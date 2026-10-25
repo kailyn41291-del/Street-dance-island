@@ -159,6 +159,9 @@
   const logoHTML = (c, cls = '') => safe(c.logo_url) ? `<img class="cr-logo ${cls}" src="${esc(c.logo_url)}" alt="${esc(c.name)}">` : `<span class="cr-logo ${cls} ph">👯</span>`;
 
   A.crumbs.crew = () => '👯 ' + t('hub_crew');
+  const crewData = () => Promise.all([Backend.crews(), Backend.crewCounts().catch(() => ({})), myInvites()]);
+  A.prefetch = A.prefetch || {};
+  A.prefetch.crew = r => { if (!(r.arg && r.arg[0]) && Backend.enabled && A.prefetchKeep) A.prefetchKeep('crew', crewData); };
   // 等太久就放棄（避免畫面一直卡在「…」）
   const withTimeout = (p, ms = 10000) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
   const myInvites = async () => { if (!logged()) return []; try { return (await Backend.crewInvites()).filter(i => i.to_user === Backend.uid && i.status === 'pending'); } catch (x) { return []; } };
@@ -170,7 +173,7 @@
       await withTimeout(Backend.ready); await withTimeout(loadMine());
       if (r.arg && r.arg[0] === 'join') return joinPage(inner, r.arg[1] || '');
       if (r.arg && r.arg[0]) return crewPage(inner, +r.arg[0]);
-      const [crews, counts, invites] = await withTimeout(Promise.all([Backend.crews(), Backend.crewCounts().catch(() => ({})), myInvites()]));
+      const [crews, counts, invites] = await withTimeout(A.prefetchTake ? A.prefetchTake('crew', crewData) : crewData());
       let q = '';
       const draw = () => {
         const mine = crews.filter(c => c.status !== 'approved' && c.leader === Backend.uid);

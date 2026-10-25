@@ -40,7 +40,9 @@
   };
   const render = (instant) => {
     if (!started) return;
-    const r = parseRoute();
+    let r = parseRoute();
+    // 活動連結 #/e/<id>：直接換成那個活動的城市頁，不要播兩次轉場
+    if (r.view === 'e') { const ev = Store.get(r.arg[0]); if (ev) { CityView.flash = ev.id; history.replaceState(null, '', `#/c/${ev.country}/${ev.city}`); r = parseRoute(); } }
     try { const pf = App.prefetch && App.prefetch[r.view]; if (pf) pf(r); } catch (e) {}
     if (instant || !current) draw(r); else { npc.hide(); wipe(() => draw(r)); }
   };

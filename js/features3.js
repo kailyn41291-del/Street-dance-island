@@ -287,13 +287,16 @@ window.Emotes = (() => {
   };
   const isMp4 = url => /\.mp4(\?|$)/i.test(url || '') && /^https:\/\//.test(url || '');
   A.crumbs.battle = () => '⚔ ' + t('arc_battle');
+  const battleData = async () => { const battles = await Backend.listBattles(); return { battles, votes: await Backend.listVotes(battles.map(b => b.id)) }; };
+  A.prefetch = A.prefetch || {};
+  A.prefetch.battle = () => { if (Backend.enabled && A.prefetchKeep) A.prefetchKeep('battle', battleData); };
   A.views.battle = async (r, stage) => {
     const view = h(`<div class="view city-view"><div class="city-inner"><p class="note">…</p></div></div>`);
     const inner = view.querySelector('.city-inner');
     stage.appendChild(view);
     if (!Backend.enabled) { inner.innerHTML = `<p class="note">${t('need_cloud')}</p>`; return; }
     let battles = [], votes = [];
-    const load = async () => { battles = await Backend.listBattles(); votes = await Backend.listVotes(battles.map(b => b.id)); };
+    const load = async (first) => { const d = first && A.prefetchTake ? await A.prefetchTake('battle', battleData) : await battleData(); battles = d.battles; votes = d.votes; };
     const draw = () => {
       const now = new Date().toISOString(), uid = Backend.uid;
       const live = battles.filter(b => b.ends_at > now), past = battles.filter(b => b.ends_at <= now);
@@ -349,7 +352,7 @@ window.Emotes = (() => {
       if (!Player.me) return Player.prompt();
       try { await Backend.vote(+b.dataset.b, b.dataset.c); SFX.play('coin'); sparkle(e.clientX, e.clientY, 12); toast(t('bt_voted'), '👍'); await load(); draw(); } catch (x) { toast(x.message, '✕'); }
     });
-    try { await load(); } catch (x) { inner.innerHTML = `<p class="note">${esc(x.message)}</p>`; return; }
+    try { await load(true); } catch (x) { inner.innerHTML = `<p class="note">${esc(x.message)}</p>`; return; }
     draw();
     const off = Social.on('votes', async () => { if (!view.isConnected) return off(); try { await load(); draw(); } catch (x) {} });
   };

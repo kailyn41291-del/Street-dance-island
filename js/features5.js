@@ -94,6 +94,13 @@
     return { reload: load };
   }
   A.mountThread = mountThread;
+  // 換頁動畫一開始就先抓下一頁要的資料
+  const PF = {};
+  A.prefetch = A.prefetch || {};
+  A.prefetchKeep = (key, fn) => { PF[key] = { t: Date.now(), p: fn().catch(e => { throw e; }) }; PF[key].p.catch(() => {}); return PF[key].p; };
+  A.prefetchTake = (key, fn) => { const x = PF[key]; delete PF[key]; return x && Date.now() - x.t < 5000 ? x.p : fn(); };
+  const forumData = async () => { const posts = await Backend.forumPosts(); const th = posts.map(p => 'p:' + p.id); const [counts, likes] = await Promise.all([Backend.replyCounts(th), Backend.likesFor(th)]); return { posts, counts, likes }; };
+  A.prefetch.forum = r => { if (!(r.arg && r.arg[0]) && Backend.enabled) A.prefetchKeep('forum', forumData); };
 
   /* =========================================================
    * 論壇（#/forum、#/forum/<id>）
@@ -111,7 +118,7 @@
     await Backend.ready;
     if (r.arg && r.arg[0]) return postView(inner, +r.arg[0]);
     let posts = [], counts = {}, likes = [];
-    try { posts = await Backend.forumPosts(); counts = await Backend.replyCounts(posts.map(p => 'p:' + p.id)); likes = await Backend.likesFor(posts.map(p => 'p:' + p.id)); } catch (x) { inner.innerHTML = `<p class="note">${esc(x.message)}</p>`; return; }
+    try { ({ posts, counts, likes } = await A.prefetchTake('forum', forumData)); } catch (x) { inner.innerHTML = `<p class="note">${esc(x.message)}</p>`; return; }
     const draw = () => {
       const lc = id => likes.filter(l => l.target === 'p:' + id).length, rc = id => counts['p:' + id] || 0;
       const mine = posts.filter(p => p.status !== 'approved' && p.user_id === Backend.uid);
