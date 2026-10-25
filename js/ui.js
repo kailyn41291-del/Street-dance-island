@@ -204,10 +204,10 @@ window.UI = (() => {
     el.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
     el.innerHTML = '';
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-      const i = document.createElement('i'); i.style.setProperty('--d', Math.round(((x + y) / (cols + rows)) * 160) + 'ms'); el.appendChild(i);
+      const i = document.createElement('i'); i.style.setProperty('--d', Math.round(((x + y) / (cols + rows)) * 260) + 'ms'); el.appendChild(i);
     }
-    // 蓋上、打開各約 0.3 秒（以前各 0.77 秒）
-    const total = 160 + 140;
+    // 蓋上、打開各約 0.45 秒
+    const total = 260 + 190;
     el.className = 'in';
     SFX.play('warp');
     setTimeout(() => {

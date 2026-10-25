@@ -421,8 +421,8 @@ textarea.input { resize: vertical; min-height: 60px; }
 /* ---------- 轉場：像素方塊擦除 ---------- */
 #wipe { position: fixed; inset: 0; z-index: 90; pointer-events: none; display: grid; }
 #wipe i { background: var(--ink); transform: scale(0); }
-#wipe.in i { animation: tileIn .14s steps(3) forwards; animation-delay: var(--d); }
-#wipe.out i { transform: scale(1); animation: tileOut .14s steps(3) forwards; animation-delay: var(--d); }
+#wipe.in i { animation: tileIn .19s steps(3) forwards; animation-delay: var(--d); }
+#wipe.out i { transform: scale(1); animation: tileOut .19s steps(3) forwards; animation-delay: var(--d); }
 @keyframes tileIn { to { transform: scale(1.02); } }
 @keyframes tileOut { to { transform: scale(0); } }
 
