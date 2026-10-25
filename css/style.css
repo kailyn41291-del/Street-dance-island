@@ -1500,3 +1500,13 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .pp-in .pp-mrz { background: rgba(31,45,107,.06); border-top: 2px dashed #e9b949; color: #1f2d6b; }
 .pp-in .pp-tc { border-color: rgba(31,45,107,.25); }
 .pp-page.pp-in { overflow: visible; }
+/* 人物背景：使用者提供的像素插圖 */
+.scene-beach { background: #c9d8f5 url("../assets/scenes/beach.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
+.scene-meadow { background: #c9d8f5 url("../assets/scenes/meadow.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
+.scene-forest { background: #c9d8f5 url("../assets/scenes/forest.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
+.scene-school { background: #c9d8f5 url("../assets/scenes/school.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
+.scene-nightmarket { background: #c9d8f5 url("../assets/scenes/nightmarket.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
+.scene-leopard_pink { background: #c9d8f5 url("../assets/scenes/leopard_pink.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
+.scene-leopard_gold { background: #c9d8f5 url("../assets/scenes/leopard_gold.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
+.scenes { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 520px) { .scenes { grid-template-columns: repeat(4, 1fr); } }

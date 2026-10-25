@@ -1,6 +1,7 @@
 /* 多國語言（第五部分）：名片、好友、私訊、玩家對戰 */
 I18N.extend({
   zh: {
+    cd_scene_forest: '森林', cd_scene_school: '校園走廊', cd_scene_nightmarket: '夜市', cd_scene_leopard_pink: '粉紅豹紋', cd_scene_leopard_gold: '金色豹紋', cd_scene_beach: '海灘', cd_scene_meadow: '晴空草原', cd_scene_none: '素色', 
     cd_scene: '人物背景', cd_scene_none: '素色', cd_scene_stars: '星空', cd_scene_beach: '海灘', cd_scene_meadow: '晴空草原', cd_scene_street: '街頭', cd_scene_studio: '練舞室', cd_leopard: '網站架設者專屬：像素豹紋', 
     mention_got: '{n} 在{c}提到了你！', 
     fr_seen_min: '{n} 分鐘前上線', fr_seen_hr: '{n} 小時前上線', fr_seen_day: '{n} 天前上線', fr_joined: '{d} 加入舞島', dm_img: '傳送圖片', dm_img_up: '圖片上傳中…', dm_img_big: '圖片太大了（最多 5MB）', dm_img_bad: '只能傳 JPG、PNG、WebP、GIF', dm_img_gone: '圖片已失效', 
@@ -23,6 +24,7 @@ I18N.extend({
     pvp_win: '🏆 你贏了！', pvp_lose: '😵 你輸了…再接再厲！', pvp_left: '對手離開了 Battle', pvp_cheat: '對手的招式驗證失敗，判你獲勝', pvp_add: 'GG！要加 {n} 好友嗎？'
   },
   en: {
+    cd_scene_forest: 'Forest', cd_scene_school: 'School hallway', cd_scene_nightmarket: 'Night market', cd_scene_leopard_pink: 'Pink leopard', cd_scene_leopard_gold: 'Gold leopard', cd_scene_beach: 'Beach', cd_scene_meadow: 'Meadow', cd_scene_none: 'Plain', 
     cd_scene: 'Backdrop', cd_scene_none: 'Plain', cd_scene_stars: 'Starry sky', cd_scene_beach: 'Beach', cd_scene_meadow: 'Meadow', cd_scene_street: 'Street', cd_scene_studio: 'Dance studio', cd_leopard: 'Site owner only: pixel leopard', 
     mention_got: '{n} mentioned you in {c}!', 
     fr_seen_min: 'Online {n} min ago', fr_seen_hr: 'Online {n} h ago', fr_seen_day: 'Online {n} d ago', fr_joined: 'Joined {d}', dm_img: 'Send image', dm_img_up: 'Uploading image…', dm_img_big: 'Image too large (max 5MB)', dm_img_bad: 'Only JPG, PNG, WebP or GIF', dm_img_gone: 'Image unavailable', 
@@ -45,6 +47,7 @@ I18N.extend({
     pvp_win: '🏆 You win!', pvp_lose: '😵 You lost… run it back!', pvp_left: 'Your opponent left the battle', pvp_cheat: "Your opponent's move failed verification — you win", pvp_add: 'GG! Add {n} as a friend?'
   },
   ja: {
+    cd_scene_forest: '森', cd_scene_school: '学校の廊下', cd_scene_nightmarket: '夜市', cd_scene_leopard_pink: 'ピンクヒョウ柄', cd_scene_leopard_gold: 'ゴールドヒョウ柄', cd_scene_beach: 'ビーチ', cd_scene_meadow: '青空と草原', cd_scene_none: '無地', 
     cd_scene: '背景', cd_scene_none: '無地', cd_scene_stars: '星空', cd_scene_beach: 'ビーチ', cd_scene_meadow: '青空と草原', cd_scene_street: 'ストリート', cd_scene_studio: 'スタジオ', cd_leopard: 'サイト制作者専用：ピクセルヒョウ柄', 
     mention_got: '{n} が{c}であなたをメンションしました！', 
     fr_seen_min: '{n} 分前にオンライン', fr_seen_hr: '{n} 時間前にオンライン', fr_seen_day: '{n} 日前にオンライン', fr_joined: '{d} に島へ参加', dm_img: '画像を送る', dm_img_up: '画像をアップロード中…', dm_img_big: '画像が大きすぎます（最大 5MB）', dm_img_bad: 'JPG・PNG・WebP・GIF のみ', dm_img_gone: '画像は表示できません', 
@@ -67,6 +70,7 @@ I18N.extend({
     pvp_win: '🏆 勝利！', pvp_lose: '😵 負けちゃった…もう一回！', pvp_left: '相手がバトルから抜けました', pvp_cheat: '相手の技の確認に失敗したため、あなたの勝ちです', pvp_add: 'GG！{n} にフレンド申請する？'
   },
   ko: {
+    cd_scene_forest: '숲', cd_scene_school: '학교 복도', cd_scene_nightmarket: '야시장', cd_scene_leopard_pink: '핑크 호피', cd_scene_leopard_gold: '골드 호피', cd_scene_beach: '해변', cd_scene_meadow: '맑은 초원', cd_scene_none: '무지', 
     cd_scene: '배경', cd_scene_none: '무지', cd_scene_stars: '별하늘', cd_scene_beach: '해변', cd_scene_meadow: '맑은 초원', cd_scene_street: '거리', cd_scene_studio: '연습실', cd_leopard: '사이트 제작자 전용: 픽셀 호피', 
     mention_got: '{n}님이 {c}에서 당신을 언급했어요!', 
     fr_seen_min: '{n}분 전 접속', fr_seen_hr: '{n}시간 전 접속', fr_seen_day: '{n}일 전 접속', fr_joined: '{d} 섬에 합류', dm_img: '이미지 보내기', dm_img_up: '이미지 업로드 중…', dm_img_big: '이미지가 너무 커요(최대 5MB)', dm_img_bad: 'JPG, PNG, WebP, GIF만 가능해요', dm_img_gone: '이미지를 볼 수 없어요', 
