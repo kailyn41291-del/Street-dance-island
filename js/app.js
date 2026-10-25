@@ -24,6 +24,7 @@
   const parseRoute = () => {
     const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     if (p[0] === 'c' && byCode[p[1]]) return { view: p[2] && cityOf(p[1], p[2]) ? 'city' : 'country', cc: p[1], city: p[2] };
+    if (App.views[p[0]]) return { view: p[0], arg: p.slice(1).map(decodeURIComponent) };   // 其他頁面（活動總覽、我的、主辦方…）
     return { view: 'world' };
   };
   let current = null, started = false;
@@ -33,7 +34,8 @@
     Themes.apply(r.view === 'world' ? null : byCode[r.cc]);
     if (r.view === 'world') WorldView();
     else if (r.view === 'country') CountryView(byCode[r.cc]);
-    else CityView(byCode[r.cc], cityOf(r.cc, r.city));
+    else if (r.view === 'city') CityView(byCode[r.cc], cityOf(r.cc, r.city));
+    else App.views[r.view](r, stage);
     updateHUD();
   };
   const render = (instant) => {
@@ -51,11 +53,13 @@
     let html = `<a href="#/">🌏 ${t('world')}</a>`;
     if (r.cc) html += `<span class="sep">›</span><a href="#/c/${r.cc}">${esc(nm(byCode[r.cc]))}</a>`;
     if (r.view === 'city') html += `<span class="sep">›</span><span>${esc(nm(cityOf(r.cc, r.city)))}</span>`;
+    if (App.crumbs[r.view]) html += `<span class="sep">›</span><span>${App.crumbs[r.view](r)}</span>`;
     hud.querySelector('.crumbs').innerHTML = html;
     hud.querySelector('.hud-add').classList.toggle('hidden', !Store.canEdit());
     hud.querySelector('.hud-save').classList.toggle('hidden', Store.cloud);
     hud.querySelector('.hud-add .label').textContent = t('add');
     hud.querySelector('.hud-game .label').textContent = t('games');
+    hud.querySelector('.hud-events .label').textContent = t('ev_all');
     hud.querySelector('.hud-save .label').textContent = t('save');
     hud.querySelector('.hud-help').setAttribute('aria-label', t('help'));
     hud.querySelector('.hud-lang .label').textContent = I18N.LANGS.find(l => l[0] === I18N.lang)[1];
@@ -392,6 +396,7 @@
     search.onkeydown = e => { if (e.key === 'Enter') gridEl.querySelector('button')?.click(); };
     fillMenu();
     view.appendChild(menu);
+    if (App.worldExtras) App.worldExtras(view);
     stage.appendChild(view);
   }
 
@@ -560,11 +565,7 @@
         st.day = st.day === tg.dataset.day ? null : tg.dataset.day; SFX.play('select'); draw();
       }
       else if (tg.classList.contains('add-here')) openForm({ country: c.code, city: city.id });
-      else if (tg.dataset.act === 'edit') openForm(Store.get(tg.dataset.ev));
-      else if (tg.dataset.act === 'del') confirmDelete(Store.get(tg.dataset.ev), draw);
-      else if (tg.dataset.act === 'poster') openPoster(Store.get(tg.dataset.ev));
-      else if (tg.dataset.act === 'map' || tg.dataset.act === 'link') SFX.play('confirm');
-      else if (tg.dataset.act === 'cmt') toggleComments(tg.closest('.card'), tg.dataset.ev);
+      else cardAct(tg, draw);
     });
     // 留言數
     Social.commentCounts().then(n => { cmtCounts = n || {}; inner.querySelectorAll('[data-cc]').forEach(x => (x.textContent = cmtCounts[x.dataset.cc] || 0)); });
@@ -574,6 +575,20 @@
 
     if (!seen('city')) setTimeout(() => npc.say(t('npc_city')), 500);
   }
+
+  /* ---------- 活動卡片上的按鈕（城市頁、總覽頁共用） ---------- */
+  function cardAct(tg, redraw) {
+    const a = tg.dataset.act; if (!a) return false;
+    const ev = tg.dataset.ev && Store.get(tg.dataset.ev);
+    if (a === 'edit') openForm(ev);
+    else if (a === 'del') confirmDelete(ev, redraw);
+    else if (a === 'poster') openPoster(ev);
+    else if (a === 'map' || a === 'link') SFX.play('confirm');
+    else if (a === 'cmt') toggleComments(tg.closest('.card'), tg.dataset.ev);
+    else return App.onCardAct(a, ev, tg, redraw);
+    return true;
+  }
+  const loadCommentCounts = root => Social.commentCounts().then(n => { cmtCounts = n || {}; root.querySelectorAll('[data-cc]').forEach(x => (x.textContent = cmtCounts[x.dataset.cc] || 0)); });
 
   /* ---------- 活動留言板 ---------- */
   let cmtCounts = {};
@@ -634,7 +649,7 @@
     return `<span class="tag" style="--c:var(--green)">${t('reg_open')}</span>`;
   }
 
-  function cardHTML(e, i, today, canEdit) {
+  function cardHTML(e, i, today, canEdit, opt = {}) {
     const d = parseDate(e.date);
     const color = Store.STYLE_COLOR[(e.styles || [])[0]] || 'var(--yellow)';
     const mapUrl = e.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.address || e.venue || '')}`;
@@ -645,7 +660,7 @@
     const safeLink = /^https?:\/\//i.test(e.link || '') ? e.link : '';
     const safeMap = /^https?:\/\//i.test(mapUrl) ? mapUrl : '';
     const rows = [
-      [t('r_when'), `${dateStr}${timeStr ? '　' + timeStr : ''}`], [t('r_org'), e.organizer],
+      [t('r_when'), `${dateStr}${timeStr ? '　' + timeStr : ''}`],
       [t('r_venue'), [e.venue, e.address].filter(Boolean).join('｜')], [t('r_reg'), reg],
       [t('r_method'), e.regMethod], [t('r_fee'), e.fee], [t('r_note'), e.note]
     ].filter(r => r[1]);
@@ -661,12 +676,15 @@
         <div class="tags">${(e.styles || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('')}
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}</div>
         <h3>${esc(e.name)}</h3>
-        <dl class="info">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+        ${opt.place ? `<div class="place-tag">📍 ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
+        <dl class="info">${e.organizer ? `<dt>${t('r_org')}</dt><dd><a class="org-link" href="#/org/${encodeURIComponent(e.organizer)}">${esc(e.organizer)}</a></dd>` : ''}${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+        ${App.cardResults(e)}
       </div>
       <div class="acts">
         ${(e.address || e.venue || e.mapUrl) && safeMap ? `<a class="btn sm teal" data-act="map" href="${esc(safeMap)}" target="_blank" rel="noopener">${I.pin} ${t('b_map')}</a>` : ''}
         ${safeLink ? `<a class="btn sm orange" data-act="link" href="${esc(safeLink)}" target="_blank" rel="noopener">${I.link} ${t('b_link')}</a>` : ''}
         <button class="btn sm yellow" data-act="cmt" data-ev="${esc(e.id)}">💬 ${t('cmt')} <span class="cc" data-cc="${esc(e.id)}">${cmtCounts[e.id] || 0}</span></button>
+        ${App.cardExtras(e, past)}
         ${canEdit ? `<button class="btn sm" data-act="edit" data-ev="${esc(e.id)}">${I.edit} ${t('b_edit')}</button>
         <button class="btn sm" data-act="del" data-ev="${esc(e.id)}">${I.trash} ${t('b_del')}</button>` : ''}
       </div>
@@ -1027,6 +1045,7 @@
     openForm(r.view === 'city' ? { country: r.cc, city: r.city } : r.cc ? { country: r.cc, city: byCode[r.cc].cities[0].id } : {});
   };
   hud.querySelector('.hud-save').onclick = () => { SFX.play('select'); openSave(); };
+  hud.querySelector('.hud-events').onclick = () => { SFX.play('select'); nav('#/events'); };
   hud.querySelector('.hud-game').onclick = () => { SFX.play('select'); Games.open(); };
   hud.querySelector('.hud-lang').onclick = e => openLang(e.currentTarget);
   hud.querySelector('.hud-player').onclick = () => { SFX.play('select'); Player.openMenu(); };
@@ -1042,6 +1061,7 @@
   hud.querySelector('.hud-save .ic').innerHTML = I.disk;
 
   Player.init({ goEvent });
+  Object.assign(App, { nav, render, byCode, cityOf, cardHTML, cardAct, loadCommentCounts, goEvent, openForm, todayStr, parseDate, ymd, beatLoop, myLook, CONTS, contName, get current() { return current; } });
 
   let rt;
   window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (current && current.view === 'country') render(true); }, 250); });

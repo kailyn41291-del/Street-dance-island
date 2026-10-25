@@ -10,3 +10,5 @@ window.DANCE_CONFIG = {
   supabaseUrl: 'https://xhawlryculasnpklephl.supabase.co',
   supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoYXdscnljdWxhc25wa2xlcGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MzE3MzMsImV4cCI6MjEwODUwNzczM30.7XMLgm1a3aqEBpYTKvvwucVdkXfHfZ5IKtb-bmtJMb0'
 };
+// 測試用：網址加上 ?local=1 就改用本機模式（用 data/events.js 的範例活動）
+if (/[?&]local=1\b/.test(location.search)) window.DANCE_CONFIG = {};

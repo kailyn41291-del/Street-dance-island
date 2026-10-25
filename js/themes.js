@@ -156,11 +156,17 @@ window.Themes = (() => {
     rain: { n: 50, cls: 'fx-fall fast', colors: ['#9fb4d6', '#b8c8e4'], w: 2, h: 14 },
     lantern: { n: 10, cls: 'fx-rise lantern', colors: ['#e74c3c', '#f39c12'], w: 14, h: 18 },
     bubbles: { n: 22, cls: 'fx-rise', colors: ['rgba(255,255,255,.75)', 'rgba(200,240,255,.8)'], w: 10, h: 10 },
-    spark: { n: 24, cls: 'fx-twinkle', colors: ['#ffffff', '#eac45a', '#f07ca3'], w: 6, h: 6 }
+    spark: { n: 24, cls: 'fx-twinkle', colors: ['#ffffff', '#eac45a', '#f07ca3'], w: 6, h: 6 },
+    pumpkin: { n: 16, cls: 'fx-fall pumpkin', colors: ['#ef8a3a', '#e0702a', '#6b4ca0'], w: 14, h: 12 },
+    heart: { n: 20, cls: 'fx-rise heart', colors: ['#f07ca3', '#e35d5d', '#ffb3c8'], w: 12, h: 12 }
   };
   function fx(country) {
-    const th = of(country); if (!th || !th.fx || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
-    const f = FX[th.fx]; if (!f) return null;
+    const th = of(country); if (!th || !th.fx) return null;
+    return fxLayer(th.fx);
+  }
+  function fxLayer(name) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+    const f = FX[name]; if (!f) return null;
     const layer = document.createElement('div');
     layer.className = 'fx-layer';
     for (let i = 0; i < f.n; i++) {
@@ -178,5 +184,5 @@ window.Themes = (() => {
     return layer;
   }
 
-  return { T, of, keyOf, apply, fx };
+  return { T, of, keyOf, apply, fx, fxLayer };
 })();
