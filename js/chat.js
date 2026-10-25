@@ -42,7 +42,7 @@ window.Chat = (() => {
         ${Social.canDelete(m) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
       <div class="mt">${Emoji.toHTML(m.text)}</div></div></div>`);
     row.prepend(headIcon(a.look));
-    if (cur === 'world' && autoTr) {
+    if (autoTr) {
       Social.translate(m.text).then(tr => { if (tr && row.isConnected) row.querySelector('.mb').insertAdjacentHTML('beforeend', `<div class="tr">🌐 ${esc(tr)}</div>`); });
     }
     const del = row.querySelector('.del');
@@ -96,7 +96,7 @@ window.Chat = (() => {
 
   function setChannel(ch) {
     cur = ch; unread[ch] = 0;
-    el.querySelector('.tr-toggle').classList.toggle('hidden', ch !== 'world');
+    el.querySelector('.tr-toggle').classList.remove('hidden');
     renderList(); updateBar();
   }
 

@@ -103,7 +103,7 @@ window.Friends = (() => {
         </div>
       </div>
       <dl class="pc-dl">${c.crew ? `<dt>${t('cd_crew')}</dt><dd>${esc(c.crew)}</dd>` : ''}${c.move ? `<dt>${t('cd_move')}</dt><dd>${esc(c.move)}</dd>` : ''}</dl>
-      <p class="pc-bio ${c.bio ? '' : 'empty'}">${c.bio ? esc(c.bio) : esc(opt.mine ? t('cd_bio_ph') : t('cd_none_bio'))}</p>
+      <p class="pc-bio ${c.bio ? '' : 'empty'}" ${c.bio && !opt.mine ? 'data-utr' : ''}>${c.bio ? esc(c.bio) : esc(opt.mine ? t('cd_bio_ph') : t('cd_none_bio'))}</p>
       ${ig ? `<a class="pc-ig" href="https://www.instagram.com/${encodeURIComponent(ig)}/" target="_blank" rel="noopener">IG @${esc(ig)}</a>` : ''}
     </div>`;
   }
@@ -349,7 +349,7 @@ window.Friends = (() => {
     const em = dm.list.querySelector('.dm-empty'); if (em) em.remove();
     const mine = r.from_user === me();
     const tm = new Date(r.created_at);
-    dm.list.appendChild(h(`<div class="dm-msg ${mine ? 'me' : ''}" data-id="${r.id}"><div class="dm-b">${Emoji.toHTML(r.text)}</div><small>${String(tm.getHours()).padStart(2, '0')}:${String(tm.getMinutes()).padStart(2, '0')}</small></div>`));
+    dm.list.appendChild(h(`<div class="dm-msg ${mine ? 'me' : ''}" data-id="${r.id}"><div class="dm-b" ${mine ? '' : 'data-utr'}>${Emoji.toHTML(r.text)}</div><small>${String(tm.getHours()).padStart(2, '0')}:${String(tm.getMinutes()).padStart(2, '0')}</small></div>`));
     dm.list.scrollTop = dm.list.scrollHeight;
   }
   function closeDM() { if (dm) { dm.el.remove(); dm = null; } }

@@ -60,6 +60,27 @@ window.UI = (() => {
     return { MOODS, url, FULL, preload, guess };
   })();
 
+  /* 自動翻譯：任何標了 data-utr 的玩家發言，語言跟目前介面不同就在下面附上翻譯 */
+  const autoTrOn = () => { try { return localStorage.getItem('danceIsland.autoTr') !== 'off'; } catch (e) { return true; } };
+  function trScan(root) {
+    if (!autoTrOn() || !window.Social || !root.querySelectorAll) return;
+    const els = [...(root.matches && root.matches('[data-utr],[data-utr-src]') ? [root] : []), ...root.querySelectorAll('[data-utr],[data-utr-src]')];
+    els.forEach(el => {
+      if (el._tr === I18N.lang) return; el._tr = I18N.lang;
+      const src = el.dataset.utrSrc != null ? el.dataset.utrSrc : el.textContent;
+      if (!src || !src.trim()) return;
+      Social.translate(src).then(tr => {
+        if (!tr || !el.isConnected) return;
+        const old = el.dataset.utrSrc != null ? el.querySelector('.tr') : (el.nextElementSibling && el.nextElementSibling.classList.contains('tr') ? el.nextElementSibling : null);
+        if (old) old.remove();
+        const d = document.createElement('div'); d.className = 'tr'; d.textContent = '🌐 ' + tr;
+        if (el.dataset.utrSrc != null) el.appendChild(d); else el.after(d);
+      });
+    });
+  }
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) trScan(n); }))).observe(document.documentElement, { childList: true, subtree: true });
+  window.trScan = trScan;
+
   /* 玩家做了某件事（每日任務用來算進度）：diAct('view') 之類 */
   window.diAct = (k, n = 1) => { try { window.dispatchEvent(new CustomEvent('di:act', { detail: { k, n } })); } catch (e) {} };
 

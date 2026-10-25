@@ -52,7 +52,7 @@
       const canDel = logged() && (r.user_id === Backend.uid || Backend.isAdmin);
       return `<li class="thr-item ${child ? 'child' : ''}" data-id="${r.id}"><span class="thr-ic"></span><div class="thr-b">
         <div class="thr-h">${byline(r.author)}<span class="tm">${ago(r.created_at)}</span></div>
-        <div class="thr-t">${par && par.parent_id ? `<span class="thr-at">@${esc((par.author || {}).name || '')}</span> ` : ''}${Emoji.toHTML(r.text)}</div>
+        <div class="thr-t">${par && par.parent_id ? `<span class="thr-at">@${esc((par.author || {}).name || '')}</span> ` : ''}${Emoji.toHTML(r.text)}</div><div class="utr-slot" data-utr-src="${esc(r.text)}"></div>
         <div class="thr-a"><button class="lk ${mine ? 'on' : ''}" data-t="${tgt}">❤ ${lk.length || ''}</button><button class="rp-b">↩ ${t('fo_reply')}</button>${canDel ? `<button class="dl">${t('b_del')}</button>` : ''}</div>
         <form class="thr-sub"></form></div></li>`;
     };
@@ -166,7 +166,7 @@
       const mine = likes.some(l => l.user_id === Backend.uid), own = p.user_id === Backend.uid, adm = Backend.isAdmin;
       inner.innerHTML = `<div class="win fo-post">${UI.winHTML(`${CAT_IC[p.category] || ''} ${esc(p.title)}`, p.pinned ? 'yellow' : 'teal', false)}<div class="win-body">
           <div class="fo-meta"><span class="fo-ic"></span>${byline(p.author)}<span class="tm">${ago(p.created_at)}</span>${catTag(p.category)}${p.pinned ? `<span class="tag pin">📌 ${t('fo_pinned')}</span>` : ''}${p.status !== 'approved' ? `<span class="tag wait">⏳ ${t(p.status === 'pending' ? 'fo_pending' : 'fo_rejected')}</span>` : ''}</div>
-          <div class="fo-body">${Emoji.toHTML(p.body)}</div>
+          <div class="fo-body" data-utr>${Emoji.toHTML(p.body)}</div>
           <div class="btn-row"><a class="btn sm" href="#/forum">◀ ${t('fo_back')}</a><button class="btn sm ${mine ? 'pink' : ''} lk">❤ ${likes.length}</button><span class="grow"></span>
             ${adm && p.status === 'approved' ? `<button class="btn sm yellow pin">📌 ${p.pinned ? t('fo_unpin') : t('fo_pin')}</button>` : ''}
             ${own || adm ? `<button class="btn sm red del">${t('b_del')}</button>` : ''}</div>

@@ -617,7 +617,7 @@
       const a = c.author || {};
       const r = h(`<div class="msg ${a.role ? 'staff' : ''}" data-id="${c.id}"><div class="mb"><div class="mh">${a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : ''}<b class="nm">${Player.nameHTML(a)}</b>${a.title ? Titles.html(a.title) : ''}
         <span class="tm">${new Date(c.created_at).toLocaleDateString()}</span>${Social.canDelete(c) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
-        <div class="mt">${Emoji.toHTML(c.text)}</div></div></div>`);
+        <div class="mt" data-utr>${Emoji.toHTML(c.text)}</div></div></div>`);
       r.prepend(Chat.headIcon(a.look));
       const del = r.querySelector('.del');
       if (del) del.onclick = async () => { try { await Social.removeComment(c.id); } catch (x) { toast(x.message, '✕'); } };
