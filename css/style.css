@@ -1648,3 +1648,29 @@ button.fo-po { grid-template-columns: 1fr; cursor: pointer; } button.fo-po:hover
   .hud-btns > .hud-player .label { display: inline; }
 }
 @media (max-width: 1024px) { .cd-ticker .tk-txt { flex: 1; min-width: 0; } .cd-ticker { display: flex; transform: none; left: 8px; } }
+
+/* =========================================================
+ * 效能：地圖上 311 座島各有兩個動畫 + 223 個浪花，手機 / 平板扛不住
+ * ========================================================= */
+/* 拖曳、縮放地圖時先暫停動畫 */
+.world-vp.dragging .isle .base, .world-vp.dragging .isle .float, .world-vp.dragging .wave { animation-play-state: paused; }
+@media (max-width: 1024px), (pointer: coarse) {
+  .isle .base { animation: none; }
+  .isle .float { animation: none; transform: translateY(-8px); }
+  .isle.home .float { animation: bob 3.2s ease-in-out infinite; }
+  .world .wave { display: none; }
+  .world .cloud { animation-duration: 90s; }
+  .fx-twinkle { animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .isle .base, .isle .float, .world .wave, .fx-twinkle, .fx-fall, .world .cloud { animation: none !important; }
+}
+/* iPhone Safari 不要自己把字放大（字會被撐出框外） */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (max-width: 1024px) {
+  .mn-b[data-k="menu"] .mn-i { height: 44px; margin-top: -20px; }
+  .mn-b .mn-l { position: relative; z-index: 1; white-space: nowrap; }
+  /* 窄螢幕：長字串可以換行，不要撐出去 */
+  .card h3, .fo-tt, .cr-main b, .pc-name, .thr-t, .fo-body, .nt-b { overflow-wrap: anywhere; }
+  .cd-ticker .tk-txt { overflow: hidden; text-overflow: ellipsis; }
+}

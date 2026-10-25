@@ -223,7 +223,9 @@
 
     // 浪花、海洋名稱、雲
     const waves = h('<div class="waves"></div>');
-    for (let i = 0; i < 280; i++) {
+    // 手機 / 平板不畫浪花（太耗效能）
+    const lite = matchMedia('(max-width: 1024px), (pointer: coarse)').matches;
+    for (let i = 0; i < (lite ? 0 : 280); i++) {
       const w = document.createElement('i'); w.className = 'wave';
       const x = Math.floor(PX.hash(i, 1) * L.GW), y = Math.floor(PX.hash(i, 2) * L.GH);
       if (L.ids[y * L.GW + x]) continue;
@@ -279,10 +281,12 @@
         d.el.style.left = (twInfo.cx - cp.x0) * C - 26 + 'px'; d.el.style.top = top + 'px';
         compEls[twInfo.comp].querySelector('.float').appendChild(d.el);
         beatLoop(d, 300);
-      } else {                                                       // 還沒建角色：嚮導 Kailyn 站在台灣
-        const k = h(`<img class="hero k-full k-hero" src="${UI.Kailyn.FULL}" alt="Kailyn">`);
-        k.style.left = (twInfo.cx - cp.x0) * C - 34 + 'px'; k.style.top = top - 30 + 'px';
-        compEls[twInfo.comp].querySelector('.float').appendChild(k);
+      } else {                                                       // 訪客：站一個預設的舞者（不要用網站架設者的造型）
+        const d = PX.dancer(4, Avatar.DEFAULT);
+        d.el.classList.add('hero', 'guest');
+        d.el.style.left = (twInfo.cx - cp.x0) * C - 26 + 'px'; d.el.style.top = top + 'px';
+        compEls[twInfo.comp].querySelector('.float').appendChild(d.el);
+        beatLoop(d, 300);
       }
     }
 
