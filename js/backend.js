@@ -119,6 +119,24 @@ window.Backend = (() => {
     async getSetting(key) { const r = must(await sb.from('settings').select('value').eq('key', key).maybeSingle()); return r ? r.value : null; },
     async setSetting(key, value) { must(await sb.from('settings').upsert({ key, value })); },
 
+    /* 實名認證 */
+    async myVerification() {
+      const r = must(await sb.from('verifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1));
+      return r[0] || null;
+    },
+    async requestVerification(dancer_name, ig, code) { return must(await sb.from('verifications').insert({ dancer_name, ig, code }).select().single()); },
+    async listVerifications() { return must(await sb.from('verifications').select('*').eq('status', 'pending').order('created_at')); },
+    async reviewVerification(id, approve) { must(await sb.rpc('review_verification', { vid: id, approve })); },
+    async verifiedNames() { return must(await sb.from('players').select('handle,name,verified_key,ig').eq('verified', true)); },
+    async playerByUser(uid) { return must(await sb.from('players').select('handle,name,verified,banned').eq('user_id', uid).maybeSingle()); },
+
+    /* 檢舉 / 管理 */
+    async report(target_handle, reason) { must(await sb.from('reports').insert({ target_handle, reason })); },
+    async listReports() { return must(await sb.from('reports').select('*').eq('status', 'open').order('created_at')); },
+    async closeReport(id) { must(await sb.from('reports').update({ status: 'done' }).eq('id', id)); },
+    async setPlayer(handle, patch) { must(await sb.from('players').update(patch).eq('handle', handle)); },
+    async findPlayer(handle) { return must(await sb.from('players').select('handle,name,verified,banned,ig').eq('handle', handle).maybeSingle()); },
+
     /* 即時更新：table = 'messages' | 'comments' | 'announcements' */
     subscribe(table, cb) {
       const ch = sb.channel('rt-' + table + '-' + Math.random().toString(36).slice(2, 7))

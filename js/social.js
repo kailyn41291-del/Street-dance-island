@@ -32,7 +32,7 @@ window.Social = (() => {
     }
     return null;
   }
-  const errKey = e => (/links|spam|duplicate/.test(e) ? 'spam' : /too fast/.test(e) ? 'fast' : /need character/.test(e) ? 'login' : null);
+  const errKey = e => (/links|spam|duplicate/.test(e) ? 'spam' : /too fast/.test(e) ? 'fast' : /need character/.test(e) ? 'login' : /banned/.test(e) ? 'banned' : null);
 
   /* ---------- 自動翻譯 ---------- */
   const tCache = new Map();

@@ -69,7 +69,7 @@
     pl.innerHTML = '';
     const d = PX.dancer(2, myLook());
     pl.appendChild(d.el);
-    pl.insertAdjacentHTML('beforeend', `<span class="label">${esc(Player.me ? Player.me.name : t('login'))}</span>`);
+    pl.insertAdjacentHTML('beforeend', `<span class="label">${Player.me ? Player.nameHTML(Player.me) : t('login')}</span>`);
     beatLoop(d, 400);
     const snd = hud.querySelector('.hud-sound');
     snd.innerHTML = SFX.on ? I.sound : I.mute;
@@ -586,7 +586,7 @@
     const listEl = box.querySelector('.cmt-list'), form = box.querySelector('.cmt-form');
     const row = c => {
       const a = c.author || {};
-      const r = h(`<div class="msg ${a.role ? 'staff' : ''}" data-id="${c.id}"><div class="mb"><div class="mh">${a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : ''}<b class="nm">${esc(a.name || '???')}</b>${a.title ? Titles.html(a.title) : ''}
+      const r = h(`<div class="msg ${a.role ? 'staff' : ''}" data-id="${c.id}"><div class="mb"><div class="mh">${a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : ''}<b class="nm">${Player.nameHTML(a)}</b>${a.title ? Titles.html(a.title) : ''}
         <span class="tm">${new Date(c.created_at).toLocaleDateString()}</span>${Social.canDelete(c) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
         <div class="mt">${Emoji.toHTML(c.text)}</div></div></div>`);
       r.prepend(Chat.headIcon(a.look));
@@ -836,15 +836,58 @@
 
   /* ================= 管理員面板：官方快訊 ================= */
   async function openAdmin() {
+    const owner = !Store.cloud || Backend.role === 'owner';
     const body = h(`<div class="admin">
+      ${Store.cloud ? `<div class="tabs"><button class="btn sm on" data-at="ann">${t('ann_title')}</button>${owner ? `<button class="btn sm" data-at="ver">${t('adm_ver')}</button>` : ''}<button class="btn sm" data-at="rep">${t('adm_rep')}</button></div>
+      <div class="adm-pane" data-p="ver" hidden><ul class="adm-list ver-list"></ul></div>
+      <div class="adm-pane" data-p="rep" hidden><ul class="adm-list rep-list"></ul></div>` : ''}
+      <div class="adm-pane" data-p="ann">
       <h4>${t('ann_title')}</h4>
       <div class="ann-row"><span>${t('ann_every')}</span><select class="input sm ann-every">${[15, 30, 60, 120, 300, 600].map(v => `<option value="${v}">${v < 60 ? v + ' ' + t('sec') : v / 60 + ' ' + t('min')}</option>`).join('')}</select></div>
       <ul class="ann-list"></ul>
       <form class="ann-form"><div class="chat-input"><button type="button" class="btn sm emo-btn">😺</button><input class="input sm" maxlength="200" placeholder="${esc(t('ann_ph'))}"><button class="btn sm yellow">${t('ann_add')}</button></div></form>
       ${Store.cloud ? `<hr><div class="btn-row"><button class="btn sm up">${t('admin_upload')}</button></div>` : ''}
-      <div class="err"></div></div>`);
+      </div><div class="err"></div></div>`);
     const m = modal({ title: t('admin_panel'), color: 'blue', body, wide: true });
     const listEl = body.querySelector('.ann-list'), err = body.querySelector('.err');
+    // 分頁：快訊 / 認證申請 / 檢舉
+    body.querySelectorAll('[data-at]').forEach(b => b.onclick = () => {
+      SFX.play('select');
+      body.querySelectorAll('[data-at]').forEach(x => x.classList.toggle('on', x === b));
+      body.querySelectorAll('.adm-pane').forEach(p => (p.hidden = p.dataset.p !== b.dataset.at));
+      if (b.dataset.at === 'ver') drawVer(); if (b.dataset.at === 'rep') drawRep();
+    });
+    const drawVer = async () => {
+      const ul = body.querySelector('.ver-list');
+      let rows = []; try { rows = await Backend.listVerifications(); } catch (x) { return fail(x); }
+      ul.innerHTML = rows.length ? '' : `<li class="note">${t('adm_none')}</li>`;
+      for (const v of rows) {
+        let who = null; try { who = await Backend.playerByUser(v.user_id); } catch (x) {}
+        const li = h(`<li><div class="grow"><b>${esc(v.dancer_name)}</b> <span class="note">@${esc(who ? who.handle : '?')}</span><br>
+          <a href="https://www.instagram.com/${encodeURIComponent(v.ig)}/" target="_blank" rel="noopener">📷 instagram.com/${esc(v.ig)}</a>
+          <div class="note">${t('adm_code')} <code class="vcode">${esc(v.code)}</code></div></div>
+          <button class="btn sm green ok">${t('adm_approve')}</button><button class="btn sm red no">${t('adm_reject')}</button></li>`);
+        li.querySelector('.ok').onclick = async () => { try { await Backend.reviewVerification(v.id, true); SFX.play('fanfare'); toast(t('adm_done'), '✔'); Player.loadVerified(); drawVer(); } catch (x) { fail(x); } };
+        li.querySelector('.no').onclick = async () => { try { await Backend.reviewVerification(v.id, false); drawVer(); } catch (x) { fail(x); } };
+        ul.appendChild(li);
+      }
+    };
+    const drawRep = async () => {
+      const ul = body.querySelector('.rep-list');
+      let rows = []; try { rows = await Backend.listReports(); } catch (x) { return fail(x); }
+      ul.innerHTML = rows.length ? '' : `<li class="note">${t('adm_none')}</li>`;
+      for (const r of rows) {
+        let p = null; try { p = await Backend.findPlayer(r.target_handle); } catch (x) {}
+        const li = h(`<li><div class="grow"><b>${p ? esc(p.name) : '?'}</b> <span class="note">@${esc(r.target_handle)}</span>${p && p.banned ? ` <span class="tag">${t('adm_banned')}</span>` : ''}<br><span class="note">${esc(r.reason || '')}</span></div>
+          ${owner && p ? `<button class="btn sm rn">${t('adm_rename')}</button><button class="btn sm red bn">${p.banned ? t('adm_unban') : t('adm_ban')}</button>` : ''}
+          <button class="btn sm dn">${t('adm_close')}</button></li>`);
+        const rn = li.querySelector('.rn'), bn = li.querySelector('.bn');
+        if (rn) rn.onclick = async () => { const n = prompt(t('adm_rename_ph'), p.name); if (!n) return; try { await Backend.setPlayer(r.target_handle, { name: n.trim().slice(0, 20) }); toast(t('adm_done'), '✔'); drawRep(); } catch (x) { fail(x); } };
+        if (bn) bn.onclick = async () => { try { await Backend.setPlayer(r.target_handle, { banned: !p.banned }); toast(t('adm_done'), '✔'); drawRep(); } catch (x) { fail(x); } };
+        li.querySelector('.dn').onclick = async () => { try { await Backend.closeReport(r.id); drawRep(); } catch (x) { fail(x); } };
+        ul.appendChild(li);
+      }
+    };
     const fail = x => { SFX.play('error'); err.textContent = '✕ ' + x.message; };
     const draw = async () => {
       const rows = await Social.announcements();

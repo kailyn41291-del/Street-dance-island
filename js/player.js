@@ -16,9 +16,9 @@ window.Player = (() => {
   const listeners = [];
   const changed = () => listeners.forEach(f => f(me));
   const cloud = () => Backend.enabled;
-  const fromProfile = p => (p ? { id: p.handle, name: p.name, nat: p.nat, style: p.style, job: p.job, title: p.title, look: p.look || {}, role: Backend.role } : null);
+  const fromProfile = p => (p ? { id: p.handle, name: p.name, nat: p.nat, style: p.style, job: p.job, title: p.title, look: p.look || {}, role: Backend.role, verified: !!p.verified, ig: p.ig || null, banned: !!p.banned } : null);
   // 啟動時恢復登入狀態（雲端：Supabase session；本機：localStorage）
-  const ready = (cloud() ? Backend.ready.then(() => { me = fromProfile(Backend.profile); }) : Promise.resolve().then(() => {
+  const ready = (cloud() ? Backend.ready.then(() => { me = fromProfile(Backend.profile); return loadVerified(); }) : Promise.resolve().then(() => {
     try { const id = localStorage.getItem(SESSION); if (id) me = DB.get(id); } catch (e) {}
   }));
 
@@ -75,7 +75,7 @@ window.Player = (() => {
         acc: row(t('o_faceAcc'), sel('faceAcc', A.faceAcc)) + row(t('o_acc'), sel('acc', A.acc)) + row(t('o_accColor'), sw('accColor', C.cloth)),
         job: `<div class="job-grid">${Object.keys(Avatar.JOBS).map(k => `<button type="button" class="opt-b job-b" data-job="${k}">${esc(J[k])}</button>`).join('')}</div>
           <button type="button" class="btn sm pink job-apply">${t('job_apply')}</button>`,
-        title: `<p class="note">${t('title_pick')}</p><div class="title-grid"><button type="button" class="opt-b" data-title="">${t('title_none')}</button>${Titles.allowed(role).map(x => `<button type="button" class="opt-b" data-title="${x.id}">${Titles.html(x.id)}</button>`).join('')}</div>`,
+        title: `<p class="note">${t('title_pick')}</p><div class="title-grid"><button type="button" class="opt-b" data-title="">${t('title_none')}</button>${Titles.allowed(role, !!(me && me.verified)).map(x => `<button type="button" class="opt-b" data-title="${x.id}">${Titles.html(x.id)}</button>`).join('')}</div>`,
         special: row(t('o_special'), sel('special', ['none', 'admin'].concat(role === 'owner' ? ['owner'] : [])))
       };
       opts.innerHTML = panels[tab];
@@ -156,7 +156,7 @@ window.Player = (() => {
           p = { id, name: v('name'), nat: v('nat'), style: v('style'), job: state.job, title: state.title, look: { ...state.look }, salt: s, hash: await hashPass(pass, s), created: new Date().toISOString() };
           DB.put(p);
         }
-      } catch (e) { btn.disabled = false; console.warn(e); return fail(null, /registered|exists/i.test(e.message) ? t('e_id_taken') : e.message); }
+      } catch (e) { btn.disabled = false; console.warn(e); return fail(/reserved/.test(e.message) ? 'name' : null, /registered|exists/i.test(e.message) ? t('e_id_taken') : /reserved/.test(e.message) ? t('v_reserved') : e.message); }
       m.close();
       I18N.set(I18N.langForCountry(p.nat));
       setSession(p);
@@ -214,18 +214,82 @@ window.Player = (() => {
     if (!me) return prompt();
     const state = { look: { ...me.look }, job: me.job || me.look.job || 'bboy', title: me.title || null };
     const nat = GEO.countries.find(c => c.code === me.nat);
-    const body = h(`<div><div class="me-head"><b>${esc(me.name)}</b> <span class="tag">@${esc(me.id)}</span> ${nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''} <span class="tag">${esc(me.style || '')}</span>
+    const body = h(`<div><div class="me-head"><b>${nameHTML(me)}</b> <span class="tag">@${esc(me.id)}</span>
+      ${me.verified && me.ig ? `<a class="tag vtag" href="https://www.instagram.com/${encodeURIComponent(me.ig)}/" target="_blank" rel="noopener">✔ IG @${esc(me.ig)}</a>` : ''} ${nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''} <span class="tag">${esc(me.style || '')}</span>
       ${me.role ? `<span class="tag role-tag role-${me.role}">${me.role === 'owner' ? '★ ' + Titles.label('owner') : '✦ ' + Titles.label('admin')}</span>` : ''}</div>
       <div class="ed"></div>
-      <div class="form-foot"><button class="btn red lo">${t('p_logout')}</button><span class="grow"></span><button class="btn pink sv">${t('p_save')}</button></div></div>`);
+      <div class="form-foot"><button class="btn red lo">${t('p_logout')}</button>${cloud() && !me.verified ? `<button class="btn blue vf">${t('v_apply')}</button>` : ''}<span class="grow"></span><button class="btn pink sv">${t('p_save')}</button></div></div>`);
     body.querySelector('.ed').appendChild(lookEditor(state, me.role));
+    const vf = body.querySelector('.vf'); if (vf) vf.onclick = () => { m.close(); setTimeout(openVerify, 220); };
     const m = modal({ title: t('p_edit'), color: 'pink', body, wide: true });
     body.querySelector('.sv').onclick = async () => {
       const patch = { look: state.look, job: state.job, title: state.title };
-      try { if (cloud()) await Backend.saveProfile(patch); else DB.put({ ...DB.get(me.id), ...patch }); } catch (e) { SFX.play('error'); toast(e.message, '✕'); return; }
+      try { if (cloud()) await Backend.saveProfile(patch); else DB.put({ ...DB.get(me.id), ...patch }); } catch (e) { SFX.play('error'); toast(/reserved/.test(e.message) ? t('v_reserved') : e.message, '✕'); return; }
       Object.assign(me, patch); changed(); m.close(); SFX.play('coin'); toast(t('p_saved'), '★');
     };
     body.querySelector('.lo').onclick = async () => { m.close(); if (cloud()) await Backend.signOut(); setSession(null); toast(t('p_logged_out'), '👋'); };
+  }
+
+  /* ---------- 實名認證 ---------- */
+  // 已認證的名字（用來標示「長得很像但沒認證」的帳號）
+  let vKeys = new Set();
+  const nameKey = n => String(n || '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+  async function loadVerified() {
+    if (!cloud()) return;
+    try { vKeys = new Set((await Backend.verifiedNames()).map(p => p.verified_key)); } catch (e) {}
+  }
+  /** 名字 + 認證勾勾（或「疑似冒名」警告） */
+  function nameHTML(a) {
+    const n = esc(a.name || '???');
+    if (a.verified) return `${n}<span class="vchk" title="${esc(t('v_badge'))}">✔</span>`;
+    if (vKeys.has(nameKey(a.name))) return `${n}<span class="vwarn" title="${esc(t('v_lookalike'))}">⚠</span>`;
+    return n;
+  }
+
+  async function openVerify() {
+    if (!me || !cloud()) return;
+    let cur = null;
+    try { cur = await Backend.myVerification(); } catch (e) {}
+    const steps = code => `<ol class="steps">${t('v_steps').map(x => `<li>${x.replace('{code}', `<code class="vcode">${esc(code)}</code>`)}</li>`).join('')}</ol>`;
+    let body;
+    if (cur && cur.status === 'pending') {
+      body = h(`<div><p>${t('v_pending')}</p>${steps(cur.code)}<p class="note">IG：@${esc(cur.ig)}　｜　${esc(cur.dancer_name)}</p></div>`);
+    } else {
+      body = h(`<form class="form" novalidate>
+        ${cur && cur.status === 'rejected' ? `<p class="full err">${t('v_rejected')}</p>` : ''}
+        <p class="full note">${t('v_intro')}</p>
+        <label class="field"><span>${t('v_name')} <b>*</b></span><input class="input" name="dn" maxlength="20" value="${esc(me.name)}"></label>
+        <label class="field"><span>${t('v_ig')} <b>*</b></span><input class="input" name="ig" maxlength="31" placeholder="${esc(t('v_ig_ph'))}" autocapitalize="off" spellcheck="false"></label>
+        <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button class="btn blue">${t('v_submit')}</button></div></div></form>`);
+    }
+    const m = modal({ title: t('v_title'), color: 'blue', body });
+    if (body.tagName !== 'FORM') return;
+    body.onsubmit = async ev => {
+      ev.preventDefault();
+      const dn = body.elements.dn.value.trim(), ig = body.elements.ig.value.trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/.*$/, '');
+      const err = body.querySelector('.err');
+      if (!dn) { err.textContent = '✕ ' + t('e_name_req'); return; }
+      if (!/^[A-Za-z0-9._]{1,30}$/.test(ig)) { err.textContent = '✕ ' + t('v_ig_bad'); return; }
+      const code = 'DI-' + Array.from(crypto.getRandomValues(new Uint8Array(4)), b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
+      try { await Backend.requestVerification(dn, ig, code); } catch (x) { SFX.play('error'); err.textContent = '✕ ' + x.message; return; }
+      m.close(); SFX.play('coin');
+      setTimeout(openVerify, 250);
+    };
+  }
+
+  /* ---------- 檢舉冒名 ---------- */
+  function openReport(handle, name) {
+    if (!cloud()) return;
+    if (!me) return prompt();
+    const body = h(`<form class="form" novalidate><p class="full">${t('rp_q', { n: esc(name) })}</p>
+      <label class="field full"><textarea class="input" name="r" maxlength="200" placeholder="${esc(t('rp_ph'))}"></textarea></label>
+      <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button class="btn red">${t('rp_send')}</button></div></div></form>`);
+    const m = modal({ title: t('rp_title'), color: 'pink', body });
+    body.onsubmit = async ev => {
+      ev.preventDefault();
+      try { await Backend.report(handle, body.elements.r.value.trim()); } catch (x) { body.querySelector('.err').textContent = '✕ ' + x.message; return; }
+      m.close(); toast(t('rp_sent'), '⚑');
+    };
   }
 
   /* ---------- 歡迎回來 + 本週任務板 ---------- */
@@ -259,6 +323,6 @@ window.Player = (() => {
     ready,
     init(o) { hooks = o || {}; },
     onChange: f => listeners.push(f),
-    prompt, openCreate, openLogin, openMenu, welcome, questBoard
+    prompt, openCreate, openLogin, openMenu, welcome, questBoard, openVerify, openReport, nameHTML, loadVerified
   };
 })();

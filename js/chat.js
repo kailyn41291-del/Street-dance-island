@@ -32,7 +32,8 @@ window.Chat = (() => {
     const a = m.author || {};
     const role = a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : '';
     const row = h(`<div class="msg ${a.role ? 'staff' : ''}" data-id="${m.id}"><div class="mb">
-      <div class="mh">${role}<b class="nm">${esc(a.name || '???')}</b>${a.title ? Titles.html(a.title) : ''}<span class="tm">${timeStr(m.created_at)}</span>
+      <div class="mh">${role}<b class="nm">${Player.nameHTML(a)}</b>${a.title ? Titles.html(a.title) : ''}<span class="tm">${timeStr(m.created_at)}</span>
+        ${Social.cloud && Player.me && a.handle && a.handle !== Player.me.id ? `<button class="rp" aria-label="${t('rp_title')}" title="${t('rp_title')}">⚑</button>` : ''}
         ${Social.canDelete(m) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
       <div class="mt">${Emoji.toHTML(m.text)}</div></div></div>`);
     row.prepend(headIcon(a.look));
@@ -41,6 +42,8 @@ window.Chat = (() => {
     }
     const del = row.querySelector('.del');
     if (del) del.onclick = async () => { try { await Social.removeMessage(m.id); } catch (e) { toast(e.message, '✕'); } };
+    const rp = row.querySelector('.rp');
+    if (rp) rp.onclick = () => Player.openReport(a.handle, a.name);
     return row;
   }
 

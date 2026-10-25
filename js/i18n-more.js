@@ -3,6 +3,14 @@
  * ========================================================= */
 I18N.extend({
   zh: {
+    v_apply: '✔ 申請認證', v_title: '✔ 舞者實名認證', v_intro: '認證後名字旁會出現 ✔，名字會被保護，別人不能再用。適合有名氣、怕被冒名的舞者。',
+    v_name: '舞者名稱（認證後會鎖定）', v_ig: '你的官方 Instagram 帳號', v_ig_ph: '例：bboy_ming（不用加 @）', v_ig_bad: 'IG 帳號格式不對', v_submit: '送出申請',
+    v_steps: ['打開你的 Instagram → 編輯個人檔案', '把驗證碼 {code} 加到「個人簡介」裡（任何位置都可以）', '等管理員確認（會打開你的 IG 檢查）', '通過後名字旁會出現 ✔，驗證碼就可以刪掉了'],
+    v_pending: '⏳ 你的申請正在審核中，請照下面的步驟做：', v_rejected: '上次的申請沒有通過，可以重新申請。', v_badge: '已實名認證', v_lookalike: '注意：這個名字跟一位認證舞者很像，但他沒有認證',
+    v_reserved: '這個名字已經被認證舞者保護，請換一個名字',
+    rp_title: '檢舉冒名', rp_q: '要檢舉「{n}」嗎？', rp_ph: '原因（例如：冒充某位舞者）', rp_send: '送出檢舉', rp_sent: '已送出檢舉，謝謝你！',
+    adm_ver: '✔ 認證申請', adm_rep: '⚑ 檢舉', adm_none: '目前沒有資料', adm_code: '驗證碼：', adm_approve: '通過', adm_reject: '拒絕', adm_done: '已完成',
+    adm_rename: '改名', adm_rename_ph: '新的名字', adm_ban: '停權', adm_unban: '解除停權', adm_banned: '已停權', adm_close: '結案', err_banned: '你的帳號已被停權',
     chat: '聊天室', ch_world: '世界頻道', ch_tw: '台灣頻道', chat_ph: '說點什麼…（可以加貓咪 / 吉娃娃表情）', chat_send: '送出', chat_login: '建立角色或登入後就能聊天',
     auto_tr: '自動翻譯', official: '官方快訊', chat_local: '※ 本機模式：訊息只有你看得到，接上雲端後所有人就能即時聊天。',
     err_spam: '偵測到廣告或連結，訊息沒有送出', err_fast: '說太快了，休息幾秒再說', err_dup: '同樣的話不要一直重複喔', err_long: '最多 200 字', err_login: '請先建立角色或登入', err_empty: '請輸入內容',
@@ -26,6 +34,14 @@ I18N.extend({
     jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'Locker', popper: 'Popper', hiphop: 'Hip Hopper', house: 'House Dancer', waacker: 'Waacker', krumper: 'Krumper', voguer: 'Voguer', choreo: '編舞者', dj: 'DJ', mc: 'MC', fan: '舞迷', host: '主辦方' }
   },
   en: {
+    v_apply: '✔ Get verified', v_title: '✔ Dancer Verification', v_intro: 'Verified dancers get a ✔ and their name is protected so nobody else can use it. Great for well-known dancers.',
+    v_name: 'Dancer name (locked after verification)', v_ig: 'Your official Instagram', v_ig_ph: 'e.g. bboy_ming (no @)', v_ig_bad: 'Invalid Instagram username', v_submit: 'Submit',
+    v_steps: ['Open Instagram → Edit profile', 'Add the code {code} anywhere in your bio', 'Wait for an admin to check your profile', "Once approved you'll get a ✔ and can remove the code"],
+    v_pending: '⏳ Your request is under review. Please follow these steps:', v_rejected: 'Your last request was not approved. You can apply again.', v_badge: 'Verified', v_lookalike: 'Careful: this name looks like a verified dancer, but this account is not verified',
+    v_reserved: 'This name is protected by a verified dancer. Please choose another one',
+    rp_title: 'Report impersonation', rp_q: 'Report "{n}"?', rp_ph: 'Reason (e.g. pretending to be a dancer)', rp_send: 'Send report', rp_sent: 'Report sent. Thank you!',
+    adm_ver: '✔ Verifications', adm_rep: '⚑ Reports', adm_none: 'Nothing here', adm_code: 'Code:', adm_approve: 'Approve', adm_reject: 'Reject', adm_done: 'Done',
+    adm_rename: 'Rename', adm_rename_ph: 'New name', adm_ban: 'Ban', adm_unban: 'Unban', adm_banned: 'Banned', adm_close: 'Close', err_banned: 'Your account has been banned',
     chat: 'Chat', ch_world: 'World', ch_tw: 'Taiwan', chat_ph: 'Say something… (cat / chihuahua emoji too)', chat_send: 'Send', chat_login: 'Create a character or log in to chat',
     auto_tr: 'Auto-translate', official: 'OFFICIAL NEWS', chat_local: '※ Local mode: only you can see messages. Everyone can chat live once the cloud is connected.',
     err_spam: 'Ads or links detected — message not sent', err_fast: 'Slow down a little', err_dup: "Please don't repeat the same message", err_long: '200 characters max', err_login: 'Create a character or log in first', err_empty: 'Type something first',
@@ -49,6 +65,14 @@ I18N.extend({
     jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'Locker', popper: 'Popper', hiphop: 'Hip Hopper', house: 'House Dancer', waacker: 'Waacker', krumper: 'Krumper', voguer: 'Voguer', choreo: 'Choreographer', dj: 'DJ', mc: 'MC', fan: 'Dance Fan', host: 'Organizer' }
   },
   ja: {
+    v_apply: '✔ 認証を申請', v_title: '✔ ダンサー認証', v_intro: '認証されると名前の横に ✔ が付き、名前が保護されて他の人は使えなくなります。有名ダンサーにおすすめ。',
+    v_name: 'ダンサー名（認証後は固定）', v_ig: 'あなたの公式 Instagram', v_ig_ph: '例：bboy_taro（@ は不要）', v_ig_bad: 'Instagram ID の形式が正しくありません', v_submit: '申請する',
+    v_steps: ['Instagram を開いて「プロフィールを編集」', 'コード {code} を自己紹介文のどこかに追加', '管理者があなたのプロフィールを確認するまで待つ', '承認されると ✔ が付きます。コードは消して OK'],
+    v_pending: '⏳ 審査中です。次の手順で進めてください：', v_rejected: '前回の申請は承認されませんでした。もう一度申請できます。', v_badge: '認証済み', v_lookalike: '注意：認証ダンサーと似た名前ですが、このアカウントは認証されていません',
+    v_reserved: 'この名前は認証ダンサーに保護されています。別の名前にしてください',
+    rp_title: 'なりすましを報告', rp_q: '「{n}」を報告しますか？', rp_ph: '理由（例：ダンサーになりすましている）', rp_send: '報告する', rp_sent: '報告しました。ありがとう！',
+    adm_ver: '✔ 認証申請', adm_rep: '⚑ 報告', adm_none: 'データなし', adm_code: 'コード：', adm_approve: '承認', adm_reject: '却下', adm_done: '完了',
+    adm_rename: '名前変更', adm_rename_ph: '新しい名前', adm_ban: '停止', adm_unban: '停止解除', adm_banned: '停止中', adm_close: '完了にする', err_banned: 'アカウントが停止されています',
     chat: 'チャット', ch_world: 'ワールド', ch_tw: '台湾', chat_ph: '何か話そう…（猫・チワワ絵文字もOK）', chat_send: '送信', chat_login: 'キャラを作るかログインするとチャットできます',
     auto_tr: '自動翻訳', official: '公式ニュース', chat_local: '※ ローカルモード：メッセージは自分だけに見えます。クラウド接続後はみんなとリアルタイムで話せます。',
     err_spam: '広告やリンクが含まれているため送信できません', err_fast: '少し待ってから送ってね', err_dup: '同じ内容の連投はやめてね', err_long: '200 文字まで', err_login: '先にキャラ作成かログインをしてください', err_empty: '内容を入力してください',
@@ -72,6 +96,14 @@ I18N.extend({
     jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'ロッカー', popper: 'ポッパー', hiphop: 'ヒップホッパー', house: 'ハウスダンサー', waacker: 'ワッカー', krumper: 'クランパー', voguer: 'ヴォーガー', choreo: '振付師', dj: 'DJ', mc: 'MC', fan: 'ダンスファン', host: '主催者' }
   },
   ko: {
+    v_apply: '✔ 인증 신청', v_title: '✔ 댄서 실명 인증', v_intro: '인증되면 이름 옆에 ✔가 붙고, 이름이 보호되어 다른 사람이 쓸 수 없어요. 유명 댄서에게 추천!',
+    v_name: '댄서 이름 (인증 후 고정)', v_ig: '공식 인스타그램 계정', v_ig_ph: '예: bboy_minsu (@ 없이)', v_ig_bad: '인스타그램 아이디 형식이 올바르지 않아요', v_submit: '신청하기',
+    v_steps: ['인스타그램 → 프로필 편집', '인증 코드 {code} 를 소개글 아무 곳에 추가', '관리자가 프로필을 확인할 때까지 기다리기', '승인되면 ✔가 붙고, 코드는 지워도 돼요'],
+    v_pending: '⏳ 심사 중이에요. 아래 순서대로 진행해 주세요:', v_rejected: '지난 신청은 승인되지 않았어요. 다시 신청할 수 있어요.', v_badge: '인증됨', v_lookalike: '주의: 인증 댄서와 비슷한 이름이지만 인증되지 않은 계정이에요',
+    v_reserved: '인증 댄서가 보호 중인 이름이에요. 다른 이름을 골라 주세요',
+    rp_title: '사칭 신고', rp_q: '「{n}」을(를) 신고할까요?', rp_ph: '이유 (예: 댄서를 사칭함)', rp_send: '신고하기', rp_sent: '신고했어요. 고마워요!',
+    adm_ver: '✔ 인증 신청', adm_rep: '⚑ 신고', adm_none: '데이터 없음', adm_code: '코드:', adm_approve: '승인', adm_reject: '거절', adm_done: '완료',
+    adm_rename: '이름 변경', adm_rename_ph: '새 이름', adm_ban: '정지', adm_unban: '정지 해제', adm_banned: '정지됨', adm_close: '종료', err_banned: '계정이 정지되었어요',
     chat: '채팅', ch_world: '월드', ch_tw: '대만', chat_ph: '하고 싶은 말…(고양이/치와와 이모지도 OK)', chat_send: '전송', chat_login: '캐릭터를 만들거나 로그인하면 채팅할 수 있어요',
     auto_tr: '자동 번역', official: '공식 소식', chat_local: '※ 로컬 모드: 메시지는 나만 볼 수 있어요. 클라우드 연결 후 모두와 실시간 채팅 가능!',
     err_spam: '광고나 링크가 감지되어 전송되지 않았어요', err_fast: '조금만 천천히!', err_dup: '같은 말을 반복하지 말아 주세요', err_long: '최대 200자', err_login: '먼저 캐릭터를 만들거나 로그인하세요', err_empty: '내용을 입력하세요',

@@ -7,6 +7,7 @@ window.Titles = (() => {
   const LIST = [
     { id: 'owner',    only: 'owner', color: '#eac45a', zh: '網站架設者',        en: 'Island Architect',      ja: 'サイト創設者',        ko: '사이트 창설자' },
     { id: 'admin',    only: 'admin', color: '#b48ae0', zh: '管理員',            en: 'Admin',                 ja: '管理者',              ko: '관리자' },
+    { id: 'verified', only: 'verified', zh: '認證舞者', en: 'Verified Dancer', ja: '認証ダンサー', ko: '인증 댄서' },
     { id: 'rookie',   zh: '新手舞者',          en: 'Rookie Dancer',        ja: '新人ダンサー',        ko: '신입 댄서' },
     { id: 'floor',    zh: '地板清潔工',        en: 'Floor Sweeper',        ja: '床掃除係',            ko: '바닥 청소부' },
     { id: 'eight',    zh: '八拍收藏家',        en: '8-Count Collector',    ja: '8カウント収集家',      ko: '8카운트 수집가' },
@@ -42,7 +43,7 @@ window.Titles = (() => {
   const byId = Object.fromEntries(LIST.map(x => [x.id, x]));
   const label = id => { const x = byId[id]; return x ? x[I18N.lang] || x.zh : ''; };
   /** role: 'owner' | 'admin' | null */
-  const allowed = role => LIST.filter(x => !x.only || (x.only === 'admin' && role) || (x.only === 'owner' && role === 'owner'));
+  const allowed = (role, verified) => LIST.filter(x => !x.only || (x.only === 'admin' && role) || (x.only === 'owner' && role === 'owner') || (x.only === 'verified' && verified));
   const html = id => { const x = byId[id]; if (!x) return ''; return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''}">${label(id).replace(/[&<>]/g, '')}</span>`; };
   return { LIST, label, allowed, html, byId };
 })();

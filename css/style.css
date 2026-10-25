@@ -720,3 +720,15 @@ body[data-theme="hk"] .win-title { text-shadow: 0 0 4px #fff, 0 0 8px #ff3d8b; }
 .pin.nolabel .name { display: none; }
 .pin.nolabel:hover .name, .pin.nolabel:focus-visible .name { display: inline-block; }
 .pin.nolabel .gem { width: 14px; height: 18px; }
+
+/* ---------- 實名認證 ---------- */
+.vchk { display: inline-grid; place-items: center; width: 14px; height: 14px; margin-left: 3px; background: #3a8ef6; color: #fff; font-size: 9px; border: 2px solid var(--ink); vertical-align: 1px; line-height: 1; }
+.vwarn { margin-left: 3px; color: #d9822b; font-size: 12px; }
+.vtag { background: #d6e8ff; text-decoration: none; }
+.vcode { font-family: var(--font-en); font-size: 12px; background: var(--yellow); border: 2px solid var(--ink); padding: 1px 6px; user-select: all; }
+.adm-list { list-style: none; margin: 10px 0; padding: 0; display: grid; gap: 8px; }
+.adm-list li { display: flex; gap: 6px; align-items: center; background: var(--paper); border: 2px solid var(--ink); padding: 6px 8px; font-size: 13px; }
+.adm-list a { font-size: 12px; }
+.msg .rp { border: 0; background: none; font-size: 11px; padding: 0 2px; color: var(--ink-soft); opacity: .5; }
+.msg:hover .rp { opacity: 1; }
+.msg .rp:hover { color: var(--red); }
