@@ -121,19 +121,27 @@
   A.crumbs.me = () => '★ ' + t('me_title');
   const meCache = {};
   A.clearMeCache = () => { meCache.at = 0; };
+  // 簽到紀錄、投稿：60 秒內再開「我的舞島」直接用上次的（簽到 / 投稿後會清掉）；換頁動畫一開始就先抓
+  function meData() {
+    if (!Player.me) return Promise.resolve([null, [], []]);
+    const fresh = meCache.at && Date.now() - meCache.at < 60000 && meCache.who === Player.me.id;
+    if (fresh && meCache.p) return meCache.p;
+    meCache.at = Date.now(); meCache.who = Player.me.id;
+    meCache.p = Promise.all([
+      Backend.enabled && !S.loaded ? loadMine() : null,
+      Backend.enabled ? Backend.myDaily().catch(() => []) : [],
+      Backend.enabled ? Backend.mySubmissions().catch(() => []) : []
+    ]);
+    return meCache.p;
+  }
+  A.prefetch = A.prefetch || {};
+  A.prefetch.me = () => meData();
   A.views.me = async (r, stage) => {
     if (!Player.me) { Player.prompt(); return A.nav('#/'); }
     const view = h(`<div class="view city-view"><div class="city-inner me-page"><p class="note">…</p></div></div>`);
     const inner = view.querySelector('.city-inner');
     stage.appendChild(view);
-    // 簽到紀錄、投稿：60 秒內再開「我的舞島」直接用上次的（簽到 / 投稿後會清掉）
-    const fresh = meCache.at && Date.now() - meCache.at < 60000 && meCache.who === Player.me.id;
-    const [, daily0, subs0] = await Promise.all([
-      Backend.enabled && !S.loaded ? loadMine() : null,
-      fresh ? meCache.daily : Backend.enabled ? Backend.myDaily().catch(() => []) : [],
-      fresh ? meCache.subs : Backend.enabled ? Backend.mySubmissions().catch(() => []) : []
-    ]);
-    if (!fresh) Object.assign(meCache, { at: Date.now(), who: Player.me.id, daily: daily0, subs: subs0 });
+    const [, daily0, subs0] = await meData();
     const me = Player.me, today = A.todayStr();
     const st = S.stats || { xp: 0, checkins: 0, comments: 0, messages: 0, days: 0 };
     const lv = levelOf(st.xp), cur = xpFor(lv), nxt = xpFor(lv + 1), pct = Math.round(((st.xp - cur) / Math.max(1, nxt - cur)) * 100);

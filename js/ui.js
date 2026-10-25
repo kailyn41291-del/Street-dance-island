@@ -198,15 +198,16 @@ window.UI = (() => {
   /* 像素方塊轉場 */
   function wipe(mid) {
     const el = document.getElementById('wipe');
-    const size = 56;
+    const size = 64;
     const cols = Math.ceil(innerWidth / size), rows = Math.ceil(innerHeight / size);
     el.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     el.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
     el.innerHTML = '';
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-      const i = document.createElement('i'); i.style.setProperty('--d', (x + y) * 14 + 'ms'); el.appendChild(i);
+      const i = document.createElement('i'); i.style.setProperty('--d', Math.round(((x + y) / (cols + rows)) * 160) + 'ms'); el.appendChild(i);
     }
-    const total = (cols + rows) * 14 + 240;
+    // 蓋上、打開各約 0.3 秒（以前各 0.77 秒）
+    const total = 160 + 140;
     el.className = 'in';
     SFX.play('warp');
     setTimeout(() => {

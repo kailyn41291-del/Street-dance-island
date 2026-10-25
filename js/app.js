@@ -41,6 +41,7 @@
   const render = (instant) => {
     if (!started) return;
     const r = parseRoute();
+    try { const pf = App.prefetch && App.prefetch[r.view]; if (pf) pf(r); } catch (e) {}
     if (instant || !current) draw(r); else { npc.hide(); wipe(() => draw(r)); }
   };
   const nav = hash => { if (location.hash === hash) render(); else location.hash = hash; };

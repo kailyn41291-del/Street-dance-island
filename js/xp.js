@@ -166,6 +166,9 @@ window.XP = (() => {
         <div class="ach-grid">${ACH.map(([id, ic, xp]) => `<div class="ach ${mine.ach.has(id) ? 'on' : ''}" title="${esc(achDesc(id))} (+${xp} XP)"><span class="ach-ic">${ic}</span><b>${esc(achName(id))}</b><small>${esc(achDesc(id))}</small><i>+${xp}</i></div>`).join('')}</div></section>
     </div></div>`;
   };
+  A.prefetch = A.prefetch || {};
+  const _pf = A.prefetch.me;
+  A.prefetch.me = r => { _pf && _pf(r); loadMine(); };
   // 我的頁面：馬上畫出來，冒險進度在背景載入後補上
   const _me = A.views.me;
   A.views.me = (r, stage) => {
