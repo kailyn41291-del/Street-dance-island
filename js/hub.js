@@ -324,6 +324,26 @@ window.Hub = (() => {
     if (matchMedia('(max-width: 1024px), (pointer: coarse) and (max-width: 1400px)').matches) { try { if (localStorage.getItem(OPEN) === null) localStorage.setItem(OPEN, '0'); } catch (x) {} }
   }
 
+  /* 電腦版上方按鈕列：放不下時，依重要程度一組一組藏起按鈕文字（只留圖示） */
+  const desktopHud = () => !matchMedia('(max-width: 1024px), (pointer: coarse) and (max-width: 1400px)').matches;
+  let fitting = false;
+  function fitHud() {
+    const hud = document.getElementById('hud'), btns = hud && hud.querySelector('.hud-btns');
+    if (!btns || fitting) return;
+    if (!desktopHud()) { delete hud.dataset.fit; return; }
+    fitting = true;
+    const crumbs = hud.querySelector('.crumbs');
+    const fits = () => { const b = btns.getBoundingClientRect(); const c = crumbs && crumbs.offsetParent ? crumbs.getBoundingClientRect() : { right: 0 }; return b.right <= innerWidth - 8 && c.right <= b.left + 1; };
+    for (let lv = 0; lv <= 4; lv++) { hud.dataset.fit = lv; if (fits()) break; }
+    fitting = false;
+  }
+  let fitT = null;
+  const fitSoon = () => { clearTimeout(fitT); fitT = setTimeout(fitHud, 60); };
+  window.addEventListener('resize', fitSoon);
+  window.addEventListener('hashchange', () => setTimeout(fitHud, 120));
+  if (I18N.onChange) I18N.onChange(fitSoon);
+  setTimeout(() => { const b = document.querySelector('#hud .hud-btns'); if (b) new MutationObserver(fitSoon).observe(b, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class'] }); fitHud(); }, 0);
+
   // 啟動：等登入狀態確定後建立任務、放上手機
   const boot = () => { mountPhone(); mountNav(); load(); };
   (Backend.enabled ? Backend.ready.then(() => Player.ready) : Promise.resolve()).then(boot, boot);
@@ -338,5 +358,5 @@ window.Hub = (() => {
       return `<li class="${d ? 'ok' : ''}"><span class="qb-c">${d ? '✔' : '☐'}</span><span class="qb-l">${esc(label(q))} <b>(${p}/${q.n})</b></span>${d ? '' : `<button class="qb-go" data-qgo="${q.id}">${t('q_go')} ▸</button>`}</li>`; }).join('')}</ul>${n === state.ids.length ? `<p class="qb-done">🎉 ${t('q_done_all')}</p>` : ''}</div>`;
   }
   const goQuest = id => { const q = POOL.find(x => x.id === id); q && q.go(); };
-  return { openMenu, act, reload: load, boardHTML, goQuest };
+  return { openMenu, act, reload: load, boardHTML, goQuest, fitHud };
 })();

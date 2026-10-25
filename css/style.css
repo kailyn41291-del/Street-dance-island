@@ -1747,3 +1747,46 @@ img.pxi { width: 1.5em; height: 1.5em; object-fit: contain; vertical-align: midd
   .mn-i, .mn-i img.pxi { width: 36px; height: 36px; }
   .modal:has(.phone-ui) { width: min(640px, 100%); }
 }
+
+/* =========================================================
+ * 電腦版上方按鈕列：放大按鈕、圖示、文字（依螢幕寬度分三段，不會超出畫面）
+ * ========================================================= */
+@media (min-width: 1025px) and (pointer: fine), (min-width: 1401px) {
+  #hud { top: 10px; }
+  .hud-btns { gap: 8px; align-items: stretch; }
+  .hud-btns > .btn { min-height: 44px; font-size: 14px; padding: 0 12px; gap: 6px; }
+  .hud-btns .btn img.pxi { width: 30px; height: 30px; margin: -6px 0; }
+  .hud-btns .btn.icon { min-width: 44px; justify-content: center; }
+  .hud-player .sprite { width: 26px; height: 36px; }
+  .logo { padding: 8px 14px; } .logo .en { font-size: 13px; } .logo .zh { font-size: 15px; }
+  .crumbs { font-size: 14px; padding: 8px 12px; }
+}
+@media (min-width: 1700px) and (pointer: fine), (min-width: 1700px) and (hover: hover) {
+  .hud-btns { gap: 10px; }
+  .hud-btns > .btn { min-height: 50px; font-size: 16px; padding: 0 16px; gap: 8px; }
+  .hud-btns .btn img.pxi { width: 36px; height: 36px; margin: -8px 0; }
+  .hud-btns .btn.icon { min-width: 50px; }
+  .hud-player .sprite { width: 30px; height: 42px; margin: -6px 0 -8px; }
+  .hud-player .lv-chip { font-size: 13px; }
+  .logo .en { font-size: 15px; } .logo .zh { font-size: 17px; }
+  .crumbs { font-size: 15px; }
+  .qbox, .hub-phone { top: 122px; }
+}
+@media (min-width: 1700px) and (pointer: fine), (min-width: 1700px) and (hover: hover) {
+  .hud-btns { gap: 8px; }
+  .hud-btns > .btn { padding: 0 13px; }
+}
+/* 上方按鈕列自動縮排（hub.js 的 fitHud 決定等級）：0 全部有字 → 4 只剩圖示 */
+#hud[data-fit] .hud-btns > .btn .label { display: inline; }
+#hud[data-fit] .hud-admin { font-size: inherit; }
+#hud[data-fit="1"] :is(.hud-game, .hud-lang, .hud-events) .label,
+#hud[data-fit="2"] :is(.hud-game, .hud-lang, .hud-events, .hud-friends) .label,
+#hud[data-fit="3"] :is(.hud-game, .hud-lang, .hud-events, .hud-friends, .hud-add) .label,
+#hud[data-fit="4"] .hud-btns > .btn:not(.hud-player) .label { display: none; }
+#hud:is([data-fit="2"], [data-fit="3"], [data-fit="4"]) .hud-admin { font-size: 0; }
+#hud:is([data-fit="2"], [data-fit="3"], [data-fit="4"]) .hud-admin img.pxi { font-size: 14px; }
+#hud[data-fit="4"] .hud-player .label { display: none; }
+#hud[data-fit="1"] .hud-btns > .btn:is(.hud-game, .hud-lang, .hud-events) .label,
+#hud[data-fit="2"] .hud-btns > .btn:is(.hud-game, .hud-lang, .hud-events, .hud-friends) .label,
+#hud[data-fit="3"] .hud-btns > .btn:is(.hud-game, .hud-lang, .hud-events, .hud-friends, .hud-add) .label,
+#hud[data-fit="4"] .hud-btns > .btn:not(.hud-player) .label, #hud[data-fit="4"] .hud-btns > .hud-player .label { display: none; }
