@@ -1312,3 +1312,49 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .sp-x { position: absolute; top: 2px; right: 2px; border: 2px solid var(--ink); background: var(--paper); font-size: 10px; cursor: pointer; }
 .sp-editbox:empty { display: none; }
 .sp-editbox { margin-top: 12px; border-top: 2px dashed rgba(59,43,43,.3); padding-top: 8px; }
+
+/* ---------- 名片：像素豹紋（網站架設者專屬） ---------- */
+.pcard.bg-leopard, .sw-leopard {
+  --bgc: #d9b27a;
+  background-color: #d9b27a;
+  background-image:
+    radial-gradient(circle at 30% 30%, #3b2b2b 0 3px, transparent 3.5px),
+    radial-gradient(circle at 30% 30%, #8a5a2b 0 6px, #3b2b2b 6px 8px, transparent 8.5px),
+    radial-gradient(circle at 75% 70%, #8a5a2b 0 5px, #3b2b2b 5px 7px, transparent 7.5px),
+    radial-gradient(circle at 70% 20%, #3b2b2b 0 2.5px, transparent 3px),
+    radial-gradient(circle at 20% 80%, #3b2b2b 0 3px, transparent 3.5px);
+  background-size: 34px 34px, 34px 34px, 40px 40px, 26px 26px, 30px 30px;
+  background-position: 0 0, 0 0, 12px 8px, 5px 17px, 19px 3px;
+  image-rendering: pixelated;
+}
+.sw-leopard { outline: 2px dashed #b8862b; outline-offset: 1px; }
+
+/* ---------- 人物背後的像素背景 ---------- */
+.pc-av[class*="scene-"]:not(.scene-none), .scn { image-rendering: pixelated; }
+.scene-stars { background: radial-gradient(circle at 78% 22%, #fff6c9 0 9px, transparent 9.5px), radial-gradient(circle at 74% 19%, #2a2f5f 0 8px, transparent 8.5px),
+  radial-gradient(#fff 1px, transparent 1.5px) 0 0 / 14px 14px, radial-gradient(#c9d8f5 1px, transparent 1.5px) 7px 9px / 19px 19px, linear-gradient(#141a3d, #3d3a7a) !important; }
+.scene-beach { background: radial-gradient(circle at 25% 20%, #fff3c9 0 8px, transparent 8.5px), linear-gradient(#8fd0f5 0 48%, #4aa3d8 48% 62%, #fff 62% 64%, #f4dca0 64%) !important; }
+.scene-meadow { background: radial-gradient(ellipse 18px 7px at 30% 22%, #fff 98%, transparent), radial-gradient(ellipse 14px 6px at 72% 30%, #fff 98%, transparent),
+  repeating-linear-gradient(90deg, #5fbf5a 0 4px, #4fae4b 4px 8px) 0 100% / 100% 34% no-repeat, linear-gradient(#a9d6ff, #dff0ff) !important; }
+.scene-street { background: linear-gradient(transparent 76%, #6b6b78 76% 80%, #4a4a55 80%),
+  repeating-linear-gradient(0deg, transparent 0 11px, #6b3b2b 11px 13px), repeating-linear-gradient(90deg, #b5523b 0 22px, #9c4632 22px 24px) !important; }
+.scene-studio { background: linear-gradient(transparent 70%, #c78a4f 70%), repeating-linear-gradient(90deg, transparent 0 26px, rgba(140,90,40,.35) 26px 28px) 0 100% / 100% 30% no-repeat,
+  linear-gradient(90deg, #dfe9f2 0 46%, #b8c9d8 46% 48%, #dfe9f2 48%) 0 0 / 100% 70% no-repeat, #dfe9f2 !important; }
+.scenes { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.scn { aspect-ratio: 3 / 4; border: 2px solid var(--ink); cursor: pointer; display: grid; align-items: end; padding: 0; background: var(--paper); }
+.scn span { font-size: 10px; background: rgba(255,246,232,.9); border-top: 2px solid var(--ink); padding: 1px 0; }
+.scn.on { outline: 3px solid var(--ink); outline-offset: 2px; }
+@media (max-width: 520px) { .scenes { grid-template-columns: repeat(3, 1fr); } }
+.pcard.bg-leopard, .sw-leopard {
+  background-image:
+    radial-gradient(circle at 30% 30%, #9a6a35 0 3px, #3b2b2b 3px 5px, transparent 5.5px),
+    radial-gradient(circle at 75% 72%, #9a6a35 0 2.5px, #3b2b2b 2.5px 4.5px, transparent 5px),
+    radial-gradient(circle at 72% 22%, #3b2b2b 0 2px, transparent 2.5px),
+    radial-gradient(circle at 22% 78%, #3b2b2b 0 2px, transparent 2.5px);
+  background-size: 46px 46px, 52px 52px, 38px 38px, 42px 42px;
+  background-position: 0 0, 14px 10px, 6px 20px, 24px 4px;
+}
+.pcard.bg-leopard .pc-info { background: rgba(255,246,232,.9); border: 2px solid var(--ink); padding: 6px 8px; }
+.pcard.bg-leopard .pc-dl { background: rgba(255,246,232,.9); border: 2px solid var(--ink); padding: 4px 8px; }
+.pcard.bg-leopard .pc-top span { background: rgba(255,246,232,.9); padding: 0 4px; }
+.pcard.bg-leopard .pc-join { background: rgba(255,246,232,.9); justify-self: start; padding: 0 4px; }

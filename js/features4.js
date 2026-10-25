@@ -66,8 +66,13 @@ window.Friends = (() => {
   /* ---------- 名片 ---------- */
   const BG = { pink: '#f6a8c4', teal: '#8fd3c7', blue: '#a9bdf0', yellow: '#f4d77a', purple: '#c7a8e8', night: '#3d3a5c' };
   const PAT = ['grid', 'dots', 'stripe', 'star', 'none'];
+  // 人物背後的像素背景
+  const SCENE = ['none', 'stars', 'beach', 'meadow', 'street', 'studio'];
+  // 專屬底色：豹紋只有網站架設者（Kailyn）能用
+  const OWNER_BG = { leopard: '#d9b27a' };
+  const bgOk = k => BG[k] || (OWNER_BG[k] && true);
   const FRAME = ['pixel', 'double', 'gold'];
-  const defCard = () => ({ bg: 'pink', pat: 'grid', frame: 'pixel', crew: '', move: '', bio: '', ig: '', find: true, rpub: false, rc: '', rcity: '' });
+  const defCard = () => ({ bg: 'pink', pat: 'grid', frame: 'pixel', scene: 'none', crew: '', move: '', bio: '', ig: '', find: true, rpub: false, rc: '', rcity: '' });
   // 地區：名片上公開的地區（rpub = true 才會存、才會被地區搜尋找到）
   const regionName = c => { const k = c.rc && A.byCode[c.rc]; if (!k) return ''; const ci = c.rcity && A.cityOf(c.rc, c.rcity); return [nm(k), ci ? nm(ci) : ''].filter(Boolean).join('・'); };
   const lonN = l => ((l + 540) % 360) - 180;
@@ -91,10 +96,10 @@ window.Friends = (() => {
     const J = t('jobs') || {};
     const ig = /^[A-Za-z0-9._]{1,30}$/.test(c.ig || '') ? c.ig : '';
     const isOn = p.user_id && online.has(p.user_id);
-    return `<div class="pcard bg-${esc(BG[c.bg] ? c.bg : 'pink')} pat-${esc(PAT.includes(c.pat) ? c.pat : 'grid')} fr-${esc(FRAME.includes(c.frame) ? c.frame : 'pixel')}">
+    return `<div class="pcard bg-${esc(bgOk(c.bg) ? c.bg : 'pink')} pat-${esc(PAT.includes(c.pat) && c.bg !== 'leopard' ? c.pat : 'none')} fr-${esc(FRAME.includes(c.frame) ? c.frame : 'pixel')}">
       <div class="pc-top"><span>DANCE ISLAND</span><span>PLAYER CARD</span></div>
       <div class="pc-body">
-        <div class="pc-av"></div>
+        <div class="pc-av scene-${esc(SCENE.includes(c.scene) ? c.scene : 'none')}"></div>
         <div class="pc-info">
           <div class="pc-name">${Player.nameHTML({ ...p, handle: null })}${p.user_id && p.user_id !== me() ? `<i class="dot ${isOn ? 'on' : ''}" title="${esc(t(isOn ? 'fr_online' : 'fr_offline'))}"></i>` : ''}</div>
           <div class="pc-handle">@${esc(p.handle || '')}</div>
@@ -122,7 +127,8 @@ window.Friends = (() => {
     const body = h(`<div class="cd-ed">
       <div class="cd-prev"></div>
       <form class="form cd-form" novalidate>
-        <div class="field full"><span>${t('cd_bg')}</span><div class="swatches">${Object.entries(BG).map(([k, v]) => `<button type="button" class="sw" data-bg="${k}" style="--c:${v}" aria-label="${k}"></button>`).join('')}</div></div>
+        <div class="field full"><span>${t('cd_bg')}</span><div class="swatches">${Object.entries(BG).map(([k, v]) => `<button type="button" class="sw" data-bg="${k}" style="--c:${v}" aria-label="${k}"></button>`).join('')}${Backend.role === 'owner' ? `<button type="button" class="sw sw-leopard" data-bg="leopard" title="${esc(t('cd_leopard'))}" aria-label="leopard"></button>` : ''}</div></div>
+        <div class="field full"><span>${t('cd_scene')}</span><div class="scenes">${SCENE.map(k => `<button type="button" class="scn scene-${k}" data-scene="${k}"><span>${t('cd_scene_' + k)}</span></button>`).join('')}</div></div>
         <div class="field"><span>${t('cd_pat')}</span><div class="seg">${PAT.map(k => `<button type="button" class="btn sm" data-pat="${k}">${t('cd_pat_' + k)}</button>`).join('')}</div></div>
         <div class="field"><span>${t('cd_frame')}</span><div class="seg">${FRAME.map(k => `<button type="button" class="btn sm" data-frame="${k}">${t('cd_frame_' + k)}</button>`).join('')}</div></div>
         <label class="field"><span>${t('cd_crew')}</span><input class="input" name="crew" maxlength="24" value="${esc(c.crew)}"></label>
@@ -158,9 +164,11 @@ window.Friends = (() => {
       body.querySelectorAll('[data-bg]').forEach(b => b.classList.toggle('on', b.dataset.bg === c.bg));
       body.querySelectorAll('[data-pat]').forEach(b => b.classList.toggle('on', b.dataset.pat === c.pat));
       body.querySelectorAll('[data-frame]').forEach(b => b.classList.toggle('on', b.dataset.frame === c.frame));
+      body.querySelectorAll('[data-scene]').forEach(b => b.classList.toggle('on', b.dataset.scene === (c.scene || 'none')));
     };
     body.addEventListener('click', e => {
-      const b = e.target.closest('[data-bg],[data-pat],[data-frame]'); if (!b) return;
+      const b = e.target.closest('[data-bg],[data-pat],[data-frame],[data-scene]'); if (!b) return;
+      if (b.dataset.scene) c.scene = b.dataset.scene;
       if (b.dataset.bg) c.bg = b.dataset.bg; if (b.dataset.pat) c.pat = b.dataset.pat; if (b.dataset.frame) c.frame = b.dataset.frame;
       SFX.play('select'); paint();
     });
