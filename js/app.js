@@ -470,7 +470,7 @@
 
     if (!seen('country.' + c.code)) {
       const lines = c.home ? t('npc_tw') : t('npc_other').map(s => s.replace('{c}', nm(c)));
-      setTimeout(() => npc.say(lines), 500);
+      setTimeout(() => npc.say(lines, null, { duo: true }), 500);
     }
   }
 
@@ -587,7 +587,7 @@
     CityView.flash = null;
     CityView.redraw = draw;
 
-    if (!seen('city')) setTimeout(() => npc.say(t('npc_city')), 500);
+    if (!seen('city')) setTimeout(() => npc.say(t('npc_city'), null, { duo: true, first: 'kailyn' }), 500);
   }
 
   /* ---------- 活動卡片上的按鈕（城市頁、總覽頁共用） ---------- */

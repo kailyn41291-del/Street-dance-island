@@ -941,3 +941,19 @@ details summary { cursor: pointer; margin: 10px 0; }
 @media (max-width: 760px) { #npc .face, .tut .face { width: 64px; height: 64px; } .k-hero { height: 80px; } }
 .msg .k-ico { object-fit: cover; object-position: 50% 15%; background: #fff6dc; }
 .passport > .note { grid-column: 1 / -1; }
+
+/* 對話框：Choco 說話時頭像在右邊、名牌換藍色 */
+#npc.choco, .tut-box.choco { flex-direction: row-reverse; }
+#npc.choco .who, .tut-box.choco .who { background: var(--blue); color: #fff; }
+#npc.choco .next { right: auto; left: 12px; }
+.choco .k-face { background: linear-gradient(#e3ebfb, #c9d8f5) !important; }
+.choco .tut-main { text-align: left; }
+/* 任務板上方的 NPC 對話 */
+.quest-npc { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.quest-npc.choco { flex-direction: row-reverse; }
+.quest-npc .k-face { flex: none; width: 64px; height: 64px; border: var(--px) solid var(--ink); }
+.quest-npc .bub { position: relative; flex: 1; background: var(--paper); border: 2px solid var(--ink); padding: 6px 10px; font-size: 13px; line-height: 1.5; box-shadow: 2px 2px 0 var(--ink); }
+.quest-npc .bub b { display: inline-block; font-size: 11px; background: var(--pink); border: 2px solid var(--ink); padding: 0 6px; margin-bottom: 3px; }
+.quest-npc.choco .bub b { background: var(--blue); color: #fff; }
+.invite-prev { display: none; margin: 10px 0 0; padding: 8px 10px; background: var(--paper); border: 2px dashed var(--ink); font: inherit; font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
+.invite-prev.on { display: block; }

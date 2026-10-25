@@ -60,7 +60,31 @@ window.UI = (() => {
     return { MOODS, url, FULL, preload, guess };
   })();
 
-  /* NPC 嚮導對話框：逐字打字效果；lines 可以是文字，或 { text, mood } */
+  /* 夥伴 Choco：對話框貼圖（24 種表情） */
+  const Choco = (() => {
+    const MOODS = ['cool', 'thumbs', 'think', 'laugh', 'love', 'angry', 'speechless', 'sleepy', 'confused', 'work', 'music', 'drink',
+      'phone', 'peace', 'shh', 'tired', 'cheer', 'ok', 'hello', 'awkward', 'eat', 'sunglasses', 'surprised', 'lying'];
+    // Kailyn 的表情名稱對應到 Choco 的
+    const MAP = { happy: 'thumbs', smug: 'cool', sad: 'tired', shy: 'awkward', cry: 'tired', helpless: 'speechless', cool: 'sunglasses',
+      celebrate: 'peace', daze: 'speechless', tsundere: 'cool', please: 'shh' };
+    const pick = m => MOODS.includes(m) ? m : (MAP[m] || 'thumbs');
+    const url = m => `assets/choco/${pick(m)}.webp`;
+    const preload = () => MOODS.map(url).forEach(u => { const i = new Image(); i.src = u; });
+    const guess = text => pick(Kailyn.guess(text));
+    return { MOODS, url, preload, guess };
+  })();
+  const CAST = { kailyn: Kailyn, choco: Choco };
+  const whoName = w => (w === 'choco' ? t('guide_choco') : t('guide'));
+  // 一句台詞：文字，或 { text, mood, who }；who 是 'kailyn'（預設）或 'choco'
+  const lineOf = (item, who) => {
+    const o = typeof item === 'string' ? { text: item } : item;
+    const w = o.who || who || 'kailyn', C = CAST[w];
+    return { text: o.text, who: w, img: C.url(o.mood || C.guess(o.text)) };
+  };
+
+  /* NPC 嚮導對話框：逐字打字效果；lines 可以是文字，或 { text, mood, who }
+     opt.duo = true：沒指定 who 的句子 Kailyn / Choco 輪流說 */
+
   const npc = (() => {
     let box, txt, timer, queue = [], typing = false, full = '', done, faceImg;
     const ensure = () => {
@@ -73,9 +97,10 @@ window.UI = (() => {
       document.body.appendChild(box);
     };
     const type = item => {
-      const line = typeof item === 'string' ? item : item.text;
-      const mood = (typeof item === 'object' && item.mood) || Kailyn.guess(line);
-      faceImg.src = Kailyn.url(mood);
+      const L = lineOf(item), line = L.text;
+      faceImg.src = L.img; faceImg.alt = L.who === 'choco' ? 'Choco' : 'Kailyn';
+      box.classList.toggle('choco', L.who === 'choco');
+      box.querySelector('.who').textContent = whoName(L.who);
       faceImg.parentNode.classList.remove('pop'); void faceImg.offsetWidth; faceImg.parentNode.classList.add('pop');
       full = line; let i = 0; typing = true; txt.textContent = '';
       clearInterval(timer);
@@ -92,10 +117,15 @@ window.UI = (() => {
       else { box.classList.add('hidden'); const cb = done; done = null; cb && cb(); }
     }
     return {
-      say(lines, cb) {
+      say(lines, cb, opt = {}) {
         ensure();
-        box.querySelector('.who').textContent = t('guide');
-        queue = [].concat(lines); done = cb;
+        const first = opt.first || (opt.duo && Math.random() < 0.5 ? 'choco' : 'kailyn');
+        queue = [].concat(lines).map((x, i) => {
+          const o = typeof x === 'string' ? { text: x } : { ...x };
+          if (!o.who) o.who = opt.duo ? (i % 2 ? (first === 'choco' ? 'kailyn' : 'choco') : first) : (opt.who || 'kailyn');
+          return o;
+        });
+        done = cb;
         box.classList.remove('hidden');
         box.style.animation = 'none'; box.offsetHeight; box.style.animation = '';
         type(queue.shift());
@@ -157,6 +187,6 @@ window.UI = (() => {
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
-  Kailyn.preload();
-  return { h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn };
+  Kailyn.preload(); Choco.preload();
+  return { h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn, Choco, lineOf, whoName };
 })();

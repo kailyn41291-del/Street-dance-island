@@ -5,7 +5,10 @@ window.Tutorial = (() => {
   const { h } = UI;
   const KEY = 'danceIsland.seen.tutorial';
   // 每一步要亮起來的元素（null = 不指定，置中說明）
-  const TARGETS = [null, '.isle.home', '.world-vp', '.world-menu', '.map-ctrls', '.hud-add', '.hud-game', '.hud-lang', '.hud-player'];
+  const TARGETS = [null, null, '.isle.home', '.world-vp', '.world-menu', '.map-ctrls', '.hud-add', '.hud-game', '.hud-lang', '.hud-player'];
+  // 每一步是誰在說話、用哪個表情（Kailyn / Choco 輪流，像 RPG 解任務）
+  const CAST = [['kailyn', 'happy'], ['choco', 'hello'], ['kailyn', 'thumbs'], ['choco', 'cool'], ['kailyn', 'confused'],
+    ['choco', 'ok'], ['kailyn', 'cheer'], ['choco', 'sunglasses'], ['kailyn', 'laugh'], ['choco', 'peace']];
 
   const seen = () => { try { return !!localStorage.getItem(KEY); } catch (e) { return true; } };
   const markSeen = () => { try { localStorage.setItem(KEY, 1); } catch (e) {} };
@@ -14,10 +17,9 @@ window.Tutorial = (() => {
     const lines = t('tut');
     let i = 0, timer = null, typing = false;
     const ov = h(`<div class="tut"><div class="tut-spot"></div>
-      <div class="tut-box"><div class="face"></div><div class="tut-main"><div class="who">${t('guide')}</div><div class="txt"></div>
+      <div class="tut-box"><div class="face"></div><div class="tut-main"><div class="who"></div><div class="txt"></div>
         <div class="tut-foot"><span class="dots"></span><span class="grow"></span><button class="btn sm skip">${t('tut_skip')}</button><button class="btn sm pink next"></button></div></div></div></div>`);
     const spot = ov.querySelector('.tut-spot'), txt = ov.querySelector('.txt'), next = ov.querySelector('.next'), dots = ov.querySelector('.dots');
-    const MOODS = ['happy', 'smug', 'thumbs', 'confused', 'ok', 'cheer', 'laugh', 'cool', 'love'];
     const faceBox = ov.querySelector('.face'); faceBox.classList.add('k-face');
     faceBox.innerHTML = `<img alt="Kailyn" src="${UI.Kailyn.url('happy')}">`;
     const faceImg = faceBox.querySelector('img');
@@ -34,7 +36,10 @@ window.Tutorial = (() => {
     };
     const show = () => {
       place();
-      faceImg.src = UI.Kailyn.url(MOODS[i] || 'happy');
+      const [who, mood] = CAST[i] || CAST[i % 2];
+      faceImg.src = (who === 'choco' ? UI.Choco : UI.Kailyn).url(mood);
+      ov.querySelector('.tut-box').classList.toggle('choco', who === 'choco');
+      ov.querySelector('.who').textContent = `${UI.whoName(who)}　·　${t('tut_quest')} ${i + 1}/${lines.length}`;
       faceBox.classList.remove('pop'); void faceBox.offsetWidth; faceBox.classList.add('pop');
       dots.textContent = lines.map((_, k) => (k === i ? '●' : '○')).join('');
       next.textContent = i === lines.length - 1 ? t('tut_done') : t('tut_next');

@@ -160,7 +160,7 @@ window.Player = (() => {
       m.close();
       I18N.set(I18N.langForCountry(p.nat));
       setSession(p);
-      setTimeout(() => { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 24); npc.say([{ text: t('welcome_new', { n: p.name }), mood: 'celebrate' }], () => questBoard()); }, 260);
+      setTimeout(() => { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 24); npc.say([{ text: t('welcome_new', { n: p.name }), mood: 'celebrate' }, { who: 'choco', mood: 'peace', text: t('welcome_new_c', { n: p.name }) }], () => questBoard()); }, 260);
     };
   }
 
@@ -297,7 +297,7 @@ window.Player = (() => {
   function welcome() {
     if (!me) return;
     SFX.play('fanfare');
-    npc.say([{ text: t('welcome_back', { n: me.name }), mood: 'happy' }], () => questBoard());
+    npc.say(Math.random() < 0.5 ? [{ text: t('welcome_back', { n: me.name }), mood: 'happy' }] : [{ who: 'choco', mood: 'hello', text: t('welcome_back_c', { n: me.name }) }], () => questBoard());
   }
 
   function questBoard() {
@@ -309,7 +309,8 @@ window.Player = (() => {
     if (!list.length) { list = all.slice(0, 6); head = all.length ? t('quest_none') : t('quest_empty'); }
     const place = e => { const c = GEO.countries.find(x => x.code === e.country); const ci = c && c.cities.find(x => x.id === e.city); return [nm(c), nm(ci)].filter(Boolean).join('・'); };
     const W = t('week');
-    const body = h(`<div><p class="quest-head">${head}</p><ul class="quest">${list.map((e, i) => {
+    const q = t('quest_npc'), ql = Array.isArray(q) ? q[Math.floor(Math.random() * q.length)] : null, L = ql && UI.lineOf(ql);
+    const body = h(`<div>${L ? `<div class="quest-npc ${L.who === 'choco' ? 'choco' : ''}"><div class="k-face"><img src="${L.img}" alt=""></div><div class="bub"><b>${esc(UI.whoName(L.who))}</b><br>${esc(L.text)}</div></div>` : ''}<p class="quest-head">${head}</p><ul class="quest">${list.map((e, i) => {
       const d = new Date(e.date + 'T00:00');
       return `<li style="--i:${i};--c:${Store.STYLE_COLOR[(e.styles || [])[0]] || 'var(--yellow)'}"><span class="qd"><b>${pad(d.getMonth() + 1)}/${pad(d.getDate())}</b><small>${W[d.getDay()]}</small></span>
         <span class="qn"><b>${esc(e.name)}</b><small>${esc(place(e))}${e.startTime ? ' · ' + esc(e.startTime) : ''}</small></span>

@@ -186,28 +186,45 @@ window.App = {
     g.font = F(36); g.textAlign = 'center'; g.fillText('🏝 ' + t('share_footer'), W / 2, H - 55);
     return cv;
   }
+  // 複製連結時附上的 RPG 邀請文字（3 種隨機）
+  function inviteText(e, url) {
+    const list = t('invite'), tpl = Array.isArray(list) ? list[Math.floor(Math.random() * list.length)] : '{name}\n{url}';
+    const d = A.parseDate(e.date);
+    const date = d ? `${(e.date || '').replace(/-/g, '/')}（${t('week')[d.getDay()]}）${e.startTime ? ' ' + e.startTime : ''}` : '';
+    const place = [nm(A.byCode[e.country]), nm(A.cityOf(e.country, e.city))].filter(Boolean).join('・');
+    return tpl.replace(/\{(\w+)\}/g, (_, k) => ({ name: e.name || '', date, place, url })[k] ?? '');
+  }
   async function openShare(e) {
     const url = eventUrl(e);
     const body = h(`<div class="share"><div class="share-prev"><p class="note">…</p></div>
       <div class="btn-row"><button class="btn pink sh">📤 ${t('share_send')}</button><button class="btn dl">⬇ ${t('share_dl')}</button><button class="btn teal cp">🔗 ${t('share_copy')}</button>
-      <a class="btn" target="_blank" rel="noopener" href="https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}">LINE</a></div></div>`);
+      <a class="btn" target="_blank" rel="noopener" href="https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}">LINE</a>
+      <a class="btn blue" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}">Facebook</a></div>
+      <pre class="invite-prev"></pre></div>`);
     modal({ title: t('share_title'), color: 'pink', body, wide: true });
+    const pre = body.querySelector('.invite-prev');
+    body.querySelector('.cp').onclick = async () => {
+      const txt = inviteText(e, url);
+      pre.textContent = txt; pre.classList.add('on');
+      try { await navigator.clipboard.writeText(txt); toast(t('share_copied'), '🔗'); SFX.play('coin'); } catch (x) { window.prompt('URL', txt); }
+    };
     const cv = await drawShareCard(e);
     const img = new Image(); img.src = cv.toDataURL('image/png'); img.alt = e.name;
     body.querySelector('.share-prev').innerHTML = ''; body.querySelector('.share-prev').appendChild(img);
     const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
     const file = new File([blob], 'dance-island.png', { type: 'image/png' });
     body.querySelector('.dl').onclick = () => { const a = document.createElement('a'); a.href = img.src; a.download = (e.name || 'event') + '.png'; a.click(); SFX.play('coin'); };
-    body.querySelector('.cp').onclick = async () => { try { await navigator.clipboard.writeText(url); toast(t('share_copied'), '🔗'); } catch (x) { window.prompt('URL', url); } };
     const sh = body.querySelector('.sh');
     if (!navigator.share) sh.classList.add('hidden');
     sh.onclick = async () => {
+      const txt = inviteText(e, url);
       try {
-        if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: e.name, text: e.name + ' ' + url });
-        else await navigator.share({ title: e.name, text: e.name, url });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: e.name, text: txt });
+        else await navigator.share({ title: e.name, text: txt });
       } catch (x) {}
     };
   }
+
 
   /* ---------- 活動資訊自動翻譯（費用、報名方式、備註；名稱 / 主辦 / 地址保持原文） ---------- */
   const TKEY = 'danceIsland.tr.v1';
