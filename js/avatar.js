@@ -24,7 +24,7 @@ window.Avatar = (() => {
     shoes: ['sneakers', 'hightops', 'boots'],
     faceAcc: ['none', 'glasses', 'shades', 'mask'],
     acc: ['none', 'headphones', 'scarf', 'chain'],
-    special: ['none', 'admin', 'owner', 'kailyn']
+    special: ['none', 'admin', 'owner', 'kailyn', 'choco']
   };
   const COLORS = {
     skin: ['#ffe3cc', '#f6c9a0', '#e8b088', '#c98d5f', '#9a6440', '#6b4128'],
@@ -427,25 +427,32 @@ window.Avatar = (() => {
   }
 
   const cache = new Map();
-  // 網站架設者專屬：「Kailyn 本人」造型直接用原畫
-  const KIMG = new Image(); KIMG.src = 'assets/kailyn/full.webp';
-  function renderKailyn(frame, scale) {
+  // 「本人造型」：直接用原畫的專屬角色（kailyn = 網站架設者；choco = bboychoco 本人）
+  const SKINS = {
+    kailyn: { full: 'assets/kailyn/full.webp', head: 'assets/kailyn/cool.webp' },
+    choco:  { full: 'assets/skins/choco.webp', head: 'assets/skins/choco_head.webp', handle: 'bboychoco' }
+  };
+  Object.values(SKINS).forEach(s => { s.img = new Image(); s.img.src = s.full; });
+  /** 這個玩家能用哪些本人造型 */
+  const skinsFor = (role, handle) => Object.keys(SKINS).filter(k => (k === 'kailyn' ? role === 'owner' : SKINS[k].handle === handle));
+  function renderSkin(name, frame, scale) {
     const out = document.createElement('canvas');
     out.width = (W + 2) * scale; out.height = (H + 2) * scale;
-    if (KIMG.complete && KIMG.naturalWidth) {
-      const g = out.getContext('2d'), h = out.height, w = (KIMG.naturalWidth / KIMG.naturalHeight) * h;
+    const img = SKINS[name].img;
+    if (img.complete && img.naturalWidth) {
+      const g = out.getContext('2d'), h = out.height, w = (img.naturalWidth / img.naturalHeight) * h;
       const bob = [0, -1, 0, 1][frame % 4] * scale;
       g.imageSmoothingQuality = 'high';
-      g.drawImage(KIMG, (out.width - w) / 2, bob, w, h);
+      g.drawImage(img, (out.width - w) / 2, bob, w, h);
     }
     return out;
   }
   function render(look, frame = 0, scale = 3) {
-    if (look && look.special === 'kailyn') {
-      const key = 'kailyn|' + frame + '|' + scale;
+    if (look && SKINS[look.special]) {
+      const key = look.special + '|' + frame + '|' + scale;
       if (cache.has(key)) return cache.get(key);
-      const c = renderKailyn(frame, scale);
-      if (KIMG.complete && KIMG.naturalWidth) cache.set(key, c);
+      const c = renderSkin(look.special, frame, scale), img = SKINS[look.special].img;
+      if (img.complete && img.naturalWidth) cache.set(key, c);
       return c;
     }
     const key = JSON.stringify(normalize(look)) + '|' + frame + '|' + scale;
@@ -482,5 +489,5 @@ window.Avatar = (() => {
     return { el, setFrame, beat: () => setFrame(i + 1), setLook };
   }
 
-  return { W, H, OPT, COLORS, JOBS, DEFAULT, normalize, random, render, dancer };
+  return { W, H, OPT, COLORS, JOBS, DEFAULT, SKINS, skinsFor, normalize, random, render, dancer };
 })();

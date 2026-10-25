@@ -76,7 +76,7 @@ window.Player = (() => {
         job: `<div class="job-grid">${Object.keys(Avatar.JOBS).map(k => `<button type="button" class="opt-b job-b" data-job="${k}">${esc(J[k])}</button>`).join('')}</div>
           <button type="button" class="btn sm pink job-apply">${t('job_apply')}</button>`,
         title: `<p class="note">${t('title_pick')}</p><div class="title-grid"><button type="button" class="opt-b" data-title="">${t('title_none')}</button>${Titles.allowed(role, !!(me && me.verified), me && me.unlocks, (me && me.level) || 1).map(x => `<button type="button" class="opt-b" data-title="${x.id}">${Titles.html(x.id)}</button>`).join('')}</div>`,
-        special: row(t('o_special'), sel('special', ['none', 'admin'].concat(role === 'owner' ? ['owner', 'kailyn'] : [])))
+        special: row(t('o_special'), sel('special', ['none', 'admin'].concat(role === 'owner' ? ['owner'] : [], Avatar.skinsFor(role, me && me.id))))
       };
       opts.innerHTML = panels[tab];
       opts.querySelectorAll('[data-k]').forEach(b => b.classList.toggle('on', L[b.dataset.k] === b.dataset.v));
