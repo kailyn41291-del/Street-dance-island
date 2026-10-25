@@ -10,7 +10,7 @@ window.Friends = (() => {
 
   /* ---------- 狀態 ---------- */
   let rels = [], blocks = new Set(), people = {}, online = new Set(), unread = {}, started = false;
-  let presence = null, inbox = null, unsubs = [];
+  let presence = null, inbox = null, unsubs = [], seenTimer = null;
   const me = () => Backend.uid;
   const other = r => (r.from_user === me() ? r.to_user : r.from_user);
   // 和某人的關係：friend / out（我送出的）/ in（對方送來的）/ none
@@ -104,6 +104,7 @@ window.Friends = (() => {
       </div>
       <dl class="pc-dl">${c.crew ? `<dt>${t('cd_crew')}</dt><dd>${esc(c.crew)}</dd>` : ''}${c.move ? `<dt>${t('cd_move')}</dt><dd>${esc(c.move)}</dd>` : ''}</dl>
       <p class="pc-bio ${c.bio ? '' : 'empty'}" ${c.bio && !opt.mine ? 'data-utr' : ''}>${c.bio ? esc(c.bio) : esc(opt.mine ? t('cd_bio_ph') : t('cd_none_bio'))}</p>
+      ${p.created_at ? `<div class="pc-join">🏝 ${esc(joinText(p))}</div>` : ''}
       ${ig ? `<a class="pc-ig" href="https://www.instagram.com/${encodeURIComponent(ig)}/" target="_blank" rel="noopener">IG @${esc(ig)}</a>` : ''}
     </div>`;
   }
@@ -222,6 +223,7 @@ window.Friends = (() => {
   /* ---------- 好友面板 ---------- */
   async function openPanel(tab = 'friends') {
     if (!on()) return Player.prompt();
+    friendIds().forEach(id => delete people[id]);   // 重新抓上線時間
     await reload();
     const body = h(`<div class="fr-panel">
       <div class="tabs"><button class="btn sm" data-t="friends">${t('fr_tab_friends')}</button><button class="btn sm" data-t="req">${t('fr_tab_req')}${incoming().length ? ` (${incoming().length})` : ''}</button><button class="btn sm" data-t="block">${t('fr_tab_block')}</button><button class="btn sm teal" data-t="find">🔍 ${t('fd_tab')}</button>
@@ -274,7 +276,7 @@ window.Friends = (() => {
       if (tab === 'friends') {
         const ids = friendIds().sort((a, b) => (online.has(b) - online.has(a)));
         html = ids.length ? ids.map(id => { const p = people[id]; if (!p) return ''; const u = unread[id] || 0;
-          return row(p, `<i class="dot ${online.has(id) ? 'on' : ''}"></i><button class="btn sm pink dm" data-u="${esc(id)}">💬${u ? ` <b class="fr-badge">${u}</b>` : ''}</button><button class="btn sm cd">🪪</button>`); }).join('')
+          return row(p, `<span class="fr-seen"><i class="dot ${online.has(id) ? 'on' : ''}"></i> ${esc(seenText(p))}<small>${esc(joinText(p))}</small></span><button class="btn sm pink dm" data-u="${esc(id)}">💬${u ? ` <b class="fr-badge">${u}</b>` : ''}</button><button class="btn sm cd">🪪</button>`); }).join('')
           : `<li class="note">${t('fr_none')}</li>`;
       } else if (tab === 'req') {
         const inn = incoming(), out = rels.filter(r => r.from_user === me() && r.status === 'pending');
@@ -305,28 +307,64 @@ window.Friends = (() => {
 
   /* ---------- 私訊 ---------- */
   let dm = null; // { uid, el, list }
+  // 上次上線：「在線」或「3 小時前上線」
+  const seenText = p => {
+    if (online.has(p.user_id)) return t('fr_online');
+    if (!p.last_seen) return t('fr_offline');
+    const s = (Date.now() - new Date(p.last_seen)) / 1000;
+    if (s < 3600) return t('fr_seen_min', { n: Math.max(1, Math.floor(s / 60)) });
+    if (s < 86400) return t('fr_seen_hr', { n: Math.floor(s / 3600) });
+    return t('fr_seen_day', { n: Math.floor(s / 86400) });
+  };
+  const joinText = p => (p.created_at ? t('fr_joined', { d: new Date(p.created_at).toLocaleDateString() }) : '');
+  // 圖片：縮成最長 1280px 的 webp（GIF 保留原檔）
+  const shrink = file => new Promise((res, rej) => {
+    if (file.type === 'image/gif') return file.size <= 5 * 1024 * 1024 ? res(file) : rej(new Error('big'));
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, 1280 / Math.max(img.width, img.height)), cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
+      cv.toBlob(b => (b && b.size <= 5 * 1024 * 1024 ? res(b) : rej(new Error('big'))), 'image/webp', 0.85);
+    };
+    img.onerror = () => rej(new Error('bad')); img.src = url;
+  });
+  const IMG = '[img]';
   async function openDM(uid) {
     if (!on()) return Player.prompt();
     await loadPeople([uid]);
     const p = people[uid]; if (!p) return;
     if (rel(uid).type !== 'friend') { toast(t('dm_only'), '✕'); return; }
     closeDM();
-    const el = h(`<div class="dm-win win" role="dialog" aria-label="${esc(t('dm_title'))}">
-      <div class="dm-head"><span class="dm-ic"></span><b>${Player.nameHTML({ ...p, handle: null })}</b><i class="dot ${online.has(uid) ? 'on' : ''}"></i><span class="grow"></span>
-        <button class="btn sm icon cd" title="${esc(t('cd_title'))}">🪪</button><button class="btn sm icon x" aria-label="close">✕</button></div>
-      <div class="dm-list"><p class="note">…</p></div>
-      <form class="chat-input dm-form"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button><input class="input sm" maxlength="500" placeholder="${esc(t('dm_ph'))}"><button class="btn sm pink">${t('dm_send')}</button></form></div>`);
+    const el = h(`<div class="dm-win msn" role="dialog" aria-label="${esc(t('dm_title'))}">
+      <div class="msn-deco" aria-hidden="true"><i>☾</i><i>♥</i><i>★</i><i>✿</i><i>♥</i><i>✦</i><i>★</i><i>☾</i></div>
+      <div class="msn-title"><span class="msn-ico">chat.exe</span><b>chat.exe</b><span class="grow"></span><button class="msn-b mn" aria-label="minimize">_</button><button class="msn-b cd" title="${esc(t('cd_title'))}">□</button><button class="msn-b x" aria-label="close">✕</button></div>
+      <div class="msn-in">
+        <div class="msn-who"><span class="dm-ic"></span><b>${Player.nameHTML({ ...p, handle: null })}</b><span class="msn-tag">· ${t('fr_is').replace('✓ ', '')}</span></div>
+        <div class="msn-st"><i class="dot ${online.has(uid) ? 'on' : ''}"></i> <span class="st-t">${esc(seenText(p))}</span></div>
+        <div class="dm-list"><p class="note">…</p></div>
+        <form class="msn-form dm-form"><button type="button" class="msn-tool emo-btn" aria-label="emoji">😺</button><label class="msn-tool img-btn" title="${esc(t('dm_img'))}">🖼<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
+          <input class="msn-input" maxlength="500" placeholder="${esc(t('dm_ph'))}"><button class="msn-send" aria-label="${esc(t('dm_send'))}">➤</button></form>
+      </div></div>`);
     el.querySelector('.dm-ic').appendChild(headIcon(p.look));
     document.body.appendChild(el);
-    const list = el.querySelector('.dm-list'), input = el.querySelector('input');
-    dm = { uid, el, list };
+    const list = el.querySelector('.dm-list'), input = el.querySelector('.msn-input');
+    dm = { uid, el, list, look: p.look };
     el.querySelector('.x').onclick = closeDM;
+    el.querySelector('.mn').onclick = () => el.classList.toggle('min');
     el.querySelector('.cd').onclick = () => openCard(p.handle);
     let pick = null;
     el.querySelector('.emo-btn').onclick = () => {
       if (pick) { pick.remove(); pick = null; return; }
       pick = Emoji.picker(code => { input.value += code; input.focus(); });
       pick.classList.add('dm-picker'); el.appendChild(pick);
+    };
+    el.querySelector('.img-btn input').onchange = async ev => {
+      const f = ev.target.files[0]; ev.target.value = ''; if (!f) return;
+      if (!/^image\/(png|jpeg|webp|gif)$/.test(f.type)) { toast(t('dm_img_bad'), '✕'); return; }
+      const tmp = h(`<div class="dm-msg me sending"><div class="dm-b">🖼 ${t('dm_img_up')}</div></div>`); list.appendChild(tmp); list.scrollTop = list.scrollHeight;
+      try { const b = await shrink(f); const path = await Backend.uploadDMImage(uid, b); const r = await Backend.sendDM(uid, IMG + path); tmp.remove(); addMsg(r); SFX.play('blip'); }
+      catch (x) { tmp.remove(); SFX.play('error'); toast(/big/.test(x.message) ? t('dm_img_big') : errMsg(x), '✕'); }
     };
     let rows = [];
     try { rows = await Backend.listDMs(uid); } catch (x) {}
@@ -337,6 +375,7 @@ window.Friends = (() => {
     el.querySelector('form').onsubmit = async ev => {
       ev.preventDefault();
       const text = input.value.trim(); if (!text) return;
+      if (text.startsWith(IMG)) return;
       input.disabled = true;
       try { const r = await Backend.sendDM(uid, text); input.value = ''; addMsg(r); SFX.play('blip'); }
       catch (x) { SFX.play('error'); toast(errMsg(x), '✕'); }
@@ -347,9 +386,16 @@ window.Friends = (() => {
   function addMsg(r) {
     if (!dm || dm.list.querySelector(`[data-id="${r.id}"]`)) return;
     const em = dm.list.querySelector('.dm-empty'); if (em) em.remove();
-    const mine = r.from_user === me();
+    const mine = r.from_user === me(), isImg = r.text.startsWith(IMG);
     const tm = new Date(r.created_at);
-    dm.list.appendChild(h(`<div class="dm-msg ${mine ? 'me' : ''}" data-id="${r.id}"><div class="dm-b" ${mine ? '' : 'data-utr'}>${Emoji.toHTML(r.text)}</div><small>${String(tm.getHours()).padStart(2, '0')}:${String(tm.getMinutes()).padStart(2, '0')}</small></div>`));
+    const row = h(`<div class="dm-msg ${mine ? 'me' : ''}" data-id="${r.id}">${mine ? '' : '<span class="dm-av"></span>'}<div class="dm-col"><div class="dm-b ${isImg ? 'img' : ''}" ${mine || isImg ? '' : 'data-utr'}>${isImg ? '<span class="note">🖼 …</span>' : Emoji.toHTML(r.text)}</div><small>${String(tm.getHours()).padStart(2, '0')}:${String(tm.getMinutes()).padStart(2, '0')}</small></div></div>`);
+    if (!mine) row.querySelector('.dm-av').appendChild(headIcon(dm.look));
+    dm.list.appendChild(row);
+    if (isImg) Backend.dmImageUrl(r.text.slice(IMG.length)).then(u => {
+      const b = row.querySelector('.dm-b'); b.innerHTML = '';
+      const a = h(`<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="" loading="lazy"></a>`); b.appendChild(a);
+      a.querySelector('img').onload = () => { dm && (dm.list.scrollTop = dm.list.scrollHeight); };
+    }).catch(() => { row.querySelector('.dm-b').textContent = '🖼 ' + t('dm_img_gone'); });
     dm.list.scrollTop = dm.list.scrollHeight;
   }
   function closeDM() { if (dm) { dm.el.remove(); dm = null; } }
@@ -492,11 +538,13 @@ window.Friends = (() => {
     unsubs.forEach(f => { try { f(); } catch (x) {} }); unsubs = [];
     if (presence) { Backend.removeChannel(presence); presence = null; }
     if (inbox) { Backend.removeChannel(inbox); inbox = null; }
-    rels = []; unread = {}; online = new Set(); closeDM(); started = false; badge();
+    clearInterval(seenTimer); rels = []; unread = {}; online = new Set(); closeDM(); started = false; badge();
   }
   async function start() {
     if (started || !on()) return;
     started = true;
+    const touch = () => { if (on() && document.visibilityState === 'visible') Backend.touchSeen().catch(() => {}); };
+    touch(); seenTimer = setInterval(touch, 240000);
     await reload();
     const uid = me();
     // 在線狀態（所有登入的玩家）
@@ -533,7 +581,7 @@ window.Friends = (() => {
       await loadPeople([r.from_user]);
       const who = people[r.from_user];
       SFX.play('coin');
-      notify(`💬 ${t('dm_new', { n: who ? who.name : '?' })}`, () => openDM(r.from_user));
+      notify(`${r.text.startsWith(IMG) ? '🖼' : '💬'} ${t('dm_new', { n: who ? who.name : '?' })}`, () => openDM(r.from_user));
     }));
   }
   // 右上角的小通知（可以點）
@@ -562,5 +610,5 @@ window.Friends = (() => {
     Player.onChange(() => setTimeout(sync, 50));
   }
 
-  return { openCard, openCardEditor, openPanel, openDM, invitePvp, get online() { return online; } };
+  return { openCard, openCardEditor, openPanel, openDM, invitePvp, get online() { return online; }, friends: () => friendIds().map(id => people[id]).filter(Boolean) };
 })();

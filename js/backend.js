@@ -183,8 +183,8 @@ window.Backend = (() => {
     async npcWin() { return must(await sb.rpc('npc_win')); },
 
     /* 玩家資料 / 名片 */
-    async playerByHandle(handle) { return must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card,banned').eq('handle', handle).maybeSingle()); },
-    async playersByIds(ids) { return ids.length ? must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card').in('user_id', ids)) : []; },
+    async playerByHandle(handle) { return must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card,banned,created_at,last_seen').eq('handle', handle).maybeSingle()); },
+    async playersByIds(ids) { return ids.length ? must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card,created_at,last_seen').in('user_id', ids)) : []; },
 
     /* 找玩家：ID（開頭相符，對方沒關閉「可被搜尋」）、地區（對方有在名片公開地區） */
     async searchPlayers(q) {
@@ -244,6 +244,30 @@ window.Backend = (() => {
       const name = `battle/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.mp4`;
       must(await sb.storage.from('videos').upload(name, file, { contentType: 'video/mp4', upsert: false }));
       return sb.storage.from('videos').getPublicUrl(name).data.publicUrl;
+    },
+
+    /* 上線時間 */
+    async touchSeen() { must(await sb.rpc('touch_seen')); },
+
+    /* 私訊圖片（私人空間，用暫時網址顯示） */
+    async uploadDMImage(to, blob) {
+      const name = `${user.id}/${to}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.webp`;
+      must(await sb.storage.from('dm-images').upload(name, blob, { contentType: blob.type || 'image/webp', upsert: false }));
+      return name;
+    },
+    async dmImageUrl(path) { const r = must(await sb.storage.from('dm-images').createSignedUrl(path, 3600)); return r.signedUrl; },
+
+    /* 贊助商廣告 */
+    async sponsors() { return must(await sb.from('sponsors').select('*').order('created_at', { ascending: false })); },
+    async saveSponsor(row) { return row.id ? must(await sb.from('sponsors').update(row).eq('id', row.id).select().single()) : must(await sb.from('sponsors').insert(row).select().single()); },
+    async deleteSponsor(id) { must(await sb.from('sponsors').delete().eq('id', id)); },
+    async bumpSponsor(sid, k) { must(await sb.rpc('bump_sponsor', { sid, k })); },
+    async sponsorStats() { return must(await sb.from('sponsor_stats').select('*')); },
+    async uploadSponsorImage(file) {
+      const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+      const name = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      must(await sb.storage.from('sponsors').upload(name, file, { contentType: file.type, upsert: false }));
+      return sb.storage.from('sponsors').getPublicUrl(name).data.publicUrl;
     },
 
     /* 即時頻道（線上 Cypher 舞池） */

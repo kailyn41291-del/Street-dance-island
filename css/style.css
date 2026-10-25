@@ -1199,3 +1199,62 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .utr-slot:empty { display: none; }
 .dm-msg .tr { border-top: 0; margin-top: 0; }
 .pcard.bg-night .tr { color: #c9d8f5; }
+
+/* ---------- 私訊：可愛 chat.exe 風 ---------- */
+.dm-win.msn { --lav: #e6dcf5; --lav-d: #b9a6dc; --sky2: #9fbfee; width: min(360px, calc(100vw - 24px)); height: min(540px, calc(100vh - 110px)); background: var(--lav); border: 3px solid #6d5a8f; border-radius: 14px; padding: 18px 14px 14px; box-shadow: 4px 4px 0 rgba(109,90,143,.45); display: flex; flex-direction: column; gap: 8px; overflow: visible; }
+.dm-win.msn.min { height: auto; }
+.dm-win.msn.min .msn-in { display: none; }
+.msn-deco { position: absolute; inset: 0; pointer-events: none; }
+.msn-deco i { position: absolute; font-style: normal; font-size: 18px; text-shadow: 0 0 0 #fff, 2px 2px 0 rgba(255,255,255,.9); }
+.msn-deco i:nth-child(1) { top: -12px; left: -8px; color: #f4d77a; font-size: 26px; }
+.msn-deco i:nth-child(2) { top: -12px; left: 34%; color: #f48fb1; font-size: 24px; }
+.msn-deco i:nth-child(3) { top: -10px; right: 22%; color: #f4d77a; }
+.msn-deco i:nth-child(4) { top: -12px; right: -6px; color: #f48fb1; font-size: 22px; }
+.msn-deco i:nth-child(5) { top: 44%; left: -10px; color: #b9a6dc; }
+.msn-deco i:nth-child(6) { top: 60%; right: -9px; color: #f4d77a; }
+.msn-deco i:nth-child(7) { bottom: -10px; left: 18%; color: #f4d77a; }
+.msn-deco i:nth-child(8) { bottom: -12px; right: 14%; color: #f4d77a; font-size: 24px; }
+.msn-title { display: flex; align-items: center; gap: 6px; background: linear-gradient(#b5cdf3, #8fb1e8); border: 3px solid #4f6fa8; border-radius: 6px; padding: 3px 4px 3px 6px; color: #2f3d5c; }
+.msn-title b { font-family: var(--font-en); font-size: 13px; letter-spacing: 1px; }
+.msn-ico { font-size: 8px; background: #fff; border: 2px solid #4f6fa8; border-radius: 4px 4px 4px 0; padding: 1px 3px; }
+.msn-b { width: 22px; height: 20px; font: inherit; font-size: 11px; line-height: 1; background: #dfe7f6; border: 2px solid #4f6fa8; color: #2f3d5c; cursor: pointer; padding: 0; }
+.msn-b:hover { background: #fff; }
+.msn-in { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #fbf5fd; border: 3px solid #a18cc7; border-radius: 4px; }
+.msn-who { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: #fde7ef; border-bottom: 2px solid #d9c9ee; font-size: 14px; color: #6d5a8f; }
+.msn-who .dm-ic { width: 24px; height: 30px; overflow: hidden; display: grid; place-items: center; }
+.msn-who .fr-head { width: 24px; }
+.msn-tag { font-size: 12px; opacity: .8; }
+.msn-st { display: flex; align-items: center; gap: 6px; padding: 3px 10px; font-size: 12px; color: #6d5a8f; border-bottom: 2px solid #e6dcf5; }
+.msn .dm-list { flex: 1; overflow-y: auto; padding: 10px 8px; display: flex; flex-direction: column; gap: 10px; background: linear-gradient(#fbf5fd, #f6eefc); }
+.msn .dm-msg { max-width: 86%; display: flex; gap: 6px; align-items: flex-end; align-self: flex-start; }
+.msn .dm-msg.me { align-self: flex-end; flex-direction: row-reverse; }
+.msn .dm-av { width: 28px; height: 34px; overflow: hidden; flex: none; display: grid; place-items: end center; }
+.msn .dm-av .fr-head { width: 28px; }
+.msn .dm-col { display: grid; gap: 2px; min-width: 0; }
+.msn .dm-msg.me .dm-col { justify-items: end; }
+.msn .dm-b { background: #fbd3e2; border: 3px solid #b9708f; border-radius: 16px; padding: 7px 12px; font-size: 14px; line-height: 1.5; color: #5a3b4b; word-break: break-word; box-shadow: 2px 2px 0 rgba(185,112,143,.25); }
+.msn .dm-msg.me .dm-b { background: #fff; border-color: #8f86a8; color: #4b4560; }
+.msn .dm-b.img { padding: 4px; background: #fff; }
+.msn .dm-b img { display: block; max-width: 220px; max-height: 260px; border-radius: 10px; }
+.msn .dm-msg.sending { opacity: .6; }
+.msn .dm-msg small { font-size: 10px; color: #9c8fb5; }
+.msn .tr { color: #6d5a8f; }
+.msn-form { display: flex; gap: 4px; align-items: center; padding: 6px; border-top: 3px solid #d9c9ee; background: #efe7f8; }
+.msn-tool { width: 30px; height: 30px; display: grid; place-items: center; font-size: 16px; background: #fff; border: 2px solid #a18cc7; border-radius: 6px; cursor: pointer; flex: none; }
+.msn-input { flex: 1; min-width: 0; font: inherit; font-size: 14px; padding: 6px 8px; background: #fff; border: 3px solid #b5bcd8; border-radius: 4px; color: #4b4560; }
+.msn-input:focus { outline: none; border-color: #8fb1e8; }
+.msn-send { width: 38px; height: 34px; font-size: 18px; background: #dfe7f6; border: 3px solid #6f93d3; border-radius: 6px; color: #4f6fa8; cursor: pointer; flex: none; }
+.msn-send:hover { background: #fff; }
+.msn .dm-picker { bottom: 58px; }
+/* 好友列表：上線狀態 */
+.fr-seen { display: grid; justify-items: end; font-size: 11px; color: var(--ink-soft); text-align: right; line-height: 1.35; }
+.fr-seen small { font-size: 10px; opacity: .8; }
+.pc-join { font-size: 11px; opacity: .8; }
+/* @標記 */
+.mention { color: #3a6ea8; font-weight: bold; text-decoration: none; background: #e3ebfb; padding: 0 3px; }
+.msg.mentioned { background: #fff3c9; box-shadow: inset 3px 0 0 var(--yellow); }
+.mention-pick { position: fixed; z-index: 120; display: grid; min-width: 200px; background: var(--paper); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.mention-pick button { font: inherit; font-size: 13px; text-align: left; background: none; border: 0; padding: 4px 10px; cursor: pointer; }
+.mention-pick button.on, .mention-pick button:hover { background: var(--yellow); }
+.mention-pick small { color: var(--ink-soft); }
+.chat-ph-tip { font-size: 10px; color: var(--ink-soft); }

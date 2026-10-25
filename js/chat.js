@@ -36,11 +36,12 @@ window.Chat = (() => {
     const mv = window.Emotes && Emotes.parse(m.text);
     if (mv) { const r = h(`<div class="msg emote" data-id="${m.id}"><div class="mb">${Emotes.rowHTML(a, mv)}</div></div>`); r.prepend(headIcon(a.look)); return r; }
     const role = a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : '';
-    const row = h(`<div class="msg ${a.role ? 'staff' : ''}" data-id="${m.id}"><div class="mb">
+    const me = Player.me && Player.me.id, hitMe = me && a.handle !== me && mentions(m.text).includes(me);
+    const row = h(`<div class="msg ${a.role ? 'staff' : ''} ${hitMe ? 'mentioned' : ''}" data-id="${m.id}"><div class="mb">
       <div class="mh">${role}<b class="nm">${Player.nameHTML(a)}</b>${a.title ? Titles.html(a.title) : ''}<span class="tm">${timeStr(m.created_at)}</span>
         ${Social.cloud && Player.me && a.handle && a.handle !== Player.me.id ? `<button class="rp" aria-label="${t('rp_title')}" title="${t('rp_title')}">⚑</button>` : ''}
         ${Social.canDelete(m) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
-      <div class="mt">${Emoji.toHTML(m.text)}</div></div></div>`);
+      <div class="mt">${tagHTML(Emoji.toHTML(m.text))}</div></div></div>`);
     row.prepend(headIcon(a.look));
     if (autoTr) {
       Social.translate(m.text).then(tr => { if (tr && row.isConnected) row.querySelector('.mb').insertAdjacentHTML('beforeend', `<div class="tr">🌐 ${esc(tr)}</div>`); });
@@ -62,6 +63,8 @@ window.Chat = (() => {
 
   function push(channel, m) {
     cache[channel].push(m);
+    const me = Player.me && Player.me.id, a = m.author || {};
+    if (me && !m.official && a.handle && a.handle !== me && mentions(m.text).includes(me)) { SFX.play('coin'); toast(t('mention_got', { n: a.name || a.handle, c: t(channel === 'tw' ? 'ch_tw' : 'ch_world') }), '📣'); }
     const mv = !m.official && window.Emotes && Emotes.parse(m.text);
     if (mv && channel === cur && open) Emotes.play(m.author, mv);
     if (cache[channel].length > 120) cache[channel].shift();
@@ -110,10 +113,38 @@ window.Chat = (() => {
     form.appendChild(h(`<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button><button type="button" class="btn sm mv-btn" aria-label="emote">🕺</button>
       <input class="input sm" maxlength="200" placeholder="${esc(t('chat_ph'))}"><button class="btn sm pink">${t('chat_send')}</button></div>`));
     input = form.querySelector('input');
+    input.addEventListener('input', () => mentionPick(input));
+    input.addEventListener('keydown', e => { const p = document.querySelector('.mention-pick'); if (p && e.key === 'Escape') p.remove(); if (p && (e.key === 'Enter' || e.key === 'Tab') && p.querySelector('.on')) { e.preventDefault(); p.querySelector('.on').click(); } if (p && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); const bs = [...p.querySelectorAll('button')], i = bs.findIndex(b => b.classList.contains('on')); bs.forEach(b => b.classList.remove('on')); bs[(i + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length].classList.add('on'); } });
     form.querySelector('.emo-btn').onclick = e => togglePicker(e.currentTarget, input);
     form.querySelector('.mv-btn').onclick = e => Emotes.picker(e.currentTarget, async txt => {
       try { await Social.send(cur, txt); SFX.play('blip'); } catch (x) { SFX.play('error'); toast(t('err_' + x.message) !== 'err_' + x.message ? t('err_' + x.message) : x.message, '✕'); }
     });
+  }
+
+  /* ---------- @標記玩家 ---------- */
+  const mentions = text => [...String(text || '').matchAll(/(?:^|[^\w@])@([a-z0-9_]{3,16})/gi)].map(x => x[1].toLowerCase());
+  const tagHTML = html => html.replace(/(^|[^\w@&])@([a-z0-9_]{3,16})/gi, (s, pre, hd) => `${pre}<span class="pname mention" data-h="${hd.toLowerCase()}">@${hd}</span>`);
+  function mentionPick(inp) {
+    document.querySelector('.mention-pick')?.remove();
+    const pos = inp.selectionStart ?? inp.value.length, m = /(?:^|\s)@([a-z0-9_]{0,16})$/i.exec(inp.value.slice(0, pos));
+    if (!m) return;
+    const q = m[1].toLowerCase(), seen = new Map();
+    const add = p => { if (p && p.handle && p.handle !== (Player.me && Player.me.id) && !seen.has(p.handle)) seen.set(p.handle, p.name || p.handle); };
+    [...cache.world, ...cache.tw].slice().reverse().forEach(x => !x.official && add(x.author));
+    if (window.Friends && Friends.friends) Friends.friends().forEach(add);
+    const list = [...seen].filter(([hd, nm]) => hd.startsWith(q) || String(nm).toLowerCase().includes(q)).slice(0, 6);
+    if (!list.length) return;
+    const p = h(`<div class="mention-pick">${list.map(([hd, nm], i) => `<button type="button" class="${i ? '' : 'on'}" data-h="${esc(hd)}"><b>${esc(nm)}</b> <small>@${esc(hd)}</small></button>`).join('')}</div>`);
+    p.onmousedown = e => e.preventDefault();
+    p.onclick = e => {
+      const b = e.target.closest('[data-h]'); if (!b) return;
+      const before = inp.value.slice(0, pos).replace(/@([a-z0-9_]{0,16})$/i, '@' + b.dataset.h + ' ');
+      inp.value = before + inp.value.slice(pos); inp.focus(); inp.setSelectionRange(before.length, before.length); p.remove();
+    };
+    document.body.appendChild(p);
+    const r = inp.getBoundingClientRect();
+    p.style.left = Math.max(8, Math.min(innerWidth - 240, r.left)) + 'px';
+    p.style.top = Math.max(8, r.top - p.offsetHeight - 6) + 'px';
   }
 
   // 表情選單（聊天室和留言板共用）
@@ -134,7 +165,7 @@ window.Chat = (() => {
     e.preventDefault();
     if (!input) return;
     const text = input.value;
-    try { await Social.send(cur, text); input.value = ''; SFX.play('blip'); document.querySelector('.emo-pick')?.remove(); }
+    try { await Social.send(cur, text); input.value = ''; SFX.play('blip'); document.querySelector('.emo-pick')?.remove(); document.querySelector('.mention-pick')?.remove(); }
     catch (x) { SFX.play('error'); toast(t('err_' + x.message) !== 'err_' + x.message ? t('err_' + x.message) : x.message, '✕'); }
   }
 
