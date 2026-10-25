@@ -1358,3 +1358,8 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .pcard.bg-leopard .pc-dl { background: rgba(255,246,232,.9); border: 2px solid var(--ink); padding: 4px 8px; }
 .pcard.bg-leopard .pc-top span { background: rgba(255,246,232,.9); padding: 0 4px; }
 .pcard.bg-leopard .pc-join { background: rgba(255,246,232,.9); justify-self: start; padding: 0 4px; }
+.qb-inboard { border: 2px solid var(--ink); background: #fff8e0; padding: 6px 10px; margin-bottom: 10px; }
+.qb-ih { font-size: 14px; margin-bottom: 4px; } .qb-ih b { font-family: var(--font-en); font-size: 12px; margin-left: 6px; }
+.qb-inboard ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.qb-inboard li { display: flex; gap: 6px; align-items: center; font-size: 13px; }
+.qb-inboard li.ok .qb-l { text-decoration: line-through; opacity: .6; }

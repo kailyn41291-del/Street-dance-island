@@ -242,5 +242,13 @@ window.Hub = (() => {
   if (Player.onChange) Player.onChange(() => setTimeout(load, 100));
   if (I18N.onChange) I18N.onChange(() => draw());
 
-  return { openMenu, act, reload: load };
+  // 本週任務板裡也放今天的每日任務
+  function boardHTML() {
+    if (!state) return '';
+    const n = state.ids.filter(done).length;
+    return `<div class="qb-inboard"><div class="qb-ih">📜 ${t('q_title')} <b>${n}/${state.ids.length}</b></div><ul>${state.ids.map(id => { const q = POOL.find(x => x.id === id), p = state.prog[id] || 0, d = p >= q.n;
+      return `<li class="${d ? 'ok' : ''}"><span class="qb-c">${d ? '✔' : '☐'}</span><span class="qb-l">${esc(label(q))} <b>(${p}/${q.n})</b></span>${d ? '' : `<button class="qb-go" data-qgo="${q.id}">${t('q_go')} ▸</button>`}</li>`; }).join('')}</ul>${n === state.ids.length ? `<p class="qb-done">🎉 ${t('q_done_all')}</p>` : ''}</div>`;
+  }
+  const goQuest = id => { const q = POOL.find(x => x.id === id); q && q.go(); };
+  return { openMenu, act, reload: load, boardHTML, goQuest };
 })();

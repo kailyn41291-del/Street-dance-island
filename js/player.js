@@ -312,7 +312,7 @@ window.Player = (() => {
     const place = e => { const c = GEO.countries.find(x => x.code === e.country); const ci = c && c.cities.find(x => x.id === e.city); return [nm(c), nm(ci)].filter(Boolean).join('・'); };
     const W = t('week');
     const q = t('quest_npc'), ql = Array.isArray(q) ? q[Math.floor(Math.random() * q.length)] : null, L = ql && UI.lineOf(ql);
-    const body = h(`<div>${L ? `<div class="quest-npc ${L.who === 'choco' ? 'choco' : ''}"><div class="k-face"><img src="${L.img}" alt=""></div><div class="bub"><b>${esc(UI.whoName(L.who))}</b><br>${esc(L.text)}</div></div>` : ''}<p class="quest-head">${head}</p><ul class="quest">${list.map((e, i) => {
+    const body = h(`<div>${L ? `<div class="quest-npc ${L.who === 'choco' ? 'choco' : ''}"><div class="k-face"><img src="${L.img}" alt=""></div><div class="bub"><b>${esc(UI.whoName(L.who))}</b><br>${esc(L.text)}</div></div>` : ''}${window.Hub && Hub.boardHTML ? Hub.boardHTML() : ''}<p class="quest-head">${head}</p><ul class="quest">${list.map((e, i) => {
       const d = new Date(e.date + 'T00:00');
       return `<li style="--i:${i};--c:${Store.STYLE_COLOR[(e.styles || [])[0]] || 'var(--yellow)'}"><span class="qd"><b>${pad(d.getMonth() + 1)}/${pad(d.getDate())}</b><small>${W[d.getDay()]}</small></span>
         <span class="qn"><b>${esc(e.name)}</b><small>${esc(place(e))}${e.startTime ? ' · ' + esc(e.startTime) : ''}</small></span>
@@ -320,6 +320,7 @@ window.Player = (() => {
     }).join('')}</ul></div>`);
     const m = modal({ title: t('quest_title'), color: 'yellow', body });
     body.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { m.close(); hooks.goEvent && hooks.goEvent(b.dataset.go, b.dataset.id); });
+    body.querySelectorAll('[data-qgo]').forEach(b => b.onclick = () => { m.close(); setTimeout(() => Hub.goQuest(b.dataset.qgo), 230); });
   }
 
   return {

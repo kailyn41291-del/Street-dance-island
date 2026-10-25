@@ -38,10 +38,32 @@ window.Social = (() => {
   const tCache = new Map();
   const detect = s => (/[가-힯]/.test(s) ? 'ko' : /[぀-ヿ]/.test(s) ? 'ja' : /[一-鿿]/.test(s) ? 'zh' : /[a-z]/i.test(s) ? 'en' : null);
   const CODE = { zh: 'zh-TW', en: 'en', ja: 'ja', ko: 'ko' };
+  /* 台灣用語 / 街舞用語：先換成一般說法再翻譯，不然會被翻成拼音（例如「安安」→ an an） */
+  // 整句就是這些話時，直接用各語言最自然的說法
+  const PHRASE = {
+    '安安': { en: 'Hiya!', ja: 'やっほー！', ko: '안뇽!' }, '安安你好': { en: 'Hi there!', ja: 'やっほー、こんにちは！', ko: '안뇽, 안녕하세요!' },
+    '掰掰': { en: 'Bye bye!', ja: 'バイバイ！', ko: '빠이빠이!' }, '881': { en: 'Bye bye!', ja: 'バイバイ！', ko: '빠이빠이!' }, '3q': { en: 'Thank you!', ja: 'サンキュー！', ko: '땡큐!' },
+    '母湯': { en: 'No way!', ja: 'ダメだよ！', ko: '안 돼!' }, '很頂': { en: "That's sick!", ja: 'ヤバすぎ！', ko: '미쳤다!' }, '傻眼': { en: "I'm speechless", ja: '唖然…', ko: '어이없어' },
+    '啾咪': { en: 'Muah~ 😉', ja: 'チュッ😉', ko: '쪽~ 😉' }, '好der': { en: 'Okie dokie!', ja: 'りょ！', ko: '오키!' }, '醬': { en: 'Like this', ja: 'こんな感じ', ko: '이렇게' },
+    'ㄏㄏ': { en: 'Heh heh', ja: 'ふふっ', ko: 'ㅎㅎ' }, '87': { en: 'Silly~', ja: 'おバカ〜', ko: '바보~' }, '揪': { en: "Let's go together!", ja: '一緒に行こう！', ko: '같이 가자!' }
+  };
+  // 句子裡的用語換成一般中文（長的先換）
+  const SLANG = [
+    ['安安你好', '你好'], ['安安', '嗨'], ['掰掰', '再見'], ['母湯', '不行'], ['很頂', '超厲害'], ['好頂', '好厲害'], ['超頂', '超厲害'], ['好der', '好的'], ['是在哈囉', '是在搞什麼'],
+    ['北七', '笨蛋'], ['87分', '很不錯'], ['87', '笨蛋'], ['揪團', '約大家一起'], ['揪', '約'], ['醬子', '這樣子'], ['醬', '這樣'], ['ㄏㄏ', '呵呵'], ['啾咪', '親一下'],
+    ['尬舞', 'battle'], ['尬意', '喜歡'], ['歐北', '亂'], ['很瞎', '很荒謬'], ['超瞎', '超荒謬'], ['魯蛇', '失敗者'], ['小確幸', '小小的幸福'], ['超派', '超兇'], ['很派', '很兇'],
+    ['呷飽未', '吃飽了嗎'], ['真假', '真的嗎'], ['傻眼貓咪', '我傻眼了'], ['傻眼', '驚呆了'], ['3Q', '謝謝'], ['3q', '謝謝'], ['881', '再見'], ['484', '是不是'], ['DLLM', ''],
+    ['機車', '很煩人'], ['很鬧', '很好笑'], ['超鬧', '超好笑'], ['好鬧', '好好笑'], ['嘴砲', '說大話'], ['抓包', '被發現'], ['爆肝', '熬夜'], ['很chill', '很放鬆'], ['很嗨', '很興奮'],
+    ['吃土', '沒錢'], ['佛系', '隨緣'], ['很頹', '很沒精神'], ['蹭', '跟著'], ['踹共', '出來講清楚'], ['蝦米', '什麼'], ['甘安捏', '真的是這樣嗎'], ['哩賀', '你好'], ['多謝', '謝謝']
+  ];
+  const localize = s => { let o = s; for (const [k, v] of SLANG) o = o.split(k).join(v); return o; };
   async function translate(text, to = I18N.lang) {
-    const plain = text.replace(/:[cd]\d{1,2}:/g, ' ').trim();
+    let plain = text.replace(/:[cd]\d{1,2}:/g, ' ').trim();
     const from = detect(plain);
     if (!plain || !from || from === to) return null;
+    const ph = PHRASE[plain.replace(/[!！~～。.,，?？\s]+$/g, '').toLowerCase()] || PHRASE[plain.replace(/[!！~～。.,，?？\s]+$/g, '')];
+    if (ph && ph[to]) return ph[to];
+    if (from === 'zh') plain = localize(plain);
     const key = to + '|' + plain;
     if (tCache.has(key)) return tCache.get(key);
     const job = (async () => {
