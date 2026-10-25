@@ -268,11 +268,19 @@
     });
     // 主角站在台灣上
     {
-      const cp = L.comps[twInfo.comp], d = PX.dancer(4, myLook());
-      d.el.classList.add('hero');
-      d.el.style.left = (twInfo.cx - cp.x0) * C - 26 + 'px'; d.el.style.top = (twInfo.y0 - cp.y0) * C + (twInfo.y1 - twInfo.y0) * C * 0.16 + 'px';
-      compEls[twInfo.comp].querySelector('.float').appendChild(d.el);
-      beatLoop(d, 300);
+      const cp = L.comps[twInfo.comp];
+      const top = (twInfo.y0 - cp.y0) * C + (twInfo.y1 - twInfo.y0) * C * 0.16;
+      if (Player.me) {
+        const d = PX.dancer(4, myLook());
+        d.el.classList.add('hero');
+        d.el.style.left = (twInfo.cx - cp.x0) * C - 26 + 'px'; d.el.style.top = top + 'px';
+        compEls[twInfo.comp].querySelector('.float').appendChild(d.el);
+        beatLoop(d, 300);
+      } else {                                                       // 還沒建角色：嚮導 Kailyn 站在台灣
+        const k = h(`<img class="hero k-full k-hero" src="${UI.Kailyn.FULL}" alt="Kailyn">`);
+        k.style.left = (twInfo.cx - cp.x0) * C - 34 + 'px'; k.style.top = top - 30 + 'px';
+        compEls[twInfo.comp].querySelector('.float').appendChild(k);
+      }
     }
 
     // 平移 / 縮放
@@ -1030,9 +1038,8 @@
     applyStatic();
     const bar = bootEl.querySelector('.bar');
     bar.innerHTML = '<i></i>'.repeat(20);
-    const d = PX.dancer(5);
-    bootEl.querySelector('.boot-dancer').appendChild(d.el);
-    const dt = setInterval(() => d.beat(), 300);
+    bootEl.querySelector('.boot-dancer').innerHTML = `<img class="k-full boot-k" src="${UI.Kailyn.FULL}" alt="Kailyn">`;
+    const dt = 0;
     const st = bootEl.querySelector('.boot-status span'), pct = bootEl.querySelector('.boot-status b');
     let i = 0, dataReady = false;
     // 等雲端（如果有）、活動、角色都載好

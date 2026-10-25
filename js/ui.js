@@ -38,21 +38,45 @@ window.UI = (() => {
     return { el: bodyEl, close };
   }
 
-  /* NPC 嚮導對話框：逐字打字效果 */
+  /* 嚮導 Kailyn：一般用全身形象，對話框裡依照說的話換表情 */
+  const Kailyn = (() => {
+    const MOODS = ['happy', 'smug', 'angry', 'sad', 'surprised', 'shy', 'laugh', 'cry', 'helpless', 'confused', 'cool', 'thumbs', 'love', 'cheer', 'celebrate', 'sleepy', 'daze', 'tsundere', 'please', 'ok'];
+    const url = m => `assets/kailyn/${MOODS.includes(m) ? m : 'happy'}.webp`;
+    const FULL = 'assets/kailyn/full.webp';
+    // 預先載入，換表情時不會閃
+    const preload = () => [...MOODS.map(url), FULL].forEach(u => { const i = new Image(); i.src = u; });
+    // 沒有指定表情時，依照句子內容猜
+    const RULES = [
+      [/恭喜|成功|升級|完成|太棒|獲得|congrat|level up|success|unlock|おめでとう|成功|축하|성공/i, 'celebrate'],
+      [/歡迎|嗨|你好|welcome|hi[!！]|hello|ようこそ|やあ|환영|안녕/i, 'happy'],
+      [/截止|提醒|注意|別忘|記得|小心|remember|don't forget|closes|careful|締切|注意|忘れ|마감|주의|잊지/i, 'surprised'],
+      [/[?？]/, 'confused'],
+      [/輸了|失敗|錯誤|可惜|沒辦法|lost|failed|sorry|残念|負け|졌|실패/i, 'cry'],
+      [/加油|挑戰|一起|go!|let's|頑張|がんば|화이팅|가자/i, 'cheer'],
+      [/謝謝|愛|thank|love|ありがとう|고마워|사랑/i, 'love'],
+      [/新增|登錄|按|點|tap|click|press|押して|タップ|눌러/i, 'thumbs']
+    ];
+    const guess = text => { for (const [re, m] of RULES) if (re.test(text)) return m; return ['happy', 'smug', 'ok', 'cool'][text.length % 4]; };
+    return { MOODS, url, FULL, preload, guess };
+  })();
+
+  /* NPC 嚮導對話框：逐字打字效果；lines 可以是文字，或 { text, mood } */
   const npc = (() => {
-    let box, txt, timer, queue = [], typing = false, full = '', done;
-    const face = PX.dancer(4);
-    setInterval(() => { if (box && !box.classList.contains('hidden')) face.beat(); }, 380);
+    let box, txt, timer, queue = [], typing = false, full = '', done, faceImg;
     const ensure = () => {
       if (box) return;
-      box = h(`<div id="npc" class="hidden" role="status"><div class="face"></div>
+      box = h(`<div id="npc" class="hidden" role="status"><div class="face k-face"><img alt="Kailyn" src="${Kailyn.url('happy')}"></div>
         <div><div class="who">${t('guide')}</div><div class="txt"></div></div><div class="next">▼</div></div>`);
-      box.querySelector('.face').appendChild(face.el);
+      faceImg = box.querySelector('.face img');
       txt = box.querySelector('.txt');
       box.onclick = advance;
       document.body.appendChild(box);
     };
-    const type = line => {
+    const type = item => {
+      const line = typeof item === 'string' ? item : item.text;
+      const mood = (typeof item === 'object' && item.mood) || Kailyn.guess(line);
+      faceImg.src = Kailyn.url(mood);
+      faceImg.parentNode.classList.remove('pop'); void faceImg.offsetWidth; faceImg.parentNode.classList.add('pop');
       full = line; let i = 0; typing = true; txt.textContent = '';
       clearInterval(timer);
       timer = setInterval(() => {
@@ -133,5 +157,6 @@ window.UI = (() => {
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
-  return { h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download };
+  Kailyn.preload();
+  return { h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn };
 })();

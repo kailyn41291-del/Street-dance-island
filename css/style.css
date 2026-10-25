@@ -925,3 +925,16 @@ details summary { cursor: pointer; margin: 10px 0; }
   .emote-stage { right: 16px; bottom: 70px; }
   .cypher-view { padding-top: 110px; }
 }
+
+/* ---------- 嚮導 Kailyn ---------- */
+.k-face { background: linear-gradient(#fff6dc, #f6e3b4) !important; overflow: hidden; }
+.k-face img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.k-face.pop img { animation: kPop .3s steps(3); }
+@keyframes kPop { 0% { transform: scale(.8) translateY(6px); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.k-full { image-rendering: auto; animation: kBob 2.4s ease-in-out infinite; }
+@keyframes kBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.boot-k { height: 150px; }
+.k-hero { position: absolute; height: 96px; z-index: 4; pointer-events: none; filter: drop-shadow(2px 3px 0 rgba(59,43,43,.35)); }
+.choose-k { height: 120px; }
+#npc .face, .tut .face { width: 92px; height: 92px; }
+@media (max-width: 760px) { #npc .face, .tut .face { width: 64px; height: 64px; } .k-hero { height: 80px; } }

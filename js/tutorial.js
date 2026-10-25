@@ -17,9 +17,11 @@ window.Tutorial = (() => {
       <div class="tut-box"><div class="face"></div><div class="tut-main"><div class="who">${t('guide')}</div><div class="txt"></div>
         <div class="tut-foot"><span class="dots"></span><span class="grow"></span><button class="btn sm skip">${t('tut_skip')}</button><button class="btn sm pink next"></button></div></div></div></div>`);
     const spot = ov.querySelector('.tut-spot'), txt = ov.querySelector('.txt'), next = ov.querySelector('.next'), dots = ov.querySelector('.dots');
-    const face = PX.dancer(4);
-    ov.querySelector('.face').appendChild(face.el);
-    const beat = setInterval(() => face.beat(), 380);
+    const MOODS = ['happy', 'smug', 'thumbs', 'confused', 'ok', 'cheer', 'laugh', 'cool', 'love'];
+    const faceBox = ov.querySelector('.face'); faceBox.classList.add('k-face');
+    faceBox.innerHTML = `<img alt="Kailyn" src="${UI.Kailyn.url('happy')}">`;
+    const faceImg = faceBox.querySelector('img');
+    const beat = 0;
     document.body.appendChild(ov);
 
     const place = () => {
@@ -32,6 +34,8 @@ window.Tutorial = (() => {
     };
     const show = () => {
       place();
+      faceImg.src = UI.Kailyn.url(MOODS[i] || 'happy');
+      faceBox.classList.remove('pop'); void faceBox.offsetWidth; faceBox.classList.add('pop');
       dots.textContent = lines.map((_, k) => (k === i ? '●' : '○')).join('');
       next.textContent = i === lines.length - 1 ? t('tut_done') : t('tut_next');
       const full = lines[i]; let n = 0; typing = true;

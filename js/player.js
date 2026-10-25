@@ -160,7 +160,7 @@ window.Player = (() => {
       m.close();
       I18N.set(I18N.langForCountry(p.nat));
       setSession(p);
-      setTimeout(() => { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 24); npc.say([t('welcome_new', { n: p.name })], () => questBoard()); }, 260);
+      setTimeout(() => { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 24); npc.say([{ text: t('welcome_new', { n: p.name }), mood: 'celebrate' }], () => questBoard()); }, 260);
     };
   }
 
@@ -201,7 +201,8 @@ window.Player = (() => {
         <button class="btn teal c-login">${t('p_login')}</button>
         <button class="btn c-later">${t('p_later')}</button>
       </div></div>`);
-    const looks = [Avatar.DEFAULT, Avatar.random({ gender: 'f' }), Avatar.random({ gender: 'm' })];
+    body.querySelector('.choose-art').insertAdjacentHTML('beforeend', `<img class="k-full choose-k" src="${UI.Kailyn.FULL}" alt="Kailyn">`);
+    const looks = [Avatar.random({ gender: 'f' }), Avatar.random({ gender: 'm' })];
     looks.forEach(l => { const d = Avatar.dancer(3, l); body.querySelector('.choose-art').appendChild(d.el); const tm = setInterval(() => { if (!d.el.isConnected) clearInterval(tm); else d.beat(); }, 300 + Math.random() * 120); });
     const m = modal({ title: t('p_choose_title'), color: 'yellow', body });
     body.querySelector('.c-new').onclick = () => { m.close(); setTimeout(openCreate, 220); };
@@ -296,7 +297,7 @@ window.Player = (() => {
   function welcome() {
     if (!me) return;
     SFX.play('fanfare');
-    npc.say([t('welcome_back', { n: me.name })], () => questBoard());
+    npc.say([{ text: t('welcome_back', { n: me.name }), mood: 'happy' }], () => questBoard());
   }
 
   function questBoard() {

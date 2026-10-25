@@ -8,7 +8,7 @@ window.I18N = (() => {
   const D = {
     zh: {
       world: '世界', add: '新增活動', games: '小遊戲', save: '存檔', help: '新手教學', login: '登入 / 創角',
-      sound_on: '關閉音效', sound_off: '開啟音效', close: '關閉', guide: '嚮導 B-BOT',
+      sound_on: '關閉音效', sound_off: '開啟音效', close: '關閉', guide: '嚮導 Kailyn',
       boot: ['生成島嶼中…', '鋪設舞池中…', '調整 BPM…', '召喚舞者…', 'READY!'], press_start: '▶ PRESS START',
       quick_travel: '快速傳送（{n} 國）', search_ph: '搜尋國家…（中文或英文）', popular: '★ 熱門', not_found: '找不到這個國家…',
       zoom_in: '放大', zoom_out: '縮小', see_world: '看整個世界', go_home: '回到台灣', n_events: '{n} 個活動',
@@ -46,7 +46,7 @@ window.I18N = (() => {
       s_downloaded: '已下載 events.js', s_imported: '匯入 {n} 筆活動', s_impfail: '匯入失敗：', s_reset_q: '確定清除這台瀏覽器的所有新增 / 修改 / 刪除？（GitHub 上的活動不受影響）', s_reset_done: '已清除本機變更',
       tut_skip: '跳過教學', tut_next: '下一步 ▶', tut_done: '開始冒險！',
       tut: [
-        '嗨！歡迎來到「舞島 DANCE ISLAND」！我是嚮導 B-BOT，帶你快速認識這座島 ✦',
+        '嗨！歡迎來到「舞島 DANCE ISLAND」！我是嚮導 Kailyn，帶你快速認識這座島 ✦',
         '中間這座就是主島「台灣」！點它就能看到各縣市的活動。',
         '整個世界都在這裡：拖曳可以移動地圖，滾輪或兩指可以縮放。點任何國家都能進去看城市。',
         '找不到國家？用「快速傳送」搜尋，或依洲別切換。',
@@ -78,7 +78,7 @@ window.I18N = (() => {
     },
     en: {
       world: 'World', add: 'Add Event', games: 'Mini Games', save: 'Save', help: 'Tutorial', login: 'Log in / Create',
-      sound_on: 'Mute', sound_off: 'Unmute', close: 'Close', guide: 'GUIDE B-BOT',
+      sound_on: 'Mute', sound_off: 'Unmute', close: 'Close', guide: 'GUIDE Kailyn',
       boot: ['Raising islands…', 'Laying the dance floor…', 'Tuning BPM…', 'Summoning dancers…', 'READY!'], press_start: '▶ PRESS START',
       quick_travel: 'Fast Travel ({n})', search_ph: 'Search a country…', popular: '★ Popular', not_found: 'No country found…',
       zoom_in: 'Zoom in', zoom_out: 'Zoom out', see_world: 'Whole world', go_home: 'Back to Taiwan', n_events: '{n} events',
@@ -116,7 +116,7 @@ window.I18N = (() => {
       s_downloaded: 'events.js downloaded', s_imported: 'Imported {n} events', s_impfail: 'Import failed: ', s_reset_q: 'Clear all local additions / edits / deletions in this browser? (GitHub events are not affected)', s_reset_done: 'Local changes cleared',
       tut_skip: 'Skip', tut_next: 'Next ▶', tut_done: "Let's go!",
       tut: [
-        "Hi! Welcome to DANCE ISLAND! I'm your guide B-BOT. Let me show you around ✦",
+        "Hi! Welcome to DANCE ISLAND! I'm your guide Kailyn. Let me show you around ✦",
         'This is the home island — Taiwan! Tap it to see events in every city.',
         'The whole world is here: drag to move, scroll or pinch to zoom. Tap any country to see its cities.',
         "Can't find a country? Search it in Fast Travel or browse by continent.",
@@ -148,7 +148,7 @@ window.I18N = (() => {
     },
     ja: {
       world: 'ワールド', add: 'イベント追加', games: 'ミニゲーム', save: 'セーブ', help: 'チュートリアル', login: 'ログイン / 作成',
-      sound_on: 'ミュート', sound_off: '音を出す', close: '閉じる', guide: 'ガイド B-BOT',
+      sound_on: 'ミュート', sound_off: '音を出す', close: '閉じる', guide: 'ガイド Kailyn',
       boot: ['島を生成中…', 'ダンスフロアを準備中…', 'BPM を調整中…', 'ダンサーを召喚中…', 'READY!'], press_start: '▶ PRESS START',
       quick_travel: 'ワープ（{n} か国）', search_ph: '国を検索…', popular: '★ 人気', not_found: '国が見つかりません…',
       zoom_in: '拡大', zoom_out: '縮小', see_world: '世界全体', go_home: '台湾に戻る', n_events: '{n} 件のイベント',
@@ -186,7 +186,7 @@ window.I18N = (() => {
       s_downloaded: 'events.js をダウンロードしました', s_imported: '{n} 件インポートしました', s_impfail: 'インポート失敗：', s_reset_q: 'このブラウザでの追加・編集・削除をすべて消去しますか？（GitHub のイベントは影響を受けません）', s_reset_done: 'ローカル変更を消去しました',
       tut_skip: 'スキップ', tut_next: '次へ ▶', tut_done: '冒険スタート！',
       tut: [
-        'やあ！「DANCE ISLAND」へようこそ！ガイドの B-BOT だよ。島を案内するね ✦',
+        'やあ！「DANCE ISLAND」へようこそ！ガイドの Kailyn だよ。島を案内するね ✦',
         '真ん中の島がメインの「台湾」！タップすると各都市のイベントが見られるよ。',
         '世界中がここにあるよ。ドラッグで移動、スクロールやピンチでズーム。どの国もタップで都市が見られる。',
         '国が見つからない？「ワープ」で検索したり、大陸ごとに切り替えたりできるよ。',
@@ -218,7 +218,7 @@ window.I18N = (() => {
     },
     ko: {
       world: '월드', add: '이벤트 추가', games: '미니게임', save: '저장', help: '튜토리얼', login: '로그인 / 생성',
-      sound_on: '음소거', sound_off: '소리 켜기', close: '닫기', guide: '가이드 B-BOT',
+      sound_on: '음소거', sound_off: '소리 켜기', close: '닫기', guide: '가이드 Kailyn',
       boot: ['섬 생성 중…', '댄스 플로어 깔는 중…', 'BPM 조정 중…', '댄서 소환 중…', 'READY!'], press_start: '▶ PRESS START',
       quick_travel: '순간이동 ({n}개국)', search_ph: '나라 검색…', popular: '★ 인기', not_found: '나라를 찾을 수 없어요…',
       zoom_in: '확대', zoom_out: '축소', see_world: '전체 세계', go_home: '대만으로', n_events: '이벤트 {n}개',
@@ -256,7 +256,7 @@ window.I18N = (() => {
       s_downloaded: 'events.js 다운로드 완료', s_imported: '{n}개 가져왔어요', s_impfail: '가져오기 실패: ', s_reset_q: '이 브라우저의 추가/수정/삭제를 모두 지울까요? (GitHub 이벤트는 영향 없음)', s_reset_done: '로컬 변경을 지웠어요',
       tut_skip: '건너뛰기', tut_next: '다음 ▶', tut_done: '모험 시작!',
       tut: [
-        '안녕! 「DANCE ISLAND」에 온 걸 환영해! 나는 가이드 B-BOT. 섬을 안내해 줄게 ✦',
+        '안녕! 「DANCE ISLAND」에 온 걸 환영해! 나는 가이드 Kailyn. 섬을 안내해 줄게 ✦',
         '가운데 섬이 메인 섬 「대만」이야! 누르면 각 도시의 이벤트를 볼 수 있어.',
         '전 세계가 여기 있어. 드래그로 이동, 스크롤이나 핀치로 확대/축소. 어느 나라든 누르면 도시가 보여.',
         '나라를 못 찾겠어? 「순간이동」에서 검색하거나 대륙별로 볼 수 있어.',
