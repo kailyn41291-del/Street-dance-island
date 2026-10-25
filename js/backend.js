@@ -292,6 +292,8 @@ window.Backend = (() => {
     async myCrewRequests() { return must(await sb.from('crew_requests').select('*').eq('user_id', user.id)); },
     async pendingCrews() { return must(await sb.from('crews').select('*').eq('status', 'pending').order('created_at')); },
     async crewRpc(fn, args) { return must(await sb.rpc(fn, args || {})); },
+    async crewInvites() { return must(await sb.from('crew_invites').select('*').eq('to_user', user.id).eq('status', 'pending')); },
+    async crewCodes(id) { return must(await sb.from('crew_codes').select('*').eq('crew_id', id).order('created_at', { ascending: false })); },
 
     /* 經驗值系統（全部在伺服器端計算） */
     async rpc(fn, args) { return must(await sb.rpc(fn, args || {})); },

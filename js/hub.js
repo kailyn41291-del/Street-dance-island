@@ -224,8 +224,11 @@ window.Hub = (() => {
       box = h(`<aside class="qbox" aria-label="${esc(t('q_title'))}"><button class="qb-head"><span class="qb-t"></span><span class="qb-n"></span><span class="qb-arrow">▾</span></button><div class="qb-body"></div></aside>`);
       document.body.appendChild(box);
       box.querySelector('.qb-head').onclick = () => { const o = !box.classList.contains('open'); box.classList.toggle('open', o); try { localStorage.setItem(OPEN, o ? '1' : '0'); } catch (x) {} SFX.play('select'); };
-      let o = true; try { o = localStorage.getItem(OPEN) !== '0'; } catch (x) {}
-      box.classList.toggle('open', o);
+      const pref = () => { try { return localStorage.getItem(OPEN) !== '0'; } catch (x) { return true; } };
+      // 在地圖上照使用者的設定；進到其他頁面先收起來，避免蓋住內容
+      const onMap = () => { const r = location.hash.replace(/^#\/?/, ''); return r === '' || /^c\/[A-Z]{2}$/.test(r); };
+      box.classList.toggle('open', pref() && onMap());
+      window.addEventListener('hashchange', () => box.classList.toggle('open', pref() && onMap()));
       box.querySelector('.qb-body').onclick = e => { const b = e.target.closest('[data-go]'); if (b) { SFX.play('select'); const q = POOL.find(x => x.id === b.dataset.go); q && q.go(); } else if (e.target.closest('.qb-login')) Player.prompt(); };
     }
     const n = state.ids.filter(done).length, all = n === state.ids.length;

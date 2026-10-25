@@ -211,6 +211,7 @@ window.Friends = (() => {
       else main = `<button class="btn green ad">${t('fr_add')}</button><button class="btn orange pv">${t('pvp_invite')}</button>`;
       acts.innerHTML = `<div class="btn-row">${main}</div><div class="btn-row sub">
         ${r.type === 'friend' ? `<button class="btn sm rm">${t('fr_remove')}</button>` : ''}
+        ${window.Crews && Crews.mine && ['leader', 'vice'].includes(Crews.mine.rank) && !bl ? `<button class="btn sm ci">👯 ${t('cr_inv_card')}</button>` : ''}
         ${bl ? '' : `<button class="btn sm bk">🚫 ${t('bl_block')}</button>`}<button class="btn sm rp">⚑ ${t('rp_title')}</button></div>`;
       const q = s => acts.querySelector(s);
       if (q('.ad')) q('.ad').onclick = async () => { try { await Backend.sendFriend(p.user_id); await reload(); SFX.play('coin'); toast(rel(p.user_id).type === 'friend' ? t('fr_now', { n: p.name }) : t('fr_sent'), '💌'); } catch (x) { toast(errMsg(x), '✕'); } draw(); };
@@ -222,6 +223,7 @@ window.Friends = (() => {
         try { await Backend.block(p.user_id); if (r.row) await Backend.removeFriend(r.row.id).catch(() => {}); await reload(); toast(t('bl_done'), '🚫'); } catch (x) { toast(errMsg(x), '✕'); } draw();
       };
       if (q('.ub')) q('.ub').onclick = async () => { try { await Backend.unblock(p.user_id); await reload(); } catch (x) { toast(errMsg(x), '✕'); } draw(); };
+      if (q('.ci')) q('.ci').onclick = async () => { try { await Backend.crewRpc('crew_invite', { uid: p.user_id }); SFX.play('coin'); toast(t('cr_inv_sent', { n: p.name }), '💌'); } catch (x) { toast(/already in crew/.test(x.message) ? t('cr_e_in2') : x.message, '✕'); } };
       if (q('.rp')) q('.rp').onclick = () => { m.close(); setTimeout(() => Player.openReport(p.handle, p.name), 220); };
       if (q('.dm')) q('.dm').onclick = () => { m.close(); openDM(p.user_id); };
       if (q('.pv')) q('.pv').onclick = () => { m.close(); invitePvp(p); };

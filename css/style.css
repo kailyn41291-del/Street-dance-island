@@ -1538,3 +1538,18 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 @media (max-width: 760px) { .hud-forum, .hud-battle { display: inline-flex !important; } }
 /* ✔ ▶ ⚠ ❤ 這類符號：用文字樣式，不要變成彩色 emoji */
 body { font-variant-emoji: text; }
+/* 舞團介紹牆、邀請碼、QR */
+.cr-dir { align-items: flex-start; }
+.cr-logo.mid { width: 72px; height: 72px; font-size: 36px; }
+.cr-snip { font-size: 12px; line-height: 1.5; color: var(--ink); opacity: .85; margin-top: 2px; }
+.cr-codef .input { width: 9em; text-transform: uppercase; letter-spacing: 1px; }
+.cr-inv-note { font-size: 12px; }
+.cr-codes { display: grid; gap: 6px; margin-bottom: 8px; }
+.cr-code { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; border: 2px dashed rgba(59,43,43,.3); padding: 4px 8px; }
+.cr-code .vcode { font-size: 16px; } .cr-code small { flex: 1; font-size: 11px; color: var(--ink-soft); }
+.cr-newcode { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; } .cr-newcode .input { width: auto; }
+.cr-qr { display: grid; gap: 10px; justify-items: center; }
+.cr-qr-card { display: grid; justify-items: center; gap: 6px; border: var(--px) solid var(--ink); background: var(--paper); padding: 12px 16px; box-shadow: 4px 4px 0 var(--ink); }
+.cr-qr-img canvas { width: 220px; height: 220px; image-rendering: pixelated; display: block; border: 2px solid var(--ink); }
+.cr-qr-card small { font-size: 11px; color: var(--ink-soft); }
+.cr-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
