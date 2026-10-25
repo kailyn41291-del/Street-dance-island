@@ -241,8 +241,26 @@ window.App = {
     tcache[key] = res; saveT();
     return res;
   }
+  // 活動名稱：只翻名稱裡的中文詞（例如「預賽」「決賽圈」），英文的活動名、品牌名保留原樣
+  const HAN = /[\u3400-\u9fff]+/g;
+  async function trName(name, to) {
+    const parts = [...new Set(name.match(HAN) || [])];
+    if (!parts.length) return null;
+    const out = await Promise.all(parts.map(p => trText(p, to)));
+    if (!out.some(Boolean)) return null;
+    const cap = w => (to === 'en' ? w.replace(/^./, c => c.toUpperCase()) : w);
+    let r = name; parts.forEach((p, i) => { if (out[i]) r = r.split(p).join(to === 'ja' ? out[i] : ' ' + cap(out[i]) + ' '); });
+    r = r.replace(/\s+/g, ' ').replace(/（\s*/g, to === 'ja' ? '（' : ' (').replace(/\s*）/g, to === 'ja' ? '）' : ')').trim();
+    return r;
+  }
+  A.trName = trName;
   A.translateCards = root => {
     const to = I18N.lang;
+    if (to !== 'zh') root.querySelectorAll('h3[data-trn]').forEach(async el => {
+      const orig = el.dataset.orig || el.textContent; el.dataset.orig = orig;
+      const tr = await trName(orig, to);
+      if (tr && el.isConnected && I18N.lang === to) { el.textContent = tr; el.title = orig; }
+    });
     root.querySelectorAll('dd[data-tr]').forEach(async dd => {
       const orig = dd.dataset.orig || dd.textContent;
       dd.dataset.orig = orig;

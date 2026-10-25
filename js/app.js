@@ -690,7 +690,7 @@
       <div class="main">
         <div class="tags">${(e.styles || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('')}
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}${App.viewTag ? App.viewTag(e) : ''}</div>
-        <h3>${esc(e.name)}</h3>
+        <h3 data-trn>${esc(e.name)}</h3>
         ${opt.place ? `<div class="place-tag">📍 ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
         <dl class="info">${e.organizer ? `<dt>${t('r_org')}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${k}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}</dl>
         ${App.cardResults(e)}
