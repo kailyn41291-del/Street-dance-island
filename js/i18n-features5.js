@@ -1,6 +1,7 @@
 /* 多國語言（第六部分）：論壇、討論串、Battle 討論區、推薦活動 */
 I18N.extend({
   zh: {
+    fo_att: '附件', fo_add_img: '照片', fo_add_vid: '影片 MP4', fo_yt_ph: '或貼 YouTube 連結', fo_att_rule: '最多 4 張照片（每張 5MB 內）＋ 1 支影片（MP4，50MB 內）或 1 個 YouTube 連結', fo_img_max: '最多 4 張照片', fo_yt_bad: 'YouTube 連結看起來不對', fo_att_bad: '附件或投票格式不對', fo_uploading: '上傳中 {n}/{t}…', fo_poll_add: '加入投票', fo_poll_q: '投票題目，例如：你覺得誰該贏？', fo_poll_opt: '選項 {n}', fo_poll_more: '新增選項', fo_poll_need: '請填投票題目和至少 2 個選項', fo_poll_n: '共 {n} 票', fo_poll_voted: '你已經投過了',
     arc_forum: '舞者論壇', arc_forum_d: '發主題、留言回覆、找舞伴',
     fo_title: '舞者論壇', fo_intro: '聊練舞、找 Crew、分享活動情報都可以！新主題要等管理員審核通過才會公開，回覆留言不用審核。',
     fo_all: '全部', fo_cat: '分類', fo_cat_chat: '閒聊', fo_cat_crew: '找舞伴 / Crew', fo_cat_skill: '練舞技巧', fo_cat_event: '活動情報', fo_cat_music: '音樂', fo_cat_other: '其他',
@@ -17,6 +18,7 @@ I18N.extend({
     rc_title: '為你推薦', rc_intro: '依照你的舞風 {s}、收藏和打卡紀錄挑選的活動', rc_style: '符合你的舞風 {s}', rc_like: '跟你收藏的活動很像', rc_home: '在你的國家', rc_soon: '快開始了', rc_reg: '報名中'
   },
   en: {
+    fo_att: 'Attachments', fo_add_img: 'Photos', fo_add_vid: 'Video (MP4)', fo_yt_ph: 'or paste a YouTube link', fo_att_rule: 'Up to 4 photos (5MB each) + 1 video (MP4, 50MB) or 1 YouTube link', fo_img_max: 'Up to 4 photos', fo_yt_bad: "That YouTube link doesn't look right", fo_att_bad: 'Attachment or poll format is invalid', fo_uploading: 'Uploading {n}/{t}…', fo_poll_add: 'Add a poll', fo_poll_q: 'Poll question, e.g. Who should have won?', fo_poll_opt: 'Option {n}', fo_poll_more: 'Add option', fo_poll_need: 'Add a question and at least 2 options', fo_poll_n: '{n} votes', fo_poll_voted: 'You voted',
     arc_forum: 'Dancer forum', arc_forum_d: 'Start topics, reply, find a crew',
     fo_title: 'Dancer forum', fo_intro: 'Talk training, find a crew, share event news! New topics appear after an admin approves them. Replies go live right away.',
     fo_all: 'All', fo_cat: 'Category', fo_cat_chat: 'Chat', fo_cat_crew: 'Find partners / crew', fo_cat_skill: 'Technique', fo_cat_event: 'Event news', fo_cat_music: 'Music', fo_cat_other: 'Other',
@@ -33,6 +35,7 @@ I18N.extend({
     rc_title: 'Recommended for you', rc_intro: 'Picked from your style {s}, favorites and check-ins', rc_style: 'Matches your style {s}', rc_like: 'Like events you saved', rc_home: 'In your country', rc_soon: 'Coming up soon', rc_reg: 'Sign-ups open'
   },
   ja: {
+    fo_att: '添付', fo_add_img: '写真', fo_add_vid: '動画 MP4', fo_yt_ph: 'または YouTube リンク', fo_att_rule: '写真 4 枚まで（各 5MB）＋ 動画 1 本（MP4、50MB）または YouTube リンク 1 つ', fo_img_max: '写真は 4 枚まで', fo_yt_bad: 'YouTube リンクが正しくないようです', fo_att_bad: '添付か投票の形式が正しくありません', fo_uploading: 'アップロード中 {n}/{t}…', fo_poll_add: '投票を追加', fo_poll_q: '投票のお題（例：勝つべきだったのは？）', fo_poll_opt: '選択肢 {n}', fo_poll_more: '選択肢を追加', fo_poll_need: 'お題と選択肢を 2 つ以上入力してね', fo_poll_n: '{n} 票', fo_poll_voted: '投票済み',
     arc_forum: 'ダンサー掲示板', arc_forum_d: 'トピック作成・返信・仲間探し',
     fo_title: 'ダンサー掲示板', fo_intro: '練習の話、クルー探し、イベント情報なんでも OK！新しいトピックは管理者の承認後に公開されます。返信はすぐ反映されます。',
     fo_all: 'すべて', fo_cat: 'カテゴリ', fo_cat_chat: '雑談', fo_cat_crew: '仲間・クルー募集', fo_cat_skill: 'テクニック', fo_cat_event: 'イベント情報', fo_cat_music: '音楽', fo_cat_other: 'その他',
@@ -49,6 +52,7 @@ I18N.extend({
     rc_title: 'あなたへのおすすめ', rc_intro: 'ジャンル {s}、お気に入り、チェックインから選んだイベント', rc_style: 'あなたのジャンル {s}', rc_like: 'お気に入りに似ている', rc_home: 'あなたの国', rc_soon: 'もうすぐ開催', rc_reg: 'エントリー受付中'
   },
   ko: {
+    fo_att: '첨부', fo_add_img: '사진', fo_add_vid: '영상 MP4', fo_yt_ph: '또는 YouTube 링크', fo_att_rule: '사진 4장(각 5MB) + 영상 1개(MP4, 50MB) 또는 YouTube 링크 1개', fo_img_max: '사진은 4장까지', fo_yt_bad: 'YouTube 링크가 이상해요', fo_att_bad: '첨부나 투표 형식이 잘못됐어요', fo_uploading: '업로드 중 {n}/{t}…', fo_poll_add: '투표 추가', fo_poll_q: '투표 질문 (예: 누가 이겼어야 했을까?)', fo_poll_opt: '선택지 {n}', fo_poll_more: '선택지 추가', fo_poll_need: '질문과 선택지 2개 이상을 입력해 주세요', fo_poll_n: '{n}표', fo_poll_voted: '투표 완료',
     arc_forum: '댄서 게시판', arc_forum_d: '주제 작성·댓글·크루 찾기',
     fo_title: '댄서 게시판', fo_intro: '연습 이야기, 크루 찾기, 이벤트 정보 모두 환영! 새 주제는 관리자 승인 후 공개되고, 댓글은 바로 올라가요.',
     fo_all: '전체', fo_cat: '분류', fo_cat_chat: '잡담', fo_cat_crew: '파트너·크루 찾기', fo_cat_skill: '테크닉', fo_cat_event: '이벤트 정보', fo_cat_music: '음악', fo_cat_other: '기타',

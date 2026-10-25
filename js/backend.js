@@ -230,6 +230,13 @@ window.Backend = (() => {
     async reviewPost(id, status) { must(await sb.from('forum_posts').update({ status, reviewed_at: new Date().toISOString() }).eq('id', id)); },
     async pinPost(id, pinned) { must(await sb.from('forum_posts').update({ pinned }).eq('id', id)); },
     async deletePost(id) { must(await sb.from('forum_posts').delete().eq('id', id)); },
+    async uploadForumFile(blob, ext) {
+      const name = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      must(await sb.storage.from('forum').upload(name, blob, { contentType: blob.type, upsert: false }));
+      return sb.storage.from('forum').getPublicUrl(name).data.publicUrl;
+    },
+    async pollVotes(postId) { return must(await sb.from('poll_votes').select('user_id,choice').eq('post_id', postId)); },
+    async pollVote(postId, choice) { must(await sb.from('poll_votes').insert({ post_id: postId, choice })); },
     async replyCounts(threads) { if (!threads.length) return {}; const n = {}; must(await sb.from('replies').select('thread').in('thread', threads)).forEach(r => (n[r.thread] = (n[r.thread] || 0) + 1)); return n; },
     async listReplies(thread) { return must(await sb.from('replies').select('*').eq('thread', thread).order('created_at').limit(500)); },
     async addReply(thread, text, parent_id) { return must(await sb.from('replies').insert({ thread, text, parent_id: parent_id || null }).select().single()); },

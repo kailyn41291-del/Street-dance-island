@@ -127,7 +127,7 @@
       const row = p => `<a class="fo-row ${p.pinned ? 'pinned' : ''}" href="#/forum/${p.id}">
         <span class="fo-ic"></span>
         <span class="fo-main"><span class="fo-top">${p.pinned ? `<span class="tag pin">📌 ${t('fo_pinned')}</span>` : ''}${catTag(p.category)}${p.status === 'pending' ? `<span class="tag wait">⏳ ${t('fo_pending')}</span>` : p.status === 'rejected' ? `<span class="tag rej">${t('fo_rejected')}</span>` : ''}</span>
-          <b class="fo-tt">${esc(p.title)}</b><small>${esc((p.author || {}).name || '')} · ${ago(p.created_at)}</small></span>
+          <b class="fo-tt">${esc(p.title)}</b><span class="fo-flags">${(p.media || []).some(x => x.type === 'image') ? '🖼' : ''}${(p.media || []).some(x => x.type !== 'image') ? '🎬' : ''}${p.poll ? '📊' : ''}</span><small>${esc((p.author || {}).name || '')} · ${ago(p.created_at)}</small></span>
         <span class="fo-n"><span>💬 ${rc(p.id)}</span><span>❤ ${lc(p.id)}</span></span></a>`;
       inner.innerHTML = `<div class="win">${UI.winHTML('🗂 ' + t('fo_title'), 'teal', false)}<div class="win-body">
           <p>${t('fo_intro')}</p>
@@ -145,6 +145,33 @@
     draw();
   };
 
+  /* ---------- 附件（照片 / 影片 / YouTube）和投票 ---------- */
+  const ytId = u => { const m = /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(u || ''); return m ? m[1] : null; };
+  const safeMedia = u => /^https:\/\//.test(u || '');
+  function mediaHTML(media) {
+    if (!Array.isArray(media) || !media.length) return '';
+    const imgs = media.filter(x => x.type === 'image' && safeMedia(x.url)), vid = media.find(x => (x.type === 'video' || x.type === 'youtube') && safeMedia(x.url));
+    return `<div class="fo-media">${vid ? (vid.type === 'youtube' && ytId(vid.url) ? `<div class="fo-video"><iframe src="https://www.youtube.com/embed/${esc(ytId(vid.url))}" title="YouTube" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>` : vid.type === 'video' ? `<div class="fo-video"><video src="${esc(vid.url)}" controls playsinline preload="metadata"></video></div>` : '') : ''}
+      ${imgs.length ? `<div class="fo-imgs n${imgs.length}">${imgs.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener"><img src="${esc(x.url)}" alt="" loading="lazy"></a>`).join('')}</div>` : ''}</div>`;
+  }
+  function pollHTML(post, votes) {
+    const pl = post.poll; if (!pl || !Array.isArray(pl.options)) return '';
+    const mine = votes.find(v => v.user_id === Backend.uid), total = votes.length, show = !!mine || post.status !== 'approved';
+    return `<div class="fo-poll" data-post="${post.id}"><div class="fo-pq">📊 ${esc(pl.q)}</div>${pl.options.map((o, i) => {
+      const n = votes.filter(v => v.choice === i).length, pc = total ? Math.round((n / total) * 100) : 0;
+      return show ? `<div class="fo-po ${mine && mine.choice === i ? 'mine' : ''}"><span class="fo-pl">${esc(o)}</span><span class="fo-pb"><i style="width:${pc}%"></i></span><b>${pc}%</b></div>`
+        : `<button class="fo-po vote" data-c="${i}"><span class="fo-pl">${esc(o)}</span></button>`;
+    }).join('')}<small class="note">${t('fo_poll_n', { n: total })}${show && post.status === 'approved' && mine ? ' · ' + t('fo_poll_voted') : ''}</small></div>`;
+  }
+  // 照片縮成最長 1600px 的 webp（GIF 保留）
+  const shrinkImg = file => new Promise((res, rej) => {
+    if (file.type === 'image/gif') return file.size <= 5 * 1024 * 1024 ? res(file) : rej(new Error('big'));
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, 1600 / Math.max(img.width, img.height)), cv = document.createElement('canvas'); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(u); cv.toBlob(b => (b && b.size <= 5 * 1024 * 1024 ? res(b) : rej(new Error('big'))), 'image/webp', 0.86); };
+    img.onerror = () => rej(new Error('bad')); img.src = u;
+  });
+
   function openNewPost(after) {
     if (!logged()) return Player.prompt();
     const body = h(`<form class="form" novalidate>
@@ -152,13 +179,50 @@
       <label class="field"><span>${t('fo_cat')}</span><select class="input" name="cat">${CATS.map(c => `<option value="${c}">${CAT_IC[c]} ${t('fo_cat_' + c)}</option>`).join('')}</select></label>
       <label class="field full"><span>${t('fo_t')} <b>*</b></span><input class="input" name="title" maxlength="80"></label>
       <label class="field full"><span>${t('fo_body')} <b>*</b></span><textarea class="input fo-ta" name="body" maxlength="2000" rows="7"></textarea></label>
-      <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button class="btn pink">${t('fo_submit')}</button></div></div></form>`);
+      <div class="field full fo-att"><span>📎 ${t('fo_att')}</span>
+        <div class="fo-att-btns"><label class="btn sm">🖼 ${t('fo_add_img')}<input type="file" name="imgs" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden></label>
+          <label class="btn sm">🎬 ${t('fo_add_vid')}<input type="file" name="vid" accept="video/mp4" hidden></label>
+          <input class="input sm" name="yt" type="url" placeholder="${esc(t('fo_yt_ph'))}"></div>
+        <div class="fo-att-prev"></div><small class="note">${t('fo_att_rule')}</small></div>
+      <div class="field full fo-pollf"><label class="chk"><input type="checkbox" name="poll"> 📊 ${t('fo_poll_add')}</label>
+        <div class="fo-poll-ed" hidden><input class="input" name="pq" maxlength="100" placeholder="${esc(t('fo_poll_q'))}"><div class="fo-opts"></div><button type="button" class="btn sm add-opt">＋ ${t('fo_poll_more')}</button></div></div>
+      <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button class="btn pink sub">${t('fo_submit')}</button></div></div></form>`);
     const m = modal({ title: '✎ ' + t('fo_new'), color: 'teal', body, wide: true });
+    const E = body.elements, err = body.querySelector('.err'), prev = body.querySelector('.fo-att-prev');
+    let imgs = [], vid = null;
+    const drawPrev = () => {
+      prev.innerHTML = imgs.map((f, i) => `<span class="fo-th"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" data-ri="${i}">✕</button></span>`).join('') + (vid ? `<span class="fo-th vid">🎬 ${esc(vid.name.slice(0, 18))}<button type="button" data-rv>✕</button></span>` : '');
+    };
+    prev.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.ri != null) imgs.splice(+b.dataset.ri, 1); if (b.dataset.rv != null) vid = null; drawPrev(); };
+    E.imgs.onchange = () => { const fs = [...E.imgs.files].filter(f => /^image\/(png|jpeg|webp|gif)$/.test(f.type)); E.imgs.value = ''; imgs = imgs.concat(fs).slice(0, 4); if (fs.length + imgs.length > 4) toast(t('fo_img_max'), '🖼'); drawPrev(); };
+    E.vid.onchange = () => { const f = E.vid.files[0]; E.vid.value = ''; if (!f) return; if (f.type !== 'video/mp4' || f.size > 50 * 1024 * 1024) { toast(t('bt_mp4_bad'), '✕'); return; } vid = f; E.yt.value = ''; drawPrev(); };
+    E.yt.oninput = () => { if (E.yt.value.trim()) { vid = null; drawPrev(); } };
+    // 投票選項
+    const opts = body.querySelector('.fo-opts');
+    const addOpt = (v = '') => { if (opts.children.length >= 6) return; opts.appendChild(h(`<div class="fo-opt"><input class="input sm" maxlength="40" placeholder="${esc(t('fo_poll_opt', { n: opts.children.length + 1 }))}" value="${esc(v)}"><button type="button" class="btn sm rm">✕</button></div>`)); };
+    addOpt(); addOpt();
+    opts.onclick = e => { if (e.target.closest('.rm') && opts.children.length > 2) { e.target.closest('.fo-opt').remove(); [...opts.querySelectorAll('input')].forEach((x, i) => (x.placeholder = t('fo_poll_opt', { n: i + 1 }))); } };
+    body.querySelector('.add-opt').onclick = () => addOpt();
+    E.poll.onchange = () => { body.querySelector('.fo-poll-ed').hidden = !E.poll.checked; };
     body.onsubmit = async ev => {
       ev.preventDefault();
-      const v = k => body.elements[k].value.trim(), err = body.querySelector('.err');
+      const v = k => E[k].value.trim();
       if (v('title').length < 2 || !v('body')) { err.textContent = '✕ ' + t('fo_need'); return; }
-      try { await Backend.addPost({ category: v('cat'), title: v('title'), body: v('body') }); } catch (x) { SFX.play('error'); err.textContent = '✕ ' + errMsg(x); return; }
+      let poll = null;
+      if (E.poll.checked) {
+        const o = [...opts.querySelectorAll('input')].map(x => x.value.trim()).filter(Boolean);
+        if (!v('pq') || o.length < 2) { err.textContent = '✕ ' + t('fo_poll_need'); return; }
+        poll = { q: v('pq'), options: o };
+      }
+      const yt = v('yt'); if (yt && !ytId(yt)) { err.textContent = '✕ ' + t('fo_yt_bad'); return; }
+      const btn = body.querySelector('.sub'); btn.disabled = true;
+      try {
+        const media = [];
+        for (let i = 0; i < imgs.length; i++) { btn.textContent = t('fo_uploading', { n: i + 1, t: imgs.length + (vid ? 1 : 0) }); const b = await shrinkImg(imgs[i]); media.push({ type: 'image', url: await Backend.uploadForumFile(b, b.type === 'image/gif' ? 'gif' : 'webp') }); }
+        if (vid) { btn.textContent = t('fo_uploading', { n: imgs.length + 1, t: imgs.length + 1 }); media.push({ type: 'video', url: await Backend.uploadForumFile(vid, 'mp4') }); }
+        else if (yt) media.unshift({ type: 'youtube', url: yt });
+        await Backend.addPost({ category: v('cat'), title: v('title'), body: v('body'), media: media.length ? media : null, poll });
+      } catch (x) { SFX.play('error'); btn.disabled = false; btn.textContent = t('fo_submit'); err.textContent = '✕ ' + (/big/.test(x.message) ? t('dm_img_big') : /bad media|bad poll/.test(x.message) ? t('fo_att_bad') : errMsg(x)); return; }
       m.close(); SFX.play('coin');
       npc.say([{ who: 'kailyn', mood: 'thumbs', text: t('fo_sent_k') }, { who: 'choco', mood: 'ok', text: t('fo_sent_c') }]);
       after && after();
@@ -166,14 +230,14 @@
   }
 
   async function postView(inner, id) {
-    let p = null, likes = [];
-    try { p = await Backend.forumPost(id); likes = await Backend.likesFor(['p:' + id]); } catch (x) {}
+    let p = null, likes = [], votes = [];
+    try { [p, likes, votes] = await Promise.all([Backend.forumPost(id), Backend.likesFor(['p:' + id]), Backend.pollVotes(id).catch(() => [])]); } catch (x) {}
     if (!p) { inner.innerHTML = `<p class="note">${t('fo_gone')}</p><a class="btn" href="#/forum">◀ ${t('fo_back')}</a>`; return; }
     const draw = () => {
       const mine = likes.some(l => l.user_id === Backend.uid), own = p.user_id === Backend.uid, adm = Backend.isAdmin;
       inner.innerHTML = `<div class="win fo-post">${UI.winHTML(`${CAT_IC[p.category] || ''} ${esc(p.title)}`, p.pinned ? 'yellow' : 'teal', false)}<div class="win-body">
           <div class="fo-meta"><span class="fo-ic"></span>${byline(p.author)}<span class="tm">${ago(p.created_at)}</span>${catTag(p.category)}${p.pinned ? `<span class="tag pin">📌 ${t('fo_pinned')}</span>` : ''}${p.status !== 'approved' ? `<span class="tag wait">⏳ ${t(p.status === 'pending' ? 'fo_pending' : 'fo_rejected')}</span>` : ''}</div>
-          <div class="fo-body" data-utr>${Emoji.toHTML(p.body)}</div>
+          <div class="fo-body" data-utr>${Emoji.toHTML(p.body)}</div>${mediaHTML(p.media)}${pollHTML(p, votes)}
           <div class="btn-row"><a class="btn sm" href="#/forum">◀ ${t('fo_back')}</a><button class="btn sm ${mine ? 'pink' : ''} lk">❤ ${likes.length}</button><span class="grow"></span>
             ${adm && p.status === 'approved' ? `<button class="btn sm yellow pin">📌 ${p.pinned ? t('fo_unpin') : t('fo_pin')}</button>` : ''}
             ${own || adm ? `<button class="btn sm red del">${t('b_del')}</button>` : ''}</div>
@@ -181,6 +245,10 @@
         ${p.status === 'approved' ? `<div class="win">${UI.winHTML('💬 ' + t('fo_replies'), 'blue', false)}<div class="win-body thr-box"></div></div>` : `<p class="note">${t('fo_wait_note')}</p>`}`;
       inner.querySelector('.fo-ic').appendChild(headIcon((p.author || {}).look));
       const box = inner.querySelector('.thr-box'); if (box) mountThread(box, 'p:' + id);
+      inner.querySelectorAll('.fo-poll .vote').forEach(b => b.onclick = async () => {
+        if (!logged()) return Player.prompt();
+        try { await Backend.pollVote(id, +b.dataset.c); SFX.play('coin'); votes = await Backend.pollVotes(id); draw(); } catch (x) { toast(errMsg(x), '✕'); }
+      });
       inner.querySelector('.lk').onclick = async e => {
         if (!logged()) return Player.prompt();
         try { mine ? await Backend.unlike('p:' + id) : await Backend.like('p:' + id); if (!mine) { SFX.play('coin'); sparkle(e.clientX, e.clientY, 8); } likes = await Backend.likesFor(['p:' + id]); draw(); } catch (x) { toast(errMsg(x), '✕'); }
@@ -200,7 +268,7 @@
       pane.innerHTML = rows.length ? '' : `<p class="note">${t('adm_none')}</p>`;
       rows.forEach(p => {
         const el = h(`<div class="fo-review"><div class="fo-meta">${catTag(p.category)}<b>${esc((p.author || {}).name || '')}</b> <span class="tag">@${esc((p.author || {}).handle || '')}</span><span class="tm">${ago(p.created_at)}</span></div>
-          <h4>${esc(p.title)}</h4><div class="fo-body">${Emoji.toHTML(p.body)}</div>
+          <h4>${esc(p.title)}</h4><div class="fo-body">${Emoji.toHTML(p.body)}</div>${mediaHTML(p.media)}${pollHTML(p, [])}
           <div class="btn-row"><button class="btn sm green ok">✓ ${t('adm_approve')}</button><button class="btn sm red no">✕ ${t('adm_reject')}</button></div></div>`);
         el.querySelector('.ok').onclick = async () => { try { await Backend.reviewPost(p.id, 'approved'); SFX.play('fanfare'); toast(t('adm_done'), '✔'); el.remove(); } catch (x) { fail(x); } };
         el.querySelector('.no').onclick = async () => { try { await Backend.reviewPost(p.id, 'rejected'); toast(t('adm_done'), '✕'); el.remove(); } catch (x) { fail(x); } };
