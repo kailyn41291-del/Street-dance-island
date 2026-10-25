@@ -63,6 +63,19 @@ def near(lon, ref):
     while lon - ref < -180: lon += 360
     return lon
 
+def in_poly(x, y, poly):
+    inside = False
+    j = len(poly) - 1
+    for i in range(len(poly)):
+        xi, yi = poly[i]; xj, yj = poly[j]
+        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi: inside = not inside
+        j = i
+    return inside
+
+def on_land(lon, lat, polys, tol=0.35):
+    if any(in_poly(lon, lat, p) for p in polys): return True
+    return any(math.hypot(lon - a, lat - b) < tol for p in polys for a, b in p)
+
 def slug(s):
     s = re.sub(r'[^a-z0-9]+', '-', s.lower()).strip('-')
     return s or 'city'
@@ -122,15 +135,20 @@ for f in feats:
     # cities: curated first, then biggest NE cities (spaced apart)
     cities = [dict(x) for x in curated.get(code, [])]
     for x in cities: x['lon'] = near(x['lon'], mlon_c)
-    spacing = max(0.25, ext * 0.12)
+    # 城市數量依國家大小：小國 6 個、大國最多 30 個
+    land = sum(area(r) for r in keep) * math.cos(math.radians(mlat))
+    limit = max(6, min(30, round(5 + math.sqrt(land) * 2.5)))
+    limit = max(limit, len(cities))
+    spacing = max(0.1, ext * 0.02)
     cand = sorted(by_a3.get(a3, []), key=lambda q: (-(q.get('ADM0CAP') or 0), -(q.get('POP_MAX') or 0)))
-    limit = 6 if not cities else max(len(cities), 6)
     for q in cand:
         if len(cities) >= limit: break
         lon, lat = near(q['LONGITUDE'], mlon_c), q['LATITUDE']
+        if not on_land(lon, lat, keep): continue          # 海外領地等不在地圖上的城市略過
         if any(math.hypot(lon - x['lon'], lat - x['lat']) < spacing for x in cities): continue
         nm = (q.get('NAME_ZHT') or q['NAME']).replace('市社', '')
-        if any(x['name'] == nm for x in cities): continue
+        base = lambda n: re.sub(r'(廣域市|特別市|特別自治市|市|縣|郡)$', '', n)
+        if any(base(x['name']) == base(nm) or (x.get('n', {}).get('en', '').lower() == (q.get('NAME_EN') or q['NAME']).lower()) for x in cities): continue
         cid = slug(q.get('NAMEASCII') or q['NAME'])
         while any(x['id'] == cid for x in cities): cid += '-2'
         cities.append({'id': cid, 'name': nm, 'n': {'en': q.get('NAME_EN') or q['NAME'], 'ja': q.get('NAME_JA') or q['NAME'], 'ko': q.get('NAME_KO') or q['NAME']},

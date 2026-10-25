@@ -2,7 +2,7 @@
  * 像素繪圖：把國家輪廓轉成像素島嶼、角色 sprite、像素 icon
  * ========================================================= */
 window.PX = (() => {
-  const C = {
+  const CC = {
     ink: '#3b2b2b',
     grass: '#8fd17e', grass2: '#7cc06c', grassHi: '#b4e59a',
     sand: '#f6dfae', sand2: '#ecc98a',
@@ -79,6 +79,7 @@ window.PX = (() => {
    * 回傳 { island: canvas, base: canvas(倒影/浪花), w, h }
    */
   function drawIsland(grid, cell, opt = {}) {
+    const C = { ...CC, ...(opt.pal || {}) };     // 國家主題可以換島嶼顏色
     const depth = opt.depth ?? 3;
     const seed = opt.seed ?? 1;
     const { w, h, cells, ids } = grid;
@@ -237,5 +238,5 @@ window.PX = (() => {
     flag:  icon(['#.......', '######..', '#######.', '######..', '#.......', '#.......', '#.......', '#.......'])
   };
 
-  return { C, rasterize, rasterizeXY, drawIsland, dancer, drawSprite, ICONS, hash, HEADS, ACCS, SWATCH, LOOK_DEFAULT };
+  return { C: CC, rasterize, rasterizeXY, drawIsland, dancer, drawSprite, ICONS, hash, HEADS, ACCS, SWATCH, LOOK_DEFAULT };
 })();

@@ -30,6 +30,7 @@
   const draw = r => {
     stage.innerHTML = '';
     current = r;
+    Themes.apply(r.view === 'world' ? null : byCode[r.cc]);
     if (r.view === 'world') WorldView();
     else if (r.view === 'country') CountryView(byCode[r.cc]);
     else CityView(byCode[r.cc], cityOf(r.cc, r.city));
@@ -403,8 +404,10 @@
     const availW = mobile ? innerWidth - 40 : innerWidth - 300 - 100;
     const availH = mobile ? innerHeight * 0.62 : innerHeight - 170;
     const cell = Math.max(2, Math.min(12, Math.floor(Math.min(availW / grid.w, availH / (grid.h + depth)))));
-    const art = PX.drawIsland(grid, cell, { depth, seed: 99 });
+    const theme = Themes.of(c);
+    const art = PX.drawIsland(grid, cell, { depth, seed: 99, pal: theme && theme.isle });
     const wrap = view.querySelector('.map-wrap');
+    const fxl = Themes.fx(c); if (fxl) view.prepend(fxl);
     const big = h(`<div class="big-isle" style="width:${art.w}px;height:${art.h}px"><div class="float"><div class="pins"></div></div></div>`);
     art.base.className = 'base'; art.base.style.left = -art.pad + 'px'; art.base.style.top = -art.pad + 'px';
     big.prepend(art.base);
@@ -421,10 +424,10 @@
       const n = Store.byCity(c.code, city.id).length, name = nm(city);
       const lw = [...name].reduce((s, ch) => s + (ch.charCodeAt(0) > 255 ? 13 : 8), 0) + 34 + (n ? 22 : 0);
       const rect = side => side === 'l' ? [x - lw, y - 26, x + 9, y] : [x - 9, y - 26, x + lw, y];
-      let side = city.label || 'r';
-      if (hit(rect(side))) side = side === 'l' ? 'r' : 'l';
-      placed.push(rect(side));
-      const pin = h(`<button class="pin ${side} ${n ? 'has' : ''}" style="left:${x}px;top:${y}px">
+      let side = city.label || 'r', nolabel = false;
+      if (hit(rect(side))) { side = side === 'l' ? 'r' : 'l'; if (hit(rect(side))) { nolabel = !n; side = city.label || 'r'; } }
+      if (nolabel) placed.push([x - 9, y - 26, x + 9, y]); else placed.push(rect(side));
+      const pin = h(`<button class="pin ${side} ${n ? 'has' : ''} ${nolabel ? 'nolabel' : ''}" style="left:${x}px;top:${y}px" aria-label="${esc(name)}">
         <i class="gem"></i><span class="name">${esc(name)}${n ? `<span class="cnt">${n}</span>` : ''}</span></button>`);
       pin.style.transform = side === 'l' ? 'translate(calc(-100% + 9px), -100%)' : 'translate(-9px, -100%)';
       pin.addEventListener('mouseenter', () => SFX.play('hover'));
@@ -434,7 +437,7 @@
     wrap.appendChild(big);
 
     const total = Store.byCountry(c.code).length;
-    const menu = h(`<div class="win city-menu">${winHTML(t('choose_city', { c: esc(nm(c)) }), 'pink', false)}
+    const menu = h(`<div class="win city-menu">${winHTML((theme ? theme.icon + ' ' : '') + t('choose_city', { c: esc(nm(c)) }), 'pink', false)}
       <div class="win-body"><div class="country-head">${esc(c.en)} — ${total} EVENTS</div><ul class="city-list"></ul></div></div>`);
     const ul = menu.querySelector('.city-list');
     [...c.cities].sort((a, b) => Store.byCity(c.code, b.id).length - Store.byCity(c.code, a.id).length).forEach(city => {
@@ -461,6 +464,7 @@
     const st = calState[key] || (calState[key] = { y: now.getFullYear(), m: now.getMonth(), mode: 'upcoming', styles: new Set(), day: null });
     const view = h(`<div class="view city-view"><div class="city-inner"></div></div>`);
     const inner = view.querySelector('.city-inner');
+    const fxl = Themes.fx(c); if (fxl) view.prepend(fxl);
     stage.appendChild(view);
     const cN = esc(nm(c)), ciN = esc(nm(city));
 
