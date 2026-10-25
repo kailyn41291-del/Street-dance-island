@@ -41,8 +41,8 @@ window.UI = (() => {
   /* 嚮導 Kailyn：一般用全身形象，對話框裡依照說的話換表情 */
   const Kailyn = (() => {
     const MOODS = ['happy', 'smug', 'angry', 'sad', 'surprised', 'shy', 'laugh', 'cry', 'helpless', 'confused', 'cool', 'thumbs', 'love', 'cheer', 'celebrate', 'sleepy', 'daze', 'tsundere', 'please', 'ok'];
-    const url = m => `assets/kailyn/${MOODS.includes(m) ? m : 'happy'}.webp`;
-    const FULL = 'assets/kailyn/full.webp';
+    const url = m => `assets/kailyn/${MOODS.includes(m) ? m : 'happy'}.webp?v=2`;
+    const FULL = 'assets/kailyn/full.webp?v=2';
     // 預先載入，換表情時不會閃
     const preload = () => [...MOODS.map(url), FULL].forEach(u => { const i = new Image(); i.src = u; });
     // 沒有指定表情時，依照句子內容猜

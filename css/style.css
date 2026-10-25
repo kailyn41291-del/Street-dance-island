@@ -939,7 +939,7 @@ details summary { cursor: pointer; margin: 10px 0; }
 .choose-k { height: 120px; }
 #npc .face, .tut .face { width: 92px; height: 92px; }
 @media (max-width: 760px) { #npc .face, .tut .face { width: 64px; height: 64px; } .k-hero { height: 80px; } }
-.msg .k-ico { object-fit: cover; object-position: 50% 15%; background: #fff6dc; }
+.msg .k-ico { object-fit: cover; object-position: 50% 3%; background: #fff6dc; }
 .passport > .note { grid-column: 1 / -1; }
 
 /* 對話框：Choco 說話時頭像在右邊、名牌換藍色 */
@@ -1136,3 +1136,5 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .rc-item { display: grid; gap: 4px; }
 .rc-why { display: flex; flex-wrap: wrap; gap: 4px; }
 .rc-why .tag { background: #fff3c9; }
+/* Kailyn 新貼圖是全身圖：對話框裡只看上半身 */
+.k-face img[src*="assets/kailyn/"] { object-fit: cover; object-position: 50% 4%; }

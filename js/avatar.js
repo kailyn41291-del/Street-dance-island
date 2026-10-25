@@ -429,7 +429,7 @@ window.Avatar = (() => {
   const cache = new Map();
   // 「本人造型」：直接用原畫的專屬角色（kailyn = 網站架設者；choco = bboychoco 本人）
   const SKINS = {
-    kailyn: { full: 'assets/kailyn/full.webp', head: 'assets/kailyn/cool.webp' },
+    kailyn: { full: 'assets/kailyn/full.webp?v=2', head: 'assets/kailyn/happy.webp?v=2' },
     choco:  { full: 'assets/skins/choco.webp', head: 'assets/skins/choco_head.webp', handle: 'bboychoco' }
   };
   Object.values(SKINS).forEach(s => { s.img = new Image(); s.img.src = s.full; });
