@@ -773,3 +773,5 @@ body[data-theme="hk"] .win-title { text-shadow: 0 0 4px #fff, 0 0 8px #ff3d8b; }
 @media (max-width: 760px) {
   .cd-ticker { top: 104px; font-size: 12px; }
 }
+.info dd { white-space: pre-line; }
+.tr-orig { display: inline-block; margin-left: 6px; border: 0; background: none; font-size: 10px; color: #3a6ea8; padding: 0; text-decoration: underline dotted; }

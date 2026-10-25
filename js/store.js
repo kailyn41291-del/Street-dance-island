@@ -34,7 +34,13 @@ window.Store = (() => {
   let remote = [];
   let loaded = false;
 
-  const all = () => (cloud() ? remote.map(e => ({ ...e, _src: 'cloud' })) : localAll()).sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+  // 雲端模式：雲端活動 + 寫在網站裡的活動（雲端有同 ID 的就以雲端為準；_deleted 代表管理員刪掉了）
+  const cloudAll = () => {
+    const ids = new Set(remote.map(e => e.id));
+    return remote.filter(e => !e._deleted).map(e => ({ ...e, _src: 'cloud' }))
+      .concat(seed().filter(e => !ids.has(e.id)).map(e => ({ ...e, _src: 'seed' })));
+  };
+  const all = () => (cloud() ? cloudAll() : localAll()).sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
 
   return {
     STYLES, STYLE_COLOR,
@@ -63,7 +69,13 @@ window.Store = (() => {
       return e;
     },
     async remove(id) {
-      if (cloud()) { await Backend.deleteEvent(id); remote = remote.filter(x => x.id !== id); return; }
+      if (cloud()) {
+        if (seed().some(e => e.id === id)) {                 // 網站內建的活動：在雲端留一筆「已刪除」標記
+          const mark = { id, _deleted: true };
+          await Backend.upsertEvent(mark); remote = remote.filter(x => x.id !== id).concat(mark);
+        } else { await Backend.deleteEvent(id); remote = remote.filter(x => x.id !== id); }
+        return;
+      }
       delete state.added[id];
       if (seed().some(e => e.id === id) && !state.removed.includes(id)) state.removed.push(id);
       save();

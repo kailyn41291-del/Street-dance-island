@@ -8,7 +8,7 @@
  * ========================================================= */
 window.App = {
   views: {}, crumbs: {},
-  cardExtras: () => '', cardResults: () => '',
+  cardExtras: () => '', cardResults: () => '', translateCards: () => {},
   onCardAct: () => false, worldExtras: null
 };
 
@@ -151,6 +151,36 @@ window.App = {
     };
   }
 
+  /* ---------- 活動資訊自動翻譯（費用、報名方式、備註；名稱 / 主辦 / 地址保持原文） ---------- */
+  const TKEY = 'danceIsland.tr.v1';
+  let tcache = {};
+  try { tcache = JSON.parse(localStorage.getItem(TKEY)) || {}; } catch (x) {}
+  const saveT = () => { try { const k = Object.keys(tcache); if (k.length > 600) k.slice(0, 200).forEach(x => delete tcache[x]); localStorage.setItem(TKEY, JSON.stringify(tcache)); } catch (x) {} };
+  async function trText(text, to) {
+    const key = to + '|' + text;
+    if (tcache[key] !== undefined) return tcache[key];
+    // 一行一行翻，保留換行
+    const lines = text.split('\n');
+    const out = await Promise.all(lines.map(l => (l.trim() ? Social.translate(l, to) : Promise.resolve(null))));
+    const res = out.some(Boolean) ? lines.map((l, i) => out[i] || l).join('\n') : null;
+    tcache[key] = res; saveT();
+    return res;
+  }
+  A.translateCards = root => {
+    const to = I18N.lang;
+    root.querySelectorAll('dd[data-tr]').forEach(async dd => {
+      const orig = dd.dataset.orig || dd.textContent;
+      dd.dataset.orig = orig;
+      const tr = await trText(orig, to);
+      if (!tr || !dd.isConnected || I18N.lang !== to) return;
+      dd.textContent = tr;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'tr-orig'; b.textContent = '🌐 ' + t('tr_show_orig');
+      b.onclick = ev => { ev.stopPropagation(); const showOrig = b.dataset.o !== '1'; b.dataset.o = showOrig ? '1' : ''; dd.firstChild.textContent = showOrig ? orig : tr; b.textContent = '🌐 ' + t(showOrig ? 'tr_show_tr' : 'tr_show_orig'); };
+      dd.textContent = ''; dd.append(document.createTextNode(tr), b);
+    });
+  };
+
   /* ---------- 活動卡片多出來的按鈕 ---------- */
   A.cardExtras = (e, past) => `
     <button class="btn sm" data-act="cal" data-ev="${esc(e.id)}">📅 ${t('b_cal')}</button>
@@ -240,6 +270,7 @@ window.App = {
       });
       listEl.innerHTML = html || `<div class="win empty"><div class="win-body"><p>${t('ev_none')}</p></div></div>`;
       A.loadCommentCounts(listEl);
+      A.translateCards(listEl);
     };
     let tmr;
     inner.querySelector('.q').oninput = ev => { fs.q = ev.target.value; clearTimeout(tmr); tmr = setTimeout(draw, 200); };

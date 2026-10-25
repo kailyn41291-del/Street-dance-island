@@ -510,6 +510,7 @@
         <div class="list-head">${head} <span class="badge">${list.length}</span></div>
         <div class="cards">${list.length ? list.map((e, i) => cardHTML(e, i, today, canEdit)).join('') : emptyHTML(city, canEdit)}</div>`;
 
+      App.translateCards(inner);
       if (!list.length) {
         const d = PX.dancer(5, myLook());
         inner.querySelector('.empty .win-body').prepend(d.el);
@@ -662,7 +663,7 @@
     const rows = [
       [t('r_when'), `${dateStr}${timeStr ? '　' + timeStr : ''}`],
       [t('r_venue'), [e.venue, e.address].filter(Boolean).join('｜')], [t('r_reg'), reg],
-      [t('r_method'), e.regMethod], [t('r_fee'), e.fee], [t('r_note'), e.note]
+      [t('r_method'), e.regMethod, 1], [t('r_fee'), e.fee, 1], [t('r_note'), e.note, 1]
     ].filter(r => r[1]);
     return `<article class="card ${e.poster ? 'has-poster' : ''} ${past ? 'past' : ''}" data-id="${esc(e.id)}" style="--i:${i};--c:${color}">
       ${e.poster ? `<button class="poster" data-act="poster" data-ev="${esc(e.id)}" aria-label="${t('poster_zoom')}"><img src="${esc(e.poster)}" alt="${esc(e.name)} ${t('poster')}" loading="lazy"></button>` : ''}
@@ -677,7 +678,7 @@
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}</div>
         <h3>${esc(e.name)}</h3>
         ${opt.place ? `<div class="place-tag">📍 ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
-        <dl class="info">${e.organizer ? `<dt>${t('r_org')}</dt><dd><a class="org-link" href="#/org/${encodeURIComponent(e.organizer)}">${esc(e.organizer)}</a></dd>` : ''}${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+        <dl class="info">${e.organizer ? `<dt>${t('r_org')}</dt><dd><a class="org-link" href="#/org/${encodeURIComponent(e.organizer)}">${esc(e.organizer)}</a></dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${k}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}</dl>
         ${App.cardResults(e)}
       </div>
       <div class="acts">
