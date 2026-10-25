@@ -1431,7 +1431,6 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
   .dm-win.msn { padding: 10px 8px 8px; }
   .msn-deco i:nth-child(n+5) { display: none; }
   .sp-cast { bottom: 70px; }
-  #toasts { bottom: 72px; }
   .modal { max-height: calc(100vh - 80px); }
 }
 /* 平板：按鈕只顯示圖示，避免擠成兩排 */
@@ -1578,3 +1577,74 @@ button.fo-po { grid-template-columns: 1fr; cursor: pointer; } button.fo-po:hover
 .fo-po b { text-align: right; font-variant-numeric: tabular-nums; }
 .fo-flags { font-size: 12px; margin-left: 4px; }
 .fo-video { max-width: 640px; } .fo-imgs { max-width: 640px; }
+
+/* =========================================================
+ * 手機 + 平板（1024px 以下）：重新排版
+ * 上方一條精簡的列、下方導覽列，浮動元件縮小、不互相重疊
+ * ========================================================= */
+@media (max-width: 1024px) {
+  /* 上方列 */
+  #hud { top: 8px; left: 8px; right: 8px; gap: 6px; flex-wrap: wrap; }
+  .logo { padding: 4px 8px; }
+  .logo .en { font-size: 10px; } .logo .zh { display: none; }
+  .hud-spacer { flex: 1; }
+  .hud-btns { gap: 6px; }
+  .hud-btns > .btn { display: none !important; }
+  .hud-btns > .hud-forum, .hud-btns > .hud-battle, .hud-btns > .hud-friends:not(.hidden), .hud-btns > .hud-player { display: inline-flex !important; }
+  .hud-btns > .btn { height: 38px; min-width: 38px; padding: 0 8px; font-size: 12px; box-shadow: 2px 2px 0 var(--ink); }
+  .hud-btns .label { display: none; }
+  .hud-player { padding: 0 8px 0 4px; }
+  .hud-player .sprite { width: 22px; height: 31px; }
+  .hud-ico { font-size: 18px; }
+  /* 路徑：在地圖上不顯示；其他頁面縮成一條細線 */
+  .crumbs { order: 3; width: 100%; font-size: 12px; padding: 3px 8px; box-shadow: 2px 2px 0 var(--ink); overflow-x: auto; }
+  body:has(.world-vp) .crumbs { display: none; }
+  /* 倒數條：只在地圖上出現、變細 */
+  .cd-ticker { top: 56px !important; width: calc(100vw - 16px); max-width: none; padding: 3px 10px; font-size: 12px; box-shadow: 0 0 0 2px var(--yellow); }
+  body:not(:has(.world-vp)) .cd-ticker { display: none; }
+  /* 地圖按鈕：縮小 */
+  .map-ctrls { top: 96px !important; bottom: auto; right: 8px; gap: 6px; }
+  .map-ctrls .btn { width: 38px; height: 38px; min-width: 0; padding: 0; font-size: 15px; box-shadow: 2px 2px 0 var(--ink); }
+  /* 頁面內容避開上方列和下方導覽列 */
+  .city-view, .view.city-view { padding-top: 96px !important; padding-bottom: 90px !important; }
+  .country-view { padding-top: 90px !important; padding-bottom: 90px !important; }
+  /* 下方導覽列（平板也用） */
+  .mnav { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 46; height: calc(56px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+    background: var(--paper); border-top: var(--px) solid var(--ink); box-shadow: 0 -3px 0 rgba(59,43,43,.12); }
+  .mn-b { position: relative; flex: 1; display: grid; justify-items: center; align-content: center; gap: 1px; font: inherit; background: none; border: 0; cursor: pointer; color: var(--ink); padding: 4px 0; }
+  .mn-b + .mn-b { border-left: 2px dashed rgba(59,43,43,.12); }
+  .mn-i { font-size: 20px; line-height: 1; } .mn-l { font-size: 10px; }
+  .mn-b.on { background: #fff3c9; }
+  .mn-b.on .mn-l { font-weight: bold; }
+  .mn-b[data-k="menu"] .mn-i { width: 40px; height: 52px; margin-top: -24px; background: none; border: 0; box-shadow: none; }
+  .mn-b[data-k="menu"] .mn-i img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(1px 2px 0 rgba(59,43,43,.3)); }
+  .hub-phone { display: none !important; }
+  .chat-bar { display: none !important; }
+  .chat { bottom: calc(56px + env(safe-area-inset-bottom)); right: 0; width: 100vw; }
+  .chat-panel { height: calc(100vh - 56px - 110px); }
+  /* 快速傳送：收起來時變成左下角的小按鈕 */
+  .world-menu { left: 8px; right: auto; width: min(320px, calc(100vw - 16px)); bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .world-menu.collapsed { width: auto; }
+  .world-menu.collapsed .win-title { padding: 4px 8px; font-size: 12px; }
+  /* 每日任務：右下角的小按鈕，打開時往上長 */
+  .qbox { top: auto !important; left: auto; right: 8px; bottom: calc(64px + env(safe-area-inset-bottom)); width: min(300px, calc(100vw - 16px)); display: flex; flex-direction: column-reverse; }
+  .qbox:not(.open) { width: auto; }
+  body:has(.world-menu:not(.collapsed)) .qbox { bottom: calc(64px + env(safe-area-inset-bottom)); }
+  body:has(.world-menu:not(.collapsed)) .qbox:not(.open) { display: none; }
+  /* 對話框、提示：避開導覽列 */
+  #npc { bottom: calc(64px + env(safe-area-inset-bottom)); width: calc(100vw - 16px); }
+  #toasts { top: 60px; bottom: auto; width: max-content; max-width: calc(100vw - 24px); }
+  .sp-cast { bottom: calc(70px + env(safe-area-inset-bottom)); }
+  /* 路過的 NPC 小一點 */
+  .npc-walker { transform: scale(.62); transform-origin: top center; }
+  .npc-bubble { font-size: 12px; }
+  .dm-win, .dm-win.msn { left: 0; right: 0; top: 0; bottom: calc(56px + env(safe-area-inset-bottom)); width: auto; height: auto; border-radius: 0; }
+}
+/* 平板比較寬：內容置中、留白多一點 */
+@media (min-width: 761px) and (max-width: 1024px) {
+  .city-inner { max-width: 760px; margin: 0 auto; }
+  .hud-btns > .btn { height: 42px; min-width: 42px; }
+  .hud-btns .label { display: inline; }
+  .hud-btns > .hud-player .label { display: inline; }
+}
+@media (max-width: 1024px) { .cd-ticker .tk-txt { flex: 1; min-width: 0; } .cd-ticker { display: flex; transform: none; left: 8px; } }

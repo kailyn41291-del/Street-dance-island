@@ -379,7 +379,7 @@
     view.appendChild(ctrls);
 
     // 快速傳送
-    const menu = h(`<div class="win world-menu ${innerWidth < 760 ? 'collapsed' : ''}">${winHTML(`🧭 ${t('quick_travel', { n: G.countries.length })}`, 'yellow', false)}
+    const menu = h(`<div class="win world-menu ${innerWidth <= 1024 ? 'collapsed' : ''}">${winHTML(`🧭 ${t('quick_travel', { n: G.countries.length })}`, 'yellow', false)}
       <div class="win-body"><input class="input sm search" placeholder="${esc(t('search_ph'))}" aria-label="${esc(t('search_ph'))}">
         <div class="cont-tabs"><button data-cont="" class="on">${t('popular')}</button>${CONTS.map(k => `<button data-cont="${k}">${contName(k)}</button>`).join('')}</div>
         <div class="country-grid"></div></div></div>`);

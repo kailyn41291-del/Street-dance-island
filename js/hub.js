@@ -8,6 +8,7 @@ window.Hub = (() => {
 
   I18N.extend({
     zh: {
+      hub_sound: '音效開關', 
       q_streak: '連續登入 {n} 天', q_all_bonus: '三個任務全清！額外 +{n} XP', 
       hub_menu: '功能選單', hub_title: '📱 功能選單', hub_sec_ev: '找活動', hub_sec_me: '我的冒險', hub_sec_so: '交朋友', hub_sec_play: '玩一下', hub_sec_etc: '其他',
       hub_events: '活動總覽', hub_near: '附近活動', hub_add: '投稿活動', hub_me: '我的頁面', hub_me_d: '護照・簽到・收藏', hub_char: '編輯角色', hub_card: '我的名片',
@@ -29,6 +30,7 @@ window.Hub = (() => {
       q_share: '分享一個活動給朋友', q_rhythm: '玩一場節奏挑戰', q_npc: '打敗一位路過的 NPC 舞者', q_spin: '完成每日簽到抽獎', q_cypher: '在 Cypher 舞池秀一招'
     },
     en: {
+      hub_sound: 'Sound on/off', 
       q_streak: '{n}-day login streak', q_all_bonus: 'All 3 quests cleared! Bonus +{n} XP', 
       hub_menu: 'Menu', hub_title: '📱 Menu', hub_sec_ev: 'Events', hub_sec_me: 'My adventure', hub_sec_so: 'Social', hub_sec_play: 'Play', hub_sec_etc: 'More',
       hub_events: 'All events', hub_near: 'Nearby', hub_add: 'Submit event', hub_me: 'My page', hub_me_d: 'Passport · check-in · saved', hub_char: 'Edit character', hub_card: 'My card',
@@ -50,6 +52,7 @@ window.Hub = (() => {
       q_share: 'Share an event with a friend', q_rhythm: 'Play a round of Rhythm', q_npc: 'Beat a wandering NPC dancer', q_spin: 'Spin the daily check-in', q_cypher: 'Show a move on the cypher floor'
     },
     ja: {
+      hub_sound: '効果音', 
       q_streak: '{n} 日連続ログイン', q_all_bonus: '3 つ全部クリア！ボーナス +{n} XP', 
       hub_menu: 'メニュー', hub_title: '📱 メニュー', hub_sec_ev: 'イベント', hub_sec_me: 'わたしの冒険', hub_sec_so: 'ソーシャル', hub_sec_play: 'あそぶ', hub_sec_etc: 'その他',
       hub_events: 'イベント一覧', hub_near: '近くのイベント', hub_add: 'イベント投稿', hub_me: 'マイページ', hub_me_d: 'パスポート・チェックイン・お気に入り', hub_char: 'キャラ編集', hub_card: '自分の名刺',
@@ -71,6 +74,7 @@ window.Hub = (() => {
       q_share: 'イベントを友だちにシェアする', q_rhythm: 'リズムチャレンジを 1 回遊ぶ', q_npc: '通りすがりの NPC ダンサーに勝つ', q_spin: 'デイリーチェックインを回す', q_cypher: 'サイファーで技を見せる'
     },
     ko: {
+      hub_sound: '효과음', 
       q_streak: '{n}일 연속 접속', q_all_bonus: '퀘스트 3개 올클! 보너스 +{n} XP', 
       hub_menu: '메뉴', hub_title: '📱 메뉴', hub_sec_ev: '이벤트', hub_sec_me: '나의 모험', hub_sec_so: '소셜', hub_sec_play: '놀기', hub_sec_etc: '기타',
       hub_events: '이벤트 전체', hub_near: '내 주변', hub_add: '이벤트 제보', hub_me: '마이 페이지', hub_me_d: '여권·출석·즐겨찾기', hub_char: '캐릭터 편집', hub_card: '내 명함',
@@ -267,7 +271,7 @@ window.Hub = (() => {
       ['hub_sec_me', [['🛂', 'hub_me', () => (logged() ? A.nav('#/me') : Player.prompt())], ['🧢', 'hub_char', () => Player.openMenu()], ['🪪', 'hub_card', () => Friends.openCardEditor()], ['📜', 'hub_quests', () => { box && box.classList.add('open'); }]]],
       ['hub_sec_so', [['👥', 'hub_friends', () => Friends.openPanel()], ['🔍', 'hub_find', () => Friends.openPanel('find')], ['💬', 'hub_chat', () => Chat.toggle(true)], ['🗂', 'hub_forum', nav('#/forum')], ['👯', 'hub_crew', nav('#/crew')]]],
       ['hub_sec_play', [['⚔', 'hub_battle', nav('#/battle')], ['🕺', 'hub_cypher', nav('#/cypher')], ['🎵', 'hub_rhythm', () => Games.open('rhythm')], ['🃏', 'hub_games', () => Games.open()], ['🚶', 'hub_walk', () => { A.nav('#/'); setTimeout(() => A.startWalk && A.startWalk(), 900); }]]],
-      ['hub_sec_etc', [['📢', 'hub_notice', () => Notices.open()], ['❓', 'hub_tut', () => Tutorial.run()], ['🌐', 'hub_lang', click('.hud-lang')]].concat(Backend.isAdmin ? [['🛠', 'hub_admin', click('.hud-admin')]] : [])]
+      ['hub_sec_etc', [['📢', 'hub_notice', () => Notices.open()], ['❓', 'hub_tut', () => Tutorial.run()], ['🌐', 'hub_lang', click('.hud-lang')], ['🔊', 'hub_sound', click('.hud-sound')]].concat(Backend.isAdmin ? [['🛠', 'hub_admin', click('.hud-admin')]] : [])]
     ];
     const items = [];
     const body = h(`<div class="phone-ui"><div class="ph-bar"><span>DANCE ISLAND</span><span class="ph-clock"></span></div>
@@ -295,7 +299,7 @@ window.Hub = (() => {
       lab(); I18N.onChange && I18N.onChange(lab);
       return b;
     };
-    ev.after(mk('hud-forum', 'teal', '🗂', 'forum', 'hud_forum', '#/forum'), mk('hud-battle', 'orange', '⚔', 'battle', 'hud_battle', '#/battle'));
+    ev.after(mk('hud-forum', 'teal', '🗂', 'forum', 'hud_forum', '#/forum'), mk('hud-battle', 'orange', '🆚', 'battle', 'hud_battle', '#/battle'));
   }
   function mountPhone() {
     mountHudButtons();
@@ -327,7 +331,7 @@ window.Hub = (() => {
     window.addEventListener('hashchange', draw);
     if (I18N.onChange) I18N.onChange(draw);
     // 手機上任務框預設收起來
-    if (matchMedia('(max-width: 760px)').matches) { try { if (localStorage.getItem(OPEN) === null) localStorage.setItem(OPEN, '0'); } catch (x) {} }
+    if (matchMedia('(max-width: 1024px)').matches) { try { if (localStorage.getItem(OPEN) === null) localStorage.setItem(OPEN, '0'); } catch (x) {} }
   }
 
   // 啟動：等登入狀態確定後建立任務、放上手機
