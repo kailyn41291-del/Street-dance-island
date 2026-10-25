@@ -123,18 +123,34 @@ window.XP = (() => {
   const changed = () => { clearTimeout(achT); achT = setTimeout(() => { checkAch(); A.refreshStats && A.refreshStats(); }, 2500); };
   window.addEventListener('di:act', changed);
 
-  async function loadMine() {
-    if (!logged()) return;
-    try { mine.ach = new Set((await Backend.achievementsOf(Backend.uid)).map(a => a.id)); } catch (x) {}
-    try { mine.weekly = await Backend.myWeekly(); } catch (x) {}
-    try { mine.season = await Backend.season(); mine.pvp = await Backend.pvpMine(mine.season); mine.top = await Backend.pvpTop(mine.season, 10); } catch (x) {}
-    try { mine.stats = await Backend.stats(); } catch (x) {}
+  // 賽季名稱直接在本機算（台灣時間的「年-Q季」），不用多問一次伺服器
+  const seasonNow = () => { const d = new Date(Date.now() + 8 * 3600e3); return `${d.getUTCFullYear()}-Q${Math.floor(d.getUTCMonth() / 3) + 1}`; };
+  let loadedAt = 0, loading = null;
+  // 全部同時送出（以前是一個接一個，要等 2～3 秒）；60 秒內重開頁面直接用快取
+  function loadMine(force) {
+    if (!logged()) return Promise.resolve();
+    if (!force && Date.now() - loadedAt < 60000) return Promise.resolve();
+    if (loading) return loading;
+    mine.season = seasonNow();
+    const safe = p => p.catch(() => null);
+    loading = Promise.all([safe(Backend.achievementsOf(Backend.uid)), safe(Backend.myWeekly()), safe(Backend.pvpMine(mine.season)), safe(Backend.pvpTop(mine.season, 10)),
+      (A.socialState && A.socialState.stats) ? Promise.resolve(A.socialState.stats) : safe(Backend.stats())])
+      .then(async ([ach, wk, pvp, top, st]) => {
+        if (ach) mine.ach = new Set(ach.map(a => a.id));
+        mine.weekly = wk; mine.pvp = pvp; mine.top = top || []; mine.stats = st;
+        mine.topPeople = {};
+        try { const ids = mine.top.map(x => x.user_id); if (ids.length) (await Backend.playersByIds(ids)).forEach(p => (mine.topPeople[p.user_id] = p)); } catch (x) {}
+        loadedAt = Date.now();
+      }).finally(() => { loading = null; });
+    return loading;
   }
 
   /* ---------- 「我的頁面」上的冒險進度區塊 ---------- */
   const NEXT = [[3, 1.2], [7, 1.5], [14, 1.75], [30, 2]];
-  A.xpHTML = () => {
-    if (!logged()) return '';
+  // 先放一個位置，資料到了再填進去（不會擋住整個頁面）
+  A.xpHTML = () => (logged() ? `<div class="xp-slot">${loadedAt ? xpInner() : `<div class="win xp-win">${UI.winHTML('✨ ' + t('xp_title'), 'yellow', false)}<div class="win-body"><p class="note">…</p></div></div>`}</div>` : '');
+  const fillSlot = () => { const s = document.querySelector('.xp-slot'); if (s) s.innerHTML = xpInner(); };
+  const xpInner = () => {
     const st = mine.stats || {}, s = st.streak || 0, m = +st.mult || 1, nx = NEXT.find(([d]) => s < d);
     const w = mine.weekly, p = mine.pvp, tr = tierOf(p ? p.points : 0);
     const people = mine.topPeople || {};
@@ -150,19 +166,17 @@ window.XP = (() => {
         <div class="ach-grid">${ACH.map(([id, ic, xp]) => `<div class="ach ${mine.ach.has(id) ? 'on' : ''}" title="${esc(achDesc(id))} (+${xp} XP)"><span class="ach-ic">${ic}</span><b>${esc(achName(id))}</b><small>${esc(achDesc(id))}</small><i>+${xp}</i></div>`).join('')}</div></section>
     </div></div>`;
   };
-  // 我的頁面打開時先載入資料（features2 會呼叫 A.xpHTML）
+  // 我的頁面：馬上畫出來，冒險進度在背景載入後補上
   const _me = A.views.me;
-  A.views.me = async (r, stage) => {
-    if (logged()) {
-      await loadMine();
-      try { const ids = (mine.top || []).map(x => x.user_id); mine.topPeople = {}; (await Backend.playersByIds(ids)).forEach(p => (mine.topPeople[p.user_id] = p)); } catch (x) {}
-    }
-    return _me(r, stage);
+  A.views.me = (r, stage) => {
+    const done = _me(r, stage);
+    if (logged()) Promise.all([loadMine(), done]).then(fillSlot);
+    return done;
   };
   document.addEventListener('click', async e => {
     const b = e.target.closest && e.target.closest('.xp-wk'); if (!b) return;
     b.disabled = true;
-    try { const r = await Backend.claimWeekly(); SFX.play('fanfare'); sparkle(e.clientX, e.clientY, 24); toast(t('wk_got', { n: r.xp }), '🗓'); A.refreshStats && A.refreshStats(); changed(); A.render(true); }
+    try { const r = await Backend.claimWeekly(); SFX.play('fanfare'); sparkle(e.clientX, e.clientY, 24); toast(t('wk_got', { n: r.xp }), '🗓'); A.refreshStats && A.refreshStats(); changed(); await loadMine(true); fillSlot(); }
     catch (x) { b.disabled = false; toast(x.message, '✕'); }
   });
 

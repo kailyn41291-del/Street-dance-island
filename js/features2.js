@@ -119,16 +119,25 @@
   /* ---------- 我的頁面 ---------- */
   const REWARD_ICON = { xp20: '✨', xp50: '💎', xp100: '👑' };
   A.crumbs.me = () => '★ ' + t('me_title');
+  const meCache = {};
+  A.clearMeCache = () => { meCache.at = 0; };
   A.views.me = async (r, stage) => {
     if (!Player.me) { Player.prompt(); return A.nav('#/'); }
     const view = h(`<div class="view city-view"><div class="city-inner me-page"><p class="note">…</p></div></div>`);
     const inner = view.querySelector('.city-inner');
     stage.appendChild(view);
-    if (Backend.enabled && !S.loaded) await loadMine();
+    // 簽到紀錄、投稿：60 秒內再開「我的舞島」直接用上次的（簽到 / 投稿後會清掉）
+    const fresh = meCache.at && Date.now() - meCache.at < 60000 && meCache.who === Player.me.id;
+    const [, daily0, subs0] = await Promise.all([
+      Backend.enabled && !S.loaded ? loadMine() : null,
+      fresh ? meCache.daily : Backend.enabled ? Backend.myDaily().catch(() => []) : [],
+      fresh ? meCache.subs : Backend.enabled ? Backend.mySubmissions().catch(() => []) : []
+    ]);
+    if (!fresh) Object.assign(meCache, { at: Date.now(), who: Player.me.id, daily: daily0, subs: subs0 });
     const me = Player.me, today = A.todayStr();
     const st = S.stats || { xp: 0, checkins: 0, comments: 0, messages: 0, days: 0 };
     const lv = levelOf(st.xp), cur = xpFor(lv), nxt = xpFor(lv + 1), pct = Math.round(((st.xp - cur) / Math.max(1, nxt - cur)) * 100);
-    let daily = []; try { if (Backend.enabled) daily = await Backend.myDaily(); } catch (x) {}
+    const daily = daily0 || [];
     const doneToday = daily.some(d => d.day === taipeiDay());
     let streak = 0; { let d = new Date(taipeiDay() + 'T00:00'); if (!doneToday) d.setDate(d.getDate() - 1); const set = new Set(daily.map(x => x.day)); while (set.has(A.ymd(d))) { streak++; d.setDate(d.getDate() - 1); } }
     const favEvents = Store.all().filter(e => S.favs.has(e.id));
@@ -136,7 +145,7 @@
     const stamps = [...S.checks.values()].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
     const twDone = new Set(stamps.filter(s => s.country === 'TW').map(s => s.city)).size, twAll = A.byCode.TW.cities.length;
     const countries = new Set(stamps.map(s => s.country)).size;
-    let subs = []; try { if (Backend.enabled) subs = await Backend.mySubmissions(); } catch (x) {}
+    const subs = subs0 || [];
 
     inner.innerHTML = `
       <div class="win">${UI.winHTML('★ ' + t('me_title'), 'pink', false)}<div class="win-body me-head">
@@ -184,7 +193,7 @@
       let k = 0; wheel.classList.add('spinning');
       const tm = setInterval(() => { wheel.querySelector('span').textContent = icons[k++ % icons.length]; SFX.play('blip'); }, 70);
       let res;
-      try { res = await Backend.dailySpin(); } catch (x) { clearInterval(tm); wheel.classList.remove('spinning'); toast(/already/.test(x.message) ? t('daily_done') : x.message, '✕'); return; }
+      try { res = await Backend.dailySpin(); meCache.at = 0; } catch (x) { clearInterval(tm); wheel.classList.remove('spinning'); toast(/already/.test(x.message) ? t('daily_done') : x.message, '✕'); return; }
       await new Promise(r => setTimeout(r, 1400));
       clearInterval(tm); wheel.classList.remove('spinning');
       const rw = res.reward, isTitle = rw.startsWith('r_');
@@ -204,7 +213,7 @@
 
   /* ---------- 投稿：一般玩家送出 → 管理員審核 ---------- */
   A.submitEvent = async data => {
-    const r = await Backend.submitEvent(data);
+    const r = await Backend.submitEvent(data); meCache.at = 0;
     SFX.play('fanfare'); toast(t('sub_sent'), '📮');
     return r;
   };
