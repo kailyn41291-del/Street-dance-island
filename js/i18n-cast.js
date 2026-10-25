@@ -1,6 +1,7 @@
 /* 多國語言：雙 NPC（Kailyn + Choco）對話、新手任務、分享邀請文字 */
 I18N.extend({
   zh: {
+    nav_map: '地圖', nav_events: '活動', nav_chat: '聊天', nav_me: '我的', 
     guide_choco: '夥伴 Choco',
     tut: [
       '嗨！歡迎來到「舞島 DANCE ISLAND」！我是嚮導 Kailyn ✦',
@@ -30,6 +31,7 @@ I18N.extend({
     ]
   },
   en: {
+    nav_map: 'Map', nav_events: 'Events', nav_chat: 'Chat', nav_me: 'Me', 
     guide_choco: 'Choco',
     tut: [
       "Hi! Welcome to DANCE ISLAND! I'm your guide Kailyn ✦",
@@ -59,6 +61,7 @@ I18N.extend({
     ]
   },
   ja: {
+    nav_map: 'マップ', nav_events: 'イベント', nav_chat: 'チャット', nav_me: 'マイ', 
     guide_choco: '相棒 Choco',
     tut: [
       'やあ！「DANCE ISLAND」へようこそ！ガイドの Kailyn だよ ✦',
@@ -88,6 +91,7 @@ I18N.extend({
     ]
   },
   ko: {
+    nav_map: '지도', nav_events: '이벤트', nav_chat: '채팅', nav_me: '마이', 
     guide_choco: '동료 Choco',
     tut: [
       '안녕! 「DANCE ISLAND」에 온 걸 환영해! 나는 가이드 Kailyn ✦',

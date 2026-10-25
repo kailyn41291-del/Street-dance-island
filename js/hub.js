@@ -236,8 +236,31 @@ window.Hub = (() => {
     lab(); I18N.onChange && I18N.onChange(lab);
   }
 
+  /* 手機版：底部導覽列（地圖 / 活動 / 選單 / 聊天 / 我的） */
+  function mountNav() {
+    if (document.querySelector('.mnav')) return;
+    const el = h(`<nav class="mnav" aria-label="menu"></nav>`);
+    const draw = () => {
+      const r = location.hash.replace(/^#\/?/, '').split('/')[0] || '';
+      const items = [['map', '🌏', t('nav_map'), r === '' || r === 'c'], ['events', '📋', t('nav_events'), r === 'events' || r === 'e'], ['menu', '📱', t('hub_menu'), false], ['chat', '💬', t('nav_chat'), false], ['me', '🧑', t('nav_me'), r === 'me']];
+      el.innerHTML = items.map(([k, ic, lb, on]) => `<button class="mn-b ${on ? 'on' : ''}" data-k="${k}"><span class="mn-i">${ic}</span><span class="mn-l">${esc(lb)}</span>${k === 'menu' ? '<i class="mn-dot"></i>' : ''}</button>`).join('');
+    };
+    el.onclick = e => {
+      const b = e.target.closest('[data-k]'); if (!b) return; SFX.play('select');
+      const k = b.dataset.k;
+      if (k === 'map') A.nav('#/'); else if (k === 'events') A.nav('#/events'); else if (k === 'menu') openMenu();
+      else if (k === 'chat') Chat.toggle(!document.getElementById('chat')?.classList.contains('open'));
+      else if (k === 'me') (logged() ? A.nav('#/me') : Player.prompt());
+    };
+    document.body.appendChild(el); draw();
+    window.addEventListener('hashchange', draw);
+    if (I18N.onChange) I18N.onChange(draw);
+    // 手機上任務框預設收起來
+    if (matchMedia('(max-width: 760px)').matches) { try { if (localStorage.getItem(OPEN) === null) localStorage.setItem(OPEN, '0'); } catch (x) {} }
+  }
+
   // 啟動：等登入狀態確定後建立任務、放上手機
-  const boot = () => { mountPhone(); load(); };
+  const boot = () => { mountPhone(); mountNav(); load(); };
   (Backend.enabled ? Backend.ready.then(() => Player.ready) : Promise.resolve()).then(boot, boot);
   if (Player.onChange) Player.onChange(() => setTimeout(load, 100));
   if (I18N.onChange) I18N.onChange(() => draw());

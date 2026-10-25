@@ -1401,3 +1401,56 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .pc-crew { margin-top: -2px; }
 .crumbs { flex-shrink: 0; white-space: nowrap; }
 .crumbs > * { white-space: nowrap; }
+
+/* =========================================================
+ * 手機版：底部導覽列、浮動元件避開彼此
+ * ========================================================= */
+.mnav { display: none; }
+@media (max-width: 760px) {
+  .mnav { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 46; height: calc(58px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+    background: var(--paper); border-top: var(--px) solid var(--ink); box-shadow: 0 -3px 0 rgba(59,43,43,.15); }
+  .mn-b { position: relative; flex: 1; display: grid; justify-items: center; align-content: center; gap: 1px; font: inherit; background: none; border: 0; cursor: pointer; color: var(--ink); padding: 4px 0; }
+  .mn-b + .mn-b { border-left: 2px dashed rgba(59,43,43,.15); }
+  .mn-i { font-size: 20px; line-height: 1; } .mn-l { font-size: 10px; }
+  .mn-b.on { background: var(--yellow); }
+  .mn-b[data-k="menu"] .mn-i { width: 34px; height: 34px; display: grid; place-items: center; margin-top: -18px; background: var(--pink); border: var(--px) solid var(--ink); border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); }
+  .mn-dot { display: none; position: absolute; top: 2px; right: calc(50% - 22px); width: 10px; height: 10px; background: var(--red); border: 2px solid var(--ink); border-radius: 50%; }
+  body:has(.hub-phone.has-new) .mn-dot { display: block; }
+  .hub-phone { display: none; }
+  .hud-events, .hud-game { display: none !important; }
+  .chat-bar { display: none !important; }
+  .chat { bottom: calc(58px + env(safe-area-inset-bottom)); }
+  .chat-panel { height: calc(100vh - 58px - 130px); }
+  .world-menu { bottom: 66px; }
+  #npc { bottom: 70px; }
+  .qbox { top: 132px; left: 8px; width: min(300px, calc(100vw - 80px)); }
+  .qbox:not(.open) { width: auto; }
+  .qbox:not(.open) .qb-head { gap: 6px; }
+  .city-view, .country-view { padding-bottom: 80px; }
+  .dm-win, .dm-win.msn { left: 0; right: 0; top: 0; bottom: calc(58px + env(safe-area-inset-bottom)); width: auto; height: auto; border-radius: 0; }
+  .dm-win.msn { padding: 10px 8px 8px; }
+  .msn-deco i:nth-child(n+5) { display: none; }
+  .sp-cast { bottom: 70px; }
+  #toasts { bottom: 72px; }
+  .modal { max-height: calc(100vh - 80px); }
+}
+/* 平板：按鈕只顯示圖示，避免擠成兩排 */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .hud-btns .label { display: none; }
+  .hud-btns .btn { padding-left: 10px; padding-right: 10px; }
+  .qbox { width: 260px; }
+}
+@media (max-width: 760px) {
+  .cd-ticker { top: 136px; width: calc(100vw - 16px); max-width: none; padding: 4px 10px; }
+  .qbox { top: 178px; }
+  .map-ctrls { top: 178px; }
+}
+@media (max-width: 760px) {
+  .qbox { top: auto; left: auto; right: 8px; bottom: 70px; display: flex; flex-direction: column-reverse; }
+  .qbox.open .qb-head { border-bottom: 0; border-top: 2px solid var(--ink); }
+  body:has(.world-menu) .qbox { bottom: 128px; }
+  .map-ctrls { top: 178px; }
+  .city-view, .view.city-view { padding-top: 150px; }
+  .country-view { padding-top: 150px; }
+}
+@media (min-width: 761px) { .qbox, .hub-phone { top: 112px; } }
