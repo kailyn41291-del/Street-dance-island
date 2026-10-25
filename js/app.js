@@ -970,7 +970,10 @@
   /* ================= 開機 ================= */
   function applyStatic() {
     const b = document.getElementById('boot');
-    if (b) b.querySelector('.start').textContent = t('press_start');
+    if (b) {
+      b.querySelector('.start').textContent = t('press_start');
+      b.querySelectorAll('.boot-langs button').forEach(x => x.classList.toggle('on', x.dataset.l === I18N.lang));
+    }
     document.title = { zh: '舞島 Dance Island', en: 'Dance Island', ja: 'ダンスアイランド Dance Island', ko: '댄스 아일랜드 Dance Island' }[I18N.lang];
   }
 
@@ -980,14 +983,17 @@
   }
 
   function boot() {
-    applyStatic();
     const bootEl = document.getElementById('boot');
+    // 開機畫面先選語言（第一次來的人才看得懂教學）
+    const langs = bootEl.querySelector('.boot-langs');
+    langs.innerHTML = `<span>🌐 LANGUAGE</span>` + I18N.LANGS.map(([k, n]) => `<button class="btn sm" data-l="${k}">${n}</button>`).join('');
+    langs.onclick = e => { const b = e.target.closest('[data-l]'); if (!b) return; SFX.init(); SFX.play('select'); I18N.set(b.dataset.l); };
+    applyStatic();
     const bar = bootEl.querySelector('.bar');
     bar.innerHTML = '<i></i>'.repeat(20);
     const d = PX.dancer(5);
     bootEl.querySelector('.boot-dancer').appendChild(d.el);
     const dt = setInterval(() => d.beat(), 300);
-    const msgs = t('boot');
     const st = bootEl.querySelector('.boot-status span'), pct = bootEl.querySelector('.boot-status b');
     let i = 0, dataReady = false;
     // 等雲端（如果有）、活動、角色都載好
@@ -996,7 +1002,7 @@
       if (i >= 19 && !dataReady) return;
       bar.children[i].classList.add('on'); i++;
       pct.textContent = i * 5 + '%';
-      st.textContent = msgs[Math.min(msgs.length - 1, Math.floor(i / 5))];
+      const msgs = t('boot'); st.textContent = msgs[Math.min(msgs.length - 1, Math.floor(i / 5))];
       if (i >= 20) {
         clearInterval(tm);
         setTimeout(() => buildLayout(), 0);   // 先把世界地圖算好

@@ -732,3 +732,9 @@ body[data-theme="hk"] .win-title { text-shadow: 0 0 4px #fff, 0 0 8px #ff3d8b; }
 .msg .rp { border: 0; background: none; font-size: 11px; padding: 0 2px; color: var(--ink-soft); opacity: .5; }
 .msg:hover .rp { opacity: 1; }
 .msg .rp:hover { color: var(--red); }
+
+/* 開機畫面的語言選擇 */
+.boot-langs { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: 4px 0 12px; }
+.boot-langs span { width: 100%; text-align: center; font-family: var(--font-en); font-size: 9px; color: var(--ink-soft); margin-bottom: 2px; }
+.boot-langs .btn { min-width: 64px; }
+.boot-langs .btn.on { --c: var(--yellow); transform: translateY(2px); box-shadow: inset 3px 3px 0 rgba(59,43,43,.2), 0 2px 0 var(--ink); }
