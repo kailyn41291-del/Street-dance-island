@@ -352,6 +352,7 @@ canvas, .sprite { image-rendering: pixelated; }
 .card .tags { display: flex; flex-wrap: wrap; gap: 4px; }
 .tag { font-size: 11px; padding: 1px 6px; border: 2px solid var(--ink); background: var(--c, var(--cream)); }
 .tag.local { background: var(--paper); border-style: dashed; }
+.tag.views { background: var(--paper); margin-left: auto; }
 .info { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-size: 13px; margin: 2px 0 0; }
 .info dt { color: var(--ink-soft); white-space: nowrap; }
 .info dd { margin: 0; word-break: break-word; }

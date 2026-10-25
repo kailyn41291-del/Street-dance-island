@@ -90,13 +90,17 @@ window.App = {
     // 標題（自動換行）
     const wrap = (text, x, y, maxW, lh, max = 3) => {
       const out = []; let line = '';
-      for (const ch of String(text)) { if (g.measureText(line + ch).width > maxW && line) { out.push(line); line = ch; } else line += ch; }
+      // 英文單字不拆開，中日韓文字可以逐字換行
+      for (const tk of String(text).match(/[A-Za-z0-9'’.,!?&:-]+|\s+|./gu) || []) {
+        if (g.measureText(line + tk).width > maxW && line.trim()) { out.push(line.trimEnd()); line = /^\s+$/.test(tk) ? '' : tk; }
+        else line += tk;
+      }
       if (line) out.push(line);
       out.slice(0, max).forEach((l, i) => g.fillText(i === max - 1 && out.length > max ? l.slice(0, -1) + '…' : l, x, y + i * lh));
       return Math.min(out.length, max) * lh;
     };
-    g.font = F(64); g.fillStyle = '#3b2b2b';
-    wrap(e.name, X + 340, Y + 190, WW - 380, 80, 3);
+    g.font = F(56); g.fillStyle = '#3b2b2b';
+    wrap(e.name, X + 340, Y + 186, WW - 380, 72, 3);
     // 舞風
     let sx = X + 40, sy = Y + 500;
     g.font = F(34);
@@ -108,23 +112,38 @@ window.App = {
       g.fillStyle = '#3b2b2b'; g.fillText(s, sx + 18, sy + 25);
       sx += w + 20;
     });
-    // 資訊
+    // 資訊（精簡：每項只一行，太長就用…截掉）
+    const fit = (text, maxW) => {
+      let str = String(text); if (g.measureText(str).width <= maxW) return str;
+      while (str && g.measureText(str + '…').width > maxW) str = str.slice(0, -1);
+      return str + '…';
+    };
+    const first = v => String(v || '').split(/\s*(?:[\/／|｜；;\n]|、)\s*/)[0].trim();
+    const venue = first(e.venue).replace(/\s*[（(].*?[)）]\s*/g, ' ').trim();
+    const ed = e.endDate && e.endDate !== e.date ? ' – ' + e.endDate.slice(5).replace('-', '/') : '';
     const info = [
-      ['🕒', [e.startTime, e.endTime].filter(Boolean).join(' – ')],
-      ['📍', [nm(A.byCode[e.country]), nm(A.cityOf(e.country, e.city)), e.venue].filter(Boolean).join('・')],
-      ['🏠', e.organizer], ['💰', e.fee], ['📝', e.regEnd ? t('share_reg_end', { d: e.regEnd.replace(/-/g, '/') }) : '']
+      ['🕒', [ed ? e.date.slice(5).replace('-', '/') + ed : '', [e.startTime, e.endTime].filter(Boolean).join(' – ')].filter(Boolean).join('　')],
+      ['📍', [nm(A.cityOf(e.country, e.city)), venue].filter(Boolean).join('・')],
+      ['💰', first(e.fee)],
+      ['📝', e.regEnd ? t('share_reg_end', { d: e.regEnd.replace(/-/g, '/') }) : '']
     ].filter(r => r[1]);
-    g.font = F(40);
+    // 底部區塊（網址＋角色）固定在最下面，資訊不會壓到
+    const footTop = Y + HH - 130;
+    let av = null;
+    try { av = Avatar.render(Player.me ? Player.me.look : Avatar.DEFAULT, 1, 5); } catch (x) {}
+    const avW = av ? av.width + 30 : 0;
+    g.font = F(40); g.fillStyle = '#3b2b2b';
     let iy = sy + 120;
-    info.forEach(([ic, v]) => { g.fillText(ic, X + 40, iy); iy += wrap(v, X + 110, iy, WW - 160, 52, 2) + 18; });
-    // 角色
-    try {
-      const av = Avatar.render(Player.me ? Player.me.look : Avatar.DEFAULT, 1, 5);
-      g.drawImage(av, X + WW - av.width - 30, Y + HH - av.height - 20);
-    } catch (x) {}
-    // 網址
-    g.fillStyle = '#3b2b2b'; g.font = F(30);
-    g.fillText(eventUrl(e).replace(/^https?:\/\//, ''), X + 40, Y + HH - 50);
+    for (const [ic, v] of info) {
+      if (iy > footTop - 60) break;
+      g.fillText(ic, X + 40, iy);
+      g.fillText(fit(v, WW - 150 - avW), X + 110, iy);
+      iy += 76;
+    }
+    g.fillRect(X + 30, footTop, WW - 60 - avW, 4);
+    if (av) g.drawImage(av, X + WW - av.width - 30, Y + HH - av.height - 16);
+    g.font = F(30);
+    g.fillText(fit((location.host + location.pathname).replace(/\/$/, ''), WW - 100 - avW), X + 40, footTop + 62);
     g.font = F(36); g.textAlign = 'center'; g.fillText('🏝 ' + t('share_footer'), W / 2, H - 55);
     return cv;
   }
@@ -182,6 +201,36 @@ window.App = {
   };
 
   /* ---------- 活動卡片多出來的按鈕 ---------- */
+  /* ---------- 活動瀏覽次數 ----------
+     卡片出現在畫面上 1 秒才算一次；同一台裝置同一個活動一天只算一次 */
+  let views = null;
+  const VKEY = 'danceIsland.viewed.v1';
+  const fmtN = n => n >= 1e4 ? (n / 1e3).toFixed(n >= 1e5 ? 0 : 1) + 'k' : String(n);
+  A.viewTag = e => views === null ? `<span class="tag views" data-vc="${esc(e.id)}" hidden></span>`
+    : `<span class="tag views" data-vc="${esc(e.id)}" title="${esc(t('views'))}">👁 ${fmtN(views[e.id] || 0)}</span>`;
+  const paintViews = () => document.querySelectorAll('[data-vc]').forEach(x => {
+    x.hidden = views === null; if (views) { x.textContent = '👁 ' + fmtN(views[x.dataset.vc] || 0); x.title = t('views'); }
+  });
+  const viewedToday = () => { try { const o = JSON.parse(localStorage.getItem(VKEY) || '{}'); return o.day === A.todayStr() ? o : { day: A.todayStr(), ids: [] }; } catch (x) { return { day: A.todayStr(), ids: [] }; } };
+  function countView(id) {
+    const o = viewedToday(); if (o.ids.includes(id)) return;
+    o.ids.push(id); try { localStorage.setItem(VKEY, JSON.stringify(o)); } catch (x) {}
+    if (views) { views[id] = (views[id] || 0) + 1; paintViews(); }
+    Backend.bumpView(id).catch(() => {});
+  }
+  if (Store.cloud && window.IntersectionObserver) {
+    Backend.viewCounts().then(n => { views = n; paintViews(); }).catch(() => {});
+    const timers = new Map();
+    const io = new IntersectionObserver(list => list.forEach(en => {
+      const id = en.target.dataset.id;
+      if (en.isIntersecting) { if (!timers.has(en.target)) timers.set(en.target, setTimeout(() => { countView(id); io.unobserve(en.target); }, 1000)); }
+      else { clearTimeout(timers.get(en.target)); timers.delete(en.target); }
+    }), { threshold: 0.5 });
+    const watch = root => root.querySelectorAll && root.querySelectorAll('article.card[data-id]').forEach(c => { if (!c._vw) { c._vw = 1; io.observe(c); } });
+    new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) { if (n.matches('article.card[data-id]')) watch(n.parentNode); else watch(n); } }))).observe(document.body, { childList: true, subtree: true });
+    watch(document);
+  }
+
   A.cardExtras = (e, past) => `
     <button class="btn sm" data-act="cal" data-ev="${esc(e.id)}">📅 ${t('b_cal')}</button>
     <button class="btn sm pink" data-act="share" data-ev="${esc(e.id)}">📤 ${t('b_share')}</button>` + (A.cardExtras2 ? A.cardExtras2(e, past) : '');

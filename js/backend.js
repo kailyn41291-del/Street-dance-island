@@ -102,6 +102,10 @@ window.Backend = (() => {
     async sendMessage(channel, text) { return must(await sb.from('messages').insert({ channel, text }).select().single()); },
     async deleteMessage(id) { must(await sb.from('messages').delete().eq('id', id)); },
 
+    /* 活動瀏覽次數 */
+    async viewCounts() { const n = {}; must(await sb.from('event_views').select('event_id,n')).forEach(r => (n[r.event_id] = r.n)); return n; },
+    async bumpView(eid) { must(await sb.rpc('bump_view', { eid })); },
+
     /* 留言板 */
     async commentCounts() {
       const rows = must(await sb.from('comments').select('event_id'));
@@ -175,6 +179,33 @@ window.Backend = (() => {
       return [...best.values()].slice(0, limit);
     },
     async npcWin() { return must(await sb.rpc('npc_win')); },
+
+    /* 玩家資料 / 名片 */
+    async playerByHandle(handle) { return must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card,banned').eq('handle', handle).maybeSingle()); },
+    async playersByIds(ids) { return ids.length ? must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card').in('user_id', ids)) : []; },
+
+    /* 好友 */
+    async friendRequests() { return must(await sb.from('friend_requests').select('*').or(`from_user.eq.${user.id},to_user.eq.${user.id}`)); },
+    async sendFriend(to_user) { must(await sb.from('friend_requests').insert({ to_user })); },
+    async respondFriend(id, status) { must(await sb.from('friend_requests').update({ status, responded_at: new Date().toISOString() }).eq('id', id)); },
+    async removeFriend(id) { must(await sb.from('friend_requests').delete().eq('id', id)); },
+    async listBlocks() { return must(await sb.from('blocks').select('blocked').eq('user_id', user.id)).map(r => r.blocked); },
+    async block(uid) { must(await sb.from('blocks').insert({ blocked: uid })); },
+    async unblock(uid) { must(await sb.from('blocks').delete().eq('user_id', user.id).eq('blocked', uid)); },
+
+    /* 私訊 */
+    async listDMs(other, limit = 80) {
+      const rows = must(await sb.from('dms').select('*').or(`and(from_user.eq.${user.id},to_user.eq.${other}),and(from_user.eq.${other},to_user.eq.${user.id})`).order('created_at', { ascending: false }).limit(limit));
+      return rows.reverse();
+    },
+    async unreadDMs() { return must(await sb.from('dms').select('id,from_user').eq('to_user', user.id).is('read_at', null)); },
+    async sendDM(to_user, text) { return must(await sb.from('dms').insert({ to_user, text }).select().single()); },
+    async markRead(from_user) { must(await sb.from('dms').update({ read_at: new Date().toISOString() }).eq('to_user', user.id).eq('from_user', from_user).is('read_at', null)); },
+    subscribeTable(table, filter, cb) {
+      const ch = sb.channel('rt-' + table + '-' + Math.random().toString(36).slice(2, 7))
+        .on('postgres_changes', { event: '*', schema: 'public', table, filter }, p => cb(p)).subscribe();
+      return () => sb.removeChannel(ch);
+    },
 
     /* 即時頻道（線上 Cypher 舞池） */
     channel(name, key) { return sb.channel(name, { config: { presence: { key }, broadcast: { self: true } } }); },
