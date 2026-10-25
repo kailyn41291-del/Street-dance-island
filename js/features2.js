@@ -79,6 +79,7 @@
     setTimeout(() => el.remove(), 2100);
   }
   const STAMP_COLORS = ['#c8372d', '#3a4f8a', '#2a9d8f', '#7a3e9d', '#e07b39', '#d6336c'];
+  A.STAMP_COLORS = STAMP_COLORS; A.stampInner = (...x) => stampInner(...x);
   function stampInner(cc, city, date) {
     const th = Themes.of(A.byCode[cc]);
     return `<span class="st-ico">${th ? th.icon : '🏝'}</span><span class="st-city">${esc(nm(A.cityOf(cc, city)) || city)}</span><span class="st-cc">${esc(cc)}</span><span class="st-date">${esc((date || '').slice(0, 10).replace(/-/g, '.'))}</span>`;
@@ -157,6 +158,7 @@
       </div></div>
 
       <div class="win">${UI.winHTML('🛂 ' + t('me_passport'), 'blue', false)}<div class="win-body">
+        <div class="btn-row"><button class="btn blue open-pp">📘 ${t('pp_open')}</button></div>
         <div class="pass-stats"><span>🇹🇼 ${twDone} / ${twAll}</span><span>🌏 ${t('me_countries', { n: countries })}</span><span>🛂 ${stamps.length}</span></div>
         <div class="tw-prog"><i style="width:${Math.round((twDone / twAll) * 100)}%"></i></div>
         <div class="passport">${stamps.length ? stamps.map((s, i) => `<div class="stamp" style="--sc:${STAMP_COLORS[i % STAMP_COLORS.length]};--rot:${((i * 37) % 14) - 7}deg">${stampInner(s.country, s.city, s.created_at)}</div>`).join('') : `<p class="note">${t('me_pass_none')}</p>`}</div>
@@ -170,6 +172,7 @@
 
     const av = Avatar.dancer(4, me.look); inner.querySelector('.me-av').appendChild(av.el); A.beatLoop(av, 340);
     inner.querySelector('.ed').onclick = () => Player.openMenu();
+    { const pp = inner.querySelector('.open-pp'); if (pp) pp.onclick = () => window.Passport && Passport.open(); }
     { const mc = inner.querySelector('.mycard'); if (mc) mc.onclick = () => Friends.openCardEditor(); const mf = inner.querySelector('.myfr'); if (mf) mf.onclick = () => Friends.openPanel(); }
     const vf = inner.querySelector('.vf'); if (vf) vf.onclick = () => Player.openVerify();
     const spin = inner.querySelector('.spin');
