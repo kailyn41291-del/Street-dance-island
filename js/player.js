@@ -242,9 +242,11 @@ window.Player = (() => {
   /** 名字 + 認證勾勾（或「疑似冒名」警告） */
   function nameHTML(a) {
     const n = esc(a.name || '???');
-    if (a.verified) return `${n}<span class="vchk" title="${esc(t('v_badge'))}">✔</span>`;
-    if (vKeys.has(nameKey(a.name))) return `${n}<span class="vwarn" title="${esc(t('v_lookalike'))}">⚠</span>`;
-    return n;
+    let out = n;
+    if (a.verified) out = `${n}<span class="vchk" title="${esc(t('v_badge'))}">✔</span>`;
+    else if (vKeys.has(nameKey(a.name))) out = `${n}<span class="vwarn" title="${esc(t('v_lookalike'))}">⚠</span>`;
+    // 雲端模式：點名字可以打開玩家名片
+    return cloud() && a.handle ? `<span class="pname" data-h="${esc(a.handle)}" role="button" tabindex="0">${out}</span>` : out;
   }
 
   async function openVerify() {
