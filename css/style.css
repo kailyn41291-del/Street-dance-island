@@ -1674,3 +1674,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .card h3, .fo-tt, .cr-main b, .pc-name, .thr-t, .fo-body, .nt-b { overflow-wrap: anywhere; }
   .cd-ticker .tk-txt { overflow: hidden; text-overflow: ellipsis; }
 }
+/* 像素圖示 */
+img.pxi { width: 1.5em; height: 1.5em; object-fit: contain; vertical-align: middle; image-rendering: pixelated; pointer-events: none; }
+.hud-btns .btn img.pxi { width: 26px; height: 26px; margin: -4px 0; }
+.mn-i img.pxi { width: 28px; height: 28px; }
+.ph-ic img.pxi { width: 84%; height: 84%; }

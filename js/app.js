@@ -70,7 +70,7 @@
     const isAdm = Store.cloud ? Backend.isAdmin : true;
     adm.classList.toggle('hidden', !isAdm);
     adm.classList.toggle('pink', Store.cloud && Backend.isAdmin);
-    adm.innerHTML = Store.cloud ? '🔑 ADMIN' : '🔑';
+    adm.innerHTML = Store.cloud ? PXI.img('menu/admin', '🔑') + ' ADMIN' : PXI.img('menu/admin', '🔑');
     adm.setAttribute('aria-label', t('admin_btn'));
     const pl = hud.querySelector('.hud-player');
     pl.innerHTML = '';
@@ -1091,8 +1091,11 @@
     if (parseRoute().view !== 'world') { nav('#/'); setTimeout(go, 900); } else go();
   };
   hud.querySelector('.hud-sound').onclick = () => { SFX.toggle(); updateHUD(); SFX.play('select'); };
-  hud.querySelector('.hud-add .ic').innerHTML = I.plus;
-  hud.querySelector('.hud-game .ic').innerHTML = I.game;
+  hud.querySelector('.hud-add .ic').innerHTML = PXI.img('menu/add', I.plus);
+  hud.querySelector('.hud-game .ic').innerHTML = PXI.img('menu/games', I.game);
+  // 按鈕前面的 emoji 換成像素圖示（有圖才換）
+  const swapLead = (sel, name, all) => { const b = hud.querySelector(sel); if (!b || !PXI.has(name)) return; const n = [...b.childNodes].find(x => x.nodeType === 3 && x.textContent.trim()); if (n) n.replaceWith(document.createRange().createContextualFragment(PXI.img(name) + (all ? '' : ' '))); };
+  swapLead('.hud-events', 'menu/events'); swapLead('.hud-lang', 'menu/lang'); swapLead('.hud-help', 'menu/tut', true);
   hud.querySelector('.hud-save .ic').innerHTML = I.disk;
 
   Player.init({ goEvent });

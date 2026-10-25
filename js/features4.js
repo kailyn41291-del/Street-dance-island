@@ -51,7 +51,7 @@ window.Friends = (() => {
   function ensureHud() {
     if (hudBtn) return;
     const lang = document.querySelector('.hud-lang'); if (!lang) return;
-    hudBtn = h(`<button class="btn green hud-friends hidden">👥 <span class="label"></span><span class="fr-badge" hidden></span></button>`);
+    hudBtn = h(`<button class="btn green hud-friends hidden">${PXI.img('menu/friends', '👥')} <span class="label"></span><span class="fr-badge" hidden></span></button>`);
     lang.parentNode.insertBefore(hudBtn, lang);
     hudBtn.onclick = () => { SFX.play('select'); openPanel(); };
   }

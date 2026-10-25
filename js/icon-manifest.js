@@ -1,0 +1,2 @@
+/* 自動產生：tools/build_icon_manifest.py — 網站有哪些像素圖示（名稱: 版本） */
+window.ICON_FILES = {"menu/add": "39d048", "menu/admin": "1b8b04", "menu/battle": "cd66ff", "menu/card": "db3a73", "menu/char": "977900", "menu/chat": "c9462e", "menu/crew": "3c9cfb", "menu/cypher": "1dc513", "menu/events": "27f8dd", "menu/find": "232f30", "menu/forum": "a0db9a", "menu/friends": "80b8ba", "menu/games": "05dcf8", "menu/lang": "f8ad2e", "menu/me": "3a00a1", "menu/near": "87aaae", "menu/notice": "5ccb0e", "menu/quests": "f13288", "menu/rhythm": "59b770", "menu/tut": "a22c0b", "menu/walk": "c2432f"};
