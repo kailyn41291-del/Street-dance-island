@@ -1536,3 +1536,5 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 /* 主畫面：論壇、人氣投票按鈕 */
 .hud-ico img { width: 22px; height: 22px; object-fit: contain; image-rendering: pixelated; vertical-align: -5px; }
 @media (max-width: 760px) { .hud-forum, .hud-battle { display: inline-flex !important; } }
+/* ✔ ▶ ⚠ ❤ 這類符號：用文字樣式，不要變成彩色 emoji */
+body { font-variant-emoji: text; }
