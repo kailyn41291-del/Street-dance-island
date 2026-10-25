@@ -1510,3 +1510,12 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .scene-leopard_gold { background: #c9d8f5 url("../assets/scenes/leopard_gold.webp?v=1") center / cover no-repeat !important; image-rendering: auto !important; }
 .scenes { grid-template-columns: repeat(4, 1fr); }
 @media (max-width: 520px) { .scenes { grid-template-columns: repeat(4, 1fr); } }
+/* 功能選單：手機插圖 */
+.hp-body.hp-img { width: 64px; height: 96px; background: none; box-shadow: none; padding: 0; border-radius: 0; display: block; }
+.hp-body.hp-img img { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(2px 3px 0 rgba(59,43,43,.3)); }
+.hub-phone:hover .hp-body.hp-img img { filter: drop-shadow(2px 3px 0 rgba(59,43,43,.3)) brightness(1.06); }
+.hub-phone.has-new .hp-body.hp-img::after { top: 2px; right: 2px; }
+@media (max-width: 760px) {
+  .mn-b[data-k="menu"] .mn-i { width: 40px; height: 52px; margin-top: -26px; background: none; border: 0; box-shadow: none; border-radius: 0; }
+  .mn-b[data-k="menu"] .mn-i img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(1px 2px 0 rgba(59,43,43,.3)); }
+}

@@ -274,7 +274,7 @@ window.Hub = (() => {
   }
   function mountPhone() {
     if (document.querySelector('.hub-phone')) return;
-    const el = h(`<button class="hub-phone" aria-label="${esc(t('hub_menu'))}"><span class="hp-body"><span class="hp-screen"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="hp-btn"></span></span><span class="hp-label"></span></button>`);
+    const el = h(`<button class="hub-phone" aria-label="${esc(t('hub_menu'))}"><span class="hp-body hp-img"><img src="assets/menu_phone.webp?v=1" alt=""></span><span class="hp-label"></span></button>`);
     el.onclick = openMenu;
     document.body.appendChild(el);
     const lab = () => { el.querySelector('.hp-label').textContent = t('hub_menu'); };
@@ -288,7 +288,7 @@ window.Hub = (() => {
     const draw = () => {
       const r = location.hash.replace(/^#\/?/, '').split('/')[0] || '';
       const items = [['map', '🌏', t('nav_map'), r === '' || r === 'c'], ['events', '📋', t('nav_events'), r === 'events' || r === 'e'], ['menu', '📱', t('hub_menu'), false], ['chat', '💬', t('nav_chat'), false], ['me', '🧑', t('nav_me'), r === 'me']];
-      el.innerHTML = items.map(([k, ic, lb, on]) => `<button class="mn-b ${on ? 'on' : ''}" data-k="${k}"><span class="mn-i">${ic}</span><span class="mn-l">${esc(lb)}</span>${k === 'menu' ? '<i class="mn-dot"></i>' : ''}</button>`).join('');
+      el.innerHTML = items.map(([k, ic, lb, on]) => `<button class="mn-b ${on ? 'on' : ''}" data-k="${k}"><span class="mn-i">${k === 'menu' ? '<img src="assets/menu_phone.webp?v=1" alt="">' : ic}</span><span class="mn-l">${esc(lb)}</span>${k === 'menu' ? '<i class="mn-dot"></i>' : ''}</button>`).join('');
     };
     el.onclick = e => {
       const b = e.target.closest('[data-k]'); if (!b) return; SFX.play('select');
