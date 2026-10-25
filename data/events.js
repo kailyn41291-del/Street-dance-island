@@ -1,0 +1,103 @@
+/* =========================================================
+ * 活動資料庫（網站上所有人都會看到的活動）
+ * 在網站上新增活動後，按「💾 存檔」→「匯出 events.js」
+ * 下載的檔案直接取代這個檔案，再 commit 到 GitHub 就會永久保存。
+ * 以下都是【範例】活動，可以刪掉。
+ * ========================================================= */
+window.DANCE_EVENTS = [
+  {
+    "id": "sample-001",
+    "name": "【範例】Island Cypher Vol.1",
+    "organizer": "範例主辦單位",
+    "country": "TW",
+    "city": "taipei",
+    "venue": "華山1914文化創意產業園區",
+    "address": "台北市中正區八德路一段1號",
+    "styles": ["Breaking", "All Style"],
+    "date": "2026-11-14",
+    "startTime": "13:00",
+    "endTime": "19:00",
+    "regStart": "2026-10-20",
+    "regEnd": "2026-11-10",
+    "regMethod": "IG 私訊報名 / 現場報名",
+    "fee": "觀眾免費｜選手 NT$300",
+    "link": "https://www.instagram.com/",
+    "poster": ""
+  },
+  {
+    "id": "sample-002",
+    "name": "【範例】Popping Lab 2on2",
+    "organizer": "範例舞團",
+    "country": "TW",
+    "city": "taipei",
+    "venue": "西門町紅樓",
+    "address": "台北市萬華區成都路10號",
+    "styles": ["Popping"],
+    "date": "2026-11-28",
+    "startTime": "14:00",
+    "endTime": "18:00",
+    "regStart": "2026-11-01",
+    "regEnd": "2026-11-25",
+    "regMethod": "Google 表單",
+    "fee": "NT$500 / 隊",
+    "link": "https://www.instagram.com/",
+    "poster": ""
+  },
+  {
+    "id": "sample-003",
+    "name": "【範例】中部 House Party",
+    "organizer": "範例 Crew",
+    "country": "TW",
+    "city": "taichung",
+    "venue": "審計新村",
+    "address": "台中市西區民生路368巷",
+    "styles": ["House", "Locking"],
+    "date": "2026-12-05",
+    "startTime": "19:00",
+    "endTime": "23:00",
+    "regStart": "",
+    "regEnd": "",
+    "regMethod": "免報名，直接來",
+    "fee": "NT$200（含一杯飲料）",
+    "link": "https://www.instagram.com/",
+    "poster": ""
+  },
+  {
+    "id": "sample-004",
+    "name": "【範例】南霸天 1on1 Battle",
+    "organizer": "範例主辦單位",
+    "country": "TW",
+    "city": "kaohsiung",
+    "venue": "駁二藝術特區",
+    "address": "高雄市鹽埕區大勇路1號",
+    "styles": ["Hip Hop", "Waacking", "All Style"],
+    "date": "2026-11-21",
+    "startTime": "12:00",
+    "endTime": "20:00",
+    "regStart": "2026-10-15",
+    "regEnd": "2026-11-15",
+    "regMethod": "官網報名",
+    "fee": "NT$400",
+    "link": "https://www.instagram.com/",
+    "poster": ""
+  },
+  {
+    "id": "sample-005",
+    "name": "【範例】Tokyo Night Session",
+    "organizer": "Sample Crew JP",
+    "country": "JP",
+    "city": "tokyo",
+    "venue": "Shibuya",
+    "address": "Shibuya, Tokyo",
+    "styles": ["Breaking"],
+    "date": "2026-12-12",
+    "startTime": "18:00",
+    "endTime": "22:00",
+    "regStart": "2026-11-01",
+    "regEnd": "2026-12-01",
+    "regMethod": "Instagram DM",
+    "fee": "¥2000",
+    "link": "https://www.instagram.com/",
+    "poster": ""
+  }
+];
