@@ -78,16 +78,6 @@ window.App = {
     g.fillStyle = '#fff6e8'; g.fillRect(X, Y, WW, HH);
     g.fillStyle = '#f07ca3'; g.fillRect(X, Y, WW, 90); g.fillStyle = '#3b2b2b'; g.fillRect(X, Y + 90, WW, 6);
     g.fillStyle = '#3b2b2b'; g.font = F(40); g.textBaseline = 'middle'; g.fillText('DANCE ISLAND 舞島', X + 32, Y + 46);
-    // 日期色塊
-    const d = A.parseDate(e.date);
-    g.fillStyle = '#3b2b2b'; g.fillRect(X + 40, Y + 140, 260, 300);
-    g.fillStyle = color; g.fillRect(X + 46, Y + 146, 248, 288);
-    g.fillStyle = '#3b2b2b'; g.textAlign = 'center';
-    g.font = F(40); g.fillText(d ? `${d.getFullYear()}/${d.getMonth() + 1}` : '', X + 170, Y + 200);
-    g.font = F(140); g.fillText(d ? pad2(d.getDate()) : '??', X + 170, Y + 300);
-    g.font = F(40); g.fillText(d ? t('wk').replace('{w}', t('week')[d.getDay()]) : '', X + 170, Y + 395);
-    g.textAlign = 'left';
-    // 標題（自動換行）
     const wrap = (text, x, y, maxW, lh, max = 3) => {
       const out = []; let line = '';
       // 英文單字不拆開，中日韓文字可以逐字換行
@@ -99,51 +89,100 @@ window.App = {
       out.slice(0, max).forEach((l, i) => g.fillText(i === max - 1 && out.length > max ? l.slice(0, -1) + '…' : l, x, y + i * lh));
       return Math.min(out.length, max) * lh;
     };
-    g.font = F(56); g.fillStyle = '#3b2b2b';
-    wrap(e.name, X + 340, Y + 186, WW - 380, 72, 3);
-    // 舞風
-    let sx = X + 40, sy = Y + 500;
-    g.font = F(34);
-    (e.styles || []).forEach(s => {
-      const w = g.measureText(s).width + 36;
-      if (sx + w > X + WW - 40) { sx = X + 40; sy += 66; }
-      g.fillStyle = '#3b2b2b'; g.fillRect(sx - 4, sy - 4, w + 8, 56);
-      g.fillStyle = Store.STYLE_COLOR[s] || '#eac45a'; g.fillRect(sx, sy, w, 48);
-      g.fillStyle = '#3b2b2b'; g.fillText(s, sx + 18, sy + 25);
-      sx += w + 20;
-    });
-    // 資訊（精簡：每項只一行，太長就用…截掉）
     const fit = (text, maxW) => {
       let str = String(text); if (g.measureText(str).width <= maxW) return str;
       while (str && g.measureText(str + '…').width > maxW) str = str.slice(0, -1);
       return str + '…';
     };
+    const tags = (x0, y0, maxX, sm) => {
+      let sx = x0, sy = y0;
+      const fz = sm ? 26 : 32, bh = sm ? 38 : 46;
+      g.font = F(fz);
+      (e.styles || []).forEach(s => {
+        const w = g.measureText(s).width + (sm ? 24 : 32);
+        if (sx + w > maxX) { sx = x0; sy += bh + 14; }
+        g.fillStyle = '#3b2b2b'; g.fillRect(sx - 4, sy - 4, w + 8, bh + 8);
+        g.fillStyle = Store.STYLE_COLOR[s] || '#eac45a'; g.fillRect(sx, sy, w, bh);
+        g.fillStyle = '#3b2b2b'; g.fillText(s, sx + (sm ? 12 : 16), sy + bh / 2 + 1);
+        sx += w + (sm ? 12 : 18);
+      });
+      return (e.styles || []).length ? sy + bh + 8 : y0;
+    };
+    const d = A.parseDate(e.date);
+    const wk = d ? t('wk').replace('{w}', t('week')[d.getDay()]) : '';
+    const footTop = Y + HH - 100;
+
+    // 海報（有的話）
+    let poster = null;
+    if (e.poster) poster = await new Promise(res => {
+      const im = new Image(); im.crossOrigin = 'anonymous';
+      im.onload = () => res(im); im.onerror = () => res(null); im.src = e.poster;
+      setTimeout(() => res(null), 6000);
+    });
+
+    let bottom;
+    if (poster) {
+      // 版面 A：海報在右上，左邊放日期、標題、舞風，下方資訊整行
+      const pw = 340, pH = Math.min(Math.round(pw * poster.height / poster.width), 520);
+      const px = X + WW - 40 - pw, py = Y + 140;
+      g.fillStyle = '#3b2b2b'; g.fillRect(px - 6, py - 6, pw + 12, pH + 12); g.fillRect(px + 4, py + 4, pw + 12, pH + 12);
+      g.imageSmoothingEnabled = true;
+      const sh = Math.min(poster.height, poster.width * pH / pw);
+      g.drawImage(poster, 0, 0, poster.width, sh, px, py, pw, pH);
+      g.imageSmoothingEnabled = false;
+      const LW = px - 40 - (X + 40);
+      g.fillStyle = '#3b2b2b'; g.fillRect(X + 40, Y + 140, LW, 120);
+      g.fillStyle = color; g.fillRect(X + 46, Y + 146, LW - 12, 108);
+      g.fillStyle = '#3b2b2b';
+      g.font = F(30); g.fillText(d ? `${d.getFullYear()}　${wk}` : '', X + 70, Y + 172);
+      g.font = F(60); g.fillText(d ? `${d.getMonth() + 1}/${pad2(d.getDate())}` : '??', X + 70, Y + 230);
+      g.font = F(44);
+      const th = wrap(e.name, X + 40, Y + 310, LW, 54, 3);
+      const tb = tags(X + 40, Y + 310 + th - 10, X + 40 + LW, true);
+      bottom = Math.max(tb, py + pH + 10) + 40;
+    } else {
+      // 版面 B：沒有海報 — 大日期色塊＋右邊標題
+      g.fillStyle = '#3b2b2b'; g.fillRect(X + 40, Y + 140, 260, 300);
+      g.fillStyle = color; g.fillRect(X + 46, Y + 146, 248, 288);
+      g.fillStyle = '#3b2b2b'; g.textAlign = 'center';
+      g.font = F(40); g.fillText(d ? `${d.getFullYear()}/${d.getMonth() + 1}` : '', X + 170, Y + 200);
+      g.font = F(140); g.fillText(d ? pad2(d.getDate()) : '??', X + 170, Y + 300);
+      g.font = F(40); g.fillText(wk, X + 170, Y + 395);
+      g.textAlign = 'left';
+      g.font = F(56); g.fillStyle = '#3b2b2b';
+      wrap(e.name, X + 340, Y + 186, WW - 380, 72, 3);
+      bottom = tags(X + 40, Y + 490, X + WW - 40) + 66;
+    }
+
+    // 資訊（精簡）
     const first = v => String(v || '').split(/\s*(?:[\/／|｜；;\n]|、)\s*/)[0].trim();
     const venue = first(e.venue).replace(/\s*[（(].*?[)）]\s*/g, ' ').trim();
     const ed = e.endDate && e.endDate !== e.date ? ' – ' + e.endDate.slice(5).replace('-', '/') : '';
     const info = [
       ['🕒', [ed ? e.date.slice(5).replace('-', '/') + ed : '', [e.startTime, e.endTime].filter(Boolean).join(' – ')].filter(Boolean).join('　')],
       ['📍', [nm(A.cityOf(e.country, e.city)), venue].filter(Boolean).join('・')],
+      ['🏠', String(e.organizer || '').replace(/\s*[\/／]\s*/g, ' / ')],
       ['💰', first(e.fee)],
       ['📝', e.regEnd ? t('share_reg_end', { d: e.regEnd.replace(/-/g, '/') }) : '']
     ].filter(r => r[1]);
-    // 底部區塊（網址＋角色）固定在最下面，資訊不會壓到
-    const footTop = Y + HH - 130;
-    let av = null;
+    // 角色（右下角）
+    let av = null, aw = 0, ah = 0;
     try { av = Avatar.render(Player.me ? Player.me.look : Avatar.DEFAULT, 1, 5); } catch (x) {}
-    const avW = av ? av.width + 30 : 0;
-    g.font = F(40); g.fillStyle = '#3b2b2b';
-    let iy = sy + 120;
+    if (av) { const k = Math.min(1, 230 / av.height); aw = Math.round(av.width * k); ah = Math.round(av.height * k); }
+    const avW = av ? aw + 30 : 0, avTop = Y + HH - ah - 14;
+    g.font = F(36); g.fillStyle = '#3b2b2b';
+    let iy = bottom;
     for (const [ic, v] of info) {
-      if (iy > footTop - 60) break;
+      if (iy > footTop - 36) break;
+      const w = WW - 140 - (iy + 50 > avTop ? avW : 0);
       g.fillText(ic, X + 40, iy);
-      g.fillText(fit(v, WW - 150 - avW), X + 110, iy);
-      iy += 76;
+      const two = !poster && iy + 46 < footTop - 40;
+      iy += (two ? wrap(v, X + 100, iy, w, 46, 2) : (g.fillText(fit(v, w), X + 100, iy), 46)) + (poster ? 12 : 26);
     }
     g.fillRect(X + 30, footTop, WW - 60 - avW, 4);
-    if (av) g.drawImage(av, X + WW - av.width - 30, Y + HH - av.height - 16);
+    if (av) g.drawImage(av, X + WW - aw - 30, avTop, aw, ah);
     g.font = F(30);
-    g.fillText(fit((location.host + location.pathname).replace(/\/$/, ''), WW - 100 - avW), X + 40, footTop + 62);
+    g.fillText(fit((location.host + location.pathname).replace(/\/$/, ''), WW - 100 - avW), X + 40, footTop + 50);
     g.font = F(36); g.textAlign = 'center'; g.fillText('🏝 ' + t('share_footer'), W / 2, H - 55);
     return cv;
   }
@@ -206,20 +245,25 @@ window.App = {
   let views = null;
   const VKEY = 'danceIsland.viewed.v1';
   const fmtN = n => n >= 1e4 ? (n / 1e3).toFixed(n >= 1e5 ? 0 : 1) + 'k' : String(n);
-  A.viewTag = e => views === null ? `<span class="tag views" data-vc="${esc(e.id)}" hidden></span>`
+  let vLoading = false;
+  const loadViews = () => {
+    if (vLoading || !Store.cloud) return; vLoading = true;
+    Backend.viewCounts().then(n => { views = n; paintViews(); }).catch(() => { vLoading = false; });
+  };
+  A.viewTag = e => (loadViews(), views === null) ? `<span class="tag views" data-vc="${esc(e.id)}" hidden></span>`
     : `<span class="tag views" data-vc="${esc(e.id)}" title="${esc(t('views'))}">👁 ${fmtN(views[e.id] || 0)}</span>`;
   const paintViews = () => document.querySelectorAll('[data-vc]').forEach(x => {
     x.hidden = views === null; if (views) { x.textContent = '👁 ' + fmtN(views[x.dataset.vc] || 0); x.title = t('views'); }
   });
   const viewedToday = () => { try { const o = JSON.parse(localStorage.getItem(VKEY) || '{}'); return o.day === A.todayStr() ? o : { day: A.todayStr(), ids: [] }; } catch (x) { return { day: A.todayStr(), ids: [] }; } };
   function countView(id) {
+    if (!Store.cloud) return;
     const o = viewedToday(); if (o.ids.includes(id)) return;
     o.ids.push(id); try { localStorage.setItem(VKEY, JSON.stringify(o)); } catch (x) {}
     if (views) { views[id] = (views[id] || 0) + 1; paintViews(); }
     Backend.bumpView(id).catch(() => {});
   }
-  if (Store.cloud && window.IntersectionObserver) {
-    Backend.viewCounts().then(n => { views = n; paintViews(); }).catch(() => {});
+  if (window.IntersectionObserver) {
     const timers = new Map();
     const io = new IntersectionObserver(list => list.forEach(en => {
       const id = en.target.dataset.id;
