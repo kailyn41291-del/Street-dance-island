@@ -137,6 +137,29 @@ window.Backend = (() => {
     async setPlayer(handle, patch) { must(await sb.from('players').update(patch).eq('handle', handle)); },
     async findPlayer(handle) { return must(await sb.from('players').select('handle,name,verified,banned,ig').eq('handle', handle).maybeSingle()); },
 
+    /* 收藏 / 追蹤 */
+    async listFavorites() { return must(await sb.from('favorites').select('event_id,created_at').eq('user_id', user.id)).map(r => r.event_id); },
+    async addFavorite(event_id) { must(await sb.from('favorites').insert({ event_id })); },
+    async removeFavorite(event_id) { must(await sb.from('favorites').delete().eq('user_id', user.id).eq('event_id', event_id)); },
+    async listFollows() { return must(await sb.from('follows').select('org').eq('user_id', user.id)).map(r => r.org); },
+    async follow(org) { must(await sb.from('follows').insert({ org })); },
+    async unfollow(org) { must(await sb.from('follows').delete().eq('user_id', user.id).eq('org', org)); },
+
+    /* 投稿 */
+    async submitEvent(data) { return must(await sb.from('submissions').insert({ data }).select().single()); },
+    async mySubmissions() { return must(await sb.from('submissions').select('id,data,status,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20)); },
+    async listSubmissions() { return must(await sb.from('submissions').select('*').eq('status', 'pending').order('created_at')); },
+    async reviewSubmission(id, status) { must(await sb.from('submissions').update({ status, reviewed_at: new Date().toISOString() }).eq('id', id)); },
+
+    /* 打卡 / 簽到 / 等級 */
+    async myCheckins() { return must(await sb.from('checkins').select('event_id,country,city,created_at').eq('user_id', user.id)); },
+    async checkin(e) { must(await sb.from('checkins').insert({ event_id: e.id, country: e.country, city: e.city })); },
+    async uncheckin(event_id) { must(await sb.from('checkins').delete().eq('user_id', user.id).eq('event_id', event_id)); },
+    async dailySpin() { return must(await sb.rpc('daily_spin')); },
+    async myDaily() { return must(await sb.from('daily').select('day,reward').eq('user_id', user.id).order('day', { ascending: false }).limit(60)); },
+    async myUnlocks() { return must(await sb.from('unlocks').select('item').eq('user_id', user.id)).map(r => r.item); },
+    async stats(uid) { return must(await sb.rpc('player_stats', { uid: uid || user.id })); },
+
     /* 即時更新：table = 'messages' | 'comments' | 'announcements' */
     subscribe(table, cb) {
       const ch = sb.channel('rt-' + table + '-' + Math.random().toString(36).slice(2, 7))

@@ -775,3 +775,46 @@ body[data-theme="hk"] .win-title { text-shadow: 0 0 4px #fff, 0 0 8px #ff3d8b; }
 }
 .info dd { white-space: pre-line; }
 .tr-orig { display: inline-block; margin-left: 6px; border: 0; background: none; font-size: 10px; color: #3a6ea8; padding: 0; text-decoration: underline dotted; }
+
+/* ---------- 第二批：收藏 / 打卡 / 我的頁面 ---------- */
+.lv-chip { font-family: var(--font-en); font-size: 8px; background: var(--yellow); border: 2px solid var(--ink); padding: 1px 3px; margin-left: 4px; }
+.results { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; background: #fff7d6; border: 2px solid #b8892a; padding: 6px 8px; }
+.res { border: 2px solid var(--ink); padding: 0 6px; background: var(--paper); }
+.res0 { background: #f6d36b; } .res1 { background: #d8dbe3; } .res2 { background: #e8b88a; }
+.org-head { display: flex; align-items: center; gap: 10px; }
+.me-page { gap: 16px; }
+.me-head { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; }
+.me-av { width: 150px; height: 160px; display: grid; place-items: center; background: linear-gradient(var(--sky) 0 70%, var(--cream-2) 70%); border: var(--px) solid var(--ink); }
+.me-name { font-size: 20px; margin-bottom: 8px; }
+.lv-row { display: flex; align-items: center; gap: 8px; }
+.lv { font-family: var(--font-en); font-size: 14px; background: var(--yellow); border: 2px solid var(--ink); padding: 2px 6px; }
+.xpbar { flex: 1; max-width: 260px; height: 16px; border: 2px solid var(--ink); background: var(--paper); }
+.xpbar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--green) 0 8px, #6abf5f 8px 10px); }
+.me-nums { display: flex; gap: 12px; margin: 8px 0; font-size: 13px; }
+.spin-box { display: grid; justify-items: center; gap: 6px; border: 2px dashed var(--ink); padding: 10px 14px; background: var(--paper); }
+.spin-title { font-size: 13px; }
+.wheel { width: 76px; height: 76px; border: var(--px) solid var(--ink); border-radius: 50%; display: grid; place-items: center; font-size: 34px;
+  background: conic-gradient(var(--pink) 0 60deg, var(--yellow) 0 120deg, var(--teal) 0 180deg, var(--blue) 0 240deg, var(--orange) 0 300deg, var(--green) 0); }
+.wheel span { background: var(--paper); border: 2px solid var(--ink); width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; }
+.wheel.spinning { animation: wspin .3s linear infinite; }
+@keyframes wspin { to { transform: rotate(360deg); } }
+.reward { text-align: center; } .rw-ico { font-size: 56px; animation: hop .6s steps(2) infinite; }
+.pass-stats { display: flex; gap: 16px; font-size: 14px; margin-bottom: 6px; }
+.tw-prog { height: 10px; border: 2px solid var(--ink); background: var(--paper); margin-bottom: 12px; }
+.tw-prog i { display: block; height: 100%; background: var(--pink); }
+.passport { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 14px; padding: 14px; background: #f7f0de; border: 2px solid var(--ink);
+  background-image: repeating-linear-gradient(0deg, transparent 0 22px, rgba(59,43,43,.06) 22px 23px); }
+.stamp { --sc: #c8372d; aspect-ratio: 1; border: 4px double var(--sc); border-radius: 50%; color: var(--sc); display: grid; place-items: center; align-content: center; gap: 1px;
+  transform: rotate(var(--rot, -4deg)); text-align: center; padding: 6px; background: rgba(255,255,255,.4); }
+.stamp .st-ico { font-size: 20px; } .stamp .st-city { font-size: 13px; font-weight: bold; line-height: 1.1; } .stamp .st-cc { font-family: var(--font-en); font-size: 8px; } .stamp .st-date { font-family: var(--font-en); font-size: 7px; }
+.stamp-fx { position: fixed; inset: 0; z-index: 96; display: grid; place-items: center; align-content: center; gap: 12px; background: rgba(59,43,43,.35); pointer-events: none; }
+.stamp-fx .stamp.big { width: 220px; --sc: #c8372d; background: var(--paper); animation: stampIn .35s steps(4); }
+.stamp-fx .stamp.big .st-ico { font-size: 44px; } .stamp-fx .stamp.big .st-city { font-size: 24px; }
+.stamp-fx p { background: var(--paper); border: var(--px) solid var(--ink); padding: 6px 12px; }
+.stamp-fx.out { animation: fadeOut .4s steps(3) forwards; }
+@keyframes stampIn { 0% { transform: scale(3) rotate(-20deg); opacity: 0; } 70% { transform: scale(.9) rotate(-6deg); opacity: 1; } 100% { transform: scale(1) rotate(-6deg); } }
+.follow-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.sub-pending { background: var(--yellow); } .sub-approved { background: var(--green); } .sub-rejected { background: #c9bfb5; }
+.sub-item { display: grid; gap: 6px; }
+details summary { cursor: pointer; margin: 10px 0; }
+@media (max-width: 760px) { .me-head { grid-template-columns: 1fr; justify-items: center; text-align: center; } .lv-row { justify-content: center; } .me-nums { justify-content: center; } }

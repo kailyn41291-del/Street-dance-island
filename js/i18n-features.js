@@ -1,6 +1,15 @@
 /* 多國語言（第三部分）：活動總覽、行事曆、分享、倒數、節慶 */
 I18N.extend({
   zh: {
+    lv_up: '⬆ 升級了！現在是 Lv.{n}', need_cloud: '這個功能需要雲端模式', b_fav: '收藏', b_faved: '已收藏', fav_added: '已加入我的行程', b_checkin: '打卡', b_checked: '已打卡',
+    checkin_ok: '在「{c}」蓋章成功！+50 XP', checkin_undo: '已取消打卡', err_toomany: '今天的次數用完了，明天再來',
+    res_title: '比賽成績', res_video: '比賽影片', res_list: '名次（一行一個，例如「冠軍：小明」）', res_ph: '冠軍：XXX\n亞軍：YYY\n四強：ZZZ',
+    org_stats: '即將舉辦 {a} 場・已舉辦 {b} 場', org_following: '追蹤中', org_follow: '追蹤主辦方', org_followed: '已追蹤！有新活動會提醒你', org_none: '目前沒有即將舉辦的活動',
+    me_title: '我的舞島', me_plan: '我的行程（收藏的活動）', me_plan_none: '還沒有收藏活動，在活動卡上按 ☆ 收藏', me_passport: '街舞護照', me_countries: '{n} 個國家', me_pass_none: '還沒有印章，參加活動時在活動卡上按 🛂 打卡', me_follows: '追蹤的主辦方', me_follow_none: '還沒有追蹤主辦方，點活動卡上的主辦方名稱就能追蹤', me_subs: '我的投稿',
+    sub_pending: '審核中', sub_approved: '已上架', sub_rejected: '未通過',
+    daily_title: '每日簽到', daily_done: '今天簽到過了', daily_spin: '轉一次！', daily_streak: '已連續簽到 {n} 天', daily_got_title: '抽到稱號「{n}」！', daily_got_xp: '獲得 {n} XP！', daily_title_hint: '到「編輯角色 → 稱號」就能掛上',
+    sub_sent: '已送出投稿！管理員審核後就會上架', adm_sub: '投稿審核', sub_btn: '投稿活動', sub_send: '送出投稿', sub_hint: '送出後會由管理員審核，通過就會出現在網站上。',
+    rm_today: '今天就是「{n}」！', rm_tomorrow: '明天就是「{n}」，記得準備！', rm_reg: '「{n}」報名 {d} 截止！', rm_follow: '你追蹤的主辦方有新活動：「{n}」',
     tr_show_orig: '顯示原文', tr_show_tr: '顯示翻譯',
     ev_all: '活動總覽', ev_near: '附近的活動', ev_search: '搜尋活動名稱、主辦方、場地、城市…', ev_r_all: '全部地區', ev_open: '只看報名中',
     ev_w_upcoming: '即將到來', ev_w_week: '7 天內', ev_w_month: '30 天內', ev_w_past: '已結束', ev_w_all: '全部時間',
@@ -11,6 +20,15 @@ I18N.extend({
     fest_halloween: '🎃 萬聖節快樂！島上出現了南瓜！', fest_xmas: '🎄 聖誕快樂！舞島下雪了！', fest_newyear: '🎆 新年快樂！今年也要一起跳舞！', fest_valentine: '💘 情人節快樂！', fest_lunar: '🧧 新年快樂！恭喜發財！'
   },
   en: {
+    lv_up: '⬆ Level up! You are now Lv.{n}', need_cloud: 'This feature needs cloud mode', b_fav: 'Save', b_faved: 'Saved', fav_added: 'Added to My Plan', b_checkin: 'Check in', b_checked: 'Checked in',
+    checkin_ok: 'Stamped in {c}! +50 XP', checkin_undo: 'Check-in removed', err_toomany: 'Daily limit reached — come back tomorrow',
+    res_title: 'Results', res_video: 'Battle video', res_list: 'Placings (one per line, e.g. "Winner: Ming")', res_ph: 'Winner: XXX\nRunner-up: YYY\nTop 4: ZZZ',
+    org_stats: '{a} upcoming · {b} past', org_following: 'Following', org_follow: 'Follow organizer', org_followed: "Following! We'll remind you about new events", org_none: 'No upcoming events',
+    me_title: 'My Island', me_plan: 'My Plan (saved events)', me_plan_none: 'No saved events yet — tap ☆ on an event card', me_passport: 'Dance Passport', me_countries: '{n} countries', me_pass_none: 'No stamps yet — tap 🛂 on an event card when you attend', me_follows: 'Following', me_follow_none: 'Not following anyone yet — tap an organizer name on an event card', me_subs: 'My submissions',
+    sub_pending: 'In review', sub_approved: 'Published', sub_rejected: 'Not approved',
+    daily_title: 'Daily Spin', daily_done: 'Already spun today', daily_spin: 'SPIN!', daily_streak: '{n}-day streak', daily_got_title: 'You got the title "{n}"!', daily_got_xp: '+{n} XP!', daily_title_hint: 'Equip it in Edit character → Title',
+    sub_sent: 'Submitted! It will appear after an admin approves it', adm_sub: 'Submissions', sub_btn: 'Submit event', sub_send: 'Submit', sub_hint: 'An admin will review your submission before it goes live.',
+    rm_today: '"{n}" is today!', rm_tomorrow: '"{n}" is tomorrow — get ready!', rm_reg: 'Registration for "{n}" closes {d}!', rm_follow: 'New event from an organizer you follow: "{n}"',
     tr_show_orig: 'Show original', tr_show_tr: 'Show translation',
     ev_all: 'All Events', ev_near: 'Events near me', ev_search: 'Search by event, organizer, venue, city…', ev_r_all: 'All regions', ev_open: 'Registration open',
     ev_w_upcoming: 'Upcoming', ev_w_week: 'Next 7 days', ev_w_month: 'Next 30 days', ev_w_past: 'Past', ev_w_all: 'Any time',
@@ -21,6 +39,15 @@ I18N.extend({
     fest_halloween: '🎃 Happy Halloween! Pumpkins have appeared on the island!', fest_xmas: '🎄 Merry Christmas! It is snowing on Dance Island!', fest_newyear: '🎆 Happy New Year! Keep dancing!', fest_valentine: '💘 Happy Valentine’s Day!', fest_lunar: '🧧 Happy Lunar New Year!'
   },
   ja: {
+    lv_up: '⬆ レベルアップ！Lv.{n} になりました', need_cloud: 'この機能はクラウドモードが必要です', b_fav: '保存', b_faved: '保存済み', fav_added: 'マイ予定に追加しました', b_checkin: 'チェックイン', b_checked: 'チェックイン済',
+    checkin_ok: '「{c}」のスタンプをゲット！+50 XP', checkin_undo: 'チェックインを取り消しました', err_toomany: '今日の上限です。また明日！',
+    res_title: '大会結果', res_video: 'バトル動画', res_list: '順位（1 行に 1 つ、例「優勝：タロウ」）', res_ph: '優勝：XXX\n準優勝：YYY\nベスト4：ZZZ',
+    org_stats: '開催予定 {a}・開催済み {b}', org_following: 'フォロー中', org_follow: '主催をフォロー', org_followed: 'フォローしました！新イベントをお知らせします', org_none: '開催予定のイベントはありません',
+    me_title: 'マイアイランド', me_plan: 'マイ予定（保存したイベント）', me_plan_none: 'まだ保存がありません。イベントカードの ☆ で保存', me_passport: 'ダンスパスポート', me_countries: '{n} か国', me_pass_none: 'スタンプはまだありません。参加したらカードの 🛂 でチェックイン', me_follows: 'フォロー中の主催', me_follow_none: 'まだフォローしていません。カードの主催名をタップ', me_subs: '投稿したイベント',
+    sub_pending: '審査中', sub_approved: '掲載済み', sub_rejected: '不承認',
+    daily_title: 'デイリーガチャ', daily_done: '今日はもう回しました', daily_spin: '回す！', daily_streak: '{n} 日連続', daily_got_title: '称号「{n}」をゲット！', daily_got_xp: '+{n} XP！', daily_title_hint: '「キャラ編集 → 称号」で付けられます',
+    sub_sent: '投稿しました！管理者の承認後に掲載されます', adm_sub: '投稿審査', sub_btn: 'イベント投稿', sub_send: '投稿する', sub_hint: '管理者が確認してから掲載されます。',
+    rm_today: '「{n}」は今日！', rm_tomorrow: '「{n}」は明日！準備しよう', rm_reg: '「{n}」のエントリーは {d} 締切！', rm_follow: 'フォロー中の主催の新イベント：「{n}」',
     tr_show_orig: '原文を表示', tr_show_tr: '翻訳を表示',
     ev_all: 'イベント一覧', ev_near: '近くのイベント', ev_search: 'イベント名・主催・会場・都市で検索…', ev_r_all: 'すべての地域', ev_open: 'エントリー受付中のみ',
     ev_w_upcoming: '近日開催', ev_w_week: '7日以内', ev_w_month: '30日以内', ev_w_past: '終了', ev_w_all: 'すべての期間',
@@ -31,6 +58,15 @@ I18N.extend({
     fest_halloween: '🎃 ハッピーハロウィン！島にかぼちゃが出現！', fest_xmas: '🎄 メリークリスマス！雪が降ってきた！', fest_newyear: '🎆 あけましておめでとう！今年も踊ろう！', fest_valentine: '💘 ハッピーバレンタイン！', fest_lunar: '🧧 春節おめでとう！'
   },
   ko: {
+    lv_up: '⬆ 레벨 업! 이제 Lv.{n}', need_cloud: '이 기능은 클라우드 모드가 필요해요', b_fav: '저장', b_faved: '저장됨', fav_added: '내 일정에 추가했어요', b_checkin: '체크인', b_checked: '체크인 완료',
+    checkin_ok: '「{c}」 스탬프 획득! +50 XP', checkin_undo: '체크인을 취소했어요', err_toomany: '오늘 횟수를 다 썼어요. 내일 다시!',
+    res_title: '대회 결과', res_video: '배틀 영상', res_list: '순위 (한 줄에 하나, 예: "우승: 민수")', res_ph: '우승: XXX\n준우승: YYY\n4강: ZZZ',
+    org_stats: '예정 {a}개 · 지난 {b}개', org_following: '팔로잉', org_follow: '주최 팔로우', org_followed: '팔로우했어요! 새 이벤트를 알려 드릴게요', org_none: '예정된 이벤트가 없어요',
+    me_title: '마이 아일랜드', me_plan: '내 일정 (저장한 이벤트)', me_plan_none: '저장한 이벤트가 없어요. 카드의 ☆ 를 눌러 저장', me_passport: '댄스 여권', me_countries: '{n}개국', me_pass_none: '스탬프가 없어요. 참가할 때 카드의 🛂 로 체크인', me_follows: '팔로우한 주최', me_follow_none: '팔로우한 주최가 없어요. 카드의 주최 이름을 눌러 보세요', me_subs: '내 제보',
+    sub_pending: '심사 중', sub_approved: '게시됨', sub_rejected: '미승인',
+    daily_title: '출석 룰렛', daily_done: '오늘은 이미 돌렸어요', daily_spin: '돌리기!', daily_streak: '{n}일 연속', daily_got_title: '칭호 「{n}」 획득!', daily_got_xp: '+{n} XP!', daily_title_hint: '「캐릭터 수정 → 칭호」에서 달 수 있어요',
+    sub_sent: '제보했어요! 관리자 승인 후 게시돼요', adm_sub: '제보 심사', sub_btn: '이벤트 제보', sub_send: '제보하기', sub_hint: '관리자가 확인한 뒤 게시돼요.',
+    rm_today: '「{n}」 오늘이에요!', rm_tomorrow: '「{n}」 내일이에요, 준비하세요!', rm_reg: '「{n}」 신청이 {d} 마감!', rm_follow: '팔로우한 주최의 새 이벤트: 「{n}」',
     tr_show_orig: '원문 보기', tr_show_tr: '번역 보기',
     ev_all: '전체 이벤트', ev_near: '내 주변 이벤트', ev_search: '이벤트명·주최·장소·도시로 검색…', ev_r_all: '모든 지역', ev_open: '신청 중만 보기',
     ev_w_upcoming: '다가오는', ev_w_week: '7일 이내', ev_w_month: '30일 이내', ev_w_past: '종료됨', ev_w_all: '전체 기간',

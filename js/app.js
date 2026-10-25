@@ -55,9 +55,9 @@
     if (r.view === 'city') html += `<span class="sep">›</span><span>${esc(nm(cityOf(r.cc, r.city)))}</span>`;
     if (App.crumbs[r.view]) html += `<span class="sep">›</span><span>${App.crumbs[r.view](r)}</span>`;
     hud.querySelector('.crumbs').innerHTML = html;
-    hud.querySelector('.hud-add').classList.toggle('hidden', !Store.canEdit());
+    hud.querySelector('.hud-add').classList.toggle('hidden', !Store.canEdit() && !Store.cloud);
     hud.querySelector('.hud-save').classList.toggle('hidden', Store.cloud);
-    hud.querySelector('.hud-add .label').textContent = t('add');
+    hud.querySelector('.hud-add .label').textContent = Store.canEdit() ? t('add') : t('sub_btn');
     hud.querySelector('.hud-game .label').textContent = t('games');
     hud.querySelector('.hud-events .label').textContent = t('ev_all');
     hud.querySelector('.hud-save .label').textContent = t('save');
@@ -73,7 +73,7 @@
     pl.innerHTML = '';
     const d = PX.dancer(2, myLook());
     pl.appendChild(d.el);
-    pl.insertAdjacentHTML('beforeend', `<span class="label">${Player.me ? Player.nameHTML(Player.me) : t('login')}</span>`);
+    pl.insertAdjacentHTML('beforeend', `<span class="label">${Player.me ? Player.nameHTML(Player.me) : t('login')}</span>${Player.me && Player.me.level ? `<span class="lv-chip">Lv.${Player.me.level}</span>` : ''}`);
     beatLoop(d, 400);
     const snd = hud.querySelector('.hud-sound');
     snd.innerHTML = SFX.on ? I.sound : I.mute;
@@ -678,7 +678,7 @@
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}</div>
         <h3>${esc(e.name)}</h3>
         ${opt.place ? `<div class="place-tag">📍 ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
-        <dl class="info">${e.organizer ? `<dt>${t('r_org')}</dt><dd><a class="org-link" href="#/org/${encodeURIComponent(e.organizer)}">${esc(e.organizer)}</a></dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${k}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}</dl>
+        <dl class="info">${e.organizer ? `<dt>${t('r_org')}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${k}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}</dl>
         ${App.cardResults(e)}
       </div>
       <div class="acts">
@@ -717,8 +717,9 @@
 
   /* ================= 新增 / 編輯活動 ================= */
   function openForm(init = {}) {
-    if (!Store.canEdit()) return openAdmin();
-    const editing = !!init.id;
+    const submitMode = !Store.canEdit();                       // 一般玩家：投稿給管理員審核
+    if (submitMode && (!Store.cloud || !Player.me)) return Player.prompt();
+    const editing = !!init.id && !submitMode;
     const e = { styles: [], country: 'TW', city: 'taipei', ...init };
     const opt = c => `<option value="${c.code}" ${c.code === e.country ? 'selected' : ''}>${esc(nm(c))}${I18N.lang === 'en' ? '' : '　' + esc(c.n?.en || c.en)}</option>`;
     const countryOpts = opt(byCode.TW) + CONTS.map(k => `<optgroup label="${contName(k)}">${G.countries.filter(c => c.cont === k && !c.home).sort((a, b) => nm(a).localeCompare(nm(b))).map(opt).join('')}</optgroup>`).join('');
@@ -758,12 +759,16 @@
         <img class="poster-prev ${e.poster ? '' : 'hidden'}" src="${esc(e.poster || '')}" alt="">
       </fieldset>
       <label class="field full"><span>${t('f_note')}</span><textarea class="input" name="note" placeholder="${esc(t('f_note_ph'))}">${esc(e.note)}</textarea></label>
+      ${submitMode ? `<p class="full note">📮 ${t('sub_hint')}</p>` : `<fieldset class="fieldset full"><legend>🏆 ${t('res_title')}</legend>
+        <label class="field"><span>${t('res_list')}</span><textarea class="input" name="results" rows="3" placeholder="${esc(t('res_ph'))}">${esc((e.results || []).map(r => [r.place, r.name].filter(Boolean).join('：')).join('\n'))}</textarea></label>
+        <label class="field"><span>▶ ${t('res_video')}</span><input class="input" name="video" type="url" value="${esc(e.video)}" placeholder="https://www.youtube.com/..."></label></fieldset>`}
       <div class="full"><div class="err"></div><div class="form-foot">
         <button type="button" class="btn cancel">${t('cancel')}</button>
         <button type="submit" class="btn pink">${editing ? t('f_submit_edit') : t('f_submit_new')}</button></div></div>
     </form>`);
 
-    const m = modal({ title: editing ? t('f_edit') : t('f_new'), color: 'pink', body, wide: true });
+    const m = modal({ title: submitMode ? '📮 ' + t('sub_btn') : editing ? t('f_edit') : t('f_new'), color: 'pink', body, wide: true });
+    if (submitMode) body.querySelector('[type=submit]').textContent = '📮 ' + t('sub_send');
     const f = body;
     const citySel = f.elements.city;
     const fillCities = (cc, sel) => { citySel.innerHTML = byCode[cc].cities.map(ci => `<option value="${ci.id}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join(''); };
@@ -808,7 +813,8 @@
         venue: get('venue'), address: get('address'), styles: fd.getAll('styles'),
         date: get('date'), endDate: get('endDate'), startTime: get('startTime'), endTime: get('endTime'),
         regStart: get('regStart'), regEnd: get('regEnd'), regMethod: get('regMethod'), fee: get('fee'),
-        link: get('link'), mapUrl: get('mapUrl'), note: get('note'),
+        link: get('link'), mapUrl: get('mapUrl'), note: get('note'), video: get('video'),
+        results: get('results') ? get('results').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const m = l.match(/^(.+?)[：:]\s*(.+)$/); return m ? { place: m[1].trim(), name: m[2].trim() } : { place: '', name: l }; }) : undefined,
         poster: pm === 'none' ? '' : pm === 'url' ? get('posterUrl') : (poster.startsWith('data:') ? poster : '')
       };
       Object.keys(out).forEach(k => { if (out[k] === '' && k !== 'poster') delete out[k]; });
@@ -822,6 +828,7 @@
       if (out.regStart && out.regEnd && out.regEnd < out.regStart) bad.push(['regEnd', t('e_reg')]);
       if (out.link && !/^https?:\/\//i.test(out.link)) bad.push(['link', t('e_link')]);
       if (out.mapUrl && !/^https?:\/\//i.test(out.mapUrl)) bad.push(['mapUrl', t('e_link')]);
+      if (out.video && !/^https?:\/\//i.test(out.video)) bad.push(['video', t('e_link')]);
       if (bad.length) {
         SFX.play('error');
         err.textContent = '✕ ' + bad.map(b => b[1]).join(' / ');
@@ -829,6 +836,11 @@
         return;
       }
       const btn = f.querySelector('[type=submit]'); btn.disabled = true;
+      if (!out.results) delete out.results;
+      if (submitMode) {
+        try { await App.submitEvent(out); } catch (x) { btn.disabled = false; SFX.play('error'); err.textContent = '✕ ' + (/too many/.test(x.message) ? t('err_toomany') : x.message); return; }
+        return m.close();
+      }
       let saved;
       try { saved = await Store.upsert(out); } catch (x) { btn.disabled = false; SFX.play('error'); err.textContent = '✕ ' + (Store.cloud ? t('cloud_err') : '') + x.message; return; }
       m.close();
@@ -857,7 +869,8 @@
   async function openAdmin() {
     const owner = !Store.cloud || Backend.role === 'owner';
     const body = h(`<div class="admin">
-      ${Store.cloud ? `<div class="tabs"><button class="btn sm on" data-at="ann">${t('ann_title')}</button>${owner ? `<button class="btn sm" data-at="ver">${t('adm_ver')}</button>` : ''}<button class="btn sm" data-at="rep">${t('adm_rep')}</button></div>
+      ${Store.cloud ? `<div class="tabs"><button class="btn sm on" data-at="ann">${t('ann_title')}</button>${owner ? `<button class="btn sm" data-at="ver">${t('adm_ver')}</button>` : ''}<button class="btn sm" data-at="rep">${t('adm_rep')}</button>${(App.adminTabs || []).map(tb => `<button class="btn sm" data-at="${tb.key}">${tb.label()}</button>`).join('')}</div>
+      ${(App.adminTabs || []).map(tb => `<div class="adm-pane" data-p="${tb.key}" hidden></div>`).join('')}
       <div class="adm-pane" data-p="ver" hidden><ul class="adm-list ver-list"></ul></div>
       <div class="adm-pane" data-p="rep" hidden><ul class="adm-list rep-list"></ul></div>` : ''}
       <div class="adm-pane" data-p="ann">
@@ -875,6 +888,8 @@
       body.querySelectorAll('[data-at]').forEach(x => x.classList.toggle('on', x === b));
       body.querySelectorAll('.adm-pane').forEach(p => (p.hidden = p.dataset.p !== b.dataset.at));
       if (b.dataset.at === 'ver') drawVer(); if (b.dataset.at === 'rep') drawRep();
+      const xt = (App.adminTabs || []).find(tb => tb.key === b.dataset.at);
+      if (xt) xt.draw(body.querySelector(`.adm-pane[data-p="${xt.key}"]`), fail);
     });
     const drawVer = async () => {
       const ul = body.querySelector('.ver-list');
@@ -1049,7 +1064,7 @@
   hud.querySelector('.hud-events').onclick = () => { SFX.play('select'); nav('#/events'); };
   hud.querySelector('.hud-game').onclick = () => { SFX.play('select'); Games.open(); };
   hud.querySelector('.hud-lang').onclick = e => openLang(e.currentTarget);
-  hud.querySelector('.hud-player').onclick = () => { SFX.play('select'); Player.openMenu(); };
+  hud.querySelector('.hud-player').onclick = () => { SFX.play('select'); if (Player.me && Store.cloud) nav('#/me'); else Player.openMenu(); };
   hud.querySelector('.hud-admin').onclick = () => { SFX.play('select'); openAdmin(); };
   hud.querySelector('.hud-help').onclick = () => {
     SFX.play('select');
@@ -1062,7 +1077,8 @@
   hud.querySelector('.hud-save .ic').innerHTML = I.disk;
 
   Player.init({ goEvent });
-  Object.assign(App, { nav, render, byCode, cityOf, cardHTML, cardAct, loadCommentCounts, goEvent, openForm, todayStr, parseDate, ymd, beatLoop, myLook, CONTS, contName, get current() { return current; } });
+  Object.assign(App, { nav, render, byCode, cityOf, cardHTML, cardAct, loadCommentCounts, goEvent, openForm, todayStr, parseDate, ymd, beatLoop, myLook, CONTS, contName });
+  Object.defineProperty(App, 'current', { get: () => current });
 
   let rt;
   window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (current && current.view === 'country') render(true); }, 250); });

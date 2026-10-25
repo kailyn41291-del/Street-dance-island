@@ -8,6 +8,18 @@ window.Titles = (() => {
     { id: 'owner',    only: 'owner', color: '#eac45a', zh: '網站架設者',        en: 'Island Architect',      ja: 'サイト創設者',        ko: '사이트 창설자' },
     { id: 'admin',    only: 'admin', color: '#b48ae0', zh: '管理員',            en: 'Admin',                 ja: '管理者',              ko: '관리자' },
     { id: 'verified', only: 'verified', zh: '認證舞者', en: 'Verified Dancer', ja: '認証ダンサー', ko: '인증 댄서' },
+    { id: 'r_lucky',     only: 'unlock', color: '#7fcf73', zh: '幸運舞者',     en: 'Lucky Dancer',       ja: 'ラッキーダンサー',  ko: '럭키 댄서' },
+    { id: 'r_spinner',   only: 'unlock', zh: '人體轉盤',     en: 'Human Spinner',      ja: '人間ルーレット',    ko: '인간 룰렛' },
+    { id: 'r_goldfeet',  only: 'unlock', zh: '黃金腳步',     en: 'Golden Feet',        ja: '黄金の足',          ko: '황금 발' },
+    { id: 'r_cypherking',only: 'unlock', zh: 'Cypher 之王',  en: 'Cypher King',        ja: 'サイファーキング',  ko: '사이퍼 킹' },
+    { id: 'r_vinyl',     only: 'unlock', zh: '黑膠收藏家',   en: 'Vinyl Collector',    ja: 'レコード収集家',    ko: 'LP 수집가' },
+    { id: 'r_rainbow',   only: 'unlock', zh: '彩虹 Groove',  en: 'Rainbow Groove',     ja: 'レインボーグルーヴ', ko: '무지개 그루브' },
+    { id: 'r_moonwalk',  only: 'unlock', zh: '月球漫步者',   en: 'Moonwalker',         ja: 'ムーンウォーカー',  ko: '문워커' },
+    { id: 'r_sushi',     only: 'unlock', zh: '壽司迴轉王',   en: 'Sushi Spinner',      ja: '回転寿司キング',    ko: '회전초밥 킹' },
+    { id: 'r_week7',     only: 'unlock', zh: '七日不間斷',   en: '7-Day Streak',       ja: '7日連続',           ko: '7일 연속' },
+    { id: 'lv5',  minLv: 5,  zh: '舞島居民',   en: 'Island Local',    ja: '島の住人',     ko: '섬 주민' },
+    { id: 'lv10', minLv: 10, zh: '舞島老手',   en: 'Island Veteran',  ja: '島のベテラン', ko: '섬 베테랑' },
+    { id: 'lv20', minLv: 20, zh: '舞島傳說',   en: 'Island Legend',   ja: '島の伝説',     ko: '섬의 전설' },
     { id: 'rookie',   zh: '新手舞者',          en: 'Rookie Dancer',        ja: '新人ダンサー',        ko: '신입 댄서' },
     { id: 'floor',    zh: '地板清潔工',        en: 'Floor Sweeper',        ja: '床掃除係',            ko: '바닥 청소부' },
     { id: 'eight',    zh: '八拍收藏家',        en: '8-Count Collector',    ja: '8カウント収集家',      ko: '8카운트 수집가' },
@@ -43,7 +55,11 @@ window.Titles = (() => {
   const byId = Object.fromEntries(LIST.map(x => [x.id, x]));
   const label = id => { const x = byId[id]; return x ? x[I18N.lang] || x.zh : ''; };
   /** role: 'owner' | 'admin' | null */
-  const allowed = (role, verified) => LIST.filter(x => !x.only || (x.only === 'admin' && role) || (x.only === 'owner' && role === 'owner') || (x.only === 'verified' && verified));
+  const allowed = (role, verified, unlocks, level = 1) => LIST.filter(x => {
+    if (x.minLv) return level >= x.minLv;
+    if (!x.only) return true;
+    return (x.only === 'admin' && role) || (x.only === 'owner' && role === 'owner') || (x.only === 'verified' && verified) || (x.only === 'unlock' && unlocks && unlocks.has(x.id));
+  });
   const html = id => { const x = byId[id]; if (!x) return ''; return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''}">${label(id).replace(/[&<>]/g, '')}</span>`; };
   return { LIST, label, allowed, html, byId };
 })();
