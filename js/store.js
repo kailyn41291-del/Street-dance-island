@@ -1,8 +1,10 @@
 /* =========================================================
- * 活動資料存取
- * - data/events.js：寫在 GitHub 上、所有人都看得到的活動（永久）
- * - localStorage：在這台瀏覽器新增 / 修改 / 刪除的活動（暫存）
- * 「匯出 events.js」會把兩者合併，拿去取代 data/events.js 即可永久保存
+ * 活動資料存取（兩種模式）
+ * 雲端模式（data/config.js 有填 Supabase）：
+ *   活動存在雲端；只有管理員能新增 / 編輯 / 刪除，存完所有人立刻看到
+ * 本機模式（沒填）：
+ *   data/events.js 是大家看到的活動；網站上新增的先存在這台瀏覽器，
+ *   用「💾 存檔 → 匯出 events.js」再上傳 GitHub
  * ========================================================= */
 window.Store = (() => {
   const KEY = 'danceIsland.events.v1';
@@ -12,49 +14,65 @@ window.Store = (() => {
     'Hip Hop': '#5bb5a6', 'House': '#7fcf73', 'Waacking': '#f07ca3', 'Krump': '#a8473f',
     'Vogue': '#b48ae0', 'Choreography': '#4fa3c7', 'Kids': '#f4a7c0', 'Other': '#9a8f85'
   };
-
-  let state = { added: {}, removed: [] };
-  const load = () => {
-    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.added) state = s; } catch (e) {}
-  };
-  const save = () => {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); return true; }
-    catch (e) { return false; }
-  };
-  load();
-
-  const seed = () => (window.DANCE_EVENTS || []);
+  const cloud = () => Backend.enabled;
   const sortKey = e => `${e.date || '9999'} ${e.startTime || '99:99'}`;
+  const uid = () => 'ev-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-  const all = () => {
+  /* ---- 本機模式 ---- */
+  let state = { added: {}, removed: [] };
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.added) state = s; } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); return true; } catch (e) { return false; } };
+  const seed = () => (window.DANCE_EVENTS || []);
+  const localAll = () => {
     const out = [];
-    seed().forEach(e => {
-      if (state.removed.includes(e.id) || state.added[e.id]) return;
-      out.push({ ...e, _src: 'seed' });
-    });
+    seed().forEach(e => { if (!state.removed.includes(e.id) && !state.added[e.id]) out.push({ ...e, _src: 'seed' }); });
     Object.values(state.added).forEach(e => out.push({ ...e, _src: 'local' }));
-    return out.sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+    return out;
   };
 
-  const uid = () => 'ev-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  /* ---- 雲端模式 ---- */
+  let remote = [];
+  let loaded = false;
+
+  const all = () => (cloud() ? remote.map(e => ({ ...e, _src: 'cloud' })) : localAll()).sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
 
   return {
     STYLES, STYLE_COLOR,
+    get cloud() { return cloud(); },
+    get loaded() { return loaded; },
+    /** 能不能新增 / 編輯：雲端模式只有管理員；本機模式大家都行（只影響自己的瀏覽器） */
+    canEdit: () => (cloud() ? Backend.isAdmin : true),
+    async load() {
+      if (cloud()) { try { remote = await Backend.listEvents(); } catch (e) { console.warn('[Store] load failed', e); } }
+      loaded = true;
+    },
     all,
     get: id => all().find(e => e.id === id),
     byCity: (country, city) => all().filter(e => e.country === country && e.city === city),
     byCountry: country => all().filter(e => e.country === country),
-    upsert(ev) {
+    async upsert(ev) {
       const e = { ...ev }; delete e._src;
       if (!e.id) e.id = uid();
+      if (cloud()) {
+        await Backend.upsertEvent(e);
+        remote = remote.filter(x => x.id !== e.id).concat(e);
+        return e;
+      }
       state.added[e.id] = e;
-      if (!save()) { delete state.added[e.id]; throw new Error('瀏覽器儲存空間不足（海報圖片可能太大），請改用圖片網址。'); }
+      if (!save()) { delete state.added[e.id]; throw new Error(t('storage_full')); }
       return e;
     },
-    remove(id) {
+    async remove(id) {
+      if (cloud()) { await Backend.deleteEvent(id); remote = remote.filter(x => x.id !== id); return; }
       delete state.added[id];
       if (seed().some(e => e.id === id) && !state.removed.includes(id)) state.removed.push(id);
       save();
+    },
+    /** 雲端模式：把 data/events.js 的活動一次上傳（管理員用） */
+    async uploadSeed() {
+      let n = 0;
+      for (const e of seed()) { if (!remote.some(x => x.id === e.id)) { await this.upsert(e); n++; } }
+      return n;
     },
     stats: () => ({ seed: seed().length, local: Object.keys(state.added).length, removed: state.removed.length, total: all().length }),
     resetLocal() { state = { added: {}, removed: [] }; save(); },
@@ -65,7 +83,7 @@ window.Store = (() => {
     exportJSON: () => JSON.stringify(all().map(({ _src, ...e }) => e), null, 2),
     importJSON(text) {
       const list = JSON.parse(text);
-      if (!Array.isArray(list)) throw new Error('格式錯誤：需要活動陣列');
+      if (!Array.isArray(list)) throw new Error('format');
       list.forEach(e => { if (e && e.name && e.country && e.city) state.added[e.id || uid()] = { ...e, id: e.id || uid() }; });
       save();
       return list.length;

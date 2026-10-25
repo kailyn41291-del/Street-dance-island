@@ -1,9 +1,11 @@
 """Build dance-island/data/geo.js from Natural Earth (public domain).
-usage: python3 -I build_geo.py <ne_dir> <old_geo.js> <out_geo.js>
+usage: python3 -I build_geo.py <ne_dir> <curated.json> <out_geo.js>
+  ne_dir 需要 countries50.geojson（ne_50m_admin_0_countries）與 places10full.geojson（ne_10m_populated_places）
+  curated.json：台灣輪廓、手工調整的城市與翻譯
 """
 import json, math, re, sys
 
-NE, OLD, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+NE, CUR, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
 CENTER = 150          # map center longitude (seam at -30, mid-Atlantic)
 TOL = 0.12            # Douglas-Peucker tolerance (deg)
 
@@ -11,24 +13,17 @@ CONT = {'Asia': '亞洲', 'Europe': '歐洲', 'Africa': '非洲', 'North America
         'South America': '南美洲', 'Oceania': '大洋洲', 'Seven seas (open ocean)': '大洋洲'}
 NAME_FIX = {'TW': '台灣', 'CN': '中國', 'HK': '香港', 'MO': '澳門', 'KR': '韓國', 'KP': '北韓',
             'US': '美國', 'GB': '英國', 'AU': '澳洲', 'NZ': '紐西蘭', 'SG': '新加坡'}
+# 其他語言的短名（Natural Earth 有些是正式全名，太長）
+NAME_FIX_I18N = {
+    'TW': ('Taiwan', '台湾', '대만'), 'CN': ('China', '中国', '중국'), 'KR': ('South Korea', '韓国', '한국'),
+    'KP': ('North Korea', '北朝鮮', '북한'), 'US': ('USA', 'アメリカ', '미국'), 'GB': ('UK', 'イギリス', '영국'),
+    'HK': ('Hong Kong', '香港', '홍콩'), 'MO': ('Macau', 'マカオ', '마카오'), 'JP': ('Japan', '日本', '일본'),
+}
 
-# ---------- old hand-made data (Taiwan shape + curated city lists) ----------
-old = open(OLD, encoding='utf-8').read()
-blocks = re.split(r"\{\s*\n\s*code: '", old)[1:]
-curated = {}
-tw_polys = None
-for b in blocks:
-    code = b[:2]
-    cities = []
-    for m in re.finditer(r"\{ id:'([^']+)',\s*name:'([^']+)',\s*lon:([-\d.]+),\s*lat:([-\d.]+)(?:,\s*label:'(\w)')?\s*\}", b):
-        c = {'id': m.group(1), 'name': m.group(2), 'lon': float(m.group(3)), 'lat': float(m.group(4))}
-        if m.group(5): c['label'] = m.group(5)
-        cities.append(c)
-    curated['GB' if code == 'UK' else code] = cities
-    if code == 'TW':
-        s = b[b.index('polys: [') + 7: b.index('cities:')]
-        s = s.strip().rstrip(',')
-        tw_polys = json.loads(s)
+# ---------- 手工資料（台灣輪廓＋城市與翻譯） ----------
+cur = json.load(open(CUR, encoding='utf-8'))
+curated = cur['cities']
+tw_polys = cur['TW_POLYS']
 
 # ---------- helpers ----------
 def dp(pts, tol):
@@ -120,8 +115,9 @@ for f in feats:
         polys.append([[round(a, 3), round(b, 3)] for a, b in s])
 
     name = NAME_FIX.get(code) or p.get('NAME_ZHT') or p['NAME']
-    c = {'code': code, 'name': name, 'en': p['NAME'].upper(), 'cont': CONT.get(p['CONTINENT'], '其他'),
-         'polys': polys}
+    en, ja, ko = NAME_FIX_I18N.get(code) or (p.get('NAME_EN') or p['NAME'], p.get('NAME_JA') or p['NAME'], p.get('NAME_KO') or p['NAME'])
+    c = {'code': code, 'name': name, 'n': {'en': en, 'ja': ja, 'ko': ko}, 'en': p['NAME'].upper(),
+         'cont': CONT.get(p['CONTINENT'], '其他'), 'polys': polys}
 
     # cities: curated first, then biggest NE cities (spaced apart)
     cities = [dict(x) for x in curated.get(code, [])]
@@ -137,9 +133,10 @@ for f in feats:
         if any(x['name'] == nm for x in cities): continue
         cid = slug(q.get('NAMEASCII') or q['NAME'])
         while any(x['id'] == cid for x in cities): cid += '-2'
-        cities.append({'id': cid, 'name': nm, 'en': q['NAME'], 'lon': round(lon, 3), 'lat': round(lat, 3)})
+        cities.append({'id': cid, 'name': nm, 'n': {'en': q.get('NAME_EN') or q['NAME'], 'ja': q.get('NAME_JA') or q['NAME'], 'ko': q.get('NAME_KO') or q['NAME']},
+                       'lon': round(lon, 3), 'lat': round(lat, 3)})
     if not cities:
-        cities.append({'id': 'main', 'name': name, 'lon': round(mlon_c, 3), 'lat': round(mlat, 3)})
+        cities.append({'id': 'main', 'name': name, 'n': dict(c['n']), 'lon': round(mlon_c, 3), 'lat': round(mlat, 3)})
     c['cities'] = cities
     if code == 'TW':
         c.update({'home': True, 'name': '台灣', 'polys': tw_polys, 'detailRes': 0.02, 'cities': curated['TW']})

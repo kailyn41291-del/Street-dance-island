@@ -6,11 +6,15 @@
 - 點島嶼 → 看到各城市按鈕 → 點城市 → 活動行事曆（月曆＋活動卡片）
 - 可以新增 / 編輯 / 刪除活動，可選擇是否附海報
 - 小遊戲：動作抽卡、節拍道場（BPM / 八拍計數）、Cypher 輪盤
+- 新手教學、捏角色（角色 ID + 密碼登入）、本週任務板
+- 中文 / English / 日本語 / 한국어（註冊時依國籍自動切換）
+- 雲端模式（Supabase）：管理員登入後新增活動，所有人立刻看到
 
 ## 檔案結構
 
 ```
 index.html        入口
+data/config.js    ★ 雲端資料庫設定（Supabase 網址與公開金鑰）
 css/style.css     所有樣式（色票在最上面的 :root）
 data/geo.js       241 個國家 / 地區的輪廓與 1000+ 城市（想加城市改這裡）
 data/events.js    ★ 活動資料庫（網站上大家看到的活動）
@@ -20,6 +24,11 @@ js/games.js       街舞小遊戲
 js/store.js       活動資料存取
 js/sfx.js         8-bit 音效
 js/ui.js          視窗、對話框、轉場等共用元件
+js/i18n.js        四國語言字典
+js/player.js      角色創建 / 登入 / 任務板
+js/tutorial.js    新手教學
+js/backend.js     雲端資料庫（Supabase）
+tools/supabase.sql 雲端資料庫建表語法
 fonts/            俐方體11號 Cubic 11（OFL 授權）
 posters/          放海報圖片的地方
 tools/build_geo.py 重新產生 geo.js 的腳本（用 Natural Earth 資料）

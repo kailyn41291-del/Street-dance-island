@@ -9,7 +9,7 @@ window.UI = (() => {
   /* 視窗 */
   const winHTML = (title, color = '', ctrls = true) => `
     <div class="win-title ${color}"><span class="t">${title}</span>
-      ${ctrls ? `<div class="win-ctrls"><span>_</span><span>□</span><button class="x" aria-label="關閉">×</button></div>` : ''}
+      ${ctrls ? `<div class="win-ctrls"><span>_</span><span>□</span><button class="x" aria-label="${t('close')}">×</button></div>` : ''}
     </div>`;
 
   /* 彈出視窗 */
@@ -46,7 +46,7 @@ window.UI = (() => {
     const ensure = () => {
       if (box) return;
       box = h(`<div id="npc" class="hidden" role="status"><div class="face"></div>
-        <div><div class="who">嚮導 B-BOT</div><div class="txt"></div></div><div class="next">▼</div></div>`);
+        <div><div class="who">${t('guide')}</div><div class="txt"></div></div><div class="next">▼</div></div>`);
       box.querySelector('.face').appendChild(face.el);
       txt = box.querySelector('.txt');
       box.onclick = advance;
@@ -62,13 +62,15 @@ window.UI = (() => {
       }, 32);
     };
     function advance() {
+      if (box.classList.contains('hidden')) return;
       if (typing) { clearInterval(timer); txt.textContent = full; typing = false; return; }
       if (queue.length) type(queue.shift());
-      else { box.classList.add('hidden'); done && done(); }
+      else { box.classList.add('hidden'); const cb = done; done = null; cb && cb(); }
     }
     return {
       say(lines, cb) {
         ensure();
+        box.querySelector('.who').textContent = t('guide');
         queue = [].concat(lines); done = cb;
         box.classList.remove('hidden');
         box.style.animation = 'none'; box.offsetHeight; box.style.animation = '';

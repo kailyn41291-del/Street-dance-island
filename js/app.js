@@ -1,7 +1,7 @@
 /* =========================================================
  * 舞島 DANCE ISLAND — 主程式
- * 路由：#/           世界地圖
- *       #/c/TW       國家（島嶼）→ 城市按鈕
+ * 路由：#/            世界地圖
+ *       #/c/TW        國家（島嶼）→ 城市按鈕
  *       #/c/TW/taipei 城市活動行事曆
  * ========================================================= */
 (() => {
@@ -9,13 +9,16 @@
   const G = window.GEO;
   const byCode = Object.fromEntries(G.countries.map(c => [c.code, c]));
   const stage = document.getElementById('stage');
-  const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
   const pad2 = n => String(n).padStart(2, '0');
   const ymd = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
   const todayStr = () => ymd(new Date());
   const parseDate = s => { const [y, m, d] = (s || '').split('-').map(Number); return y ? new Date(y, m - 1, d) : null; };
   const cityOf = (cc, id) => (byCode[cc]?.cities || []).find(c => c.id === id);
   const seen = key => { try { if (localStorage.getItem('danceIsland.seen.' + key)) return true; localStorage.setItem('danceIsland.seen.' + key, 1); } catch (e) {} return false; };
+  const CONTS = Object.keys(I18N.CONT_KEY);
+  const contName = k => t(I18N.CONT_KEY[k]);
+  const beatLoop = (d, ms) => { const tm = setInterval(() => { if (!d.el.isConnected) clearInterval(tm); else d.beat(); }, ms); };
+  const myLook = () => (Player.me ? Player.me.look : null);
 
   /* ---------------- 路由 ---------------- */
   const parseRoute = () => {
@@ -23,110 +26,204 @@
     if (p[0] === 'c' && byCode[p[1]]) return { view: p[2] && cityOf(p[1], p[2]) ? 'city' : 'country', cc: p[1], city: p[2] };
     return { view: 'world' };
   };
-  let current = null;
-  let firstRender = true;
-  const render = () => {
+  let current = null, started = false;
+  const draw = r => {
+    stage.innerHTML = '';
+    current = r;
+    if (r.view === 'world') WorldView();
+    else if (r.view === 'country') CountryView(byCode[r.cc]);
+    else CityView(byCode[r.cc], cityOf(r.cc, r.city));
+    updateHUD();
+  };
+  const render = (instant) => {
+    if (!started) return;
     const r = parseRoute();
-    const go = () => {
-      stage.innerHTML = '';
-      current = r;
-      npc.hide();
-      if (r.view === 'world') WorldView();
-      else if (r.view === 'country') CountryView(byCode[r.cc]);
-      else CityView(byCode[r.cc], cityOf(r.cc, r.city));
-      updateCrumbs(r);
-    };
-    if (firstRender) { firstRender = false; go(); } else wipe(go);
+    if (instant || !current) draw(r); else { npc.hide(); wipe(() => draw(r)); }
   };
   const nav = hash => { if (location.hash === hash) render(); else location.hash = hash; };
-  window.addEventListener('hashchange', render);
+  window.addEventListener('hashchange', () => render());
 
   /* ---------------- HUD ---------------- */
-  function updateCrumbs(r) {
-    const el = document.querySelector('.crumbs');
-    let html = `<a href="#/">🌏 世界</a>`;
-    if (r.cc) html += `<span class="sep">›</span><a href="#/c/${r.cc}">${esc(byCode[r.cc].name)}</a>`;
-    if (r.view === 'city') html += `<span class="sep">›</span><span>${esc(cityOf(r.cc, r.city).name)}</span>`;
-    el.innerHTML = html;
+  const hud = document.getElementById('hud');
+  function updateHUD() {
+    const r = current || { view: 'world' };
+    let html = `<a href="#/">🌏 ${t('world')}</a>`;
+    if (r.cc) html += `<span class="sep">›</span><a href="#/c/${r.cc}">${esc(nm(byCode[r.cc]))}</a>`;
+    if (r.view === 'city') html += `<span class="sep">›</span><span>${esc(nm(cityOf(r.cc, r.city)))}</span>`;
+    hud.querySelector('.crumbs').innerHTML = html;
+    hud.querySelector('.hud-add').classList.toggle('hidden', !Store.canEdit());
+    hud.querySelector('.hud-save').classList.toggle('hidden', Store.cloud);
+    hud.querySelector('.hud-add .label').textContent = t('add');
+    hud.querySelector('.hud-game .label').textContent = t('games');
+    hud.querySelector('.hud-save .label').textContent = t('save');
+    hud.querySelector('.hud-help').setAttribute('aria-label', t('help'));
+    hud.querySelector('.hud-lang .label').textContent = I18N.LANGS.find(l => l[0] === I18N.lang)[1];
+    const adm = hud.querySelector('.hud-admin');
+    adm.classList.toggle('hidden', !Store.cloud);
+    adm.classList.toggle('pink', Backend.isAdmin);
+    adm.innerHTML = Backend.isAdmin ? '🔑 ADMIN' : '🔑';
+    adm.setAttribute('aria-label', t('admin_btn'));
+    const pl = hud.querySelector('.hud-player');
+    pl.innerHTML = '';
+    const d = PX.dancer(2, myLook());
+    pl.appendChild(d.el);
+    pl.insertAdjacentHTML('beforeend', `<span class="label">${esc(Player.me ? Player.me.name : t('login'))}</span>`);
+    beatLoop(d, 400);
+    const snd = hud.querySelector('.hud-sound');
+    snd.innerHTML = SFX.on ? I.sound : I.mute;
+    snd.setAttribute('aria-label', SFX.on ? t('sound_on') : t('sound_off'));
   }
 
   /* ================= 世界地圖 ================= */
   /*
-   * 版面：所有國家依真實經緯度排列（以東經 150° 為中心，美洲在右、歐非在左），
-   * 再以台灣為圓心「往外推」並拉開間距，讓每個國家都變成一座獨立漂浮的島；
-   * 台灣放大 7 倍放在正中間。
+   * 所有國家依真實經緯度拼在一起（以東經 150° 為中心：歐非在左、美洲在右）。
+   * 以台灣為圓心做「平滑往外推」，讓放大的台灣不會壓到鄰國，
+   * 推的時候國界仍然貼合。相連的陸地（例如歐亞非）是同一塊漂浮大陸，國界用細線分開。
    */
-  const WL = { S: 10, Y: 1.15, SPREAD: 1.3, PUSH: 240, DECAY: 800, TW_ZOOM: 7, CELL: 5, MARGIN: 260 };
+  const WL = { S: 10, Y: 1.15, PUSH: 300, DECAY: 900, TW_ZOOM: 9, CELL: 5, PADC: 50, MIN: 3 };
   let layout = null;
   function buildLayout() {
     if (layout) return layout;
-    const raw = (lon, lat) => [(lon - G.center) * WL.S, -lat * WL.S * WL.Y];
+    const { S, Y, CELL } = WL;
+    const raw = (lon, lat) => [(lon - G.center) * S, -lat * S * Y];
     const tw = byCode.TW;
     const twPts = tw.polys[0].map(([lo, la]) => raw(lo, la));
     const T = [twPts.reduce((s, p) => s + p[0], 0) / twPts.length, twPts.reduce((s, p) => s + p[1], 0) / twPts.length];
-    // 一個點（例如國家中心）在世界地圖上的新位置
-    const place = ([x, y]) => {
-      const dx = (x - T[0]) * WL.SPREAD, dy = (y - T[1]) * WL.SPREAD, r = Math.hypot(dx, dy);
-      if (r < 1e-6) return [...T];
+    const warp = ([x, y]) => {
+      const dx = x - T[0], dy = y - T[1], r = Math.hypot(dx, dy);
+      if (r < 1e-6) return [x, y];
       const r2 = r + WL.PUSH * Math.exp(-r / WL.DECAY);
       return [T[0] + (dx / r) * r2, T[1] + (dy / r) * r2];
     };
-    const items = G.countries.map((c, idx) => {
+    // 1) 每個國家投影成世界座標
+    const shapes = G.countries.map((c, idx) => {
       let polys = c.polys.map(poly => poly.map(([lo, la]) => raw(lo, la)));
+      polys = c.home ? polys.map(poly => poly.map(([x, y]) => [T[0] + (x - T[0]) * WL.TW_ZOOM, T[1] + (y - T[1]) * WL.TW_ZOOM]))
+        : polys.map(poly => poly.map(warp));
       const xs = polys.flat().map(p => p[0]), ys = polys.flat().map(p => p[1]);
-      const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
-      const size = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
-      // 太小的國家放大到至少 5 格，台灣放大 TW_ZOOM 倍
-      const k = c.home ? WL.TW_ZOOM : Math.max(1, (WL.CELL * 5) / Math.max(size, 0.01));
-      const [nx, ny] = c.home ? [...T] : place([cx, cy]);
-      polys = polys.map(poly => poly.map(([x, y]) => [nx + (x - cx) * k, ny + (y - cy) * k]));
-      const grid = PX.rasterizeXY(polys, WL.CELL);
-      return { c, idx, grid, x: grid.minX - grid.pad * WL.CELL, y: grid.minY - grid.pad * WL.CELL, area: grid.w * grid.h };
+      const bx = Math.min(...xs), by = Math.min(...ys), bw = Math.max(...xs) - bx, bh = Math.max(...ys) - by;
+      const size = Math.max(bw, bh);
+      if (!c.home && size < CELL * WL.MIN) {   // 太小的國家放大到看得到
+        const k = (CELL * WL.MIN) / Math.max(size, 0.01), cx = bx + bw / 2, cy = by + bh / 2;
+        polys = polys.map(poly => poly.map(([x, y]) => [cx + (x - cx) * k, cy + (y - cy) * k]));
+      }
+      return { c, idx, polys, area: bw * bh, bx, by, bw, bh };
     });
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    items.forEach(it => { minX = Math.min(minX, it.x); minY = Math.min(minY, it.y); maxX = Math.max(maxX, it.x + it.grid.w * WL.CELL); maxY = Math.max(maxY, it.y + (it.grid.h + 4) * WL.CELL); });
-    const ox = WL.MARGIN - minX, oy = WL.MARGIN - minY;
-    items.forEach(it => { it.x += ox; it.y += oy; });
-    const toWorld = (lon, lat) => { const [x, y] = place(raw(lon, lat)); return [x + ox, y + oy]; };
-    items.sort((a, b) => b.area - a.area);   // 小國畫在上層，才點得到
-    layout = { items, W: maxX - minX + WL.MARGIN * 2, H: maxY - minY + WL.MARGIN * 2, T: [T[0] + ox, T[1] + oy], toWorld, art: new Map() };
+    shapes.forEach(s => { minX = Math.min(minX, s.bx); minY = Math.min(minY, s.by); maxX = Math.max(maxX, s.bx + s.bw); maxY = Math.max(maxY, s.by + s.bh); });
+    const ox = minX - WL.PADC * CELL, oy = minY - WL.PADC * CELL;
+    const GW = Math.ceil((maxX - ox) / CELL) + WL.PADC, GH = Math.ceil((maxY - oy) / CELL) + WL.PADC;
+    // 2) 蓋到同一張格子上（大國先、小國後，小國才不會被蓋掉）
+    const ids = new Uint16Array(GW * GH);
+    [...shapes].sort((a, b) => b.area - a.area).forEach(s => {
+      const g = PX.rasterizeXY(s.polys, CELL, 0, [ox, oy]);
+      const offx = Math.round((g.minX - ox) / CELL), offy = Math.round((g.minY - oy) / CELL);
+      for (let y = 0; y < g.h; y++) for (let x = 0; x < g.w; x++) {
+        if (!g.cells[y * g.w + x]) continue;
+        const X = offx + x, Yy = offy + y;
+        if (X >= 0 && Yy >= 0 && X < GW && Yy < GH) ids[Yy * GW + X] = s.idx + 1;
+      }
+    });
+    // 3) 找出相連的陸塊（每塊各自漂浮）
+    const comp = new Int32Array(GW * GH).fill(-1);
+    const comps = [];
+    const stack = [];
+    for (let i = 0; i < GW * GH; i++) {
+      if (!ids[i] || comp[i] >= 0) continue;
+      const k = comps.length;
+      let x0 = GW, y0 = GH, x1 = 0, y1 = 0, n = 0;
+      comp[i] = k; stack.push(i);
+      while (stack.length) {
+        const j = stack.pop(), x = j % GW, y = (j - x) / GW;
+        n++; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        const nb = [x > 0 ? j - 1 : -1, x < GW - 1 ? j + 1 : -1, y > 0 ? j - GW : -1, y < GH - 1 ? j + GW : -1];
+        for (const q of nb) if (q >= 0 && ids[q] && comp[q] < 0) { comp[q] = k; stack.push(q); }
+      }
+      comps.push({ k, x0, y0, w: x1 - x0 + 1, h: y1 - y0 + 1, n });
+    }
+    comps.forEach(cp => {
+      const cells = new Uint8Array(cp.w * cp.h), sub = new Uint16Array(cp.w * cp.h);
+      for (let y = 0; y < cp.h; y++) for (let x = 0; x < cp.w; x++) {
+        const j = (cp.y0 + y) * GW + cp.x0 + x;
+        if (comp[j] === cp.k) { cells[y * cp.w + x] = 1; sub[y * cp.w + x] = ids[j]; }
+      }
+      cp.grid = { w: cp.w, h: cp.h, cells, ids: sub };
+    });
+    // 4) 每個國家的標籤位置與所屬陸塊
+    const info = G.countries.map(() => ({ n: 0, sx: 0, sy: 0, x0: GW, y0: GH, x1: 0, y1: 0, comps: {} }));
+    for (let i = 0; i < GW * GH; i++) {
+      if (!ids[i]) continue;
+      const f = info[ids[i] - 1], x = i % GW, y = (i - x) / GW;
+      f.n++; f.sx += x; f.sy += y;
+      if (x < f.x0) f.x0 = x; if (x > f.x1) f.x1 = x; if (y < f.y0) f.y0 = y; if (y > f.y1) f.y1 = y;
+      f.comps[comp[i]] = (f.comps[comp[i]] || 0) + 1;
+    }
+    info.forEach(f => {
+      if (!f.n) return;
+      f.cx = f.sx / f.n; f.cy = f.sy / f.n; f.best = Infinity;
+    });
+    // 標籤放在「離中心最近、且屬於這個國家」的格子上（越南這種 S 形國家，中心點可能落在鄰國）
+    for (let i = 0; i < GW * GH; i++) {
+      if (!ids[i]) continue;
+      const f = info[ids[i] - 1], x = i % GW, y = (i - x) / GW, d = (x - f.cx) ** 2 + (y - f.cy) ** 2;
+      if (d < f.best) { f.best = d; f.lx = x; f.ly = y; f.comp = comp[i]; }
+    }
+    info.forEach(f => { if (f.n) { f.cx = f.lx; f.cy = f.ly; } });
+    const toWorld = (lon, lat) => { const [x, y] = warp(raw(lon, lat)); return [x - ox, y - oy]; };
+    layout = { GW, GH, ids, comps, info, W: GW * CELL, H: GH * CELL, T: [T[0] - ox, T[1] - oy], toWorld, art: new Map(), hi: new Map() };
     return layout;
   }
 
-  const OCEANS = [
-    ['太平洋 PACIFIC OCEAN', -150, 15], ['太平洋', 175, -30], ['台灣海峽', 119.6, 24.3], ['南海', 114, 14],
-    ['印度洋 INDIAN OCEAN', 78, -22], ['大西洋', -27, 25], ['大西洋 ATLANTIC', 328, 5], ['北冰洋 ARCTIC', 100, 80]
-  ];
-  const CONTS = ['亞洲', '歐洲', '北美洲', '南美洲', '非洲', '大洋洲'];
+  // 滑過國家時的亮框
+  function highlightCanvas(L, idx) {
+    if (L.hi.has(idx)) return L.hi.get(idx);
+    const f = L.info[idx], C = WL.CELL, w = f.x1 - f.x0 + 1, hh = f.y1 - f.y0 + 1;
+    const cv = document.createElement('canvas');
+    cv.width = w * C; cv.height = hh * C; cv.className = 'hi';
+    const g = cv.getContext('2d');
+    const me = idx + 1, at = (x, y) => (x >= 0 && y >= 0 && x < L.GW && y < L.GH ? L.ids[y * L.GW + x] : 0);
+    for (let y = f.y0; y <= f.y1; y++) for (let x = f.x0; x <= f.x1; x++) {
+      if (at(x, y) !== me) continue;
+      const edge = at(x + 1, y) !== me || at(x - 1, y) !== me || at(x, y + 1) !== me || at(x, y - 1) !== me;
+      g.fillStyle = edge ? '#3b2b2b' : 'rgba(255, 236, 140, .55)';
+      g.fillRect((x - f.x0) * C, (y - f.y0) * C, C, C);
+    }
+    L.hi.set(idx, cv);
+    return cv;
+  }
+
+  const OCEANS = [['ocean_pacific', -150, 15], ['ocean_pacific2', 175, -30], ['strait_tw', 119.6, 24.3], ['scs', 113, 13],
+    ['ocean_indian', 78, -22], ['ocean_atlantic', -28, 25], ['ocean_atlantic', 328, 5], ['ocean_arctic', 100, 80]];
 
   const cam = { x: null, y: null, s: 1 };
   function WorldView() {
-    const L = buildLayout();
+    const L = buildLayout(), C = WL.CELL;
     const view = h(`<div class="view"><div class="world-vp"><div class="world"></div></div></div>`);
     const vp = view.querySelector('.world-vp'), world = view.querySelector('.world');
     world.style.width = L.W + 'px'; world.style.height = L.H + 'px';
     const counts = {};
     Store.all().forEach(e => (counts[e.country] = (counts[e.country] || 0) + 1));
+    const twIdx = G.countries.indexOf(byCode.TW), twInfo = L.info[twIdx];
 
-    // 航線：從台灣連到「有活動」的國家
-    const routes = L.items.filter(it => !it.c.home && counts[it.c.code]).map(it => {
-      const x = it.x + (it.grid.w * WL.CELL) / 2, y = it.y + (it.grid.h * WL.CELL) / 2;
-      const [tx, ty] = L.T, mx = (tx + x) / 2, my = (ty + y) / 2 - Math.abs(x - tx) * 0.15;
-      return `<path d="M${tx} ${ty} Q${mx} ${my} ${x} ${y}"/>`;
+    // 航線：從台灣到有活動的國家
+    const routes = G.countries.map((c, i) => [c, L.info[i]]).filter(([c, f]) => !c.home && counts[c.code] && f.n).map(([c, f]) => {
+      const [tx, ty] = [twInfo.cx * C, twInfo.cy * C], x = f.cx * C, y = f.cy * C;
+      return `<path d="M${tx} ${ty} Q${(tx + x) / 2} ${(ty + y) / 2 - Math.abs(x - tx) * 0.15} ${x} ${y}"/>`;
     }).join('');
     world.appendChild(h(`<svg class="routes" width="${L.W}" height="${L.H}" viewBox="0 0 ${L.W} ${L.H}">${routes}</svg>`));
 
-    // 浪花 & 海洋名稱 & 雲
+    // 浪花、海洋名稱、雲
     const waves = h('<div class="waves"></div>');
-    for (let i = 0; i < 260; i++) {
+    for (let i = 0; i < 280; i++) {
       const w = document.createElement('i'); w.className = 'wave';
-      w.style.left = Math.round(PX.hash(i, 1) * L.W) + 'px';
-      w.style.top = Math.round(PX.hash(i, 2) * L.H) + 'px';
+      const x = Math.floor(PX.hash(i, 1) * L.GW), y = Math.floor(PX.hash(i, 2) * L.GH);
+      if (L.ids[y * L.GW + x]) continue;
+      w.style.left = x * C + 'px'; w.style.top = y * C + 'px';
       w.style.animationDelay = (PX.hash(i, 3) * -4).toFixed(2) + 's';
       waves.appendChild(w);
     }
     world.appendChild(waves);
-    OCEANS.forEach(([t, lon, lat]) => { const [x, y] = L.toWorld(lon, lat); world.appendChild(h(`<div class="ocean-label" style="left:${x}px;top:${y}px">${esc(t)}</div>`)); });
+    OCEANS.forEach(([k, lon, lat]) => { const [x, y] = L.toWorld(lon, lat); world.appendChild(h(`<div class="ocean-label" style="left:${x}px;top:${y}px">${esc(t(k))}</div>`)); });
     for (let i = 0; i < 16; i++) {
       const c = h(`<i class="cloud"></i>`);
       c.style.top = Math.round(PX.hash(i, 9) * L.H) + 'px';
@@ -137,48 +234,76 @@
       world.appendChild(c);
     }
 
-    // 島嶼
-    L.items.forEach(({ c, idx, grid, x, y, area }) => {
-      let art = L.art.get(c.code);
-      if (!art) { art = PX.drawIsland(grid, WL.CELL, { depth: c.home ? 4 : 3, seed: idx + 1 }); L.art.set(c.code, art); }
-      const count = counts[c.code] || 0;
-      const lvl = c.home || count ? 0 : area > 2500 ? 1 : area > 500 ? 2 : 3;
-      const isle = h(`<div class="isle lv${lvl} ${c.home ? 'home' : ''}" style="left:${x}px;top:${y}px;width:${art.w}px;height:${art.h}px">
-        <div class="float" style="--d:${(-(idx % 9) * 0.37).toFixed(2)}s"><button class="hit" aria-label="${esc(c.name)}（${count} 個活動）"></button></div>
-        <div class="isle-tag" style="top:${art.h + 6}px">${esc(c.name)} <span class="en">${esc(c.en)}</span>${count ? `<span class="badge">${count}</span>` : ''}</div>
-      </div>`);
-      art.base.className = 'base';
-      art.base.style.left = -art.pad + 'px'; art.base.style.top = -art.pad + 'px';
-      isle.prepend(art.base);
-      const fl = isle.querySelector('.float');
-      fl.prepend(art.island);
-      if (count) fl.appendChild(h(`<i class="arrow" style="top:-26px"></i>`));
-      if (c.home) {
-        const d = PX.dancer(4);
-        d.el.style.left = art.w * 0.42 + 'px'; d.el.style.top = art.h * 0.2 + 'px';
-        fl.appendChild(d.el);
-        const t = setInterval(() => { if (!d.el.isConnected) clearInterval(t); else d.beat(); }, 300);
-      }
-      const btn = isle.querySelector('.hit');
-      btn.addEventListener('mouseenter', () => SFX.play('hover'));
-      btn.addEventListener('click', e => {
-        if (pan.moved) return;
-        SFX.play('select'); sparkle(e.clientX, e.clientY);
-        nav('#/c/' + c.code);
-      });
-      world.appendChild(isle);
+    // 陸塊
+    const compEls = [];
+    L.comps.forEach(cp => {
+      let art = L.art.get(cp.k);
+      if (!art) { art = PX.drawIsland(cp.grid, C, { depth: cp.n > 40 ? 4 : 3, seed: cp.k + 1 }); L.art.set(cp.k, art); }
+      const el = h(`<div class="isle" style="left:${cp.x0 * C}px;top:${cp.y0 * C}px;width:${art.w}px;height:${art.h}px">
+        <div class="float" style="--d:${(-(cp.k % 9) * 0.37).toFixed(2)}s"></div></div>`);
+      art.base.className = 'base'; art.base.style.left = -art.pad + 'px'; art.base.style.top = -art.pad + 'px';
+      el.prepend(art.base);
+      el.querySelector('.float').prepend(art.island);
+      compEls[cp.k] = el;
+      world.appendChild(el);
     });
+    compEls[twInfo.comp].classList.add('home');
+
+    // 國名標籤
+    const tags = [];
+    G.countries.forEach((c, i) => {
+      const f = L.info[i]; if (!f.n) return;
+      const cp = L.comps[f.comp], n = counts[c.code] || 0;
+      const lvl = c.home || n ? 0 : f.n > 1500 ? 1 : f.n > 220 ? 2 : 3;
+      const tag = h(`<div class="ctag lv${lvl} ${c.home ? 'home' : ''}" data-i="${i}" style="left:${(f.cx - cp.x0 + 0.5) * C}px;top:${(f.cy - cp.y0 + 0.5) * C}px">
+        ${n ? '<i class="arrow"></i>' : ''}<span>${esc(nm(c))}</span>${n ? `<span class="badge">${n}</span>` : ''}</div>`);
+      compEls[f.comp].querySelector('.float').appendChild(tag);
+      tags[i] = tag;
+    });
+    // 主角站在台灣上
+    {
+      const cp = L.comps[twInfo.comp], d = PX.dancer(4, myLook());
+      d.el.classList.add('hero');
+      d.el.style.left = (twInfo.cx - cp.x0) * C - 26 + 'px'; d.el.style.top = (twInfo.y0 - cp.y0) * C + (twInfo.y1 - twInfo.y0) * C * 0.16 + 'px';
+      compEls[twInfo.comp].querySelector('.float').appendChild(d.el);
+      beatLoop(d, 300);
+    }
 
     // 平移 / 縮放
     const zoomLevel = s => (s >= 1.1 ? 3 : s >= 0.6 ? 2 : 1);
     const apply = () => {
       world.style.transform = `translate(${cam.x}px, ${cam.y}px) scale(${cam.s})`;
-      world.style.setProperty('--inv', Math.min(2.4, 1 / cam.s).toFixed(3));
+      world.style.setProperty('--inv', Math.min(2.6, 1 / cam.s).toFixed(3));
       world.dataset.z = zoomLevel(cam.s);
     };
-    const homeScale = () => (innerWidth < 760 ? 0.45 : 0.7);
+    const homeScale = () => (innerWidth < 760 ? 0.5 : 0.75);
+    const homePt = () => [twInfo.cx * C, twInfo.cy * C];
     const centerOn = ([x, y], s = cam.s) => { cam.s = s; cam.x = innerWidth / 2 - x * s; cam.y = innerHeight / 2 - y * s; apply(); };
-    if (cam.x === null) centerOn(L.T, homeScale()); else apply();
+    if (cam.x === null) centerOn(homePt(), homeScale()); else apply();
+
+    // 滑過 / 點擊國家
+    let hover = -1, hiEl = null;
+    const tagAt = e => { const tg = e.target.closest && e.target.closest('.ctag'); return tg ? +tg.dataset.i : -1; };
+    const idAt = (cx, cy) => {
+      const wx = (cx - cam.x) / cam.s, wy = (cy - cam.y) / cam.s + 9;   // +9：補償島嶼浮起的高度
+      const gx = Math.floor(wx / C), gy = Math.floor(wy / C);
+      if (gx < 0 || gy < 0 || gx >= L.GW || gy >= L.GH) return -1;
+      return L.ids[gy * L.GW + gx] - 1;
+    };
+    const setHover = i => {
+      if (i === hover) return;
+      if (hover >= 0 && tags[hover]) tags[hover].classList.remove('hov');
+      if (hiEl) hiEl.remove(), hiEl = null;
+      hover = i;
+      vp.classList.toggle('over', i >= 0);
+      if (i < 0) return;
+      const f = L.info[i], cp = L.comps[f.comp];
+      hiEl = highlightCanvas(L, i);
+      hiEl.style.left = (f.x0 - cp.x0) * C + 'px'; hiEl.style.top = (f.y0 - cp.y0) * C + 'px';
+      compEls[f.comp].querySelector('.float').appendChild(hiEl);
+      if (tags[i]) tags[i].classList.add('hov');
+      SFX.play('hover');
+    };
 
     const pan = { on: false, moved: false, sx: 0, sy: 0, ox: 0, oy: 0, pts: new Map(), dist: 0 };
     vp.addEventListener('pointerdown', e => {
@@ -188,7 +313,7 @@
       if (pan.pts.size === 2) { const [a, b] = [...pan.pts.values()]; pan.dist = Math.hypot(a[0] - b[0], a[1] - b[1]); pan.s0 = cam.s; }
     });
     vp.addEventListener('pointermove', e => {
-      if (!pan.on) return;
+      if (!pan.on) { if (e.pointerType === 'mouse') { const ti = tagAt(e); setHover(ti >= 0 ? ti : idAt(e.clientX, e.clientY)); } return; }
       pan.pts.set(e.pointerId, [e.clientX, e.clientY]);
       if (pan.pts.size === 2) {
         const [a, b] = [...pan.pts.values()];
@@ -196,11 +321,20 @@
         pan.moved = true; return;
       }
       const dx = e.clientX - pan.sx, dy = e.clientY - pan.sy;
-      if (!pan.moved && Math.hypot(dx, dy) > 6) { pan.moved = true; vp.classList.add('dragging'); vp.setPointerCapture(e.pointerId); }
+      if (!pan.moved && Math.hypot(dx, dy) > 6) { pan.moved = true; vp.classList.add('dragging'); vp.setPointerCapture(e.pointerId); setHover(-1); }
       if (pan.moved) { cam.x = pan.ox + dx; cam.y = pan.oy + dy; apply(); }
     });
-    const end = e => { pan.pts.delete(e.pointerId); if (!pan.pts.size) { pan.on = false; vp.classList.remove('dragging'); setTimeout(() => (pan.moved = false), 0); } };
+    const end = e => {
+      const wasClick = pan.on && !pan.moved && pan.pts.size === 1;
+      pan.pts.delete(e.pointerId);
+      if (!pan.pts.size) { pan.on = false; vp.classList.remove('dragging'); }
+      if (wasClick && e.type === 'pointerup') {
+        const ti = tagAt(e), i = ti >= 0 ? ti : idAt(e.clientX, e.clientY);
+        if (i >= 0) { SFX.play('select'); sparkle(e.clientX, e.clientY); nav('#/c/' + G.countries[i].code); }
+      }
+    };
     vp.addEventListener('pointerup', end); vp.addEventListener('pointercancel', end);
+    vp.addEventListener('pointerleave', () => setHover(-1));
     const zoomAt = (px, py, s, abs) => {
       s = Math.min(2.2, Math.max(0.16, abs ? s : cam.s * s));
       cam.x = px - ((px - cam.x) * s) / cam.s; cam.y = py - ((py - cam.y) * s) / cam.s; cam.s = s; apply();
@@ -209,38 +343,39 @@
 
     // 控制鈕
     const ctrls = h(`<div class="map-ctrls">
-      <button class="btn icon" data-z="in" aria-label="放大">${I.plus}</button>
-      <button class="btn icon" data-z="out" aria-label="縮小"><b style="font-size:16px;line-height:1">－</b></button>
-      <button class="btn icon yellow" data-z="all" aria-label="看整個世界">🌏</button>
-      <button class="btn icon pink" data-z="home" aria-label="回到台灣">⌂</button></div>`);
+      <button class="btn icon" data-z="in" aria-label="${t('zoom_in')}">${I.plus}</button>
+      <button class="btn icon" data-z="out" aria-label="${t('zoom_out')}"><b style="font-size:16px;line-height:1">－</b></button>
+      <button class="btn icon yellow" data-z="all" aria-label="${t('see_world')}">🌏</button>
+      <button class="btn icon pink" data-z="home" aria-label="${t('go_home')}">⌂</button></div>`);
     ctrls.onclick = e => {
       const b = e.target.closest('button'); if (!b) return; SFX.play('select');
       if (b.dataset.z === 'in') zoomAt(innerWidth / 2, innerHeight / 2, 1.2);
       else if (b.dataset.z === 'out') zoomAt(innerWidth / 2, innerHeight / 2, 0.83);
-      else if (b.dataset.z === 'all') centerOn([L.W / 2, L.H / 2], Math.max(0.16, Math.min(innerWidth / L.W, innerHeight / L.H) * 0.95));
-      else centerOn(L.T, homeScale());
+      else if (b.dataset.z === 'all') centerOn([L.W / 2, L.H / 2], Math.max(0.16, Math.min(innerWidth / L.W, innerHeight / L.H) * 1.05));
+      else centerOn(homePt(), homeScale());
     };
     view.appendChild(ctrls);
 
-    // 快速傳送：搜尋 + 洲別
-    const menu = h(`<div class="win world-menu ${innerWidth < 760 ? 'collapsed' : ''}">${winHTML(`🧭 快速傳送（${G.countries.length} 國）`, 'yellow', false)}
-      <div class="win-body"><input class="input sm search" placeholder="搜尋國家…（中文或英文）" aria-label="搜尋國家">
-        <div class="cont-tabs"><button data-cont="" class="on">★ 熱門</button>${CONTS.map(k => `<button data-cont="${k}">${k}</button>`).join('')}</div>
+    // 快速傳送
+    const menu = h(`<div class="win world-menu ${innerWidth < 760 ? 'collapsed' : ''}">${winHTML(`🧭 ${t('quick_travel', { n: G.countries.length })}`, 'yellow', false)}
+      <div class="win-body"><input class="input sm search" placeholder="${esc(t('search_ph'))}" aria-label="${esc(t('search_ph'))}">
+        <div class="cont-tabs"><button data-cont="" class="on">${t('popular')}</button>${CONTS.map(k => `<button data-cont="${k}">${contName(k)}</button>`).join('')}</div>
         <div class="country-grid"></div></div></div>`);
-    menu.querySelector('.win-title').insertAdjacentHTML('beforeend', `<button class="btn sm toggle" aria-label="展開或收合">▾</button>`);
+    menu.querySelector('.win-title').insertAdjacentHTML('beforeend', `<button class="btn sm toggle" aria-label="toggle">▾</button>`);
     menu.querySelector('.toggle').onclick = () => { menu.classList.toggle('collapsed'); SFX.play('select'); };
     const gridEl = menu.querySelector('.country-grid'), search = menu.querySelector('.search');
     let cont = '';
     const POPULAR = ['TW', 'JP', 'KR', 'CN', 'HK', 'VN', 'TH', 'PH', 'SG', 'MY', 'ID', 'US', 'FR', 'GB', 'DE', 'AU'];
     const fillMenu = () => {
       const q = search.value.trim().toLowerCase();
-      let list = q ? G.countries.filter(c => c.name.includes(q) || c.en.toLowerCase().includes(q) || c.code.toLowerCase() === q)
-        : cont ? G.countries.filter(c => c.cont === cont)
+      const match = c => [c.name, c.en, ...Object.values(c.n || {})].some(s => String(s).toLowerCase().includes(q));
+      const list = q ? G.countries.filter(match)
+        : cont ? G.countries.filter(c => c.cont === cont).sort((a, b) => nm(a).localeCompare(nm(b)))
         : [...new Set([...G.countries.filter(c => counts[c.code]).map(c => c.code), ...POPULAR])].map(k => byCode[k]).filter(Boolean);
-      gridEl.innerHTML = list.length ? '' : '<p style="grid-column:1/-1;font-size:12px;margin:4px">找不到這個國家…</p>';
+      gridEl.innerHTML = list.length ? '' : `<p style="grid-column:1/-1;font-size:12px;margin:4px">${t('not_found')}</p>`;
       list.forEach(c => {
         const n = counts[c.code] || 0;
-        const b = h(`<button class="btn sm ${c.home ? 'pink' : ''}"><span class="nm">${esc(c.name)}</span>${n ? `<span class="badge">${n}</span>` : ''}</button>`);
+        const b = h(`<button class="btn sm ${c.home ? 'pink' : ''}"><span class="nm">${esc(nm(c))}</span>${n ? `<span class="badge">${n}</span>` : ''}</button>`);
         b.onclick = () => { SFX.play('select'); nav('#/c/' + c.code); };
         gridEl.appendChild(b);
       });
@@ -274,12 +409,7 @@
     big.prepend(art.base);
     big.querySelector('.float').prepend(art.island);
     const pins = big.querySelector('.pins');
-
-    const goCity = (city, e) => {
-      SFX.play('confirm');
-      if (e) sparkle(e.clientX, e.clientY, 14);
-      nav(`#/c/${c.code}/${city.id}`);
-    };
+    const goCity = (city, e) => { SFX.play('confirm'); if (e) sparkle(e.clientX, e.clientY, 14); nav(`#/c/${c.code}/${city.id}`); };
 
     // 標籤自動避開：先試指定方向（沒指定就右邊），撞到就換邊
     const placed = [];
@@ -287,14 +417,14 @@
     c.cities.forEach(city => {
       let [x, y] = grid.toCell(city.lon, city.lat);
       x = Math.min(grid.w - 1, Math.max(1, x)) * cell; y = Math.min(grid.h - 1, Math.max(1, y)) * cell + cell / 2;
-      const n = Store.byCity(c.code, city.id).length;
-      const lw = city.name.length * 13 + 34 + (n ? 22 : 0);
+      const n = Store.byCity(c.code, city.id).length, name = nm(city);
+      const lw = [...name].reduce((s, ch) => s + (ch.charCodeAt(0) > 255 ? 13 : 8), 0) + 34 + (n ? 22 : 0);
       const rect = side => side === 'l' ? [x - lw, y - 26, x + 9, y] : [x - 9, y - 26, x + lw, y];
       let side = city.label || 'r';
-      if (!city.label && hit(rect(side))) side = 'l';
+      if (hit(rect(side))) side = side === 'l' ? 'r' : 'l';
       placed.push(rect(side));
       const pin = h(`<button class="pin ${side} ${n ? 'has' : ''}" style="left:${x}px;top:${y}px">
-        <i class="gem"></i><span class="name">${esc(city.name)}${n ? `<span class="cnt">${n}</span>` : ''}</span></button>`);
+        <i class="gem"></i><span class="name">${esc(name)}${n ? `<span class="cnt">${n}</span>` : ''}</span></button>`);
       pin.style.transform = side === 'l' ? 'translate(calc(-100% + 9px), -100%)' : 'translate(-9px, -100%)';
       pin.addEventListener('mouseenter', () => SFX.play('hover'));
       pin.onclick = e => goCity(city, e);
@@ -302,14 +432,13 @@
     });
     wrap.appendChild(big);
 
-    // 城市清單
     const total = Store.byCountry(c.code).length;
-    const menu = h(`<div class="win city-menu">${winHTML(`📍 ${esc(c.name)}・選擇城市`, 'pink', false)}
+    const menu = h(`<div class="win city-menu">${winHTML(t('choose_city', { c: esc(nm(c)) }), 'pink', false)}
       <div class="win-body"><div class="country-head">${esc(c.en)} — ${total} EVENTS</div><ul class="city-list"></ul></div></div>`);
     const ul = menu.querySelector('.city-list');
     [...c.cities].sort((a, b) => Store.byCity(c.code, b.id).length - Store.byCity(c.code, a.id).length).forEach(city => {
       const n = Store.byCity(c.code, city.id).length;
-      const li = h(`<li><button><span class="grow">${esc(city.name)}</span>${n ? `<span class="badge">${n}</span>` : '<span style="opacity:.4;font-size:11px">—</span>'}</button></li>`);
+      const li = h(`<li><button><span class="grow">${esc(nm(city))}</span>${n ? `<span class="badge">${n}</span>` : '<span style="opacity:.4;font-size:11px">—</span>'}</button></li>`);
       li.querySelector('button').addEventListener('mouseenter', () => SFX.play('hover'));
       li.querySelector('button').onclick = () => goCity(city);
       ul.appendChild(li);
@@ -318,9 +447,8 @@
     stage.appendChild(view);
 
     if (!seen('country.' + c.code)) {
-      setTimeout(() => npc.say(c.home
-        ? ['歡迎回到主島「台灣」！', '每個縣市都是一顆按鈕。發亮跳動的是「有活動」的城市，點進去看行事曆吧！']
-        : [`抵達「${c.name}」！`, '這裡的城市一樣可以點，看看海外有什麼 Battle 和 Workshop。']), 500);
+      const lines = c.home ? t('npc_tw') : t('npc_other').map(s => s.replace('{c}', nm(c)));
+      setTimeout(() => npc.say(lines), 500);
     }
   }
 
@@ -330,10 +458,10 @@
     const key = c.code + '/' + city.id;
     const now = new Date();
     const st = calState[key] || (calState[key] = { y: now.getFullYear(), m: now.getMonth(), mode: 'upcoming', styles: new Set(), day: null });
-    // 如果這個月沒活動、但之後有，預設跳到下一個有活動的月份
     const view = h(`<div class="view city-view"><div class="city-inner"></div></div>`);
     const inner = view.querySelector('.city-inner');
     stage.appendChild(view);
+    const cN = esc(nm(c)), ciN = esc(nm(city));
 
     const draw = (flashId) => {
       const all = Store.byCity(c.code, city.id);
@@ -345,36 +473,37 @@
       if (st.mode === 'month') list = filtered.filter(e => st.day ? (e.date === st.day || (e.endDate && e.date <= st.day && e.endDate >= st.day)) : inMonth(e));
       else if (st.mode === 'upcoming') list = filtered.filter(e => (e.endDate || e.date) >= today);
       else list = filtered;
+      const canEdit = Store.canEdit();
+      const head = st.mode === 'month' ? (st.day ? t('list_day', { d: st.day.replace(/-/g, '/') }) : t('list_month', { y: st.y, m: st.m + 1 }))
+        : st.mode === 'upcoming' ? t('list_upcoming') : t('list_all');
 
-      const stylesHere = Store.STYLES;
       inner.innerHTML = `
-        <div class="win">${winHTML(`📅 ${esc(c.name)}・${esc(city.name)}　活動行事曆`, 'teal', false)}
+        <div class="win">${winHTML(t('calendar', { c: cN, city: ciN }), 'teal', false)}
           <div class="win-body" style="display:grid;gap:14px">
             <div class="cal-head">
               <div class="seg" role="tablist">
-                <button data-mode="upcoming" class="${st.mode === 'upcoming' ? 'on' : ''}">即將到來</button>
-                <button data-mode="month" class="${st.mode === 'month' ? 'on' : ''}">月曆</button>
-                <button data-mode="all" class="${st.mode === 'all' ? 'on' : ''}">全部</button>
+                <button data-mode="upcoming" class="${st.mode === 'upcoming' ? 'on' : ''}">${t('upcoming')}</button>
+                <button data-mode="month" class="${st.mode === 'month' ? 'on' : ''}">${t('month')}</button>
+                <button data-mode="all" class="${st.mode === 'all' ? 'on' : ''}">${t('all')}</button>
               </div>
               <span class="grow"></span>
-              <a class="btn sm" href="#/c/${c.code}">${I.back} 回到${esc(c.name)}</a>
-              <button class="btn pink sm add-here">${I.plus} 在${esc(city.name)}新增活動</button>
+              <a class="btn sm" href="#/c/${c.code}">${I.back} ${t('back_to', { c: cN })}</a>
+              ${canEdit ? `<button class="btn pink sm add-here">${I.plus} ${t('add_here', { city: ciN })}</button>` : ''}
             </div>
             <div class="chips">
-              <button class="chip ${st.styles.size ? '' : 'on'}" data-style="" style="--c:var(--yellow)">全部舞風</button>
-              ${stylesHere.map(s => `<button class="chip ${st.styles.has(s) ? 'on' : ''}" data-style="${esc(s)}" style="--c:${Store.STYLE_COLOR[s]}"><span class="dot"></span>${esc(s)}</button>`).join('')}
+              <button class="chip ${st.styles.size ? '' : 'on'}" data-style="" style="--c:var(--yellow)">${t('all_styles')}</button>
+              ${Store.STYLES.map(s => `<button class="chip ${st.styles.has(s) ? 'on' : ''}" data-style="${esc(s)}" style="--c:${Store.STYLE_COLOR[s]}"><span class="dot"></span>${esc(s)}</button>`).join('')}
             </div>
             ${st.mode === 'month' ? monthGrid(filtered, today) : ''}
           </div>
         </div>
-        <div class="list-head">${st.mode === 'month' ? (st.day ? `${st.day.replace(/-/g, '/')} 的活動` : `${st.y} 年 ${st.m + 1} 月的活動`) : st.mode === 'upcoming' ? '即將到來的活動' : '所有活動'}
-          <span class="badge">${list.length}</span></div>
-        <div class="cards">${list.length ? list.map((e, i) => cardHTML(e, i, today)).join('') : emptyHTML(city)}</div>`;
+        <div class="list-head">${head} <span class="badge">${list.length}</span></div>
+        <div class="cards">${list.length ? list.map((e, i) => cardHTML(e, i, today, canEdit)).join('') : emptyHTML(city, canEdit)}</div>`;
 
       if (!list.length) {
-        const d = PX.dancer(5); d.el.classList.add('sprite');
-        inner.querySelector('.empty').prepend(d.el);
-        const t = setInterval(() => { if (!d.el.isConnected) clearInterval(t); else d.beat(); }, 420);
+        const d = PX.dancer(5, myLook());
+        inner.querySelector('.empty .win-body').prepend(d.el);
+        beatLoop(d, 420);
       }
       if (flashId) {
         const el = inner.querySelector(`[data-id="${CSS.escape(flashId)}"]`);
@@ -399,53 +528,53 @@
         </button>`;
       }
       return `<div class="cal-head" style="justify-content:center">
-          <button class="btn sm" data-mon="-1" aria-label="上個月">◀</button>
-          <div class="month">${st.y} 年 ${st.m + 1} 月</div>
-          <button class="btn sm" data-mon="1" aria-label="下個月">▶</button>
-          <button class="btn sm yellow" data-mon="0">今天</button>
+          <button class="btn sm" data-mon="-1" aria-label="${t('prev_month')}">◀</button>
+          <div class="month">${t('month_title', { y: st.y, m: st.m + 1 })}</div>
+          <button class="btn sm" data-mon="1" aria-label="${t('next_month')}">▶</button>
+          <button class="btn sm yellow" data-mon="0">${t('today')}</button>
         </div>
-        <div class="month-grid">${WEEK.map(w => `<div class="dow">${w}</div>`).join('')}${cells}</div>`;
+        <div class="month-grid">${t('week').map(w => `<div class="dow">${w}</div>`).join('')}${cells}</div>`;
     }
 
     inner.addEventListener('click', e => {
-      const t = e.target.closest('button, a'); if (!t) return;
-      if (t.dataset.mode) { st.mode = t.dataset.mode; st.day = null; SFX.play('select'); draw(); }
-      else if (t.dataset.style !== undefined) {
-        const s = t.dataset.style;
+      const tg = e.target.closest('button, a'); if (!tg) return;
+      if (tg.dataset.mode) { st.mode = tg.dataset.mode; st.day = null; SFX.play('select'); draw(); }
+      else if (tg.dataset.style !== undefined) {
+        const s = tg.dataset.style;
         if (!s) st.styles.clear(); else st.styles.has(s) ? st.styles.delete(s) : st.styles.add(s);
         SFX.play('select'); draw();
       }
-      else if (t.dataset.mon !== undefined) {
-        const v = +t.dataset.mon;
+      else if (tg.dataset.mon !== undefined) {
+        const v = +tg.dataset.mon;
         if (v === 0) { st.y = now.getFullYear(); st.m = now.getMonth(); }
         else { const d = new Date(st.y, st.m + v, 1); st.y = d.getFullYear(); st.m = d.getMonth(); }
         st.day = null; SFX.play('select'); draw();
       }
-      else if (t.dataset.day) {
-        if (!t.classList.contains('has')) return;
-        st.day = st.day === t.dataset.day ? null : t.dataset.day; SFX.play('select'); draw();
+      else if (tg.dataset.day) {
+        if (!tg.classList.contains('has')) return;
+        st.day = st.day === tg.dataset.day ? null : tg.dataset.day; SFX.play('select'); draw();
       }
-      else if (t.classList.contains('add-here')) openForm({ country: c.code, city: city.id });
-      else if (t.dataset.act === 'edit') openForm(Store.get(t.dataset.ev));
-      else if (t.dataset.act === 'del') confirmDelete(Store.get(t.dataset.ev), draw);
-      else if (t.dataset.act === 'poster') openPoster(Store.get(t.dataset.ev));
-      else if (t.dataset.act === 'map' || t.dataset.act === 'link') SFX.play('confirm');
+      else if (tg.classList.contains('add-here')) openForm({ country: c.code, city: city.id });
+      else if (tg.dataset.act === 'edit') openForm(Store.get(tg.dataset.ev));
+      else if (tg.dataset.act === 'del') confirmDelete(Store.get(tg.dataset.ev), draw);
+      else if (tg.dataset.act === 'poster') openPoster(Store.get(tg.dataset.ev));
+      else if (tg.dataset.act === 'map' || tg.dataset.act === 'link') SFX.play('confirm');
     });
     draw(CityView.flash);
     CityView.flash = null;
     CityView.redraw = draw;
 
-    if (!seen('city')) setTimeout(() => npc.say(['這裡是城市行事曆！', '「月曆」可以看整個月；每張卡片右邊有地圖📍和官網🔗按鈕。', '有活動沒被登錄？按「新增活動」把它加進來！']), 500);
+    if (!seen('city')) setTimeout(() => npc.say(t('npc_city')), 500);
   }
 
   function regStatus(e, today) {
     if (!e.regStart && !e.regEnd) return '';
-    if (e.regStart && today < e.regStart) return `<span class="tag" style="--c:var(--blue)">報名尚未開始</span>`;
-    if (e.regEnd && today > e.regEnd) return `<span class="tag" style="--c:#c9bfb5">報名已截止</span>`;
-    return `<span class="tag" style="--c:var(--green)">● 報名中</span>`;
+    if (e.regStart && today < e.regStart) return `<span class="tag" style="--c:var(--blue)">${t('reg_soon')}</span>`;
+    if (e.regEnd && today > e.regEnd) return `<span class="tag" style="--c:#c9bfb5">${t('reg_closed')}</span>`;
+    return `<span class="tag" style="--c:var(--green)">${t('reg_open')}</span>`;
   }
 
-  function cardHTML(e, i, today) {
+  function cardHTML(e, i, today, canEdit) {
     const d = parseDate(e.date);
     const color = Store.STYLE_COLOR[(e.styles || [])[0]] || 'var(--yellow)';
     const mapUrl = e.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.address || e.venue || '')}`;
@@ -454,118 +583,112 @@
     const dateStr = e.endDate && e.endDate !== e.date ? `${(e.date || '').replace(/-/g, '/')} – ${e.endDate.slice(5).replace('-', '/')}` : (e.date || '').replace(/-/g, '/');
     const reg = (e.regStart || e.regEnd) ? `${(e.regStart || '?').replace(/-/g, '/')} ～ ${(e.regEnd || '?').replace(/-/g, '/')}` : '';
     const safeLink = /^https?:\/\//i.test(e.link || '') ? e.link : '';
+    const safeMap = /^https?:\/\//i.test(mapUrl) ? mapUrl : '';
     const rows = [
-      ['🕒 日期時間', `${dateStr}${timeStr ? '　' + timeStr : ''}`],
-      ['🏠 主辦', e.organizer],
-      ['📍 地點', [e.venue, e.address].filter(Boolean).join('｜')],
-      ['📝 報名期間', reg],
-      ['✉ 報名方式', e.regMethod],
-      ['💰 費用', e.fee],
-      ['💬 備註', e.note]
+      [t('r_when'), `${dateStr}${timeStr ? '　' + timeStr : ''}`], [t('r_org'), e.organizer],
+      [t('r_venue'), [e.venue, e.address].filter(Boolean).join('｜')], [t('r_reg'), reg],
+      [t('r_method'), e.regMethod], [t('r_fee'), e.fee], [t('r_note'), e.note]
     ].filter(r => r[1]);
     return `<article class="card ${e.poster ? 'has-poster' : ''} ${past ? 'past' : ''}" data-id="${esc(e.id)}" style="--i:${i};--c:${color}">
-      ${e.poster ? `<button class="poster" data-act="poster" data-ev="${esc(e.id)}" aria-label="放大海報"><img src="${esc(e.poster)}" alt="${esc(e.name)} 海報" loading="lazy"></button>` : ''}
+      ${e.poster ? `<button class="poster" data-act="poster" data-ev="${esc(e.id)}" aria-label="${t('poster_zoom')}"><img src="${esc(e.poster)}" alt="${esc(e.name)} ${t('poster')}" loading="lazy"></button>` : ''}
       <div class="date">
         <span class="m">${d ? d.getFullYear() + '/' + (d.getMonth() + 1) : ''}</span>
         <span class="d">${d ? pad2(d.getDate()) : '??'}</span>
-        <span class="w">週${d ? WEEK[d.getDay()] : '?'}</span>
+        <span class="w">${d ? t('wk').replace('{w}', t('week')[d.getDay()]) : '?'}</span>
         ${e.startTime ? `<span class="tm">${esc(e.startTime)}</span>` : ''}
       </div>
       <div class="main">
         <div class="tags">${(e.styles || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('')}
-          ${regStatus(e, today)}${past ? '<span class="tag">已結束</span>' : ''}${e._src === 'local' ? '<span class="tag local" title="只存在這台瀏覽器，記得匯出">本機新增</span>' : ''}</div>
+          ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}</div>
         <h3>${esc(e.name)}</h3>
         <dl class="info">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
       </div>
       <div class="acts">
-        ${(e.address || e.venue || e.mapUrl) ? `<a class="btn sm teal" data-act="map" href="${esc(mapUrl)}" target="_blank" rel="noopener">${I.pin} 地圖</a>` : ''}
-        ${safeLink ? `<a class="btn sm orange" data-act="link" href="${esc(safeLink)}" target="_blank" rel="noopener">${I.link} 官網/IG</a>` : ''}
-        <button class="btn sm" data-act="edit" data-ev="${esc(e.id)}">${I.edit} 編輯</button>
-        <button class="btn sm" data-act="del" data-ev="${esc(e.id)}">${I.trash} 刪除</button>
+        ${(e.address || e.venue || e.mapUrl) && safeMap ? `<a class="btn sm teal" data-act="map" href="${esc(safeMap)}" target="_blank" rel="noopener">${I.pin} ${t('b_map')}</a>` : ''}
+        ${safeLink ? `<a class="btn sm orange" data-act="link" href="${esc(safeLink)}" target="_blank" rel="noopener">${I.link} ${t('b_link')}</a>` : ''}
+        ${canEdit ? `<button class="btn sm" data-act="edit" data-ev="${esc(e.id)}">${I.edit} ${t('b_edit')}</button>
+        <button class="btn sm" data-act="del" data-ev="${esc(e.id)}">${I.trash} ${t('b_del')}</button>` : ''}
       </div>
     </article>`;
   }
 
-  const emptyHTML = city => `<div class="win empty"><div class="win-body">
-      <p>${esc(city.name)}這裡還沒有活動……</p>
-      <p style="font-size:13px;color:var(--ink-soft)">成為第一個登錄活動的勇者吧！</p>
-      <button class="btn pink add-here">${I.plus} 新增活動</button></div></div>`;
+  const emptyHTML = (city, canEdit) => `<div class="win empty"><div class="win-body">
+      <p>${t('empty1', { city: esc(nm(city)) })}</p>
+      ${canEdit ? `<p style="font-size:13px;color:var(--ink-soft)">${t('empty2')}</p><button class="btn pink add-here">${I.plus} ${t('add')}</button>` : ''}</div></div>`;
 
   function openPoster(e) {
-    modal({ title: '🖼 ' + e.name, color: 'blue', wide: true, body: `<div class="lightbox"><img src="${esc(e.poster)}" alt="${esc(e.name)} 海報"></div>` });
+    modal({ title: '🖼 ' + e.name, color: 'blue', wide: true, body: `<div class="lightbox"><img src="${esc(e.poster)}" alt="${esc(e.name)} ${t('poster')}"></div>` });
   }
 
   function confirmDelete(e, after) {
     const m = modal({
-      title: '⚠ 確認刪除', color: 'pink',
-      body: `<p>確定要刪除「${esc(e.name)}」嗎？</p>
-        <p style="font-size:12px;color:var(--ink-soft)">${e._src === 'seed' ? '這是 GitHub 上的活動：只會在這台瀏覽器隱藏，匯出 events.js 後才會真的移除。' : '這個活動只存在這台瀏覽器。'}</p>
-        <div class="form-foot"><button class="btn no">NO</button><button class="btn red yes">YES，刪除</button></div>`
+      title: t('del_title'), color: 'pink',
+      body: `<p>${t('del_q', { n: esc(e.name) })}</p>
+        ${Store.cloud ? '' : `<p style="font-size:12px;color:var(--ink-soft)">${e._src === 'seed' ? t('del_seed') : t('del_local')}</p>`}
+        <div class="err"></div><div class="form-foot"><button class="btn no">${t('no')}</button><button class="btn red yes">${t('yes_del')}</button></div>`
     });
     m.el.querySelector('.no').onclick = m.close;
-    m.el.querySelector('.yes').onclick = () => { Store.remove(e.id); m.close(); toast('活動已刪除', '✕'); after && after(); };
+    m.el.querySelector('.yes').onclick = async ev => {
+      ev.target.disabled = true;
+      try { await Store.remove(e.id); } catch (x) { SFX.play('error'); m.el.querySelector('.err').textContent = '✕ ' + t('cloud_err') + x.message; ev.target.disabled = false; return; }
+      m.close(); toast(t('deleted'), '✕'); after && after();
+    };
   }
 
   /* ================= 新增 / 編輯活動 ================= */
   function openForm(init = {}) {
+    if (!Store.canEdit()) return openAdmin();
     const editing = !!init.id;
     const e = { styles: [], country: 'TW', city: 'taipei', ...init };
-    const opt = c => `<option value="${c.code}" ${c.code === e.country ? 'selected' : ''}>${esc(c.name)}　${esc(c.en)}</option>`;
-    const countryOpts = opt(byCode.TW) + CONTS.map(k => `<optgroup label="${k}">${G.countries.filter(c => c.cont === k && !c.home).sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant')).map(opt).join('')}</optgroup>`).join('');
+    const opt = c => `<option value="${c.code}" ${c.code === e.country ? 'selected' : ''}>${esc(nm(c))}${I18N.lang === 'en' ? '' : '　' + esc(c.n?.en || c.en)}</option>`;
+    const countryOpts = opt(byCode.TW) + CONTS.map(k => `<optgroup label="${contName(k)}">${G.countries.filter(c => c.cont === k && !c.home).sort((a, b) => nm(a).localeCompare(nm(b))).map(opt).join('')}</optgroup>`).join('');
     const posterMode = !e.poster ? 'none' : e.poster.startsWith('data:') ? 'upload' : 'url';
     const body = h(`<form class="form" novalidate>
-      <label class="field full"><span>活動名稱 <b>*</b></span><input class="input" name="name" value="${esc(e.name)}" placeholder="例：Island Cypher Vol.1" required></label>
-      <label class="field"><span>主辦方</span><input class="input" name="organizer" value="${esc(e.organizer)}" placeholder="主辦單位 / Crew"></label>
-      <div class="field"><span>國家 / 城市 <b>*</b></span><div class="row2">
+      <label class="field full"><span>${t('f_name')} <b>*</b></span><input class="input" name="name" value="${esc(e.name)}" placeholder="${esc(t('f_name_ph'))}" required></label>
+      <label class="field"><span>${t('f_org')}</span><input class="input" name="organizer" value="${esc(e.organizer)}" placeholder="${esc(t('f_org_ph'))}"></label>
+      <div class="field"><span>${t('f_place')} <b>*</b></span><div class="row2">
         <select class="input" name="country">${countryOpts}</select><select class="input" name="city"></select></div></div>
-      <label class="field"><span>場地名稱</span><input class="input" name="venue" value="${esc(e.venue)}" placeholder="例：華山文創園區"></label>
-      <label class="field"><span>地址（會用來開 Google Map）</span><input class="input" name="address" value="${esc(e.address)}" placeholder="例：台北市中正區八德路一段1號"></label>
-
-      <fieldset class="fieldset full"><legend>賽事分類（可複選）<b style="color:var(--red)">*</b></legend>
+      <label class="field"><span>${t('f_venue')}</span><input class="input" name="venue" value="${esc(e.venue)}" placeholder="${esc(t('f_venue_ph'))}"></label>
+      <label class="field"><span>${t('f_addr')}</span><input class="input" name="address" value="${esc(e.address)}" placeholder="${esc(t('f_addr_ph'))}"></label>
+      <fieldset class="fieldset full"><legend>${t('f_styles')} <b style="color:var(--red)">*</b></legend>
         <div class="chips">${Store.STYLES.map(s => `<label class="chip ${e.styles.includes(s) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[s]}"><input type="checkbox" name="styles" value="${esc(s)}" ${e.styles.includes(s) ? 'checked' : ''} hidden><span class="dot"></span>${esc(s)}</label>`).join('')}</div>
       </fieldset>
-
-      <fieldset class="fieldset full"><legend>🕒 活動日期與時間</legend>
-        <div class="row2"><label class="field"><span>活動日期 <b>*</b></span><input class="input" type="date" name="date" value="${esc(e.date)}"></label>
-          <label class="field"><span>結束日期（多日活動才填）</span><input class="input" type="date" name="endDate" value="${esc(e.endDate)}"></label></div>
-        <div class="row2"><label class="field"><span>開始時間</span><input class="input" type="time" name="startTime" value="${esc(e.startTime)}"></label>
-          <label class="field"><span>結束時間</span><input class="input" type="time" name="endTime" value="${esc(e.endTime)}"></label></div>
+      <fieldset class="fieldset full"><legend>${t('f_when')}</legend>
+        <div class="row2"><label class="field"><span>${t('f_date')} <b>*</b></span><input class="input" type="date" name="date" value="${esc(e.date)}"></label>
+          <label class="field"><span>${t('f_end')}</span><input class="input" type="date" name="endDate" value="${esc(e.endDate)}"></label></div>
+        <div class="row2"><label class="field"><span>${t('f_start')}</span><input class="input" type="time" name="startTime" value="${esc(e.startTime)}"></label>
+          <label class="field"><span>${t('f_endt')}</span><input class="input" type="time" name="endTime" value="${esc(e.endTime)}"></label></div>
       </fieldset>
-
-      <fieldset class="fieldset full"><legend>📝 報名資訊</legend>
-        <div class="row2"><label class="field"><span>報名開始</span><input class="input" type="date" name="regStart" value="${esc(e.regStart)}"></label>
-          <label class="field"><span>報名截止</span><input class="input" type="date" name="regEnd" value="${esc(e.regEnd)}"></label></div>
-        <div class="row2"><label class="field"><span>報名方式</span><input class="input" name="regMethod" value="${esc(e.regMethod)}" placeholder="例：IG 私訊 / Google 表單 / 現場"></label>
-          <label class="field"><span>費用</span><input class="input" name="fee" value="${esc(e.fee)}" placeholder="例：選手 NT$300｜觀眾免費"></label></div>
+      <fieldset class="fieldset full"><legend>${t('f_reg')}</legend>
+        <div class="row2"><label class="field"><span>${t('f_regs')}</span><input class="input" type="date" name="regStart" value="${esc(e.regStart)}"></label>
+          <label class="field"><span>${t('f_rege')}</span><input class="input" type="date" name="regEnd" value="${esc(e.regEnd)}"></label></div>
+        <div class="row2"><label class="field"><span>${t('f_method')}</span><input class="input" name="regMethod" value="${esc(e.regMethod)}" placeholder="${esc(t('f_method_ph'))}"></label>
+          <label class="field"><span>${t('f_fee')}</span><input class="input" name="fee" value="${esc(e.fee)}" placeholder="${esc(t('f_fee_ph'))}"></label></div>
       </fieldset>
-
-      <label class="field full"><span>${I.link} 活動官網 / 官方 IG 連結</span><input class="input" name="link" type="url" value="${esc(e.link)}" placeholder="https://www.instagram.com/..."></label>
-      <label class="field full"><span>${I.pin} Google Map 連結（選填，不填就用地址搜尋）</span><input class="input" name="mapUrl" type="url" value="${esc(e.mapUrl)}" placeholder="https://maps.app.goo.gl/..."></label>
-
-      <fieldset class="fieldset full"><legend>${I.image} 活動海報</legend>
+      <label class="field full"><span>${I.link} ${t('f_link')}</span><input class="input" name="link" type="url" value="${esc(e.link)}" placeholder="https://www.instagram.com/..."></label>
+      <label class="field full"><span>${I.pin} ${t('f_map')}</span><input class="input" name="mapUrl" type="url" value="${esc(e.mapUrl)}" placeholder="https://maps.app.goo.gl/..."></label>
+      <fieldset class="fieldset full"><legend>${I.image} ${t('f_poster')}</legend>
         <div class="seg" style="justify-self:start">
-          <button type="button" data-pm="none" class="${posterMode === 'none' ? 'on' : ''}">不放海報</button>
-          <button type="button" data-pm="upload" class="${posterMode === 'upload' ? 'on' : ''}">上傳圖片</button>
-          <button type="button" data-pm="url" class="${posterMode === 'url' ? 'on' : ''}">圖片網址</button>
+          <button type="button" data-pm="none" class="${posterMode === 'none' ? 'on' : ''}">${t('p_none')}</button>
+          <button type="button" data-pm="upload" class="${posterMode === 'upload' ? 'on' : ''}">${t('p_up')}</button>
+          <button type="button" data-pm="url" class="${posterMode === 'url' ? 'on' : ''}">${t('p_url')}</button>
         </div>
         <input type="file" accept="image/*" class="input pm-upload ${posterMode === 'upload' ? '' : 'hidden'}">
-        <input class="input pm-url ${posterMode === 'url' ? '' : 'hidden'}" name="posterUrl" placeholder="https://... 或 posters/檔名.jpg" value="${posterMode === 'url' ? esc(e.poster) : ''}">
-        <img class="poster-prev ${e.poster ? '' : 'hidden'}" src="${esc(e.poster || '')}" alt="海報預覽">
+        <input class="input pm-url ${posterMode === 'url' ? '' : 'hidden'}" name="posterUrl" placeholder="${esc(t('p_url_ph'))}" value="${posterMode === 'url' ? esc(e.poster) : ''}">
+        <img class="poster-prev ${e.poster ? '' : 'hidden'}" src="${esc(e.poster || '')}" alt="">
       </fieldset>
-
-      <label class="field full"><span>備註</span><textarea class="input" name="note" placeholder="評審、DJ、獎金、注意事項…">${esc(e.note)}</textarea></label>
+      <label class="field full"><span>${t('f_note')}</span><textarea class="input" name="note" placeholder="${esc(t('f_note_ph'))}">${esc(e.note)}</textarea></label>
       <div class="full"><div class="err"></div><div class="form-foot">
-        <button type="button" class="btn cancel">CANCEL</button>
-        <button type="submit" class="btn pink">${editing ? '★ 儲存修改' : '★ 登錄活動'}</button></div></div>
+        <button type="button" class="btn cancel">${t('cancel')}</button>
+        <button type="submit" class="btn pink">${editing ? t('f_submit_edit') : t('f_submit_new')}</button></div></div>
     </form>`);
 
-    const m = modal({ title: editing ? '✎ 編輯活動' : '＋ 新增活動', color: 'pink', body, wide: true });
+    const m = modal({ title: editing ? t('f_edit') : t('f_new'), color: 'pink', body, wide: true });
     const f = body;
     const citySel = f.elements.city;
-    const fillCities = (cc, sel) => { citySel.innerHTML = byCode[cc].cities.map(ci => `<option value="${ci.id}" ${ci.id === sel ? 'selected' : ''}>${esc(ci.name)}</option>`).join(''); };
+    const fillCities = (cc, sel) => { citySel.innerHTML = byCode[cc].cities.map(ci => `<option value="${ci.id}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join(''); };
     fillCities(e.country, e.city);
     f.elements.country.onchange = () => fillCities(f.elements.country.value);
-
     f.querySelectorAll('.chips label.chip').forEach(l => l.addEventListener('click', ev => {
       ev.preventDefault();
       const cb = l.querySelector('input'); cb.checked = !cb.checked; l.classList.toggle('on', cb.checked); SFX.play('select');
@@ -586,8 +709,7 @@
       const img = new Image(), rd = new FileReader();
       rd.onload = () => { img.src = rd.result; };
       img.onload = () => {
-        // 縮小海報避免塞爆瀏覽器儲存空間
-        const max = 720, k = Math.min(1, max / Math.max(img.width, img.height));
+        const max = 720, k = Math.min(1, max / Math.max(img.width, img.height));   // 縮小海報
         const cv = document.createElement('canvas'); cv.width = img.width * k; cv.height = img.height * k;
         cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
         poster = cv.toDataURL('image/jpeg', 0.78); showPrev(poster); SFX.play('coin');
@@ -596,7 +718,7 @@
     };
 
     f.querySelector('.cancel').onclick = m.close;
-    f.onsubmit = ev => {
+    f.onsubmit = async ev => {
       ev.preventDefault();
       const fd = new FormData(f);
       const get = k => (fd.get(k) || '').toString().trim();
@@ -613,124 +735,193 @@
       const err = f.querySelector('.err');
       f.querySelectorAll('.bad').forEach(x => x.classList.remove('bad'));
       const bad = [];
-      if (!out.name) bad.push(['name', '請輸入活動名稱']);
-      if (!out.date) bad.push(['date', '請選擇活動日期']);
-      if (!out.styles.length) bad.push([null, '請至少選一個賽事分類']);
-      if (out.endDate && out.date && out.endDate < out.date) bad.push(['endDate', '結束日期不能早於活動日期']);
-      if (out.regStart && out.regEnd && out.regEnd < out.regStart) bad.push(['regEnd', '報名截止不能早於報名開始']);
-      if (out.link && !/^https?:\/\//i.test(out.link)) bad.push(['link', '連結請以 https:// 開頭']);
+      if (!out.name) bad.push(['name', t('e_name')]);
+      if (!out.date) bad.push(['date', t('e_date')]);
+      if (!out.styles.length) bad.push([null, t('e_style')]);
+      if (out.endDate && out.date && out.endDate < out.date) bad.push(['endDate', t('e_end')]);
+      if (out.regStart && out.regEnd && out.regEnd < out.regStart) bad.push(['regEnd', t('e_reg')]);
+      if (out.link && !/^https?:\/\//i.test(out.link)) bad.push(['link', t('e_link')]);
+      if (out.mapUrl && !/^https?:\/\//i.test(out.mapUrl)) bad.push(['mapUrl', t('e_link')]);
       if (bad.length) {
         SFX.play('error');
-        err.textContent = '✕ ' + bad.map(b => b[1]).join('、');
+        err.textContent = '✕ ' + bad.map(b => b[1]).join(' / ');
         bad.forEach(([n]) => n && f.elements[n].classList.add('bad'));
         return;
       }
+      const btn = f.querySelector('[type=submit]'); btn.disabled = true;
       let saved;
-      try { saved = Store.upsert(out); } catch (x) { SFX.play('error'); err.textContent = '✕ ' + x.message; return; }
+      try { saved = await Store.upsert(out); } catch (x) { btn.disabled = false; SFX.play('error'); err.textContent = '✕ ' + (Store.cloud ? t('cloud_err') : '') + x.message; return; }
       m.close();
       setTimeout(() => {
         SFX.play('fanfare');
-        toast(editing ? '活動資料已更新！' : `獲得新活動「${saved.name}」！`, '★');
+        toast(editing ? t('toast_updated') : t('toast_new', { n: saved.name }), '★');
         sparkle(innerWidth / 2, 90, 16);
-        CityView.flash = saved.id;
-        const target = `#/c/${saved.country}/${saved.city}`;
-        const d = parseDate(saved.date);
-        const k = saved.country + '/' + saved.city;
-        if (calState[k] && d && calState[k].mode === 'month') { calState[k].y = d.getFullYear(); calState[k].m = d.getMonth(); calState[k].day = null; }
-        if (location.hash === target && CityView.redraw) { CityView.redraw(saved.id); CityView.flash = null; }
-        else nav(target);
-        if (!seen('exportHint')) setTimeout(() => npc.say(['活動已存進「這台瀏覽器」。', '要讓所有人都看到，記得按右上角「💾 存檔」匯出 events.js，再上傳到 GitHub 喔！']), 1200);
+        goEvent(saved.country + '/' + saved.city, saved.id);
+        if (!Store.cloud && !seen('exportHint')) setTimeout(() => npc.say(t('npc_export')), 1200);
       }, 220);
     };
   }
 
-  /* ================= 存檔管理 ================= */
+  // 前往某個活動（城市頁並閃一下那張卡）
+  function goEvent(path, id) {
+    const [cc, ci] = path.split('/');
+    const ev = Store.get(id), d = ev && parseDate(ev.date), k = path;
+    if (calState[k] && d && calState[k].mode === 'month') { calState[k].y = d.getFullYear(); calState[k].m = d.getMonth(); calState[k].day = null; }
+    if (calState[k] && ev && calState[k].styles.size && !(ev.styles || []).some(s => calState[k].styles.has(s))) calState[k].styles.clear();
+    CityView.flash = id;
+    const target = `#/c/${cc}/${ci}`;
+    if (location.hash === target && CityView.redraw) { CityView.redraw(id); CityView.flash = null; } else nav(target);
+  }
+
+  /* ================= 管理員（雲端模式） ================= */
+  function openAdmin() {
+    if (!Store.cloud) return;
+    if (Backend.isAdmin) {
+      const body = h(`<div><p>${t('admin_on')}</p>
+        <div class="btn-row"><button class="btn up">${t('admin_upload')}</button><span class="grow"></span><button class="btn red lo">${t('admin_logout')}</button></div><div class="err"></div></div>`);
+      const m = modal({ title: t('admin_title'), color: 'blue', body });
+      body.querySelector('.lo').onclick = async () => { await Backend.signOut(); m.close(); toast(t('p_logged_out'), '👋'); render(true); };
+      body.querySelector('.up').onclick = async ev => {
+        ev.target.disabled = true;
+        try { const n = await Store.uploadSeed(); toast(t('admin_uploaded', { n }), '★'); m.close(); render(true); }
+        catch (x) { ev.target.disabled = false; body.querySelector('.err').textContent = '✕ ' + x.message; }
+      };
+      return;
+    }
+    const body = h(`<form class="form" novalidate>
+      <label class="field full"><span>${t('admin_email')}</span><input class="input" name="email" type="email" autocomplete="username"></label>
+      <label class="field full"><span>${t('p_pass')}</span><input class="input" name="pass" type="password" autocomplete="current-password"></label>
+      <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button type="submit" class="btn blue">${t('admin_login')}</button></div></div></form>`);
+    const m = modal({ title: t('admin_title'), color: 'blue', body });
+    body.onsubmit = async ev => {
+      ev.preventDefault();
+      const btn = body.querySelector('[type=submit]'); btn.disabled = true;
+      try { await Backend.signInAdmin(body.elements.email.value, body.elements.pass.value); }
+      catch (x) { btn.disabled = false; SFX.play('error'); body.querySelector('.err').textContent = '✕ ' + t('admin_fail'); return; }
+      m.close(); SFX.play('fanfare'); toast(t('admin_ok'), '🔑'); render(true);
+    };
+  }
+
+  /* ================= 存檔管理（本機模式） ================= */
   function openSave() {
     const s = Store.stats();
     const body = h(`<div>
       <div class="save-stats">
-        <div class="stat">GitHub 活動<div class="v">${s.seed}</div></div>
-        <div class="stat">本機新增/修改<div class="v">${s.local}</div></div>
-        <div class="stat">目前總數<div class="v">${s.total}</div></div>
+        <div class="stat">${t('s_seed')}<div class="v">${s.seed}</div></div>
+        <div class="stat">${t('s_local')}<div class="v">${s.local}</div></div>
+        <div class="stat">${t('s_total')}<div class="v">${s.total}</div></div>
       </div>
-      <p style="margin:0 0 8px">讓活動<b>永久</b>出現在網站上（所有人都看得到）：</p>
-      <ol class="steps">
-        <li>在網站上新增 / 編輯活動（會先存在這台瀏覽器）</li>
-        <li>按下面的「匯出 events.js」</li>
-        <li>到 GitHub 專案，把 <code>data/events.js</code> 換成剛下載的檔案</li>
-        <li>Commit 後等 1 分鐘，GitHub Pages 就更新了 ✦</li>
-      </ol>
+      <p style="margin:0 0 8px">${t('s_intro')}</p>
+      <ol class="steps">${t('s_steps').map(x => `<li>${x}</li>`).join('')}</ol>
       <div class="btn-row">
-        <button class="btn pink exp-js">${I.disk} 匯出 events.js</button>
-        <button class="btn exp-json">匯出 JSON 備份</button>
-        <label class="btn">匯入 JSON<input type="file" accept=".json,application/json" hidden class="imp"></label>
-        <button class="btn red reset">清除本機變更</button>
+        <button class="btn pink exp-js">${I.disk} ${t('s_exp')}</button>
+        <button class="btn exp-json">${t('s_json')}</button>
+        <label class="btn">${t('s_imp')}<input type="file" accept=".json,application/json" hidden class="imp"></label>
+        <button class="btn red reset">${t('s_reset')}</button>
       </div>
-      <p style="font-size:12px;color:var(--ink-soft);margin:0">小提醒：上傳的海報會直接存在 events.js 裡，海報多的話建議把圖片放進 <code>posters/</code> 資料夾，表單改填「圖片網址」<code>posters/檔名.jpg</code>。</p>
+      <p style="font-size:12px;color:var(--ink-soft);margin:0">${t('s_tip')}</p>
     </div>`);
-    const m = modal({ title: '💾 存檔管理 SAVE DATA', color: 'yellow', body });
-    body.querySelector('.exp-js').onclick = () => { download('events.js', Store.exportJS()); SFX.play('coin'); toast('已下載 events.js', '💾'); };
+    const m = modal({ title: t('s_title'), color: 'yellow', body });
+    body.querySelector('.exp-js').onclick = () => { download('events.js', Store.exportJS()); SFX.play('coin'); toast(t('s_downloaded'), '💾'); };
     body.querySelector('.exp-json').onclick = () => { download('dance-island-backup.json', Store.exportJSON(), 'application/json'); SFX.play('coin'); };
     body.querySelector('.imp').onchange = ev => {
       const file = ev.target.files[0]; if (!file) return;
-      file.text().then(t => { const n = Store.importJSON(t); toast(`匯入 ${n} 筆活動`, '★'); m.close(); render(); })
-        .catch(x => { SFX.play('error'); toast('匯入失敗：' + x.message, '✕'); });
+      file.text().then(x => { const n = Store.importJSON(x); toast(t('s_imported', { n }), '★'); m.close(); render(true); })
+        .catch(x => { SFX.play('error'); toast(t('s_impfail') + x.message, '✕'); });
     };
     body.querySelector('.reset').onclick = () => {
-      if (!confirm('確定清除這台瀏覽器的所有新增 / 修改 / 刪除？（GitHub 上的活動不受影響）')) return;
-      Store.resetLocal(); m.close(); toast('已清除本機變更', '✕'); render();
+      if (!confirm(t('s_reset_q'))) return;
+      Store.resetLocal(); m.close(); toast(t('s_reset_done'), '✕'); render(true);
     };
   }
 
+  /* ================= 語言選單 ================= */
+  function openLang(btn) {
+    document.querySelector('.lang-pop')?.remove();
+    const r = btn.getBoundingClientRect();
+    const pop = h(`<div class="lang-pop win" style="top:${r.bottom + 8}px;right:${Math.max(8, innerWidth - r.right)}px">
+      ${I18N.LANGS.map(([k, n]) => `<button data-l="${k}" class="${k === I18N.lang ? 'on' : ''}">${n}</button>`).join('')}</div>`);
+    document.body.appendChild(pop);
+    SFX.play('open');
+    const close = ev => { if (!pop.contains(ev.target) && ev.target !== btn) { pop.remove(); document.removeEventListener('pointerdown', close); } };
+    setTimeout(() => document.addEventListener('pointerdown', close), 0);
+    pop.onclick = ev => { const b = ev.target.closest('[data-l]'); if (!b) return; SFX.play('confirm'); pop.remove(); I18N.set(b.dataset.l); };
+  }
+  I18N.onChange(() => { applyStatic(); if (started) render(true); });
+  Player.onChange(() => { if (started) render(true); });
+  Backend.onChange(() => { if (started) updateHUD(); });
+
   /* ================= 開機 ================= */
+  function applyStatic() {
+    const b = document.getElementById('boot');
+    if (b) b.querySelector('.start').textContent = t('press_start');
+    document.title = { zh: '舞島 Dance Island', en: 'Dance Island', ja: 'ダンスアイランド Dance Island', ko: '댄스 아일랜드 Dance Island' }[I18N.lang];
+  }
+
+  function afterStart() {
+    if (Player.me) return setTimeout(() => Player.welcome(), 700);
+    if (!Tutorial.seen()) setTimeout(() => Tutorial.run(() => setTimeout(() => Player.prompt(), 250)), 700);
+  }
+
   function boot() {
+    applyStatic();
     const bootEl = document.getElementById('boot');
     const bar = bootEl.querySelector('.bar');
     bar.innerHTML = '<i></i>'.repeat(20);
     const d = PX.dancer(5);
     bootEl.querySelector('.boot-dancer').appendChild(d.el);
     const dt = setInterval(() => d.beat(), 300);
-    const msgs = ['生成島嶼中…', '鋪設舞池中…', '調整 BPM…', '召喚舞者…', 'READY!'];
-    let i = 0;
-    const st = bootEl.querySelector('.boot-status span');
-    const pct = bootEl.querySelector('.boot-status b');
-    const t = setInterval(() => {
+    const msgs = t('boot');
+    const st = bootEl.querySelector('.boot-status span'), pct = bootEl.querySelector('.boot-status b');
+    let i = 0, dataReady = false;
+    // 等雲端（如果有）、活動、角色都載好
+    Backend.ready.then(() => Promise.all([Store.load(), Player.ready])).then(() => { dataReady = true; });
+    const tm = setInterval(() => {
+      if (i >= 19 && !dataReady) return;
       bar.children[i].classList.add('on'); i++;
       pct.textContent = i * 5 + '%';
       st.textContent = msgs[Math.min(msgs.length - 1, Math.floor(i / 5))];
-      if (i >= 20) { clearInterval(t); bootEl.querySelector('.start').classList.remove('hidden'); bootEl.querySelector('.start').focus(); }
+      if (i >= 20) {
+        clearInterval(tm);
+        setTimeout(() => buildLayout(), 0);   // 先把世界地圖算好
+        const s = bootEl.querySelector('.start'); s.classList.remove('hidden'); s.focus();
+      }
     }, 55);
     bootEl.querySelector('.start').onclick = () => {
       SFX.init(); SFX.play('fanfare'); clearInterval(dt);
       bootEl.remove();
-      document.getElementById('hud').classList.remove('hidden');
-      render();
-      if (!seen('intro')) setTimeout(() => npc.say([
-        '嗨！歡迎來到「舞島 DANCE ISLAND」！我是嚮導 B-BOT。',
-        '中間粉紅色的是台灣主島，周圍漂浮的是世界各國。拖曳可以移動地圖，滾輪可以縮放。',
-        '點擊島嶼進入城市，就能看到活動行事曆。右上角可以新增活動、玩小遊戲！'
-      ]), 900);
+      hud.classList.remove('hidden');
+      started = true;
+      render(true);
+      afterStart();
     };
   }
 
   /* HUD 按鈕 */
-  document.querySelector('.hud-add').onclick = () => {
+  hud.querySelector('.hud-add').onclick = () => {
     SFX.play('select');
     const r = parseRoute();
     openForm(r.view === 'city' ? { country: r.cc, city: r.city } : r.cc ? { country: r.cc, city: byCode[r.cc].cities[0].id } : {});
   };
-  document.querySelector('.hud-save').onclick = () => { SFX.play('select'); openSave(); };
-  document.querySelector('.hud-game').onclick = () => { SFX.play('select'); Games.open(); };
-  const sndBtn = document.querySelector('.hud-sound');
-  const sndIcon = () => { sndBtn.innerHTML = SFX.on ? I.sound : I.mute; sndBtn.setAttribute('aria-label', SFX.on ? '關閉音效' : '開啟音效'); };
-  sndIcon();
-  sndBtn.onclick = () => { SFX.toggle(); sndIcon(); SFX.play('select'); };
-  document.querySelector('.hud-add .ic').innerHTML = I.plus;
-  document.querySelector('.hud-game .ic').innerHTML = I.game;
-  document.querySelector('.hud-save .ic').innerHTML = I.disk;
+  hud.querySelector('.hud-save').onclick = () => { SFX.play('select'); openSave(); };
+  hud.querySelector('.hud-game').onclick = () => { SFX.play('select'); Games.open(); };
+  hud.querySelector('.hud-lang').onclick = e => openLang(e.currentTarget);
+  hud.querySelector('.hud-player').onclick = () => { SFX.play('select'); Player.openMenu(); };
+  hud.querySelector('.hud-admin').onclick = () => { SFX.play('select'); openAdmin(); };
+  hud.querySelector('.hud-help').onclick = () => {
+    SFX.play('select');
+    const go = () => Tutorial.run(() => { if (!Player.me) setTimeout(() => Player.prompt(), 250); });
+    if (parseRoute().view !== 'world') { nav('#/'); setTimeout(go, 900); } else go();
+  };
+  hud.querySelector('.hud-sound').onclick = () => { SFX.toggle(); updateHUD(); SFX.play('select'); };
+  hud.querySelector('.hud-add .ic').innerHTML = I.plus;
+  hud.querySelector('.hud-game .ic').innerHTML = I.game;
+  hud.querySelector('.hud-save .ic').innerHTML = I.disk;
+
+  Player.init({ goEvent });
 
   let rt;
-  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (current && current.view === 'country') { stage.innerHTML = ''; CountryView(byCode[current.cc]); } }, 250); });
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (current && current.view === 'country') render(true); }, 250); });
 
   boot();
 })();

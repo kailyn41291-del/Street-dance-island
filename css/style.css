@@ -169,8 +169,8 @@ canvas, .sprite { image-rendering: pixelated; }
 .routes path { fill: none; stroke: #fff; stroke-width: 6; stroke-dasharray: 6 12; opacity: .8; animation: march 1.5s steps(3) infinite; }
 @keyframes march { to { stroke-dashoffset: -18; } }
 
-.isle { position: absolute; transform: translate(-50%, -50%); }
-.isle .base { position: absolute; left: 0; top: 0; animation: foam 3s steps(3) infinite; pointer-events: none; }
+.isle { position: absolute; pointer-events: none; }
+.isle .base { position: absolute; left: 0; top: 0; animation: foam 3s steps(3) infinite; }
 @keyframes foam { 50% { opacity: .55; } }
 .isle .float {
   position: absolute; left: 0; top: 0;
@@ -178,35 +178,35 @@ canvas, .sprite { image-rendering: pixelated; }
   animation-delay: var(--d, 0s);
 }
 @keyframes bob { 0%,100% { transform: translateY(-4px); } 50% { transform: translateY(-14px); } }
-.isle .float canvas { display: block; transition: filter .15s; }
-.isle button.hit { position: absolute; inset: 0; background: none; border: 0; padding: 0; cursor: inherit; }
-.isle:hover .float canvas, .isle:focus-within .float canvas { filter: brightness(1.08) drop-shadow(0 0 0 var(--ink)); }
-.isle:hover .float { animation-duration: 1.2s; }
-.isle-tag {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 6px;
-  padding: 4px 10px; background: var(--cream); border: var(--px) solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
-  font-size: 14px; white-space: nowrap; pointer-events: none;
+.isle .float canvas { display: block; }
+.isle .float canvas.hi { position: absolute; opacity: .95; animation: blink 1s steps(2) infinite; }
+.world-vp.over { cursor: pointer; }
+.world-vp.over.dragging { cursor: grabbing; }
+
+/* 國名標籤 */
+.ctag {
+  position: absolute; transform: translate(-50%, -50%) scale(var(--inv, 1)); transform-origin: 50% 50%;
+  display: flex; align-items: center; gap: 5px;
+  padding: 2px 8px; background: var(--cream); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+  font-size: 12px; white-space: nowrap; z-index: 3; pointer-events: auto; cursor: pointer;
 }
-.isle-tag .en { font-family: var(--font-en); font-size: 8px; color: var(--ink-soft); }
-.isle.home .isle-tag { background: var(--pink); font-size: 16px; }
-.isle-tag { transform: translateX(-50%) scale(var(--inv, 1)); transform-origin: 50% 0; z-index: 3; }
-.isle:hover, .isle:focus-within { z-index: 10; }
+.ctag.home { background: var(--pink); font-size: 15px; border-width: 3px; padding: 3px 10px; }
+.ctag.hov { display: flex !important; background: var(--yellow); z-index: 6; transform: translate(-50%, -50%) scale(calc(var(--inv, 1) * 1.15)); }
+.ctag .badge { min-width: 18px; height: 16px; font-size: 9px; }
+.ctag .arrow {
+  position: absolute; left: 50%; top: -18px; width: 15px; height: 10px; margin-left: -7px;
+  background: var(--ink);
+  clip-path: polygon(0 0, 100% 0, 100% 33%, 83% 33%, 83% 66%, 66% 66%, 66% 100%, 33% 100%, 33% 66%, 16% 66%, 16% 33%, 0 33%);
+  animation: hop .6s steps(2) infinite;
+}
 /* 依縮放程度決定顯示哪些國名（滑過去一定會顯示） */
-.world[data-z="1"] .isle.lv2 .isle-tag, .world[data-z="1"] .isle.lv3 .isle-tag, .world[data-z="2"] .isle.lv3 .isle-tag { display: none; }
-.world .isle:hover .isle-tag, .world .isle:focus-within .isle-tag { display: flex; background: var(--yellow); }
+.world[data-z="1"] .ctag.lv2, .world[data-z="1"] .ctag.lv3, .world[data-z="2"] .ctag.lv3 { display: none; }
 .badge {
   display: inline-grid; place-items: center; min-width: 22px; height: 20px; padding: 0 4px;
   background: var(--yellow); border: 2px solid var(--ink); font-size: 11px; font-family: var(--font-en);
 }
-.isle .arrow {
-  position: absolute; left: 50%; width: 18px; height: 12px; margin-left: -9px;
-  background: var(--ink);
-  clip-path: polygon(0 0, 100% 0, 100% 33%, 83% 33%, 83% 66%, 66% 66%, 66% 100%, 33% 100%, 33% 66%, 16% 66%, 16% 33%, 0 33%);
-  animation: hop .6s steps(2) infinite; pointer-events: none;
-}
 @keyframes hop { 50% { transform: translateY(5px); } }
-.isle .sprite { position: absolute; pointer-events: none; }
+.isle .sprite.hero { position: absolute; z-index: 4; }
 
 .cloud {
   position: absolute; pointer-events: none; opacity: .9;
@@ -489,7 +489,7 @@ textarea.input { resize: vertical; min-height: 60px; }
   .crumbs { order: 3; width: 100%; font-size: 12px; overflow-x: auto; white-space: nowrap; }
   .hud-btns .label { display: none; }
   .world-menu { left: 8px; right: 8px; width: auto; bottom: 8px; }
-  .map-ctrls { bottom: auto; top: 110px; right: 8px; }
+  .map-ctrls { bottom: auto; top: 150px; right: 8px; }
   .country-view { flex-direction: column; padding: 110px 16px 16px; overflow: auto; height: 100%; justify-content: flex-start; }
   .map-wrap { height: auto; }
   .city-menu { width: 100%; max-height: none; }
@@ -508,4 +508,81 @@ textarea.input { resize: vertical; min-height: 60px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+}
+
+/* ---------- HUD：角色 / 語言 ---------- */
+.hud-player { padding: 3px 10px 4px 4px; gap: 4px; }
+.hud-player .sprite { width: 28px; height: 36px; margin: -4px 0 -6px; }
+.hud-player .label { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+.lang-pop { position: fixed; z-index: 70; display: grid; padding: 4px; gap: 2px; animation: winOpen .2s steps(4); }
+.lang-pop button { border: 2px solid transparent; background: none; padding: 6px 18px; font-size: 14px; text-align: left; }
+.lang-pop button:hover, .lang-pop button.on { border-color: var(--ink); background: var(--yellow); }
+.grow { flex: 1; }
+.note { font-size: 12px; color: var(--ink-soft); margin: 0; }
+
+/* ---------- 新手教學 ---------- */
+.tut { position: fixed; inset: 0; z-index: 85; }
+.tut-spot {
+  position: fixed; border: 3px dashed var(--yellow); border-radius: 4px; pointer-events: none;
+  box-shadow: 0 0 0 4px var(--ink), 0 0 0 200vmax rgba(30, 20, 40, .55);
+  transition: left .3s steps(5), top .3s steps(5), width .3s steps(5), height .3s steps(5);
+  animation: spotPulse 1s steps(2) infinite;
+}
+@keyframes spotPulse { 50% { border-color: var(--pink); } }
+.tut-spot.none, .tut-spot.full { left: 50%; top: 50%; width: 0; height: 0; border: 0; }
+.tut-spot.full { box-shadow: 0 0 0 200vmax rgba(30, 20, 40, .2); }
+.tut-box {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); width: min(640px, calc(100vw - 32px));
+  display: flex; gap: 12px; background: var(--paper); border: var(--px) solid var(--ink); box-shadow: var(--shadow); padding: 12px;
+  animation: popUp .25s steps(4);
+}
+.tut.top .tut-box { bottom: auto; top: 76px; }
+.tut .face { flex: none; width: 78px; height: 78px; border: var(--px) solid var(--ink); background: var(--sky); display: grid; place-items: center; overflow: hidden; }
+.tut-main { flex: 1; min-width: 0; }
+.tut .who { font-size: 12px; background: var(--pink); border: 2px solid var(--ink); display: inline-block; padding: 1px 8px; margin-bottom: 6px; }
+.tut .txt { font-size: 15px; line-height: 1.6; min-height: 50px; }
+.tut-foot { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.tut-foot .dots { font-size: 10px; letter-spacing: 2px; color: var(--ink-soft); }
+.tut.closing { animation: fadeOut .2s steps(3) forwards; }
+@keyframes fadeOut { to { opacity: 0; } }
+
+/* ---------- 角色創建 ---------- */
+.creator { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; }
+.creator-stage {
+  position: relative; height: 240px; border: var(--px) solid var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 10px; padding-bottom: 10px;
+  background: linear-gradient(var(--sky) 0 62%, var(--cream-2) 62%); overflow: hidden;
+}
+.creator-stage .sprite { position: relative; z-index: 1; margin-bottom: -18px; }
+.spot-floor { position: absolute; left: 50%; bottom: 46px; width: 140px; height: 24px; margin-left: -70px; background: rgba(255,255,255,.7); border-radius: 50%; }
+.creator-stage .rnd { position: relative; z-index: 2; }
+.creator-opts { display: grid; gap: 8px; }
+.opt-row { display: grid; grid-template-columns: 84px 1fr; gap: 8px; align-items: center; }
+.opt-l { font-size: 12px; }
+.opt-v { display: flex; flex-wrap: wrap; gap: 4px; }
+.sw { width: 24px; height: 24px; background: var(--c); border: 2px solid var(--ink); padding: 0; box-shadow: 0 2px 0 var(--ink); }
+.sw.on { outline: 3px solid var(--ink); outline-offset: 1px; transform: translateY(-2px); }
+.opt-b { font-size: 12px; padding: 3px 7px; border: 2px solid var(--ink); background: var(--paper); box-shadow: 0 2px 0 var(--ink); }
+.opt-b.on { background: var(--yellow); transform: translateY(-2px); }
+.choose { text-align: center; display: grid; gap: 12px; }
+.choose-art { display: flex; justify-content: center; gap: 18px; padding: 10px; background: var(--sky); border: var(--px) solid var(--ink); }
+.choose-btns { display: grid; gap: 10px; }
+.me-head { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; font-size: 16px; }
+.ed { margin-bottom: 14px; }
+
+/* ---------- 本週任務板 ---------- */
+.quest-head { margin: 0 0 10px; }
+.quest { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.quest li { display: flex; align-items: center; gap: 10px; border: 2px solid var(--ink); background: var(--paper); padding: 6px 8px; animation: cardIn .3s steps(4) both; animation-delay: calc(var(--i) * 70ms); }
+.quest .qd { flex: none; width: 52px; text-align: center; background: var(--c); border: 2px solid var(--ink); padding: 3px 0; display: grid; }
+.quest .qd b { font-family: var(--font-en); font-size: 10px; font-weight: normal; }
+.quest .qd small { font-size: 11px; }
+.quest .qn { flex: 1; min-width: 0; display: grid; }
+.quest .qn b { font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.quest .qn small { font-size: 11px; color: var(--ink-soft); }
+
+@media (max-width: 760px) {
+  .creator { grid-template-columns: 1fr; }
+  .creator-stage { height: 200px; }
+  .hud-player .label, .hud-lang .label { display: none; }
+  .tut .face { width: 56px; height: 56px; }
 }

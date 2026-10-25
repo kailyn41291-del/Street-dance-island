@@ -9,7 +9,7 @@ window.PX = (() => {
     cliff: ['#e0a86a', '#c98a52', '#a86d3e', '#86532f'],
     flower: ['#f07ca3', '#fbe9d0', '#eac45a'],
     tree: '#5a9e5a', treeHi: '#79c071',
-    foam: 'rgba(255,255,255,.85)', shadow: 'rgba(59,43,43,.16)'
+    foam: 'rgba(255,255,255,.85)', shadow: 'rgba(59,43,43,.16)', border: '#5f9658'
   };
 
   // 簡單的可重現亂數（同一座島每次畫出來長一樣）
@@ -25,10 +25,11 @@ window.PX = (() => {
    * 把多邊形（已投影到平面座標）轉成格子：用 canvas 填色再讀回來，速度很快
    * polys: [[[x,y],...],...]   cell: 每格代表多少單位
    */
-  function rasterizeXY(polys, cell, pad = 4) {
+  function rasterizeXY(polys, cell, pad = 4, origin = null) {
     const all = polys.flat();
     const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
-    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    let minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    if (origin) { minX = origin[0] + Math.floor((minX - origin[0]) / cell) * cell; minY = origin[1] + Math.floor((minY - origin[1]) / cell) * cell; }
     const w = Math.max(1, Math.ceil((maxX - minX) / cell)) + pad * 2;
     const h = Math.max(1, Math.ceil((maxY - minY) / cell)) + pad * 2;
     const cv = document.createElement('canvas');
@@ -80,9 +81,10 @@ window.PX = (() => {
   function drawIsland(grid, cell, opt = {}) {
     const depth = opt.depth ?? 3;
     const seed = opt.seed ?? 1;
-    const { w, h, cells } = grid;
+    const { w, h, cells, ids } = grid;
     const H = h + depth;
     const at = (x, y) => (x >= 0 && y >= 0 && x < w && y < h ? cells[y * w + x] : 0);
+    const idAt = (x, y) => (ids ? ids[y * w + x] : 1);
     const sil = (x, y) => { for (let d = 0; d <= depth; d++) if (at(x, y - d)) return 1; return 0; };
 
     const cv = document.createElement('canvas');
@@ -109,8 +111,11 @@ window.PX = (() => {
       const edge = !at(x + 1, y) || !at(x - 1, y) || !at(x, y + 1) || !at(x, y - 1);
       const edge2 = !at(x + 2, y) || !at(x - 2, y) || !at(x, y + 2) || !at(x, y - 2);
       const r = hash(x, y, seed);
+      const me = idAt(x, y);
+      const border = ids && ((at(x + 1, y) && idAt(x + 1, y) !== me) || (at(x, y + 1) && idAt(x, y + 1) !== me));
       let c;
       if (edge) c = r < 0.3 ? C.sand2 : C.sand;
+      else if (border) c = C.border;
       else if (edge2) c = C.grassHi;
       else if (r < 0.025) c = C.flower[Math.floor(r * 1000) % 3];
       else if (r < 0.09) c = C.tree;
@@ -135,8 +140,8 @@ window.PX = (() => {
     return { island: cv, base, w: cv.width, h: cv.height, pad: pad * cell };
   }
 
-  /* ---------- 角色 sprite：街舞小人 ---------- */
-  const SPRITE_PAL = { c: '#e35d5d', s: '#f6c9a0', k: '#3b2b2b', w: '#fbe9d0', b: '#7895df', y: '#eac45a', p: '#f07ca3', t: '#5bb5a6' };
+  /* ---------- 角色 sprite：街舞小人（可捏臉） ---------- */
+  // 調色盤代號：c 帽子  h 頭髮  s 皮膚  k 眼睛/描邊  t 上衣  b 褲子  y 鞋子  w 白色
   const DANCER = [
     [ '....cccc....', '...cccccc...', '...ccccccc..', '....ssss....', '....sksk....', '....ssss....',
       '...tttttt...', '..sttttttts.', '..s.tttt.s..', '....tttt....', '....bbbb....', '...bb..bb...',
@@ -151,14 +156,42 @@ window.PX = (() => {
       '...ttttttss.', '..sttttttt..', '..s.tttt....', '....tttt....', '....bbbb....', '....bb.bb...',
       '...bb...bb..', '...b.....bb.', '..yy.....yy.', '............' ]
   ];
+  const HEAD_Y = [0, 0, 1, 0];              // 每一格動作頭頂在第幾行
+  const HEADS = {
+    cap:      ['....cccc....', '...cccccc...', '...ccccccc..'],
+    beanie:   ['.....w......', '...cccccc...', '...cwcwcw...'],
+    bucket:   ['....cccc....', '...cccccc...', '..cccccccc..'],
+    headband: ['....hhhh....', '...hhhhhh...', '...cccccc...'],
+    afro:     ['...hhhhhh...', '..hhhhhhhh..', '..hhhhhhhh..'],
+    spiky:    ['...h.h.h....', '...hhhhhh...', '...hhhhhh...'],
+    bun:      ['.....hh.....', '....hhhh....', '...hhhhhh...'],
+    buzz:     ['............', '....hhhh....', '...hhhhhh...']
+  };
+  const ACCS = { none: null, glasses: '...kkkkk....', shades: '...kkkkkk...' };
+  const LOOK_DEFAULT = { head: 'cap', hat: '#e35d5d', hair: '#3b2b2b', skin: '#f6c9a0', shirt: '#5bb5a6', pants: '#7895df', shoes: '#eac45a', acc: 'none' };
+  const SWATCH = {
+    skin: ['#ffe0c2', '#f6c9a0', '#e0a878', '#b97b50', '#8a5634', '#5e3a24'],
+    hair: ['#3b2b2b', '#7a4a2a', '#d9a35a', '#f2e2a0', '#e35d5d', '#f07ca3', '#7895df', '#5bb5a6', '#fbe9d0'],
+    cloth: ['#e35d5d', '#ef8a3a', '#eac45a', '#7fcf73', '#5bb5a6', '#7895df', '#b48ae0', '#f07ca3', '#fbe9d0', '#3b2b2b', '#9a8f85']
+  };
 
-  function drawSprite(frame, scale = 4, pal = SPRITE_PAL) {
-    const rows = frame, h = rows.length, w = rows[0].length;
+  const lookFrames = look => DANCER.map((f, i) => {
+    const rows = [...f], y0 = HEAD_Y[i];
+    const head = HEADS[look.head] || HEADS.cap;
+    for (let r = 0; r < 3; r++) rows[y0 + r] = head[r];
+    const acc = ACCS[look.acc];
+    if (acc) rows[y0 + 4] = acc;
+    return rows;
+  });
+  const lookPal = l => ({ c: l.hat, h: l.hair, s: l.skin, k: '#3b2b2b', t: l.shirt, b: l.pants, y: l.shoes, w: '#fbe9d0' });
+
+  function drawSprite(rows, scale = 4, pal) {
+    const h = rows.length, w = rows[0].length;
     const cv = document.createElement('canvas');
     cv.width = (w + 2) * scale; cv.height = (h + 2) * scale;
     const g = cv.getContext('2d');
     const on = (x, y) => y >= 0 && y < h && x >= 0 && x < w && rows[y][x] !== '.';
-    g.fillStyle = SPRITE_PAL.k;
+    g.fillStyle = '#3b2b2b';
     for (let y = -1; y <= h; y++) for (let x = -1; x <= w; x++) {
       if (on(x, y)) continue;
       if (on(x + 1, y) || on(x - 1, y) || on(x, y + 1) || on(x, y - 1)) g.fillRect((x + 1) * scale, (y + 1) * scale, scale, scale);
@@ -171,17 +204,22 @@ window.PX = (() => {
     return cv;
   }
 
-  /** 建立會跳舞的角色 <canvas>，回傳 { el, setFrame, beat } */
-  function dancer(scale = 4, pal) {
-    const frames = DANCER.map(f => drawSprite(f, scale, pal));
+  /** 建立會跳舞的角色 <canvas>：dancer(scale, look) → { el, setFrame, beat, setLook } */
+  function dancer(scale = 4, look) {
+    let frames;
     const el = document.createElement('canvas');
-    el.width = frames[0].width; el.height = frames[0].height;
     el.className = 'sprite';
     const g = el.getContext('2d');
     let i = 0;
     const setFrame = n => { i = n % frames.length; g.clearRect(0, 0, el.width, el.height); g.drawImage(frames[i], 0, 0); };
-    setFrame(0);
-    return { el, setFrame, beat: () => setFrame(i + 1) };
+    const setLook = l => {
+      const L = { ...LOOK_DEFAULT, ...(l || {}) };
+      frames = lookFrames(L).map(f => drawSprite(f, scale, lookPal(L)));
+      el.width = frames[0].width; el.height = frames[0].height;
+      setFrame(i);
+    };
+    setLook(look);
+    return { el, setFrame, beat: () => setFrame(i + 1), setLook };
   }
 
   /* ---------- 像素 icon（SVG） ---------- */
@@ -212,5 +250,5 @@ window.PX = (() => {
     flag:  icon(['#.......', '######..', '#######.', '######..', '#.......', '#.......', '#.......', '#.......'])
   };
 
-  return { C, rasterize, rasterizeXY, drawIsland, dancer, drawSprite, ICONS, hash };
+  return { C, rasterize, rasterizeXY, drawIsland, dancer, drawSprite, ICONS, hash, HEADS, ACCS, SWATCH, LOOK_DEFAULT };
 })();
