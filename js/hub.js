@@ -321,7 +321,7 @@ window.Hub = (() => {
     window.addEventListener('hashchange', draw);
     if (I18N.onChange) I18N.onChange(draw);
     // 手機上任務框預設收起來
-    if (matchMedia('(max-width: 1024px)').matches) { try { if (localStorage.getItem(OPEN) === null) localStorage.setItem(OPEN, '0'); } catch (x) {} }
+    if (matchMedia('(max-width: 1024px), (pointer: coarse) and (max-width: 1400px)').matches) { try { if (localStorage.getItem(OPEN) === null) localStorage.setItem(OPEN, '0'); } catch (x) {} }
   }
 
   // 啟動：等登入狀態確定後建立任務、放上手機

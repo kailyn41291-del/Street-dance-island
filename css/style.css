@@ -1582,7 +1582,7 @@ button.fo-po { grid-template-columns: 1fr; cursor: pointer; } button.fo-po:hover
  * 手機 + 平板（1024px 以下）：重新排版
  * 上方一條精簡的列、下方導覽列，浮動元件縮小、不互相重疊
  * ========================================================= */
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (pointer: coarse) and (max-width: 1400px) {
   /* 上方列 */
   #hud { top: 8px; left: 8px; right: 8px; gap: 6px; flex-wrap: wrap; }
   .logo { padding: 4px 8px; }
@@ -1679,3 +1679,33 @@ img.pxi { width: 1.5em; height: 1.5em; object-fit: contain; vertical-align: midd
 .hud-btns .btn img.pxi { width: 26px; height: 26px; margin: -4px 0; }
 .mn-i img.pxi { width: 28px; height: 28px; }
 .ph-ic img.pxi { width: 84%; height: 84%; }
+
+/* =========================================================
+ * 彈出視窗：不可以比螢幕寬；標題太長就用…截掉；iPhone 用實際可見高度
+ * ========================================================= */
+.modal { min-width: 0; max-width: 100%; max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); }
+.win-title { min-width: 0; }
+.win-title .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.win-ctrls { flex: none; }
+.modal .win-body { min-width: 0; overflow-x: hidden; }
+.lightbox img { max-height: calc(100vh - 140px); max-height: calc(100dvh - 140px); width: auto; height: auto; object-fit: contain; }
+.win, .win-body, .card, .city-inner { min-width: 0; }
+.modal img, .modal video, .modal iframe, .modal canvas, .city-inner img, .city-inner video, .city-inner iframe { max-width: 100%; }
+@media (max-width: 1024px) {
+  .modal-back { padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .modal { max-height: calc(100dvh - 16px - env(safe-area-inset-bottom)); }
+  .win-title { letter-spacing: 0; }
+  .modal .win-title .t { font-size: 13px; }
+  .lightbox img { max-height: calc(100dvh - 110px); border-width: 2px; }
+}
+/* 中等寬度的電腦螢幕：次要按鈕只顯示圖示，避免按鈕列超出畫面 */
+@media (min-width: 1025px) and (max-width: 1480px) and (pointer: fine) {
+  .hud-btns { gap: 6px; }
+  .hud-btns > .btn { padding-left: 9px; padding-right: 9px; }
+  .hud-events .label, .hud-game .label, .hud-lang .label, .hud-friends .label { display: none; }
+  .hud-admin { font-size: 0; } .hud-admin img.pxi { font-size: 14px; }
+  .crumbs { max-width: 26vw; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (min-width: 1025px) and (max-width: 1220px) and (pointer: fine) {
+  .hud-add .label, .hud-player .label { display: none; }
+}
