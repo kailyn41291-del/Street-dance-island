@@ -313,6 +313,8 @@ window.I18N = (() => {
   const listeners = [];
   return {
     LANGS, t, nm, CONT_KEY,
+    /** 擴充字典：extend({ zh: {...}, en: {...}, ... }) */
+    extend(more) { Object.keys(more).forEach(l => { D[l] = { ...(D[l] || {}), ...more[l] }; }); },
     get lang() { return lang; },
     langForCountry: cc => LANG_OF[cc] || 'en',
     set(l) {

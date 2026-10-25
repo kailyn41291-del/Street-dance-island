@@ -204,22 +204,9 @@ window.PX = (() => {
     return cv;
   }
 
-  /** 建立會跳舞的角色 <canvas>：dancer(scale, look) → { el, setFrame, beat, setLook } */
+  /** 會跳舞的角色：新版畫法在 avatar.js（scale 沿用舊的大小單位） */
   function dancer(scale = 4, look) {
-    let frames;
-    const el = document.createElement('canvas');
-    el.className = 'sprite';
-    const g = el.getContext('2d');
-    let i = 0;
-    const setFrame = n => { i = n % frames.length; g.clearRect(0, 0, el.width, el.height); g.drawImage(frames[i], 0, 0); };
-    const setLook = l => {
-      const L = { ...LOOK_DEFAULT, ...(l || {}) };
-      frames = lookFrames(L).map(f => drawSprite(f, scale, lookPal(L)));
-      el.width = frames[0].width; el.height = frames[0].height;
-      setFrame(i);
-    };
-    setLook(look);
-    return { el, setFrame, beat: () => setFrame(i + 1), setLook };
+    return Avatar.dancer(Math.max(1, Math.round(scale / 2)), look);
   }
 
   /* ---------- 像素 icon（SVG） ---------- */

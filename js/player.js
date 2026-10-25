@@ -16,7 +16,7 @@ window.Player = (() => {
   const listeners = [];
   const changed = () => listeners.forEach(f => f(me));
   const cloud = () => Backend.enabled;
-  const fromProfile = p => (p ? { id: p.handle, name: p.name, nat: p.nat, style: p.style, look: p.look || {} } : null);
+  const fromProfile = p => (p ? { id: p.handle, name: p.name, nat: p.nat, style: p.style, job: p.job, title: p.title, look: p.look || {}, role: Backend.role } : null);
   // 啟動時恢復登入狀態（雲端：Supabase session；本機：localStorage）
   const ready = (cloud() ? Backend.ready.then(() => { me = fromProfile(Backend.profile); }) : Promise.resolve().then(() => {
     try { const id = localStorage.getItem(SESSION); if (id) me = DB.get(id); } catch (e) {}
@@ -40,40 +40,62 @@ window.Player = (() => {
 
   const setSession = p => { me = p; try { p ? localStorage.setItem(SESSION, p.id) : localStorage.removeItem(SESSION); } catch (e) {} changed(); };
 
-  /* ---------- 外觀編輯器 ---------- */
-  const pick = a => a[Math.floor(Math.random() * a.length)];
-  const randomLook = () => ({
-    head: pick(Object.keys(PX.HEADS)), hat: pick(PX.SWATCH.cloth), hair: pick(PX.SWATCH.hair), skin: pick(PX.SWATCH.skin),
-    shirt: pick(PX.SWATCH.cloth), pants: pick(PX.SWATCH.cloth), shoes: pick(PX.SWATCH.cloth), acc: pick(['none', 'none', 'glasses', 'shades'])
-  });
-
-  function lookEditor(look, onChange) {
+  /* ---------- 捏角色編輯器 ---------- */
+  // state = { look, job, title }，role = 'owner' | 'admin' | null（決定能不能選專屬造型 / 稱號）
+  function lookEditor(state, role) {
+    state.look = Avatar.normalize(state.look);
+    const L = state.look;
+    const tabs = ['body', 'hair', 'hat', 'outfit', 'acc', 'job', 'title'].concat(role ? ['special'] : []);
     const wrap = h(`<div class="creator">
-      <div class="creator-stage"><div class="spot-floor"></div><button type="button" class="btn sm rnd">${t('p_random')}</button></div>
-      <div class="creator-opts"></div></div>`);
-    const d = PX.dancer(9, look);
+      <div class="creator-stage"><div class="spot-floor"></div>
+        <div class="stage-tags"></div>
+        <div class="stage-btns"><button type="button" class="btn sm g-m">♂</button><button type="button" class="btn sm g-f">♀</button><button type="button" class="btn sm yellow rnd">${t('p_random')}</button></div></div>
+      <div class="creator-side"><div class="ctabs">${tabs.map(k => `<button type="button" data-tab="${k}">${t('tab_' + k)}</button>`).join('')}</div><div class="creator-opts"></div></div></div>`);
+    const d = Avatar.dancer(4, L);
     wrap.querySelector('.creator-stage').prepend(d.el);
-    const tm = setInterval(() => { if (!d.el.isConnected) clearInterval(tm); else d.beat(); }, 330);
-    const opts = wrap.querySelector('.creator-opts');
+    const tm = setInterval(() => { if (!d.el.isConnected) clearInterval(tm); else d.beat(); }, 340);
+    const opts = wrap.querySelector('.creator-opts'), tagsEl = wrap.querySelector('.stage-tags');
+    const O = t('opts'), J = t('jobs');
     const row = (label, html) => `<div class="opt-row"><span class="opt-l">${label}</span><div class="opt-v">${html}</div></div>`;
     const sw = (key, list) => list.map(c => `<button type="button" class="sw" data-k="${key}" data-v="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('');
-    const sel = (key, obj) => Object.keys(obj).map(k => `<button type="button" class="opt-b" data-k="${key}" data-v="${k}">${esc(obj[k])}</button>`).join('');
-    const draw = () => {
-      opts.innerHTML =
-        row(t('p_head'), sel('head', t('heads'))) +
-        row(t('p_hat'), sw('hat', PX.SWATCH.cloth)) + row(t('p_hair'), sw('hair', PX.SWATCH.hair)) +
-        row(t('p_skin'), sw('skin', PX.SWATCH.skin)) + row(t('p_shirt'), sw('shirt', PX.SWATCH.cloth)) +
-        row(t('p_pants'), sw('pants', PX.SWATCH.cloth)) + row(t('p_shoes'), sw('shoes', PX.SWATCH.cloth)) +
-        row(t('p_acc'), sel('acc', t('accs')));
-      opts.querySelectorAll('[data-k]').forEach(b => b.classList.toggle('on', look[b.dataset.k] === b.dataset.v));
+    const sel = (key, list) => list.map(v => `<button type="button" class="opt-b" data-k="${key}" data-v="${v}">${esc(O[v] || v)}</button>`).join('');
+    let tab = 'body';
+    const refreshTags = () => {
+      tagsEl.innerHTML = `<span class="tag job">${esc(J[state.job] || '')}</span>${state.title ? Titles.html(state.title) : ''}`;
     };
+    const draw = () => {
+      wrap.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+      const A = Avatar.OPT, C = Avatar.COLORS;
+      const panels = {
+        body: row(t('o_gender'), sel('gender', A.gender)) + row(t('o_face'), sel('face', A.face)) + row(t('o_skin'), sw('skin', C.skin)) + row(t('o_eye'), sw('eye', C.eye)),
+        hair: row(t('o_hair'), sel('hair', A.hair)) + row(t('o_hairColor'), sw('hairColor', C.hair)),
+        hat: row(t('o_hat'), sel('hat', A.hat)) + row(t('o_hatColor'), sw('hatColor', C.cloth)),
+        outfit: row(t('o_top'), sel('top', A.top)) + row(t('o_topColor'), sw('topColor', C.cloth)) + row(t('o_bottom'), sel('bottom', A.bottom)) + row(t('o_bottomColor'), sw('bottomColor', C.cloth)) +
+          row(t('o_shoes'), sel('shoes', A.shoes)) + row(t('o_shoesColor'), sw('shoesColor', C.cloth)),
+        acc: row(t('o_faceAcc'), sel('faceAcc', A.faceAcc)) + row(t('o_acc'), sel('acc', A.acc)) + row(t('o_accColor'), sw('accColor', C.cloth)),
+        job: `<div class="job-grid">${Object.keys(Avatar.JOBS).map(k => `<button type="button" class="opt-b job-b" data-job="${k}">${esc(J[k])}</button>`).join('')}</div>
+          <button type="button" class="btn sm pink job-apply">${t('job_apply')}</button>`,
+        title: `<p class="note">${t('title_pick')}</p><div class="title-grid"><button type="button" class="opt-b" data-title="">${t('title_none')}</button>${Titles.allowed(role).map(x => `<button type="button" class="opt-b" data-title="${x.id}">${Titles.html(x.id)}</button>`).join('')}</div>`,
+        special: row(t('o_special'), sel('special', ['none', 'admin'].concat(role === 'owner' ? ['owner'] : [])))
+      };
+      opts.innerHTML = panels[tab];
+      opts.querySelectorAll('[data-k]').forEach(b => b.classList.toggle('on', L[b.dataset.k] === b.dataset.v));
+      opts.querySelectorAll('[data-job]').forEach(b => b.classList.toggle('on', state.job === b.dataset.job));
+      opts.querySelectorAll('[data-title]').forEach(b => b.classList.toggle('on', (state.title || '') === b.dataset.title));
+      refreshTags();
+    };
+    const apply = () => { d.setLook(L); refreshTags(); };
+    wrap.querySelector('.ctabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) { tab = b.dataset.tab; SFX.play('select'); draw(); } };
     opts.addEventListener('click', e => {
-      const b = e.target.closest('[data-k]'); if (!b) return;
-      look[b.dataset.k] = b.dataset.v; SFX.play('select');
-      opts.querySelectorAll(`[data-k="${b.dataset.k}"]`).forEach(x => x.classList.toggle('on', x === b));
-      d.setLook(look); onChange && onChange(look);
+      const k = e.target.closest('[data-k]'), j = e.target.closest('[data-job]'), ti = e.target.closest('[data-title]');
+      if (k) { L[k.dataset.k] = k.dataset.v; SFX.play('select'); opts.querySelectorAll(`[data-k="${k.dataset.k}"]`).forEach(x => x.classList.toggle('on', x === k)); apply(); }
+      if (j) { state.job = j.dataset.job; L.job = state.job; SFX.play('select'); opts.querySelectorAll('[data-job]').forEach(x => x.classList.toggle('on', x === j)); apply(); }
+      if (ti) { state.title = ti.dataset.title || null; SFX.play('select'); opts.querySelectorAll('[data-title]').forEach(x => x.classList.toggle('on', x === ti)); refreshTags(); }
+      if (e.target.closest('.job-apply')) { Object.assign(L, Avatar.JOBS[state.job] || {}); L.job = state.job; SFX.play('coin'); sparkle(e.clientX, e.clientY, 10); apply(); }
     });
-    wrap.querySelector('.rnd').onclick = () => { Object.assign(look, randomLook()); SFX.play('card'); d.setLook(look); draw(); onChange && onChange(look); };
+    wrap.querySelector('.rnd').onclick = () => { Object.assign(L, Avatar.random({ job: state.job, special: L.special })); SFX.play('card'); apply(); draw(); };
+    wrap.querySelector('.g-m').onclick = () => { L.gender = 'm'; SFX.play('select'); apply(); draw(); };
+    wrap.querySelector('.g-f').onclick = () => { L.gender = 'f'; if (['short', 'buzz', 'spiky'].includes(L.hair)) L.hair = 'long'; SFX.play('select'); apply(); draw(); };
     draw();
     return wrap;
   }
@@ -90,7 +112,8 @@ window.Player = (() => {
 
   /* ---------- 建立角色 ---------- */
   function openCreate() {
-    const look = randomLook(); look.head = 'cap';
+    const state = { look: Avatar.random({ job: 'bboy' }), job: 'bboy', title: 'rookie' };
+    Object.assign(state.look, Avatar.JOBS.bboy);
     const body = h(`<form class="form" novalidate autocomplete="off">
       <div class="full"></div>
       <label class="field"><span>${t('p_name')} <b>*</b></span><input class="input" name="name" maxlength="20" placeholder="${esc(t('p_name_ph'))}"></label>
@@ -104,7 +127,7 @@ window.Player = (() => {
         <button type="button" class="btn link-login">${t('p_have')}</button><span class="grow"></span>
         <button type="submit" class="btn pink">${t('p_submit')}</button></div></div>
     </form>`);
-    body.firstElementChild.appendChild(lookEditor(look));
+    body.firstElementChild.appendChild(lookEditor(state, null));
     const m = modal({ title: t('p_title_create'), color: 'pink', body, wide: true });
     const f = body;
     f.elements.nat.onchange = () => { const l = I18N.langForCountry(f.elements.nat.value); if (l !== I18N.lang) { toast(I18N.LANGS.find(x => x[0] === l)[1], '🌐'); } };
@@ -126,11 +149,11 @@ window.Player = (() => {
       try {
         if (cloud()) {
           if (await Backend.handleTaken(id)) { btn.disabled = false; return fail('id', t('e_id_taken')); }
-          p = fromProfile(await Backend.signUpPlayer(id, pass, { name: v('name'), nat: v('nat'), style: v('style'), look: { ...look } }));
+          p = fromProfile(await Backend.signUpPlayer(id, pass, { name: v('name'), nat: v('nat'), style: v('style'), job: state.job, title: state.title, look: { ...state.look } }));
         } else {
           if (DB.get(id)) { btn.disabled = false; return fail('id', t('e_id_taken')); }
           const s = salt();
-          p = { id, name: v('name'), nat: v('nat'), style: v('style'), look: { ...look }, salt: s, hash: await hashPass(pass, s), created: new Date().toISOString() };
+          p = { id, name: v('name'), nat: v('nat'), style: v('style'), job: state.job, title: state.title, look: { ...state.look }, salt: s, hash: await hashPass(pass, s), created: new Date().toISOString() };
           DB.put(p);
         }
       } catch (e) { btn.disabled = false; console.warn(e); return fail(null, /registered|exists/i.test(e.message) ? t('e_id_taken') : e.message); }
@@ -178,8 +201,8 @@ window.Player = (() => {
         <button class="btn teal c-login">${t('p_login')}</button>
         <button class="btn c-later">${t('p_later')}</button>
       </div></div>`);
-    const looks = [PX.LOOK_DEFAULT, randomLook(), randomLook()];
-    looks.forEach(l => { const d = PX.dancer(5, l); body.querySelector('.choose-art').appendChild(d.el); const tm = setInterval(() => { if (!d.el.isConnected) clearInterval(tm); else d.beat(); }, 300 + Math.random() * 120); });
+    const looks = [Avatar.DEFAULT, Avatar.random({ gender: 'f' }), Avatar.random({ gender: 'm' })];
+    looks.forEach(l => { const d = Avatar.dancer(3, l); body.querySelector('.choose-art').appendChild(d.el); const tm = setInterval(() => { if (!d.el.isConnected) clearInterval(tm); else d.beat(); }, 300 + Math.random() * 120); });
     const m = modal({ title: t('p_choose_title'), color: 'yellow', body });
     body.querySelector('.c-new').onclick = () => { m.close(); setTimeout(openCreate, 220); };
     body.querySelector('.c-login').onclick = () => { m.close(); setTimeout(openLogin, 220); };
@@ -189,15 +212,18 @@ window.Player = (() => {
   /* ---------- 角色選單（編輯外觀 / 登出） ---------- */
   function openMenu() {
     if (!me) return prompt();
-    const look = { ...PX.LOOK_DEFAULT, ...me.look };
-    const body = h(`<div><div class="me-head"><b>${esc(me.name)}</b> <span class="tag">@${esc(me.id)}</span> <span class="tag">${esc(nm(GEO.countries.find(c => c.code === me.nat)))}</span> <span class="tag">${esc(me.style || '')}</span></div>
+    const state = { look: { ...me.look }, job: me.job || me.look.job || 'bboy', title: me.title || null };
+    const nat = GEO.countries.find(c => c.code === me.nat);
+    const body = h(`<div><div class="me-head"><b>${esc(me.name)}</b> <span class="tag">@${esc(me.id)}</span> ${nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''} <span class="tag">${esc(me.style || '')}</span>
+      ${me.role ? `<span class="tag role-tag role-${me.role}">${me.role === 'owner' ? '★ ' + Titles.label('owner') : '✦ ' + Titles.label('admin')}</span>` : ''}</div>
       <div class="ed"></div>
       <div class="form-foot"><button class="btn red lo">${t('p_logout')}</button><span class="grow"></span><button class="btn pink sv">${t('p_save')}</button></div></div>`);
-    body.querySelector('.ed').appendChild(lookEditor(look));
+    body.querySelector('.ed').appendChild(lookEditor(state, me.role));
     const m = modal({ title: t('p_edit'), color: 'pink', body, wide: true });
     body.querySelector('.sv').onclick = async () => {
-      try { if (cloud()) await Backend.saveLook(look); else DB.put({ ...DB.get(me.id), look }); } catch (e) { SFX.play('error'); toast(e.message, '✕'); return; }
-      me.look = look; changed(); m.close(); SFX.play('coin'); toast(t('p_saved'), '★');
+      const patch = { look: state.look, job: state.job, title: state.title };
+      try { if (cloud()) await Backend.saveProfile(patch); else DB.put({ ...DB.get(me.id), ...patch }); } catch (e) { SFX.play('error'); toast(e.message, '✕'); return; }
+      Object.assign(me, patch); changed(); m.close(); SFX.play('coin'); toast(t('p_saved'), '★');
     };
     body.querySelector('.lo').onclick = async () => { m.close(); if (cloud()) await Backend.signOut(); setSession(null); toast(t('p_logged_out'), '👋'); };
   }

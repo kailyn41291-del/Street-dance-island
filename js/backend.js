@@ -11,7 +11,7 @@ window.Backend = (() => {
   const enabled = !!(cfg.supabaseUrl && cfg.supabaseAnonKey);
   const LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
   const PLAYER_DOMAIN = '@players.dance-island.app';
-  let sb = null, user = null, isAdmin = false, profile = null;
+  let sb = null, user = null, isAdmin = false, role = null, profile = null;
   const listeners = [];
   const emit = () => listeners.forEach(f => f({ user, isAdmin, profile }));
 
@@ -25,10 +25,10 @@ window.Backend = (() => {
   async function refresh() {
     const { data } = await sb.auth.getSession();
     user = data.session ? data.session.user : null;
-    isAdmin = false; profile = null;
+    isAdmin = false; role = null; profile = null;
     if (user) {
-      const a = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle();
-      isAdmin = !!a.data;
+      const a = await sb.from('admins').select('user_id,role').eq('user_id', user.id).maybeSingle();
+      isAdmin = !!a.data; role = a.data ? a.data.role || 'admin' : null;
       const p = await sb.from('players').select('*').eq('user_id', user.id).maybeSingle();
       profile = p.data || null;
     }
@@ -47,6 +47,7 @@ window.Backend = (() => {
     ready,
     get user() { return user; },
     get isAdmin() { return isAdmin; },
+    get role() { return role; },
     get profile() { return profile; },
     onChange: f => listeners.push(f),
 
@@ -66,7 +67,7 @@ window.Backend = (() => {
     async signUpPlayer(handle, password, p) {
       const r = must(await sb.auth.signUp({ email: toEmail(handle), password }));
       if (!r.session) must(await sb.auth.signInWithPassword({ email: toEmail(handle), password }));
-      must(await sb.from('players').insert({ handle, name: p.name, nat: p.nat, style: p.style, look: p.look }));
+      must(await sb.from('players').insert({ handle, name: p.name, nat: p.nat, style: p.style, job: p.job, title: p.title, look: p.look }));
       await refresh(); emit();
       return profile;
     },
@@ -75,9 +76,10 @@ window.Backend = (() => {
       await refresh(); emit();
       return profile;
     },
-    async saveLook(look) {
-      must(await sb.from('players').update({ look }).eq('user_id', user.id));
-      profile = { ...profile, look }; emit();
+    async saveProfile(patch) {
+      const r = must(await sb.from('players').update(patch).eq('user_id', user.id).select().maybeSingle());
+      profile = r || { ...profile, ...patch }; emit();
+      return profile;
     },
     async signOut() { await sb.auth.signOut(); await refresh(); emit(); },
 
@@ -90,6 +92,39 @@ window.Backend = (() => {
       const { id, ...data } = e;
       must(await sb.from('events').upsert({ id, data, updated_at: new Date().toISOString() }));
     },
-    async deleteEvent(id) { must(await sb.from('events').delete().eq('id', id)); }
+    async deleteEvent(id) { must(await sb.from('events').delete().eq('id', id)); },
+
+    /* 聊天室 */
+    async listMessages(channel, limit = 60) {
+      const rows = must(await sb.from('messages').select('*').eq('channel', channel).order('created_at', { ascending: false }).limit(limit));
+      return rows.reverse();
+    },
+    async sendMessage(channel, text) { return must(await sb.from('messages').insert({ channel, text }).select().single()); },
+    async deleteMessage(id) { must(await sb.from('messages').delete().eq('id', id)); },
+
+    /* 留言板 */
+    async commentCounts() {
+      const rows = must(await sb.from('comments').select('event_id'));
+      const n = {}; rows.forEach(r => (n[r.event_id] = (n[r.event_id] || 0) + 1)); return n;
+    },
+    async listComments(eventId) { return must(await sb.from('comments').select('*').eq('event_id', eventId).order('created_at')); },
+    async sendComment(eventId, text) { return must(await sb.from('comments').insert({ event_id: eventId, text }).select().single()); },
+    async deleteComment(id) { must(await sb.from('comments').delete().eq('id', id)); },
+
+    /* 官方快訊 */
+    async listAnnouncements() { return must(await sb.from('announcements').select('*').order('created_at')); },
+    async addAnnouncement(text) { return must(await sb.from('announcements').insert({ text }).select().single()); },
+    async setAnnouncement(id, patch) { must(await sb.from('announcements').update(patch).eq('id', id)); },
+    async deleteAnnouncement(id) { must(await sb.from('announcements').delete().eq('id', id)); },
+    async getSetting(key) { const r = must(await sb.from('settings').select('value').eq('key', key).maybeSingle()); return r ? r.value : null; },
+    async setSetting(key, value) { must(await sb.from('settings').upsert({ key, value })); },
+
+    /* 即時更新：table = 'messages' | 'comments' | 'announcements' */
+    subscribe(table, cb) {
+      const ch = sb.channel('rt-' + table + '-' + Math.random().toString(36).slice(2, 7))
+        .on('postgres_changes', { event: '*', schema: 'public', table }, payload => cb(payload))
+        .subscribe();
+      return () => sb.removeChannel(ch);
+    }
   };
 })();

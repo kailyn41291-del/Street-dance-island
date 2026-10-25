@@ -59,9 +59,10 @@
     hud.querySelector('.hud-help').setAttribute('aria-label', t('help'));
     hud.querySelector('.hud-lang .label').textContent = I18N.LANGS.find(l => l[0] === I18N.lang)[1];
     const adm = hud.querySelector('.hud-admin');
-    adm.classList.toggle('hidden', !Store.cloud);
-    adm.classList.toggle('pink', Backend.isAdmin);
-    adm.innerHTML = Backend.isAdmin ? '🔑 ADMIN' : '🔑';
+    const isAdm = Store.cloud ? Backend.isAdmin : true;
+    adm.classList.toggle('hidden', !isAdm);
+    adm.classList.toggle('pink', Store.cloud && Backend.isAdmin);
+    adm.innerHTML = Store.cloud ? '🔑 ADMIN' : '🔑';
     adm.setAttribute('aria-label', t('admin_btn'));
     const pl = hud.querySelector('.hud-player');
     pl.innerHTML = '';
@@ -559,12 +560,67 @@
       else if (tg.dataset.act === 'del') confirmDelete(Store.get(tg.dataset.ev), draw);
       else if (tg.dataset.act === 'poster') openPoster(Store.get(tg.dataset.ev));
       else if (tg.dataset.act === 'map' || tg.dataset.act === 'link') SFX.play('confirm');
+      else if (tg.dataset.act === 'cmt') toggleComments(tg.closest('.card'), tg.dataset.ev);
     });
+    // 留言數
+    Social.commentCounts().then(n => { cmtCounts = n || {}; inner.querySelectorAll('[data-cc]').forEach(x => (x.textContent = cmtCounts[x.dataset.cc] || 0)); });
     draw(CityView.flash);
     CityView.flash = null;
     CityView.redraw = draw;
 
     if (!seen('city')) setTimeout(() => npc.say(t('npc_city')), 500);
+  }
+
+  /* ---------- 活動留言板 ---------- */
+  let cmtCounts = {};
+  async function toggleComments(card, id) {
+    const next = card.nextElementSibling;
+    if (next && next.classList.contains('cmt-box')) { SFX.play('cancel'); next._off && next._off(); return next.remove(); }
+    SFX.play('open');
+    const box = h(`<div class="cmt-box win"><div class="cmt-list"></div><form class="cmt-form"></form></div>`);
+    card.after(box);
+    const listEl = box.querySelector('.cmt-list'), form = box.querySelector('.cmt-form');
+    const row = c => {
+      const a = c.author || {};
+      const r = h(`<div class="msg ${a.role ? 'staff' : ''}" data-id="${c.id}"><div class="mb"><div class="mh">${a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : ''}<b class="nm">${esc(a.name || '???')}</b>${a.title ? Titles.html(a.title) : ''}
+        <span class="tm">${new Date(c.created_at).toLocaleDateString()}</span>${Social.canDelete(c) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
+        <div class="mt">${Emoji.toHTML(c.text)}</div></div></div>`);
+      r.prepend(Chat.headIcon(a.look));
+      const del = r.querySelector('.del');
+      if (del) del.onclick = async () => { try { await Social.removeComment(c.id); } catch (x) { toast(x.message, '✕'); } };
+      return r;
+    };
+    const setCount = n => { cmtCounts[id] = n; document.querySelectorAll(`[data-cc="${CSS.escape(id)}"]`).forEach(x => (x.textContent = n)); };
+    let rows = [];
+    const draw = () => {
+      listEl.innerHTML = rows.length ? '' : `<p class="note">${t('cmt_none')}</p>`;
+      rows.forEach(c => listEl.appendChild(row(c)));
+      listEl.scrollTop = listEl.scrollHeight;
+      setCount(rows.length);
+    };
+    try { rows = await Social.comments(id); } catch (x) { rows = []; }
+    draw();
+    box._off = Social.on('comments', ({ type, row: r }) => {
+      if (type === 'INSERT' && r.event_id === id && !rows.some(x => x.id === r.id)) { rows.push(r); draw(); }
+      if (type === 'DELETE') { rows = rows.filter(x => x.id !== r.id); draw(); }
+    });
+    if (!Player.me) {
+      form.innerHTML = `<button type="button" class="btn sm pink">${t('cmt_login')}</button>`;
+      form.querySelector('button').onclick = () => Player.prompt();
+      return;
+    }
+    form.innerHTML = `<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button><input class="input sm" maxlength="200" placeholder="${esc(t('cmt_ph'))}"><button class="btn sm pink">${t('chat_send')}</button></div>`;
+    const input = form.querySelector('input');
+    form.querySelector('.emo-btn').onclick = e => Chat.togglePicker(e.currentTarget, input);
+    form.onsubmit = async ev => {
+      ev.preventDefault();
+      try {
+        const r = await Social.comment(id, input.value);
+        if (r && !rows.some(x => x.id === r.id)) { rows.push(r); draw(); }
+        input.value = ''; SFX.play('coin'); document.querySelector('.emo-pick')?.remove();
+      } catch (x) { SFX.play('error'); const k = 'err_' + x.message; toast(t(k) !== k ? t(k) : x.message, '✕'); }
+    };
+    setTimeout(() => input.focus({ preventScroll: true }), 50);
   }
 
   function regStatus(e, today) {
@@ -606,6 +662,7 @@
       <div class="acts">
         ${(e.address || e.venue || e.mapUrl) && safeMap ? `<a class="btn sm teal" data-act="map" href="${esc(safeMap)}" target="_blank" rel="noopener">${I.pin} ${t('b_map')}</a>` : ''}
         ${safeLink ? `<a class="btn sm orange" data-act="link" href="${esc(safeLink)}" target="_blank" rel="noopener">${I.link} ${t('b_link')}</a>` : ''}
+        <button class="btn sm yellow" data-act="cmt" data-ev="${esc(e.id)}">💬 ${t('cmt')} <span class="cc" data-cc="${esc(e.id)}">${cmtCounts[e.id] || 0}</span></button>
         ${canEdit ? `<button class="btn sm" data-act="edit" data-ev="${esc(e.id)}">${I.edit} ${t('b_edit')}</button>
         <button class="btn sm" data-act="del" data-ev="${esc(e.id)}">${I.trash} ${t('b_del')}</button>` : ''}
       </div>
@@ -773,33 +830,45 @@
     if (location.hash === target && CityView.redraw) { CityView.redraw(id); CityView.flash = null; } else nav(target);
   }
 
-  /* ================= 管理員（雲端模式） ================= */
-  function openAdmin() {
-    if (!Store.cloud) return;
-    if (Backend.isAdmin) {
-      const body = h(`<div><p>${t('admin_on')}</p>
-        <div class="btn-row"><button class="btn up">${t('admin_upload')}</button><span class="grow"></span><button class="btn red lo">${t('admin_logout')}</button></div><div class="err"></div></div>`);
-      const m = modal({ title: t('admin_title'), color: 'blue', body });
-      body.querySelector('.lo').onclick = async () => { await Backend.signOut(); m.close(); toast(t('p_logged_out'), '👋'); render(true); };
-      body.querySelector('.up').onclick = async ev => {
-        ev.target.disabled = true;
-        try { const n = await Store.uploadSeed(); toast(t('admin_uploaded', { n }), '★'); m.close(); render(true); }
-        catch (x) { ev.target.disabled = false; body.querySelector('.err').textContent = '✕ ' + x.message; }
-      };
-      return;
-    }
-    const body = h(`<form class="form" novalidate>
-      <label class="field full"><span>${t('admin_email')}</span><input class="input" name="email" type="email" autocomplete="username"></label>
-      <label class="field full"><span>${t('p_pass')}</span><input class="input" name="pass" type="password" autocomplete="current-password"></label>
-      <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button type="submit" class="btn blue">${t('admin_login')}</button></div></div></form>`);
-    const m = modal({ title: t('admin_title'), color: 'blue', body });
-    body.onsubmit = async ev => {
-      ev.preventDefault();
-      const btn = body.querySelector('[type=submit]'); btn.disabled = true;
-      try { await Backend.signInAdmin(body.elements.email.value, body.elements.pass.value); }
-      catch (x) { btn.disabled = false; SFX.play('error'); body.querySelector('.err').textContent = '✕ ' + t('admin_fail'); return; }
-      m.close(); SFX.play('fanfare'); toast(t('admin_ok'), '🔑'); render(true);
+  /* ================= 管理員面板：官方快訊 ================= */
+  async function openAdmin() {
+    const body = h(`<div class="admin">
+      <h4>${t('ann_title')}</h4>
+      <div class="ann-row"><span>${t('ann_every')}</span><select class="input sm ann-every">${[15, 30, 60, 120, 300, 600].map(v => `<option value="${v}">${v < 60 ? v + ' ' + t('sec') : v / 60 + ' ' + t('min')}</option>`).join('')}</select></div>
+      <ul class="ann-list"></ul>
+      <form class="ann-form"><div class="chat-input"><button type="button" class="btn sm emo-btn">😺</button><input class="input sm" maxlength="200" placeholder="${esc(t('ann_ph'))}"><button class="btn sm yellow">${t('ann_add')}</button></div></form>
+      ${Store.cloud ? `<hr><div class="btn-row"><button class="btn sm up">${t('admin_upload')}</button></div>` : ''}
+      <div class="err"></div></div>`);
+    const m = modal({ title: t('admin_panel'), color: 'blue', body, wide: true });
+    const listEl = body.querySelector('.ann-list'), err = body.querySelector('.err');
+    const fail = x => { SFX.play('error'); err.textContent = '✕ ' + x.message; };
+    const draw = async () => {
+      const rows = await Social.announcements();
+      listEl.innerHTML = rows.length ? '' : `<li class="note">${t('ann_empty')}</li>`;
+      rows.forEach(a => {
+        const li = h(`<li class="${a.active ? '' : 'off'}"><span class="ann-txt">📢 ${Emoji.toHTML(a.text)}</span>
+          <button class="btn sm tg">${a.active ? t('ann_on') : t('ann_off')}</button><button class="btn sm red rm">×</button></li>`);
+        li.querySelector('.tg').onclick = async () => { try { await Social.setAnnouncement(a.id, { active: !a.active }); draw(); Chat.restartAnnouncements(); } catch (x) { fail(x); } };
+        li.querySelector('.rm').onclick = async () => { try { await Social.removeAnnouncement(a.id); draw(); Chat.restartAnnouncements(); } catch (x) { fail(x); } };
+        listEl.appendChild(li);
+      });
     };
+    const every = body.querySelector('.ann-every');
+    every.value = String(await Social.announceEvery());
+    every.onchange = async () => { try { await Social.setAnnounceEvery(+every.value); toast(t('ann_saved'), '✓'); Chat.restartAnnouncements(); } catch (x) { fail(x); } };
+    const form = body.querySelector('.ann-form'), input = form.querySelector('input');
+    form.querySelector('.emo-btn').onclick = e => Chat.togglePicker(e.currentTarget, input);
+    form.onsubmit = async ev => {
+      ev.preventDefault();
+      if (!input.value.trim()) return;
+      try { await Social.addAnnouncement(input.value.trim()); input.value = ''; SFX.play('coin'); draw(); Chat.restartAnnouncements(); } catch (x) { fail(x); }
+    };
+    const up = body.querySelector('.up');
+    if (up) up.onclick = async () => {
+      up.disabled = true;
+      try { const n = await Store.uploadSeed(); toast(t('admin_uploaded', { n }), '★'); render(true); } catch (x) { up.disabled = false; fail(x); }
+    };
+    draw();
   }
 
   /* ================= 存檔管理（本機模式） ================= */
@@ -893,6 +962,7 @@
       hud.classList.remove('hidden');
       started = true;
       render(true);
+      Emoji.ready.then(() => Chat.init());
       afterStart();
     };
   }

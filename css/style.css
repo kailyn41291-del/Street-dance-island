@@ -586,3 +586,106 @@ textarea.input { resize: vertical; min-height: 60px; }
   .hud-player .label, .hud-lang .label { display: none; }
   .tut .face { width: 56px; height: 56px; }
 }
+
+/* ---------- 像素表情 ---------- */
+.pxemo { width: 28px; height: 28px; vertical-align: -8px; object-fit: contain; }
+.emo-pick { position: fixed; z-index: 95; width: 300px; padding: 6px; animation: winOpen .2s steps(4); }
+.emo-tabs { display: flex; gap: 4px; margin-bottom: 6px; }
+.emo-tabs button { flex: 1; border: 2px solid var(--ink); background: var(--paper); font-size: 16px; padding: 2px; }
+.emo-tabs button.on { background: var(--yellow); }
+.emo-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; max-height: 240px; overflow-y: auto; }
+.emo-grid button { border: 2px solid transparent; background: none; padding: 2px; }
+.emo-grid button:hover { border-color: var(--ink); background: var(--paper); transform: translateY(-2px); }
+.emo-grid .pxemo { width: 32px; height: 32px; }
+
+/* ---------- 稱號 ---------- */
+.ttl { display: inline-block; font-size: 10px; padding: 0 5px; margin-left: 4px; border: 2px solid var(--ink); background: var(--cream-2); white-space: nowrap; vertical-align: 1px; }
+.ttl-owner { background: linear-gradient(90deg, #f6d36b, #eab53c); animation: shine 1.6s steps(4) infinite; }
+.ttl-admin { background: #d8c6f5; }
+@keyframes shine { 50% { filter: brightness(1.15); } }
+.role { font-size: 12px; margin-right: 2px; }
+.role-owner { color: #c9962a; } .role-admin { color: #6a4fb3; }
+.role-tag.role-owner { background: #f6d36b; } .role-tag.role-admin { background: #d8c6f5; }
+
+/* ---------- 聊天室 ---------- */
+.chat { position: fixed; right: 76px; bottom: 0; z-index: 35; width: clamp(300px, calc(100vw - 420px), 540px); }
+.chat-bar {
+  width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 13px;
+  background: var(--cream); border: var(--px) solid var(--ink); border-bottom: 0; box-shadow: 4px 0 0 var(--ink);
+}
+.chat-bar .ticker { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; color: var(--ink-soft); }
+.chat-bar .ticker .pxemo { width: 16px; height: 16px; vertical-align: -3px; }
+.chat-bar .arr { animation: hop .8s steps(2) infinite; }
+.chat.ping .chat-bar { animation: ping .8s steps(4) 2; }
+@keyframes ping { 50% { background: var(--yellow); } }
+.chat-panel { display: none; height: min(48vh, 420px); flex-direction: column; border-bottom: 0; box-shadow: 4px 0 0 var(--ink); }
+.chat.open .chat-bar { display: none; }
+.chat.open .chat-panel { display: flex; animation: slideUp .25s steps(5); }
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } }
+.ch-tabs { display: flex; gap: 4px; }
+.ch-tabs button { border: 2px solid var(--ink); background: var(--paper); font-size: 12px; padding: 2px 8px; }
+.ch-tabs button.on { background: var(--yellow); }
+.ch-tabs .badge { min-width: 16px; height: 14px; font-size: 8px; margin-left: 2px; }
+.tr-toggle { border: 2px solid var(--ink); background: var(--paper); font-size: 11px; padding: 2px 6px; opacity: .6; }
+.tr-toggle.on { background: var(--green); opacity: 1; }
+.chat-list { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; background: var(--paper); }
+.chat-note { font-size: 11px; color: var(--ink-soft); border: 2px dashed var(--ink-soft); padding: 4px 8px; }
+.chat-form, .cmt-form { padding: 8px; border-top: var(--px) solid var(--ink); background: var(--cream); }
+.chat-input { display: flex; gap: 6px; align-items: center; }
+.chat-input .input { flex: 1; min-width: 0; }
+.msg { display: flex; gap: 8px; align-items: flex-start; animation: cardIn .25s steps(3) both; }
+.msg .head-ico { flex: none; width: 34px; height: 24px; image-rendering: pixelated; background: var(--sky); border: 2px solid var(--ink); }
+.msg .mb { flex: 1; min-width: 0; background: #fff; border: 2px solid var(--ink); padding: 3px 8px 4px; box-shadow: 2px 2px 0 var(--ink); }
+.msg .mh { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 12px; }
+.msg .mh .nm { font-weight: normal; }
+.msg .tm { margin-left: auto; font-size: 10px; color: var(--ink-soft); font-family: var(--font-en); }
+.msg .mt { font-size: 14px; line-height: 1.5; word-break: break-word; }
+.msg .tr { font-size: 12px; color: #3a6ea8; border-top: 1px dashed #c9d8f5; margin-top: 2px; padding-top: 2px; }
+.msg .del { border: 0; background: none; font-size: 14px; padding: 0 2px; color: var(--ink-soft); }
+.msg .del:hover { color: var(--red); }
+.msg.staff .mb { background: #f6f0ff; }
+.msg.official .mb { background: #fff2b3; border-color: #b8892a; box-shadow: 2px 2px 0 #b8892a; }
+.msg.official .mh b { color: #9a6a10; font-weight: normal; letter-spacing: 1px; }
+.msg .ann-ico { flex: none; width: 34px; height: 24px; display: grid; place-items: center; font-size: 18px; animation: hop .6s steps(2) infinite; }
+
+/* ---------- 活動留言板 ---------- */
+.cmt-box { margin-top: -10px; border-top: 0; animation: slideUp .25s steps(4); }
+.cmt-list { max-height: 260px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; background: var(--paper); }
+.card .acts .cc { font-family: var(--font-en); font-size: 9px; background: var(--paper); border: 2px solid var(--ink); padding: 0 3px; }
+
+/* ---------- 管理員面板 ---------- */
+.admin h4 { margin: 0 0 8px; font-weight: normal; font-size: 16px; }
+.ann-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; }
+.ann-row .input { width: auto; }
+.ann-list { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+.ann-list li { display: flex; gap: 6px; align-items: center; background: #fff2b3; border: 2px solid #b8892a; padding: 4px 8px; }
+.ann-list li.off { opacity: .5; background: var(--paper); }
+.ann-txt { flex: 1; min-width: 0; font-size: 13px; }
+.admin hr { border: 0; border-top: 2px dashed var(--ink); margin: 14px 0; }
+
+/* ---------- 捏角色 v2 ---------- */
+.creator { grid-template-columns: 230px 1fr; }
+.creator-stage { height: 320px; justify-content: flex-start; padding-top: 18px; }
+.creator-stage .sprite { margin: 0; }
+.spot-floor { bottom: 92px; }
+.stage-tags { position: relative; z-index: 2; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 8px; }
+.stage-tags .job { background: var(--teal); }
+.stage-btns { position: relative; z-index: 2; display: flex; gap: 6px; margin-top: auto; }
+.creator-side { min-width: 0; }
+.ctabs { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 10px; }
+.ctabs button { border: 2px solid var(--ink); background: var(--paper); font-size: 12px; padding: 3px 9px; box-shadow: 0 2px 0 var(--ink); }
+.ctabs button.on { background: var(--pink); transform: translateY(2px); box-shadow: none; }
+.creator-opts { min-height: 220px; }
+.job-grid, .title-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.title-grid .opt-b .ttl { margin: 0; border: 0; padding: 0; background: none; animation: none; }
+.title-grid .opt-b.on { background: var(--yellow); }
+.avatar { image-rendering: pixelated; }
+.hud-player .sprite { width: 22px; height: 31px; margin: -4px 0 -6px; }
+
+@media (max-width: 760px) {
+  .chat { bottom: 0; right: 0; width: 100vw; }
+  .world-menu { bottom: 44px; }
+  .creator { grid-template-columns: 1fr; }
+  .creator-stage { height: 260px; }
+  .chat-panel { height: 55vh; }
+}

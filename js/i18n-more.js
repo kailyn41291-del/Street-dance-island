@@ -1,0 +1,97 @@
+/* =========================================================
+ * 多國語言（第二部分）：聊天室、留言板、捏角色選項、職業、管理員
+ * ========================================================= */
+I18N.extend({
+  zh: {
+    chat: '聊天室', ch_world: '世界頻道', ch_tw: '台灣頻道', chat_ph: '說點什麼…（可以加貓咪 / 吉娃娃表情）', chat_send: '送出', chat_login: '建立角色或登入後就能聊天',
+    auto_tr: '自動翻譯', official: '官方快訊', chat_local: '※ 本機模式：訊息只有你看得到，接上雲端後所有人就能即時聊天。',
+    err_spam: '偵測到廣告或連結，訊息沒有送出', err_fast: '說太快了，休息幾秒再說', err_dup: '同樣的話不要一直重複喔', err_long: '最多 200 字', err_login: '請先建立角色或登入', err_empty: '請輸入內容',
+    cmt: '留言', cmt_ph: '幫選手加油、謝謝主辦…', cmt_none: '還沒有留言，留下第一句應援吧！', cmt_login: '登入後就能留言',
+    admin_panel: '🔑 管理員面板', ann_title: '📢 官方快訊', ann_ph: '例：快訊!! 西門町的貓咪在街頭尬舞，新一代貓咪舞王會是誰呢！！', ann_add: '新增快訊', ann_every: '每隔幾秒播一則',
+    ann_empty: '還沒有快訊', ann_on: '播放中', ann_off: '暫停', ann_saved: '已儲存', sec: '秒', min: '分鐘',
+    tab_body: '角色', tab_hair: '髮型', tab_hat: '帽子', tab_outfit: '服裝', tab_acc: '配件', tab_job: '職業', tab_title: '稱號', tab_special: '專屬',
+    o_gender: '性別', o_face: '臉型', o_skin: '膚色', o_eye: '眼睛顏色', o_hair: '髮型', o_hairColor: '髮色', o_hat: '帽子', o_hatColor: '帽子顏色',
+    o_top: '上衣', o_topColor: '上衣顏色', o_bottom: '褲子', o_bottomColor: '褲子顏色', o_shoes: '鞋子', o_shoesColor: '鞋子顏色',
+    o_faceAcc: '臉部配件', o_acc: '配件', o_accColor: '配件顏色', o_special: '管理員專屬造型', job_apply: '✨ 套用職業造型', title_pick: '選一個稱號掛在名字旁邊', title_none: '不使用稱號',
+    p_job: '職業', p_title: '稱號',
+    opts: {
+      m: '男', f: '女', round: '圓臉', oval: '鵝蛋臉', sharp: '尖下巴',
+      short: '短髮', spiky: '刺蝟頭', messy: '亂髮', undercut: '削邊頭', sidepart: '旁分', buzz: '平頭', afro: '爆炸頭', dreads: '髒辮', long: '長髮', bob: '鮑伯頭', ponytail: '馬尾', twintails: '雙馬尾', buns: '丸子頭', wolf: '狼尾',
+      none: '無', cap: '棒球帽', backcap: '反戴帽', beanie: '毛帽', catbeanie: '貓耳毛帽', bucket: '漁夫帽', newsboy: '報童帽', fedora: '紳士帽', beret: '貝雷帽', headband: '頭帶', bandana: '頭巾',
+      tee: 'T 恤', hoodie: '帽 T', jacket: '外套', varsity: '棒球外套', track: '運動外套', oversize: 'Oversize T', crop: '短版上衣', tank: '背心', locker: 'Locker 條紋吊帶', vest: '西裝背心',
+      cargo: '工作褲', baggy: '垮褲', joggers: '縮口褲', jeans: '寬版牛仔褲', shorts: '短褲', knickers: 'Locker 燈籠褲', skirt: '裙子',
+      sneakers: '球鞋', hightops: '高筒鞋', boots: '靴子', glasses: '眼鏡', shades: '墨鏡', mask: '口罩', headphones: '耳機', scarf: '圍巾', chain: '項鍊',
+      admin: '管理員披風', owner: '網站架設者皇冠'
+    },
+    jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'Locker', popper: 'Popper', hiphop: 'Hip Hopper', house: 'House Dancer', waacker: 'Waacker', krumper: 'Krumper', voguer: 'Voguer', choreo: '編舞者', dj: 'DJ', mc: 'MC', fan: '舞迷', host: '主辦方' }
+  },
+  en: {
+    chat: 'Chat', ch_world: 'World', ch_tw: 'Taiwan', chat_ph: 'Say something… (cat / chihuahua emoji too)', chat_send: 'Send', chat_login: 'Create a character or log in to chat',
+    auto_tr: 'Auto-translate', official: 'OFFICIAL NEWS', chat_local: '※ Local mode: only you can see messages. Everyone can chat live once the cloud is connected.',
+    err_spam: 'Ads or links detected — message not sent', err_fast: 'Slow down a little', err_dup: "Please don't repeat the same message", err_long: '200 characters max', err_login: 'Create a character or log in first', err_empty: 'Type something first',
+    cmt: 'Comments', cmt_ph: 'Cheer for a dancer, thank the organizers…', cmt_none: 'No comments yet — be the first to cheer!', cmt_login: 'Log in to comment',
+    admin_panel: '🔑 Admin Panel', ann_title: '📢 Official News', ann_ph: 'e.g. BREAKING!! Cats are battling in Ximending — who will be the next Cat Dance King?!', ann_add: 'Add', ann_every: 'Play one every',
+    ann_empty: 'No announcements yet', ann_on: 'On', ann_off: 'Paused', ann_saved: 'Saved', sec: 'sec', min: 'min',
+    tab_body: 'Body', tab_hair: 'Hair', tab_hat: 'Hat', tab_outfit: 'Outfit', tab_acc: 'Accessories', tab_job: 'Role', tab_title: 'Title', tab_special: 'Staff',
+    o_gender: 'Gender', o_face: 'Face', o_skin: 'Skin', o_eye: 'Eyes', o_hair: 'Hairstyle', o_hairColor: 'Hair color', o_hat: 'Hat', o_hatColor: 'Hat color',
+    o_top: 'Top', o_topColor: 'Top color', o_bottom: 'Bottoms', o_bottomColor: 'Bottoms color', o_shoes: 'Shoes', o_shoesColor: 'Shoes color',
+    o_faceAcc: 'Face', o_acc: 'Accessory', o_accColor: 'Accessory color', o_special: 'Staff-only skin', job_apply: '✨ Use role outfit', title_pick: 'Pick a title to show next to your name', title_none: 'No title',
+    p_job: 'Role', p_title: 'Title',
+    opts: {
+      m: 'Male', f: 'Female', round: 'Round', oval: 'Oval', sharp: 'Sharp chin',
+      short: 'Short', spiky: 'Spiky', messy: 'Messy', undercut: 'Undercut', sidepart: 'Side part', buzz: 'Buzz cut', afro: 'Afro', dreads: 'Dreads', long: 'Long', bob: 'Bob', ponytail: 'Ponytail', twintails: 'Twin tails', buns: 'Space buns', wolf: 'Wolf cut',
+      none: 'None', cap: 'Cap', backcap: 'Backwards cap', beanie: 'Beanie', catbeanie: 'Cat beanie', bucket: 'Bucket hat', newsboy: 'Newsboy cap', fedora: 'Fedora', beret: 'Beret', headband: 'Headband', bandana: 'Bandana',
+      tee: 'Tee', hoodie: 'Hoodie', jacket: 'Jacket', varsity: 'Varsity', track: 'Track jacket', oversize: 'Oversized tee', crop: 'Crop top', tank: 'Tank top', locker: 'Locker stripes', vest: 'Vest',
+      cargo: 'Cargo', baggy: 'Baggy', joggers: 'Joggers', jeans: 'Wide jeans', shorts: 'Shorts', knickers: 'Locker knickers', skirt: 'Skirt',
+      sneakers: 'Sneakers', hightops: 'High-tops', boots: 'Boots', glasses: 'Glasses', shades: 'Shades', mask: 'Mask', headphones: 'Headphones', scarf: 'Scarf', chain: 'Chain',
+      admin: 'Admin cape', owner: 'Architect crown'
+    },
+    jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'Locker', popper: 'Popper', hiphop: 'Hip Hopper', house: 'House Dancer', waacker: 'Waacker', krumper: 'Krumper', voguer: 'Voguer', choreo: 'Choreographer', dj: 'DJ', mc: 'MC', fan: 'Dance Fan', host: 'Organizer' }
+  },
+  ja: {
+    chat: 'チャット', ch_world: 'ワールド', ch_tw: '台湾', chat_ph: '何か話そう…（猫・チワワ絵文字もOK）', chat_send: '送信', chat_login: 'キャラを作るかログインするとチャットできます',
+    auto_tr: '自動翻訳', official: '公式ニュース', chat_local: '※ ローカルモード：メッセージは自分だけに見えます。クラウド接続後はみんなとリアルタイムで話せます。',
+    err_spam: '広告やリンクが含まれているため送信できません', err_fast: '少し待ってから送ってね', err_dup: '同じ内容の連投はやめてね', err_long: '200 文字まで', err_login: '先にキャラ作成かログインをしてください', err_empty: '内容を入力してください',
+    cmt: 'コメント', cmt_ph: 'ダンサーへの応援、主催への感謝…', cmt_none: 'まだコメントはありません。最初の応援をどうぞ！', cmt_login: 'ログインするとコメントできます',
+    admin_panel: '🔑 管理パネル', ann_title: '📢 公式ニュース', ann_ph: '例：速報!! 西門町で猫たちがバトル中！次の猫ダンス王は誰だ！？', ann_add: '追加', ann_every: '流す間隔',
+    ann_empty: 'まだニュースがありません', ann_on: '放送中', ann_off: '停止中', ann_saved: '保存しました', sec: '秒', min: '分',
+    tab_body: 'キャラ', tab_hair: '髪型', tab_hat: '帽子', tab_outfit: '服', tab_acc: 'アクセ', tab_job: '職業', tab_title: '称号', tab_special: '専用',
+    o_gender: '性別', o_face: '輪郭', o_skin: '肌の色', o_eye: '目の色', o_hair: '髪型', o_hairColor: '髪の色', o_hat: '帽子', o_hatColor: '帽子の色',
+    o_top: 'トップス', o_topColor: 'トップスの色', o_bottom: 'ボトムス', o_bottomColor: 'ボトムスの色', o_shoes: 'シューズ', o_shoesColor: 'シューズの色',
+    o_faceAcc: '顔アクセ', o_acc: 'アクセサリー', o_accColor: 'アクセの色', o_special: '管理者専用スキン', job_apply: '✨ 職業コーデを適用', title_pick: '名前の横に表示する称号を選ぼう', title_none: '称号なし',
+    p_job: '職業', p_title: '称号',
+    opts: {
+      m: '男子', f: '女子', round: '丸顔', oval: '卵型', sharp: 'シャープ',
+      short: 'ショート', spiky: 'ツンツン', messy: 'ボサボサ', undercut: 'ツーブロック', sidepart: 'サイドパート', buzz: '坊主', afro: 'アフロ', dreads: 'ドレッド', long: 'ロング', bob: 'ボブ', ponytail: 'ポニーテール', twintails: 'ツインテール', buns: 'お団子', wolf: 'ウルフ',
+      none: 'なし', cap: 'キャップ', backcap: '後ろかぶり', beanie: 'ニット帽', catbeanie: '猫耳ニット', bucket: 'バケハ', newsboy: 'キャスケット', fedora: '中折れ帽', beret: 'ベレー帽', headband: 'ヘアバンド', bandana: 'バンダナ',
+      tee: 'Tシャツ', hoodie: 'パーカー', jacket: 'ジャケット', varsity: 'スタジャン', track: 'ジャージ', oversize: 'ビッグT', crop: 'クロップ丈', tank: 'タンクトップ', locker: 'ロッカーボーダー', vest: 'ベスト',
+      cargo: 'カーゴ', baggy: 'バギー', joggers: 'ジョガー', jeans: 'ワイドデニム', shorts: 'ショーツ', knickers: 'ロッカーニッカ', skirt: 'スカート',
+      sneakers: 'スニーカー', hightops: 'ハイカット', boots: 'ブーツ', glasses: 'メガネ', shades: 'サングラス', mask: 'マスク', headphones: 'ヘッドホン', scarf: 'マフラー', chain: 'チェーン',
+      admin: '管理者マント', owner: '創設者の王冠'
+    },
+    jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'ロッカー', popper: 'ポッパー', hiphop: 'ヒップホッパー', house: 'ハウスダンサー', waacker: 'ワッカー', krumper: 'クランパー', voguer: 'ヴォーガー', choreo: '振付師', dj: 'DJ', mc: 'MC', fan: 'ダンスファン', host: '主催者' }
+  },
+  ko: {
+    chat: '채팅', ch_world: '월드', ch_tw: '대만', chat_ph: '하고 싶은 말…(고양이/치와와 이모지도 OK)', chat_send: '전송', chat_login: '캐릭터를 만들거나 로그인하면 채팅할 수 있어요',
+    auto_tr: '자동 번역', official: '공식 소식', chat_local: '※ 로컬 모드: 메시지는 나만 볼 수 있어요. 클라우드 연결 후 모두와 실시간 채팅 가능!',
+    err_spam: '광고나 링크가 감지되어 전송되지 않았어요', err_fast: '조금만 천천히!', err_dup: '같은 말을 반복하지 말아 주세요', err_long: '최대 200자', err_login: '먼저 캐릭터를 만들거나 로그인하세요', err_empty: '내용을 입력하세요',
+    cmt: '댓글', cmt_ph: '댄서 응원, 주최 측에 감사 인사…', cmt_none: '아직 댓글이 없어요. 첫 응원을 남겨 봐!', cmt_login: '로그인하면 댓글을 쓸 수 있어요',
+    admin_panel: '🔑 관리자 패널', ann_title: '📢 공식 소식', ann_ph: '예: 속보!! 시먼딩 고양이들이 배틀 중! 차세대 고양이 댄스왕은 누구?!', ann_add: '추가', ann_every: '재생 간격',
+    ann_empty: '아직 소식이 없어요', ann_on: '재생 중', ann_off: '일시정지', ann_saved: '저장했어요', sec: '초', min: '분',
+    tab_body: '캐릭터', tab_hair: '헤어', tab_hat: '모자', tab_outfit: '의상', tab_acc: '액세서리', tab_job: '직업', tab_title: '칭호', tab_special: '전용',
+    o_gender: '성별', o_face: '얼굴형', o_skin: '피부', o_eye: '눈 색', o_hair: '헤어스타일', o_hairColor: '머리 색', o_hat: '모자', o_hatColor: '모자 색',
+    o_top: '상의', o_topColor: '상의 색', o_bottom: '하의', o_bottomColor: '하의 색', o_shoes: '신발', o_shoesColor: '신발 색',
+    o_faceAcc: '얼굴 액세서리', o_acc: '액세서리', o_accColor: '액세서리 색', o_special: '관리자 전용 스킨', job_apply: '✨ 직업 코디 적용', title_pick: '이름 옆에 표시할 칭호를 골라 봐', title_none: '칭호 없음',
+    p_job: '직업', p_title: '칭호',
+    opts: {
+      m: '남자', f: '여자', round: '둥근 얼굴', oval: '계란형', sharp: '갸름한 턱',
+      short: '숏컷', spiky: '삐죽머리', messy: '부스스', undercut: '투블럭', sidepart: '가르마', buzz: '삭발', afro: '아프로', dreads: '드레드', long: '긴 머리', bob: '단발', ponytail: '포니테일', twintails: '양갈래', buns: '똥머리', wolf: '울프컷',
+      none: '없음', cap: '캡모자', backcap: '거꾸로 캡', beanie: '비니', catbeanie: '고양이 비니', bucket: '버킷햇', newsboy: '뉴스보이캡', fedora: '페도라', beret: '베레모', headband: '헤어밴드', bandana: '반다나',
+      tee: '티셔츠', hoodie: '후드티', jacket: '재킷', varsity: '바시티', track: '트랙 재킷', oversize: '오버핏 티', crop: '크롭탑', tank: '나시', locker: '락킹 스트라이프', vest: '베스트',
+      cargo: '카고', baggy: '배기', joggers: '조거', jeans: '와이드 청바지', shorts: '반바지', knickers: '락킹 니커즈', skirt: '치마',
+      sneakers: '스니커즈', hightops: '하이탑', boots: '부츠', glasses: '안경', shades: '선글라스', mask: '마스크', headphones: '헤드폰', scarf: '목도리', chain: '체인',
+      admin: '관리자 망토', owner: '창설자 왕관'
+    },
+    jobs: { bboy: '비보이', bgirl: '비걸', locker: '락커', popper: '팝퍼', hiphop: '힙합 댄서', house: '하우스 댄서', waacker: '왁커', krumper: '크럼퍼', voguer: '보거', choreo: '안무가', dj: 'DJ', mc: 'MC', fan: '댄스 팬', host: '주최자' }
+  }
+});
