@@ -1482,3 +1482,21 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .cr-xp { display: flex; gap: 4px; flex-wrap: wrap; }
 .boot-logo { display: flex; justify-content: center; width: 100%; overflow: hidden; }
 .boot-logo-img { width: 100%; max-width: 400px; margin: 4px auto 10px; }
+/* 護照：封面 / 封底用插圖，內頁是深藍書皮 + 金色像素框 */
+.pp-slot { width: min(420px, 100%); }
+.pp-page { aspect-ratio: 720 / 942; }
+.pp-page.pp-img { padding: 0; border: 0; border-radius: 0; box-shadow: none; background: none; overflow: visible; }
+.pp-page.pp-img::after { display: none; }
+.pp-page.pp-img img { width: 100%; height: 100%; object-fit: contain; display: block; image-rendering: auto; filter: drop-shadow(5px 6px 0 rgba(31,45,107,.35)); }
+.pp-page.pp-in { border: 10px solid #1f2d6b; border-left-width: 16px; border-radius: 4px 12px 12px 4px; padding: 22px 20px 20px 22px;
+  box-shadow: inset 0 0 0 3px #f3ead6, inset 0 0 0 6px #e9b949, inset 0 0 0 8px #f3ead6, inset 0 0 0 10px #e9b949, 5px 6px 0 rgba(31,45,107,.35);
+  background-color: #f6efdc; }
+.pp-page.pp-in::before { content: ''; position: absolute; left: -16px; top: 18%; width: 16px; height: 64%; background: repeating-linear-gradient(#1f2d6b 0 36px, #e9b949 36px 42px, #1f2d6b 42px 50px, #e9b949 50px 56px, #1f2d6b 56px); opacity: .9; }
+.pp-k { position: absolute; width: 10px; height: 10px; background: #e9b949; transform: rotate(45deg); box-shadow: 0 0 0 2px #1f2d6b; z-index: 1; }
+.pp-k.k1 { top: 6px; left: 6px; } .pp-k.k2 { top: 6px; right: 6px; } .pp-k.k3 { bottom: 6px; left: 6px; } .pp-k.k4 { bottom: 6px; right: 6px; }
+.pp-in .pp-ph { color: #1f2d6b; border-bottom: 3px double #e9b949; font-weight: bold; }
+.pp-in .pp-ph span { color: #b8862b; }
+.pp-in .pp-photo { border-color: #1f2d6b; box-shadow: 3px 3px 0 #e9b949; }
+.pp-in .pp-mrz { background: rgba(31,45,107,.06); border-top: 2px dashed #e9b949; color: #1f2d6b; }
+.pp-in .pp-tc { border-color: rgba(31,45,107,.25); }
+.pp-page.pp-in { overflow: visible; }

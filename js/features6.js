@@ -72,8 +72,8 @@
     const twSet = new Set(stamps.filter(s => s.country === 'TW').map(s => s.city));
     const [m1, m2] = mrz(me, issued, stamps.length);
     const out = [];
-    out.push(`<div class="pp-page pp-cover"><div class="pp-emb">🏝</div><div class="pp-c1">${esc(t('pp_cover1'))}</div><div class="pp-c2">${esc(t('pp_cover2'))}</div><div class="pp-c3">${esc(t('pp_cover3'))}</div><div class="pp-chip"></div></div>`);
-    out.push(`<div class="pp-page pp-info"><div class="pp-ph">${esc(t('pp_info'))}<span>DANCE ISLAND</span></div>
+    out.push(`<div class="pp-page pp-img"><img src="assets/passport/cover.webp?v=1" alt="${esc(t('pp_cover1'))} ${esc(t('pp_cover2'))}"></div>`);
+    out.push(`<div class="pp-page pp-in pp-info"><i class="pp-k k1"></i><i class="pp-k k2"></i><i class="pp-k k3"></i><i class="pp-k k4"></i><div class="pp-ph">${esc(t('pp_info'))}<span>DANCE ISLAND</span></div>
       <div class="pp-grid"><div class="pp-photo"></div><dl>
         <dt>${t('pp_name')}</dt><dd>${esc(me.name)}</dd><dt>${t('pp_id')}</dt><dd>@${esc(me.id)}</dd>
         <dt>${t('pp_nat')}</dt><dd>${nat ? esc(nm(nat)) : '—'}</dd><dt>${t('pp_style')}</dt><dd>${esc(me.style || '—')}</dd>
@@ -81,15 +81,15 @@
         <dt>${t('pp_lv')}</dt><dd>Lv.${S.level || me.level || 1}</dd><dt>${t('pp_issue')}</dt><dd>${issued ? issued.toLocaleDateString() : '—'}</dd>
         <dt>${t('pp_stamps')}</dt><dd>${stamps.length}</dd></dl></div>
       <div class="pp-mrz">${esc(m1)}<br>${esc(m2)}</div></div>`);
-    out.push(`<div class="pp-page pp-tw"><div class="pp-ph">🇹🇼 ${esc(t('pp_tw'))}<span>${twSet.size} / ${A.byCode.TW.cities.length}</span></div><p class="note">${t('pp_tw_d')}</p>
+    out.push(`<div class="pp-page pp-in pp-tw"><i class="pp-k k1"></i><i class="pp-k k2"></i><i class="pp-k k3"></i><i class="pp-k k4"></i><div class="pp-ph">🇹🇼 ${esc(t('pp_tw'))}<span>${twSet.size} / ${A.byCode.TW.cities.length}</span></div><p class="note">${t('pp_tw_d')}</p>
       <div class="pp-twgrid">${A.byCode.TW.cities.map((c, i) => `<div class="pp-tc ${twSet.has(c.id) ? 'on' : ''}" style="--sc:${A.STAMP_COLORS[i % A.STAMP_COLORS.length]}"><span>${esc(nm(c))}</span></div>`).join('')}</div></div>`);
     const per = 6, n = Math.max(2, Math.ceil(stamps.length / per));
     for (let i = 0; i < n; i++) {
       const chunk = stamps.slice(i * per, i * per + per);
-      out.push(`<div class="pp-page pp-visa"><div class="pp-ph">${t('pp_visa')}<span>${pad2(i + 1)}</span></div>
+      out.push(`<div class="pp-page pp-in pp-visa"><i class="pp-k k1"></i><i class="pp-k k2"></i><i class="pp-k k3"></i><i class="pp-k k4"></i><div class="pp-ph">${t('pp_visa')}<span>${pad2(i + 1)}</span></div>
         <div class="pp-stamps">${chunk.length ? chunk.map((s, k) => `<div class="stamp" style="--sc:${A.STAMP_COLORS[(i * per + k) % A.STAMP_COLORS.length]};--rot:${(((i * per + k) * 37) % 18) - 9}deg">${A.stampInner(s.country, s.city, s.created_at)}</div>`).join('') : `<p class="note">${t('pp_visa_empty')}</p>`}</div></div>`);
     }
-    out.push(`<div class="pp-page pp-cover pp-backc"><div class="pp-emb sm">🏝</div><div class="pp-c3">${esc(t('pp_back'))}</div></div>`);
+    out.push(`<div class="pp-page pp-img"><img src="assets/passport/back.webp?v=1" alt="${esc(t('pp_back'))}"></div>`);
     return { out, me, issued, stamps, nat, m1, m2 };
   }
   function openPassport() {
@@ -125,15 +125,16 @@
     g.fillStyle = '#f3ead6'; g.fillRect(0, 0, W, H);
     g.strokeStyle = 'rgba(58,79,138,.10)'; g.lineWidth = 2;
     for (let y = -40; y < H + 40; y += 24) { g.beginPath(); for (let x = 0; x <= W; x += 12) g.lineTo(x, y + Math.sin(x / 40) * 8); g.stroke(); }
-    g.fillStyle = '#3b2b2b'; g.fillRect(0, 0, W, 90); g.fillStyle = '#f4d77a'; g.font = F(40); g.textBaseline = 'middle'; g.fillText('🏝 ' + t('pp_cover1') + '  ' + t('pp_cover2'), 40, 46);
-    g.fillStyle = '#fff'; g.fillRect(50, 130, 300, 380); g.strokeStyle = '#3b2b2b'; g.lineWidth = 6; g.strokeRect(50, 130, 300, 380);
+    g.strokeStyle = '#1f2d6b'; g.lineWidth = 20; g.strokeRect(10, 10, W - 20, H - 20); g.strokeStyle = '#e9b949'; g.lineWidth = 4; g.strokeRect(28, 28, W - 56, H - 56);
+    g.fillStyle = '#1f2d6b'; g.fillRect(20, 20, W - 40, 80); g.fillStyle = '#e9b949'; g.font = F(40); g.textBaseline = 'middle'; g.fillText('🏝 ' + t('pp_cover1') + '  ' + t('pp_cover2'), 50, 60);
+    g.fillStyle = '#fff'; g.fillRect(60, 130, 290, 380); g.strokeStyle = '#1f2d6b'; g.lineWidth = 6; g.strokeRect(60, 130, 290, 380);
     try { const av = Avatar.render(P.me.look, 0, 8); const k = Math.min(260 / av.width, 340 / av.height); g.imageSmoothingEnabled = false; g.drawImage(av, 200 - av.width * k / 2, 320 - av.height * k / 2, av.width * k, av.height * k); } catch (x) {}
     const J = t('jobs') || {};
     const rows = [[t('pp_name'), P.me.name], [t('pp_id'), '@' + P.me.id], [t('pp_nat'), P.nat ? nm(P.nat) : '—'], [t('pp_style'), P.me.style || '—'],
       [t('pp_job'), J[P.me.job] || P.me.job || '—'], [t('pp_lv'), 'Lv.' + ((A.socialState || {}).level || P.me.level || 1)], [t('pp_issue'), P.issued ? P.issued.toLocaleDateString() : '—'], [t('pp_stamps'), String(P.stamps.length)]];
     rows.forEach(([k, v], j) => { g.fillStyle = '#6b5552'; g.font = F(24); g.fillText(k, 400, 150 + j * 46); g.fillStyle = '#3b2b2b'; g.font = F(32); g.fillText(String(v).slice(0, 24), 700, 150 + j * 46); });
-    g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(0, 640, W, 150);
-    g.fillStyle = '#3b2b2b'; g.font = '38px "Courier New", monospace'; g.fillText(P.m1, 50, 690); g.fillText(P.m2, 50, 750);
+    g.fillStyle = 'rgba(31,45,107,.07)'; g.fillRect(40, 640, W - 80, 150);
+    g.fillStyle = '#1f2d6b'; g.font = '38px "Courier New", monospace'; g.fillText(P.m1, 50, 690); g.fillText(P.m2, 50, 750);
     return cv;
   }
   window.Passport = { open: openPassport };
