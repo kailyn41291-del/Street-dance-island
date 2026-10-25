@@ -30,6 +30,8 @@ window.Chat = (() => {
       return row;
     }
     const a = m.author || {};
+    const mv = window.Emotes && Emotes.parse(m.text);
+    if (mv) { const r = h(`<div class="msg emote" data-id="${m.id}"><div class="mb">${Emotes.rowHTML(a, mv)}</div></div>`); r.prepend(headIcon(a.look)); return r; }
     const role = a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : '';
     const row = h(`<div class="msg ${a.role ? 'staff' : ''}" data-id="${m.id}"><div class="mb">
       <div class="mh">${role}<b class="nm">${Player.nameHTML(a)}</b>${a.title ? Titles.html(a.title) : ''}<span class="tm">${timeStr(m.created_at)}</span>
@@ -57,6 +59,8 @@ window.Chat = (() => {
 
   function push(channel, m) {
     cache[channel].push(m);
+    const mv = !m.official && window.Emotes && Emotes.parse(m.text);
+    if (mv && channel === cur && open) Emotes.play(m.author, mv);
     if (cache[channel].length > 120) cache[channel].shift();
     if (channel === cur && open) {
       const near = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
@@ -73,7 +77,8 @@ window.Chat = (() => {
     el.querySelector('.chat-bar .badge').classList.toggle('hidden', !n || open);
     if (last) {
       const who = last.official ? '📢' : (last.author && last.author.name ? last.author.name + '：' : '');
-      el.querySelector('.ticker').innerHTML = esc(who) + ' ' + Emoji.toHTML(last.text);
+      const mv = window.Emotes && Emotes.parse(last.text);
+      el.querySelector('.ticker').innerHTML = esc(who) + ' ' + (mv ? Emotes.MOVES[mv].icon + ' ' + Emotes.MOVES[mv].name : Emoji.toHTML(last.text));
       if (!open && last.official) { el.classList.remove('ping'); void el.offsetWidth; el.classList.add('ping'); }
     }
     el.querySelectorAll('.ch-tabs button').forEach(b => {
@@ -99,10 +104,13 @@ window.Chat = (() => {
       form.querySelector('.login').onclick = () => Player.prompt();
       return;
     }
-    form.appendChild(h(`<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button>
+    form.appendChild(h(`<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button><button type="button" class="btn sm mv-btn" aria-label="emote">🕺</button>
       <input class="input sm" maxlength="200" placeholder="${esc(t('chat_ph'))}"><button class="btn sm pink">${t('chat_send')}</button></div>`));
     input = form.querySelector('input');
     form.querySelector('.emo-btn').onclick = e => togglePicker(e.currentTarget, input);
+    form.querySelector('.mv-btn').onclick = e => Emotes.picker(e.currentTarget, async txt => {
+      try { await Social.send(cur, txt); SFX.play('blip'); } catch (x) { SFX.play('error'); toast(t('err_' + x.message) !== 'err_' + x.message ? t('err_' + x.message) : x.message, '✕'); }
+    });
   }
 
   // 表情選單（聊天室和留言板共用）

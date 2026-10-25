@@ -818,3 +818,110 @@ body[data-theme="hk"] .win-title { text-shadow: 0 0 4px #fff, 0 0 8px #ff3d8b; }
 .sub-item { display: grid; gap: 6px; }
 details summary { cursor: pointer; margin: 10px 0; }
 @media (max-width: 760px) { .me-head { grid-template-columns: 1fr; justify-items: center; text-align: center; } .lv-row { justify-content: center; } .me-nums { justify-content: center; } }
+
+/* ---------- 第三批：招式動畫 ---------- */
+.mv-windmill { animation: mvSpin .35s linear infinite; }
+.mv-headspin { animation: mvHead .25s linear infinite; }
+.mv-flare { animation: mvFlare .4s steps(4) infinite; }
+.mv-freeze { animation: mvFreeze 2.4s steps(1) forwards; }
+.mv-wave { animation: mvWave .4s ease-in-out infinite; }
+.mv-jump { animation: mvJump .5s steps(5) infinite; }
+.mv-lock { animation: mvLock .5s steps(2) infinite; }
+.mv-pop { animation: mvPop .18s steps(2) infinite; }
+.mv-toprock { animation: mvTop .3s steps(2) infinite; }
+@keyframes mvSpin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes mvHead { 0% { transform: rotate(180deg) scaleX(1); } 50% { transform: rotate(180deg) scaleX(-1); } 100% { transform: rotate(180deg) scaleX(1); } }
+@keyframes mvFlare { 0% { transform: rotate(-20deg) translateX(-6px); } 50% { transform: rotate(20deg) translateX(6px) translateY(-6px); } 100% { transform: rotate(-20deg) translateX(-6px); } }
+@keyframes mvFreeze { 0% { transform: rotate(-70deg) translateY(10px); } 100% { transform: rotate(-70deg) translateY(10px); } }
+@keyframes mvWave { 0%, 100% { transform: skewX(-12deg); } 50% { transform: skewX(12deg); } }
+@keyframes mvJump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-26px); } }
+@keyframes mvLock { 0% { transform: translateY(0) rotate(0); } 50% { transform: translateY(4px) rotate(-6deg); } }
+@keyframes mvPop { 0% { transform: scale(1); } 50% { transform: scale(1.06, .94); } }
+@keyframes mvTop { 0% { transform: translateX(-5px) rotate(-4deg); } 50% { transform: translateX(5px) rotate(4deg); } }
+.emote-stage { position: fixed; right: 90px; bottom: 60px; z-index: 37; display: grid; justify-items: center; gap: 4px; pointer-events: none; animation: popUp .25s steps(4); }
+.emote-stage .sprite { position: relative; z-index: 1; }
+.em-floor { position: absolute; bottom: 26px; width: 120px; height: 18px; border-radius: 50%; background: radial-gradient(rgba(255,240,150,.9), transparent 70%); }
+.em-name { background: var(--ink); color: var(--yellow); border: 2px solid var(--ink); padding: 2px 10px; font-size: 12px; }
+.emote-stage.out { animation: fadeOut .4s steps(3) forwards; }
+.msg.emote .mb { background: #fff7d6; }
+.emote-line b { font-weight: normal; }
+.emote-pick { position: fixed; z-index: 95; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 6px; width: 290px; animation: winOpen .2s steps(4); }
+.emote-pick button { border: 2px solid var(--ink); background: var(--paper); display: grid; justify-items: center; padding: 4px; font-size: 18px; }
+.emote-pick button span { font-size: 10px; } .emote-pick button:hover { background: var(--yellow); }
+
+/* 遊戲中心 */
+.arcade { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.arc-tile { display: grid; justify-items: center; gap: 4px; padding: 14px 10px; border: var(--px) solid var(--ink); background: var(--paper); box-shadow: 0 4px 0 var(--ink); transition: transform .06s; }
+.arc-tile:hover { transform: translateY(-3px); background: var(--cream-2); } .arc-tile:active { transform: translateY(3px); box-shadow: none; }
+.arc-ico { font-size: 34px; } .arc-tile b { font-weight: normal; font-size: 15px; } .arc-tile small { font-size: 11px; color: var(--ink-soft); text-align: center; }
+
+/* 節奏遊戲 */
+.rh-wrap { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.rh { border: var(--px) solid var(--ink); image-rendering: pixelated; max-width: 100%; touch-action: none; }
+.rh-side { display: grid; gap: 8px; align-content: start; min-width: 180px; max-width: 260px; }
+.rh-score { font-family: var(--font-en); font-size: 28px; } .rh-combo { font-family: var(--font-en); font-size: 12px; color: var(--orange); min-height: 14px; }
+.rh-judge { font-family: var(--font-en); font-size: 16px; min-height: 20px; } .rh-judge.p { color: #e0a800; } .rh-judge.g { color: var(--teal); } .rh-judge.m { color: var(--red); } .rh-judge.r { color: var(--pink); font-size: 22px; }
+.rh-board ol { margin: 4px 0 0; padding-left: 20px; font-size: 12px; } .rh-board li { display: flex; justify-content: space-between; gap: 8px; }
+.rh-pads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 320px; margin: 10px auto 0; }
+.rh-pad { height: 54px; font-size: 22px; border: var(--px) solid var(--ink); background: var(--paper); box-shadow: 0 4px 0 var(--ink); touch-action: none; }
+.rh-pad:active { transform: translateY(4px); box-shadow: none; background: var(--yellow); }
+
+/* NPC */
+.npc-walker { position: fixed; z-index: 22; border: 0; background: none; padding: 0; display: grid; justify-items: center; animation: npcWalkL 16s linear forwards; }
+.npc-walker.r { animation-name: npcWalkR; }
+.npc-walker.stop { animation-play-state: paused; }
+@keyframes npcWalkL { from { left: -80px; } to { left: calc(100vw + 20px); } }
+@keyframes npcWalkR { from { left: calc(100vw + 20px); } to { left: -80px; } }
+.npc-bubble { background: var(--paper); border: 2px solid var(--ink); padding: 2px 8px; font-size: 11px; white-space: nowrap; box-shadow: 2px 2px 0 var(--ink); animation: hop .8s steps(2) infinite; }
+.npc-battle { display: grid; gap: 10px; text-align: center; }
+.nb-stage { display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding: 10px; background: linear-gradient(var(--sky) 0 70%, var(--cream-2) 70%); border: var(--px) solid var(--ink); }
+.nb-vs { font-family: var(--font-en); color: var(--red); font-size: 18px; align-self: center; }
+.nb-score { font-family: var(--font-en); font-size: 20px; }
+.nb-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+/* 散步模式 */
+.walker { position: absolute; left: 0; top: 0; z-index: 30; margin: -60px 0 0 -26px; display: grid; justify-items: center; pointer-events: none; }
+.walker .sprite { transform-origin: 50% 100%; }
+.walk-tip { display: none; background: var(--ink); color: var(--yellow); padding: 2px 8px; font-size: 12px; white-space: nowrap; border: 2px solid var(--yellow); transform: scale(var(--inv, 1)); pointer-events: auto; cursor: pointer; }
+.walk-tip.on { display: block; animation: hop .8s steps(2) infinite; }
+.dpad { position: fixed; left: 16px; bottom: 60px; z-index: 40; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 4px; }
+.dpad button { border: var(--px) solid var(--ink); background: var(--paper); font-size: 16px; box-shadow: 0 3px 0 var(--ink); touch-action: none; }
+.dpad button:active { transform: translateY(3px); box-shadow: none; }
+.dpad [data-k=up] { grid-column: 2; grid-row: 1; } .dpad [data-k=left] { grid-column: 1; grid-row: 2; } .dpad [data-k=enter] { grid-column: 2; grid-row: 2; background: var(--yellow); font-family: var(--font-en); font-size: 10px; }
+.dpad [data-k=right] { grid-column: 3; grid-row: 2; } .dpad [data-k=down] { grid-column: 2; grid-row: 3; } .dpad .x { grid-column: 3; grid-row: 1; background: var(--red); }
+
+/* Battle 投票 */
+.battle .bt-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: start; }
+.bt-side { display: grid; gap: 8px; justify-items: center; border: 2px solid var(--ink); padding: 10px; background: var(--paper); }
+.bt-side.chosen { outline: 3px solid var(--pink); } .bt-side.winner { background: #fff2b3; }
+.bt-side.winner .bt-name::before { content: '👑 '; }
+.bt-name { font-size: 18px; }
+.bt-video { width: 100%; aspect-ratio: 16 / 9; border: 2px solid var(--ink); background: #000; } .bt-video iframe { width: 100%; height: 100%; border: 0; }
+.bt-vs { font-family: var(--font-en); color: var(--red); font-size: 20px; align-self: center; }
+.bt-pct { font-family: var(--font-en); font-size: 18px; }
+.bt-bar { height: 14px; border: 2px solid var(--ink); background: var(--blue); margin-top: 10px; } .bt-bar i { display: block; height: 100%; background: var(--pink); }
+.bt-new form { margin-top: 10px; }
+
+/* Cypher 舞池 */
+.cypher-view { overflow: hidden; background: radial-gradient(ellipse at 50% 110%, #5a3a8a, #1d1838 70%); display: grid; grid-template-rows: auto 1fr auto; padding: 84px 16px 70px; gap: 12px; }
+.cy-lights { position: absolute; inset: 0; pointer-events: none; background:
+  conic-gradient(from 200deg at 20% 0, transparent 0 20deg, rgba(240,124,163,.25) 20deg 30deg, transparent 30deg) , conic-gradient(from 140deg at 80% 0, transparent 0 20deg, rgba(91,181,166,.25) 20deg 30deg, transparent 30deg);
+  animation: cyLight 3s steps(6) infinite alternate; }
+@keyframes cyLight { to { filter: hue-rotate(90deg); } }
+.cy-head { max-width: 640px; width: 100%; justify-self: center; position: relative; z-index: 1; }
+.cy-head .win-body { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+.cy-floor { position: relative; z-index: 1; align-self: end; border-top: 4px solid #2a1f2e;
+  background: repeating-conic-gradient(#3b2b5a 0 25%, #4d3a78 0 50%) 0 0 / 48px 48px; padding: 30px 10px 16px; min-height: 240px; }
+.cy-dancers { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 18px; }
+.cy-dancer { display: grid; justify-items: center; gap: 4px; transition: transform .2s; }
+.cy-dancer.me .cy-name { background: var(--pink); }
+.cy-dancer.spot { filter: drop-shadow(0 0 10px #ffe680); transform: scale(1.1); }
+.cy-name { font-size: 11px; background: var(--paper); border: 2px solid var(--ink); padding: 0 6px; white-space: nowrap; }
+.cy-moves { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.cy-moves .btn { display: grid; justify-items: center; font-size: 18px; padding: 4px 10px; } .cy-moves .btn span { font-size: 10px; }
+
+@media (max-width: 760px) {
+  .battle .bt-row { grid-template-columns: 1fr; } .bt-vs { justify-self: center; }
+  .emote-stage { right: 16px; bottom: 70px; }
+  .cypher-view { padding-top: 110px; }
+}

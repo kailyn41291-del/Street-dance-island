@@ -160,6 +160,27 @@ window.Backend = (() => {
     async myUnlocks() { return must(await sb.from('unlocks').select('item').eq('user_id', user.id)).map(r => r.item); },
     async stats(uid) { return must(await sb.rpc('player_stats', { uid: uid || user.id })); },
 
+    /* 人氣 Battle */
+    async listBattles() { return must(await sb.from('battles').select('*').order('ends_at', { ascending: false }).limit(20)); },
+    async addBattle(b) { return must(await sb.from('battles').insert(b).select().single()); },
+    async deleteBattle(id) { must(await sb.from('battles').delete().eq('id', id)); },
+    async listVotes(battleIds) { return battleIds.length ? must(await sb.from('votes').select('battle_id,user_id,choice').in('battle_id', battleIds)) : []; },
+    async vote(battle_id, choice) { must(await sb.from('votes').insert({ battle_id, choice })); },
+
+    /* 節奏遊戲 / NPC */
+    async postScore(score) { return must(await sb.from('scores').insert({ score, game: 'rhythm' }).select().single()); },
+    async topScores(limit = 10) {
+      const rows = must(await sb.from('scores').select('user_id,score,author,created_at').eq('game', 'rhythm').order('score', { ascending: false }).limit(200));
+      const best = new Map(); rows.forEach(r => { if (!best.has(r.user_id)) best.set(r.user_id, r); });   // 每人只算最高分
+      return [...best.values()].slice(0, limit);
+    },
+    async npcWin() { return must(await sb.rpc('npc_win')); },
+
+    /* 即時頻道（線上 Cypher 舞池） */
+    channel(name, key) { return sb.channel(name, { config: { presence: { key }, broadcast: { self: true } } }); },
+    removeChannel(ch) { sb.removeChannel(ch); },
+    get uid() { return user ? user.id : null; },
+
     /* 即時更新：table = 'messages' | 'comments' | 'announcements' */
     subscribe(table, cb) {
       const ch = sb.channel('rt-' + table + '-' + Math.random().toString(36).slice(2, 7))

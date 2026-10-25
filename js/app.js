@@ -290,6 +290,11 @@
     // 滑過 / 點擊國家
     let hover = -1, hiEl = null;
     const tagAt = e => { const tg = e.target.closest && e.target.closest('.ctag'); return tg ? +tg.dataset.i : -1; };
+    // 給散步模式用的地圖介面
+    App.worldApi = {
+      world, L, cam, C, centerOn, home: homePt(), walking: false, stopWalk: () => {},
+      idAtWorld: (wx, wy) => { const gx = Math.floor(wx / C), gy = Math.floor(wy / C); return gx < 0 || gy < 0 || gx >= L.GW || gy >= L.GH ? -1 : L.ids[gy * L.GW + gx] - 1; }
+    };
     const idAt = (cx, cy) => {
       const wx = (cx - cam.x) / cam.s, wy = (cy - cam.y) / cam.s + 9;   // +9：補償島嶼浮起的高度
       const gx = Math.floor(wx / C), gy = Math.floor(wy / C);
@@ -1062,7 +1067,7 @@
   };
   hud.querySelector('.hud-save').onclick = () => { SFX.play('select'); openSave(); };
   hud.querySelector('.hud-events').onclick = () => { SFX.play('select'); nav('#/events'); };
-  hud.querySelector('.hud-game').onclick = () => { SFX.play('select'); Games.open(); };
+  hud.querySelector('.hud-game').onclick = () => { SFX.play('select'); App.openArcade ? App.openArcade() : Games.open(); };
   hud.querySelector('.hud-lang').onclick = e => openLang(e.currentTarget);
   hud.querySelector('.hud-player').onclick = () => { SFX.play('select'); if (Player.me && Store.cloud) nav('#/me'); else Player.openMenu(); };
   hud.querySelector('.hud-admin').onclick = () => { SFX.play('select'); openAdmin(); };

@@ -154,5 +154,7 @@ window.Games = (() => {
     show(which);
   }
 
-  return { open };
+  // 其他檔案可以加新的小遊戲分頁：Games.addTab('key', '標題的翻譯 key', (pane, cleanup) => {...})
+  const addTab = (key, labelKey, fn) => { if (!TABS.some(x => x[0] === key)) TABS.push([key, labelKey, fn]); };
+  return { open, addTab };
 })();

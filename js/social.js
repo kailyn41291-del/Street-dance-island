@@ -6,7 +6,7 @@
 window.Social = (() => {
   const cloud = () => Backend.enabled;
   const KEY = 'danceIsland.social.v1';
-  const listeners = { messages: [], comments: [], announcements: [] };
+  const listeners = { messages: [], comments: [], announcements: [], votes: [] };
   const emit = (table, payload) => listeners[table].forEach(f => f(payload));
 
   /* ---------- 本機假資料庫 ---------- */
@@ -68,7 +68,7 @@ window.Social = (() => {
   function ensureSubs() {
     if (subs || !cloud()) return;
     subs = true;
-    ['messages', 'comments', 'announcements'].forEach(tb => Backend.subscribe(tb, p => emit(tb, { type: p.eventType, row: p.new && p.new.id ? p.new : p.old })));
+    ['messages', 'comments', 'announcements', 'votes'].forEach(tb => Backend.subscribe(tb, p => emit(tb, { type: p.eventType, row: p.new && p.new.id ? p.new : p.old })));
   }
 
   return {

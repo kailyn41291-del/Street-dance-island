@@ -330,6 +330,7 @@ window.App = {
     view.dataset.phase = phase;
     view.appendChild(h(`<div class="daynight ${phase}"></div>`));
     if (phase === 'night') { const l = Themes.fxLayer('spark'); if (l) { l.classList.add('fixed'); view.appendChild(l); } }
+    (A.worldHooks || []).forEach(f => f(view));
     // 節慶
     const f = festival(d);
     if (f) {

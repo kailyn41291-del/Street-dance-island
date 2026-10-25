@@ -17,6 +17,8 @@ window.Titles = (() => {
     { id: 'r_moonwalk',  only: 'unlock', zh: '月球漫步者',   en: 'Moonwalker',         ja: 'ムーンウォーカー',  ko: '문워커' },
     { id: 'r_sushi',     only: 'unlock', zh: '壽司迴轉王',   en: 'Sushi Spinner',      ja: '回転寿司キング',    ko: '회전초밥 킹' },
     { id: 'r_week7',     only: 'unlock', zh: '七日不間斷',   en: '7-Day Streak',       ja: '7日連続',           ko: '7일 연속' },
+    { id: 'r_npcslayer', only: 'unlock', zh: 'NPC 終結者', en: 'NPC Slayer', ja: 'NPC キラー', ko: 'NPC 사냥꾼' },
+    { id: 'r_npcboss',   only: 'unlock', zh: '街頭魔王',   en: 'Street Boss', ja: 'ストリートの魔王', ko: '스트릿 마왕' },
     { id: 'lv5',  minLv: 5,  zh: '舞島居民',   en: 'Island Local',    ja: '島の住人',     ko: '섬 주민' },
     { id: 'lv10', minLv: 10, zh: '舞島老手',   en: 'Island Veteran',  ja: '島のベテラン', ko: '섬 베테랑' },
     { id: 'lv20', minLv: 20, zh: '舞島傳說',   en: 'Island Legend',   ja: '島の伝説',     ko: '섬의 전설' },
