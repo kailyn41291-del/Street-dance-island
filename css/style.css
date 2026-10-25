@@ -1456,3 +1456,29 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 @media (min-width: 761px) { .qbox, .hub-phone { top: 112px; } }
 /* 開場 LOGO */
 .boot-logo-img { display: block; width: min(420px, 82vw); height: auto; margin: 4px auto 10px; image-rendering: auto; animation: kBob 2.6s ease-in-out infinite; filter: drop-shadow(3px 4px 0 rgba(59,43,43,.25)); }
+
+/* ---------- 經驗值：冒險進度 ---------- */
+.xp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.xp-card { border: 2px solid var(--ink); background: var(--paper); padding: 8px 10px; display: grid; gap: 6px; align-content: start; }
+.xp-card.full { grid-column: 1 / -1; }
+.xp-card h4 { margin: 0; font-size: 14px; } .xp-card p { margin: 0; }
+.xp-big { font-size: 18px; }
+.xp-days { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; }
+.xp-days i { height: 10px; background: #eee6dc; border: 1px solid rgba(59,43,43,.25); }
+.xp-days i.on { background: #f08c3a; } .xp-days i.mk { outline: 2px solid var(--ink); outline-offset: -1px; }
+.xp-tier { font-size: 18px; font-weight: bold; }
+.xp-board { margin: 6px 0 0; padding-left: 0; list-style: none; display: grid; gap: 3px; font-size: 13px; }
+.xp-board li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed rgba(59,43,43,.2); padding: 2px 0; }
+.xp-board a { color: inherit; text-decoration: none; } .xp-board b { font-variant-numeric: tabular-nums; }
+.ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.ach { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 0 6px; align-items: center; border: 2px dashed rgba(59,43,43,.3); padding: 5px 7px; color: #9c8f80; background: #f6efe4; }
+.ach .ach-ic { grid-row: span 2; font-size: 22px; filter: grayscale(1); opacity: .45; }
+.ach b { font-size: 12px; } .ach small { font-size: 10px; line-height: 1.3; }
+.ach i { position: absolute; top: 2px; right: 5px; font-style: normal; font-size: 9px; }
+.ach.on { border: 2px solid var(--ink); background: #fff3c9; color: var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+.ach.on .ach-ic { filter: none; opacity: 1; }
+.qb-streak { font-size: 12px; margin-bottom: 5px; } .qb-streak b { color: #d9480f; }
+.qb-xp { font-style: normal; font-size: 10px; color: #2a9d8f; white-space: nowrap; }
+.cr-xp { display: flex; gap: 4px; flex-wrap: wrap; }
+.boot-logo { display: flex; justify-content: center; width: 100%; overflow: hidden; }
+.boot-logo-img { width: 100%; max-width: 400px; margin: 4px auto 10px; }

@@ -82,7 +82,7 @@ window.UI = (() => {
   window.trScan = trScan;
 
   /* 玩家做了某件事（每日任務用來算進度）：diAct('view') 之類 */
-  window.diAct = (k, n = 1) => { try { window.dispatchEvent(new CustomEvent('di:act', { detail: { k, n } })); } catch (e) {} };
+  window.diAct = (k, n = 1, ref = null) => { try { window.dispatchEvent(new CustomEvent('di:act', { detail: { k, n, ref } })); } catch (e) {} };
 
   /* 夥伴 Choco：對話框貼圖（24 種表情） */
   const Choco = (() => {

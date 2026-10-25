@@ -195,7 +195,7 @@ window.App = {
     return tpl.replace(/\{(\w+)\}/g, (_, k) => ({ name: e.name || '', date, place, url })[k] ?? '');
   }
   async function openShare(e) {
-    const url = eventUrl(e); diAct('share');
+    const url = eventUrl(e); diAct('share', 1, e.id);
     const body = h(`<div class="share"><div class="share-prev"><p class="note">…</p></div>
       <div class="btn-row"><button class="btn pink sh">📤 ${t('share_send')}</button><button class="btn dl">⬇ ${t('share_dl')}</button><button class="btn teal cp">🔗 ${t('share_copy')}</button>
       <a class="btn" target="_blank" rel="noopener" href="https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}">LINE</a>
@@ -277,7 +277,7 @@ window.App = {
     if (!Store.cloud) return;
     const o = viewedToday(); if (o.ids.includes(id)) return;
     o.ids.push(id); try { localStorage.setItem(VKEY, JSON.stringify(o)); } catch (x) {}
-    diAct('view');
+    diAct('view', 1, id);
     if (views) { views[id] = (views[id] || 0) + 1; paintViews(); }
     Backend.bumpView(id).catch(() => {});
   }
@@ -295,7 +295,7 @@ window.App = {
 
   A.cardExtras = (e, past) => `
     <button class="btn sm" data-act="cal" data-ev="${esc(e.id)}">📅 ${t('b_cal')}</button>
-    <button class="btn sm pink" data-act="share" data-ev="${esc(e.id)}">📤 ${t('b_share')}</button>` + (A.cardExtras2 ? A.cardExtras2(e, past) : '');
+    <button class="btn sm pink" data-act="share" data-ev="${esc(e.id)}">📤 ${t('b_share')}</button>` + (A.cardExtras2 ? A.cardExtras2(e, past) : '') + (A.cardExtras3 ? A.cardExtras3(e) : '');
   A.onCardAct = (a, ev, tg, redraw) => {
     if (!ev) return false;
     if (a === 'cal') { SFX.play('select'); openCalendar(ev); return true; }

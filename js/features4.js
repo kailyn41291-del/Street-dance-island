@@ -193,7 +193,7 @@ window.Friends = (() => {
     if (!p) { toast(t('cd_notfound'), '✕'); return; }
     people[p.user_id] = p;
     const mine = p.user_id === me();
-    if (!mine) diAct('card');
+    if (!mine) diAct('card', 1, p.handle);
     const body = h(`<div class="pc-wrap">${opt.request ? `<p class="pc-req">💌 ${esc(t('fr_wants', { n: p.name }))}</p>` : ''}<div class="pc-slot">${cardHTML(p, { mine })}</div><div class="pc-acts"></div></div>`);
     mountCard(body, p);
     Backend.crewRpc && Backend.crewRpc('crew_tag', { uid: p.user_id }).then(cw => { if (cw && cw.name && Chat.crewTagHTML) { const tg = body.querySelector('.pc-name'); tg && tg.insertAdjacentHTML('afterend', `<div class="pc-crew">${Chat.crewTagHTML({ crew: cw })}</div>`); } }).catch(() => {});
@@ -479,6 +479,7 @@ window.Friends = (() => {
     const ch = Backend.channel('pvp-' + room, me());
     const finish = (text, win) => {
       if (over) return; over = true; clearInterval(timer);
+      if (win === true || win === false) A.pvpResult && A.pvpResult(room, opp.user_id, win);
       btns.hidden = true; rd.textContent = '';
       msg.textContent = text;
       if (win) { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 24); } else if (win === false) SFX.play('error');

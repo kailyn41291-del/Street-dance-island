@@ -396,7 +396,7 @@ window.Emotes = (() => {
     view.querySelector('.cy-moves').onclick = e => {
       if (e.target.closest('.join')) return Player.prompt();
       const b = e.target.closest('[data-mv]'); if (!b) return;
-      if (me) diAct('cypher');
+      if (me) diAct('cypher', 1, b.dataset.mv);
       if (!me) return Player.prompt();
       if (ch) ch.send({ type: 'broadcast', event: 'move', payload: { handle: me.id, move: b.dataset.mv } });
       else doMove(me.id, b.dataset.mv);

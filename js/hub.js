@@ -8,6 +8,7 @@ window.Hub = (() => {
 
   I18N.extend({
     zh: {
+      q_streak: '連續登入 {n} 天', q_all_bonus: '三個任務全清！額外 +{n} XP', 
       hub_menu: '功能選單', hub_title: '📱 功能選單', hub_sec_ev: '找活動', hub_sec_me: '我的冒險', hub_sec_so: '交朋友', hub_sec_play: '玩一下', hub_sec_etc: '其他',
       hub_events: '活動總覽', hub_near: '附近活動', hub_add: '投稿活動', hub_me: '我的頁面', hub_me_d: '護照・簽到・收藏', hub_char: '編輯角色', hub_card: '我的名片',
       hub_friends: '好友', hub_find: '找好友', hub_chat: '聊天室', hub_forum: '舞者論壇', hub_battle: '人氣 Battle', hub_cypher: 'Cypher 舞池', hub_rhythm: '節奏挑戰',
@@ -28,6 +29,7 @@ window.Hub = (() => {
       q_share: '分享一個活動給朋友', q_rhythm: '玩一場節奏挑戰', q_npc: '打敗一位路過的 NPC 舞者', q_spin: '完成每日簽到抽獎', q_cypher: '在 Cypher 舞池秀一招'
     },
     en: {
+      q_streak: '{n}-day login streak', q_all_bonus: 'All 3 quests cleared! Bonus +{n} XP', 
       hub_menu: 'Menu', hub_title: '📱 Menu', hub_sec_ev: 'Events', hub_sec_me: 'My adventure', hub_sec_so: 'Social', hub_sec_play: 'Play', hub_sec_etc: 'More',
       hub_events: 'All events', hub_near: 'Nearby', hub_add: 'Submit event', hub_me: 'My page', hub_me_d: 'Passport · check-in · saved', hub_char: 'Edit character', hub_card: 'My card',
       hub_friends: 'Friends', hub_find: 'Find friends', hub_chat: 'Chat', hub_forum: 'Forum', hub_battle: 'Battle vote', hub_cypher: 'Cypher floor', hub_rhythm: 'Rhythm',
@@ -48,6 +50,7 @@ window.Hub = (() => {
       q_share: 'Share an event with a friend', q_rhythm: 'Play a round of Rhythm', q_npc: 'Beat a wandering NPC dancer', q_spin: 'Spin the daily check-in', q_cypher: 'Show a move on the cypher floor'
     },
     ja: {
+      q_streak: '{n} 日連続ログイン', q_all_bonus: '3 つ全部クリア！ボーナス +{n} XP', 
       hub_menu: 'メニュー', hub_title: '📱 メニュー', hub_sec_ev: 'イベント', hub_sec_me: 'わたしの冒険', hub_sec_so: 'ソーシャル', hub_sec_play: 'あそぶ', hub_sec_etc: 'その他',
       hub_events: 'イベント一覧', hub_near: '近くのイベント', hub_add: 'イベント投稿', hub_me: 'マイページ', hub_me_d: 'パスポート・チェックイン・お気に入り', hub_char: 'キャラ編集', hub_card: '自分の名刺',
       hub_friends: 'フレンド', hub_find: 'フレンド検索', hub_chat: 'チャット', hub_forum: '掲示板', hub_battle: '人気バトル', hub_cypher: 'サイファー', hub_rhythm: 'リズム',
@@ -68,6 +71,7 @@ window.Hub = (() => {
       q_share: 'イベントを友だちにシェアする', q_rhythm: 'リズムチャレンジを 1 回遊ぶ', q_npc: '通りすがりの NPC ダンサーに勝つ', q_spin: 'デイリーチェックインを回す', q_cypher: 'サイファーで技を見せる'
     },
     ko: {
+      q_streak: '{n}일 연속 접속', q_all_bonus: '퀘스트 3개 올클! 보너스 +{n} XP', 
       hub_menu: '메뉴', hub_title: '📱 메뉴', hub_sec_ev: '이벤트', hub_sec_me: '나의 모험', hub_sec_so: '소셜', hub_sec_play: '놀기', hub_sec_etc: '기타',
       hub_events: '이벤트 전체', hub_near: '내 주변', hub_add: '이벤트 제보', hub_me: '마이 페이지', hub_me_d: '여권·출석·즐겨찾기', hub_char: '캐릭터 편집', hub_card: '내 명함',
       hub_friends: '친구', hub_find: '친구 찾기', hub_chat: '채팅', hub_forum: '게시판', hub_battle: '인기 배틀', hub_cypher: '사이퍼', hub_rhythm: '리듬',
@@ -121,9 +125,21 @@ window.Hub = (() => {
     try { const now = new Date().toISOString(); liveBattle = (await Backend.listBattles()).some(b => b.ends_at > now); } catch (x) { liveBattle = false; }
     return liveBattle;
   }
+  // 登入後：任務、進度、經驗值都由伺服器決定（不能作弊）；沒登入：只在這台裝置記進度
+  let server = false, refreshT = null, claiming = false;
+  const CLIENT_KINDS = ['view', 'country', 'card', 'share', 'cypher'];
+  function applyServer(r) {
+    const prog = {}, claimed = {};
+    r.quests.forEach(q => { prog[q.id] = q.prog; claimed[q.id] = q.claimed; });
+    state = { ids: r.quests.map(q => q.id), prog, claimed, allDone: r.all, streak: r.streak, mult: +r.mult, server: true, guest: false };
+  }
   async function load() {
+    if (logged()) {
+      try { const r = await Backend.myQuests(); if (r && r.quests) { server = true; applyServer(r); draw(); autoClaim(); return; } } catch (x) {}
+    }
+    server = false;
     try { state = JSON.parse(localStorage.getItem(key()) || 'null'); } catch (x) { state = null; }
-    if (!state || !state.ids || !state.ids.every(id => POOL.some(q => q.id === id))) {
+    if (!state || !state.ids || state.server || !state.ids.every(id => POOL.some(q => q.id === id))) {
       const lg = logged(), lb = lg && await hasLiveBattle();
       const ok = POOL.filter(q => (!q.login || lg) && (!q.battle || lb));
       const rnd = seeded(who() + A.todayStr()), pick = [];
@@ -134,10 +150,39 @@ window.Hub = (() => {
     }
     draw();
   }
+  // 完成的任務自動領經驗值
+  async function autoClaim() {
+    if (!server || claiming || !state) return;
+    const todo = state.ids.filter(id => (state.prog[id] || 0) >= POOL.find(q => q.id === id).n && !state.claimed[id]);
+    if (!todo.length) return;
+    claiming = true;
+    let bonus = 0;
+    for (const id of todo) {
+      try {
+        const r = await Backend.claimQuest(id);
+        SFX.play('coin'); toast(`${t('q_done')} ${label(POOL.find(q => q.id === id))}  +${r.xp} XP`, '📜');
+        bonus += r.bonus || 0;
+      } catch (x) {}
+    }
+    claiming = false;
+    try { applyServer(await Backend.myQuests()); } catch (x) {}
+    draw();
+    if (bonus) {
+      setTimeout(() => { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 3, 30); toast(`🎉 ${t('q_all_bonus', { n: bonus })}`, '✨');
+        npc.say([{ who: 'kailyn', mood: 'celebrate', text: t('q_done_k') }, { who: 'choco', mood: 'peace', text: t('q_done_c') }]); }, 700);
+    }
+    window.XP && XP.changed();
+  }
+  const refresh = () => { clearTimeout(refreshT); refreshT = setTimeout(async () => { if (!server) return; try { applyServer(await Backend.myQuests()); draw(); autoClaim(); } catch (x) {} }, 1500); };
   const save = () => { try { localStorage.setItem(key(), JSON.stringify(state)); } catch (x) {} };
   const done = id => { const q = POOL.find(x => x.id === id); return (state.prog[id] || 0) >= q.n; };
   const seenCountry = new Set();
-  function act(k, n = 1) {
+  function act(k, n = 1, ref = null) {
+    if (server) {
+      if (CLIENT_KINDS.includes(k)) Backend.logAct(k, ref || k).then(refresh, () => {});
+      else refresh();
+      return;
+    }
     if (!state || !state.ids.includes(k) || done(k)) return;
     const q = POOL.find(x => x.id === k);
     state.prog[k] = Math.min(q.n, (state.prog[k] || 0) + n); save();
@@ -150,9 +195,9 @@ window.Hub = (() => {
     }
     draw();
   }
-  window.addEventListener('di:act', e => act(e.detail.k, e.detail.n));
+  window.addEventListener('di:act', e => act(e.detail.k, e.detail.n, e.detail.ref));
   // 逛國家：每天不同的國家才算
-  window.addEventListener('hashchange', () => { const m = /^#\/c\/([A-Z]{2})/.exec(location.hash); if (m && !seenCountry.has(m[1])) { seenCountry.add(m[1]); act('country'); } });
+  window.addEventListener('hashchange', () => { const m = /^#\/c\/([A-Z]{2})/.exec(location.hash); if (m && !seenCountry.has(m[1])) { seenCountry.add(m[1]); act('country', 1, m[1]); } });
   // 把會改變進度的動作包起來（成功才算）
   const wrap = (obj, name, k, test) => {
     if (!obj || typeof obj[name] !== 'function' || obj[name]._q) return;
@@ -187,8 +232,8 @@ window.Hub = (() => {
     box.classList.toggle('all', all);
     box.querySelector('.qb-t').textContent = '📜 ' + t('q_title');
     box.querySelector('.qb-n').textContent = `${n}/${state.ids.length}`;
-    box.querySelector('.qb-body').innerHTML = `<ul>${state.ids.map(id => { const q = POOL.find(x => x.id === id), p = state.prog[id] || 0, d = p >= q.n;
-        return `<li class="${d ? 'ok' : ''}"><span class="qb-c">${d ? '✔' : '☐'}</span><span class="qb-l">${esc(label(q))} <b>(${p}/${q.n})</b></span>${d ? '' : `<button class="qb-go" data-go="${q.id}">${t('q_go')} ▸</button>`}</li>`; }).join('')}</ul>
+    box.querySelector('.qb-body').innerHTML = `${state.server ? `<div class="qb-streak">🔥 ${t('q_streak', { n: state.streak || 0 })}${state.mult > 1 ? ` <b>×${state.mult}</b>` : ''}</div>` : ''}<ul>${state.ids.map(id => { const q = POOL.find(x => x.id === id), p = state.prog[id] || 0, d = p >= q.n;
+        return `<li class="${d ? 'ok' : ''}"><span class="qb-c">${d ? '✔' : '☐'}</span><span class="qb-l">${esc(label(q))} <b>(${p}/${q.n})</b>${state.server ? ` <i class="qb-xp">+${Math.round(15 * (state.mult || 1))} XP</i>` : ''}</span>${d ? '' : `<button class="qb-go" data-go="${q.id}">${t('q_go')} ▸</button>`}</li>`; }).join('')}</ul>
       ${all ? `<p class="qb-done">🎉 ${t('q_done_all')}</p>` : ''}${state.guest && Backend.enabled ? `<button class="qb-login">🔑 ${t('q_login')}</button>` : ''}`;
   }
 

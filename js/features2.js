@@ -151,6 +151,7 @@
           <div class="note">${t('daily_streak', { n: streak })}</div></div>
       </div></div>
 
+      ${A.xpHTML ? A.xpHTML() : ''}
       ${A.recommendHTML ? A.recommendHTML() : ''}
       <div class="win">${UI.winHTML('📅 ' + t('me_plan'), 'teal', false)}<div class="win-body">
         ${upFav.length ? `<div class="cards">${upFav.map((e, i) => A.cardHTML(e, i, today, Store.canEdit(), { place: true })).join('')}</div>` : `<p class="note">${t('me_plan_none')}</p>`}
@@ -250,4 +251,5 @@
   Player.ready.then(async () => { await loadMine(); reminders(); if (A.current) A.render(true); });
   Player.onChange(async () => { await loadMine(); reminders(); if (A.current) A.render(true); });
   A.levelOf = levelOf;
+  A.refreshStats = refreshStats;
 })();
