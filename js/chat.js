@@ -38,7 +38,7 @@ window.Chat = (() => {
     const role = a.role ? `<span class="role role-${a.role}">${a.role === 'owner' ? '★' : '✦'}</span>` : '';
     const me = Player.me && Player.me.id, hitMe = me && a.handle !== me && mentions(m.text).includes(me);
     const row = h(`<div class="msg ${a.role ? 'staff' : ''} ${hitMe ? 'mentioned' : ''}" data-id="${m.id}"><div class="mb">
-      <div class="mh">${role}<b class="nm">${Player.nameHTML(a)}</b>${a.title ? Titles.html(a.title) : ''}<span class="tm">${timeStr(m.created_at)}</span>
+      <div class="mh">${role}<b class="nm">${Player.nameHTML(a)}</b>${crewTag(a)}${a.title ? Titles.html(a.title) : ''}<span class="tm">${timeStr(m.created_at)}</span>
         ${Social.cloud && Player.me && a.handle && a.handle !== Player.me.id ? `<button class="rp" aria-label="${t('rp_title')}" title="${t('rp_title')}">⚑</button>` : ''}
         ${Social.canDelete(m) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
       <div class="mt">${tagHTML(Emoji.toHTML(m.text))}</div></div></div>`);
@@ -62,6 +62,7 @@ window.Chat = (() => {
   }
 
   function push(channel, m) {
+    if (!cache[channel]) return;
     cache[channel].push(m);
     const me = Player.me && Player.me.id, a = m.author || {};
     if (me && !m.official && a.handle && a.handle !== me && mentions(m.text).includes(me)) { SFX.play('coin'); toast(t('mention_got', { n: a.name || a.handle, c: t(channel === 'tw' ? 'ch_tw' : 'ch_world') }), '📣'); }
@@ -78,7 +79,7 @@ window.Chat = (() => {
 
   function updateBar(last) {
     if (!el) return;
-    const n = unread.world + unread.tw;
+    const n = Object.values(unread).reduce((a, b) => a + b, 0);
     el.querySelector('.chat-bar .badge').textContent = n > 99 ? '99+' : n;
     el.querySelector('.chat-bar .badge').classList.toggle('hidden', !n || open);
     if (last) {
@@ -120,6 +121,14 @@ window.Chat = (() => {
       try { await Social.send(cur, txt); SFX.play('blip'); } catch (x) { SFX.play('error'); toast(t('err_' + x.message) !== 'err_' + x.message ? t('err_' + x.message) : x.message, '✕'); }
     });
   }
+
+  /* 舞團稱號：「A舞團-團長」，顏色用團長設定的樣式 */
+  const crewTag = a => {
+    const c = a && a.crew; if (!c || !c.name) return '';
+    const st = c.style || {}, ok = v => (/^#[0-9a-f]{6}$/i.test(v || '') ? v : null);
+    const role = c.label || t('crew_rank_' + (c.rank || 'member'));
+    return `<a class="crew-tag" href="#/crew/${+c.id}" style="--cb:${ok(st.bg) || '#f4d77a'};--cf:${ok(st.fg) || '#3b2b2b'};--cd:${ok(st.bd) || '#3b2b2b'}">${esc(c.name)}-${esc(role)}</a>`;
+  };
 
   /* ---------- @標記玩家 ---------- */
   const mentions = text => [...String(text || '').matchAll(/(?:^|[^\w@])@([a-z0-9_]{3,16})/gi)].map(x => x[1].toLowerCase());
@@ -191,7 +200,7 @@ window.Chat = (() => {
     el = h(`<div id="chat" class="chat">
       <button class="chat-bar"><span class="ico">💬</span><b>${t('chat')}</b><span class="ticker"></span><span class="badge hidden">0</span><span class="arr">▲</span></button>
       <div class="chat-panel win">
-        <div class="win-title blue"><div class="ch-tabs">${CHANNELS.map(([k, ic]) => `<button data-ch="${k}">${ic} ${t('ch_' + k)} <span class="badge hidden"></span></button>`).join('')}</div>
+        <div class="win-title blue"><div class="ch-tabs">${CHANNELS.map(([k, ic]) => `<button data-ch="${k}">${ic} ${k.startsWith('crew:') ? t('ch_crew') : t('ch_' + k)} <span class="badge hidden"></span></button>`).join('')}</div>
           <span class="grow"></span><button class="tr-toggle ${autoTr ? 'on' : ''}" title="${esc(t('auto_tr'))}">🌐 ${t('auto_tr')}</button>
           <div class="win-ctrls"><button class="mini" aria-label="minimize">_</button></div></div>
         <div class="chat-list"></div>
@@ -233,5 +242,15 @@ window.Chat = (() => {
     startAnnouncements();
   }
 
-  return { init, togglePicker, restartAnnouncements: startAnnouncements, headIcon, toggle };
+  /* 舞團頻道：加入舞團後多一個「crew:<id>」分頁；離團就拿掉 */
+  async function setCrew(id) {
+    const key = id ? 'crew:' + id : null;
+    const old = CHANNELS.findIndex(([k]) => k.startsWith('crew:'));
+    if (old >= 0 && CHANNELS[old][0] === key) return;
+    if (old >= 0) { const k = CHANNELS[old][0]; CHANNELS.splice(old, 1); delete cache[k]; delete unread[k]; if (cur === k) cur = 'world'; }
+    if (key) { CHANNELS.push([key, '👯']); cache[key] = []; unread[key] = 0; await load(key); }
+    if (el) { const o = open; el.remove(); build(); if (o) toggle(true); renderList(); }
+  }
+
+  return { init, togglePicker, restartAnnouncements: startAnnouncements, headIcon, toggle, setCrew, crewTagHTML: a => crewTag(a) };
 })();

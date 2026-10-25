@@ -196,6 +196,7 @@ window.Friends = (() => {
     if (!mine) diAct('card');
     const body = h(`<div class="pc-wrap">${opt.request ? `<p class="pc-req">💌 ${esc(t('fr_wants', { n: p.name }))}</p>` : ''}<div class="pc-slot">${cardHTML(p, { mine })}</div><div class="pc-acts"></div></div>`);
     mountCard(body, p);
+    Backend.crewRpc && Backend.crewRpc('crew_tag', { uid: p.user_id }).then(cw => { if (cw && cw.name && Chat.crewTagHTML) { const tg = body.querySelector('.pc-name'); tg && tg.insertAdjacentHTML('afterend', `<div class="pc-crew">${Chat.crewTagHTML({ crew: cw })}</div>`); } }).catch(() => {});
     const m = modal({ title: mine ? t('cd_me') : t('cd_title'), color: opt.request ? 'yellow' : 'blue', body });
     const acts = body.querySelector('.pc-acts');
     const draw = () => {

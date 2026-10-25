@@ -270,6 +270,29 @@ window.Backend = (() => {
       return sb.storage.from('sponsors').getPublicUrl(name).data.publicUrl;
     },
 
+    /* 公告欄 */
+    async notices() { return must(await sb.from('notices').select('*').order('pinned', { ascending: false }).order('created_at', { ascending: false }).limit(50)); },
+    async saveNotice(row) { return row.id ? must(await sb.from('notices').update(row).eq('id', row.id).select().single()) : must(await sb.from('notices').insert(row).select().single()); },
+    async deleteNotice(id) { must(await sb.from('notices').delete().eq('id', id)); },
+    async uploadMedia(folder, file) {
+      const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+      const name = `${folder === 'crew' ? 'crew/' + user.id : 'notice'}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      must(await sb.storage.from('media').upload(name, file, { contentType: file.type, upsert: false }));
+      return sb.storage.from('media').getPublicUrl(name).data.publicUrl;
+    },
+
+    /* 舞團 */
+    async crews() { return must(await sb.from('crews').select('*').order('created_at')); },
+    async crew(id) { return must(await sb.from('crews').select('*').eq('id', id).maybeSingle()); },
+    async crewMembers(id) { return must(await sb.from('crew_members').select('*').eq('crew_id', id)); },
+    async crewCounts() { const n = {}; must(await sb.from('crew_members').select('crew_id')).forEach(r => (n[r.crew_id] = (n[r.crew_id] || 0) + 1)); return n; },
+    async crewLabels(id) { return must(await sb.from('crew_labels').select('*').eq('crew_id', id).order('id')); },
+    async crewOf(uid) { return must(await sb.from('crew_members').select('*').eq('user_id', uid).maybeSingle()); },
+    async crewRequests(id) { return must(await sb.from('crew_requests').select('*').eq('crew_id', id).eq('status', 'pending').order('created_at')); },
+    async myCrewRequests() { return must(await sb.from('crew_requests').select('*').eq('user_id', user.id)); },
+    async pendingCrews() { return must(await sb.from('crews').select('*').eq('status', 'pending').order('created_at')); },
+    async crewRpc(fn, args) { return must(await sb.rpc(fn, args || {})); },
+
     /* 即時頻道（線上 Cypher 舞池） */
     channel(name, key) { return sb.channel(name, { config: { presence: { key }, broadcast: { self: true } } }); },
     removeChannel(ch) { sb.removeChannel(ch); },

@@ -216,9 +216,9 @@ window.Hub = (() => {
     const S = [
       ['hub_sec_ev', [['📋', 'hub_events', nav('#/events')], ['📍', 'hub_near', nav('#/events/near')], ['➕', 'hub_add', click('.hud-add')]]],
       ['hub_sec_me', [['🛂', 'hub_me', () => (logged() ? A.nav('#/me') : Player.prompt())], ['🧢', 'hub_char', () => Player.openMenu()], ['🪪', 'hub_card', () => Friends.openCardEditor()], ['📜', 'hub_quests', () => { box && box.classList.add('open'); }]]],
-      ['hub_sec_so', [['👥', 'hub_friends', () => Friends.openPanel()], ['🔍', 'hub_find', () => Friends.openPanel('find')], ['💬', 'hub_chat', () => Chat.toggle(true)], ['🗂', 'hub_forum', nav('#/forum')]]],
+      ['hub_sec_so', [['👥', 'hub_friends', () => Friends.openPanel()], ['🔍', 'hub_find', () => Friends.openPanel('find')], ['💬', 'hub_chat', () => Chat.toggle(true)], ['🗂', 'hub_forum', nav('#/forum')], ['👯', 'hub_crew', nav('#/crew')]]],
       ['hub_sec_play', [['⚔', 'hub_battle', nav('#/battle')], ['🕺', 'hub_cypher', nav('#/cypher')], ['🎵', 'hub_rhythm', () => Games.open('rhythm')], ['🃏', 'hub_games', () => Games.open()], ['🚶', 'hub_walk', () => { A.nav('#/'); setTimeout(() => A.startWalk && A.startWalk(), 900); }]]],
-      ['hub_sec_etc', [['❓', 'hub_tut', () => Tutorial.run()], ['🌐', 'hub_lang', click('.hud-lang')]].concat(Backend.isAdmin ? [['🛠', 'hub_admin', click('.hud-admin')]] : [])]
+      ['hub_sec_etc', [['📢', 'hub_notice', () => Notices.open()], ['❓', 'hub_tut', () => Tutorial.run()], ['🌐', 'hub_lang', click('.hud-lang')]].concat(Backend.isAdmin ? [['🛠', 'hub_admin', click('.hud-admin')]] : [])]
     ];
     const items = [];
     const body = h(`<div class="phone-ui"><div class="ph-bar"><span>DANCE ISLAND</span><span class="ph-clock"></span></div>
