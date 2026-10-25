@@ -67,6 +67,7 @@ window.Emotes = (() => {
       ['🎵', 'arc_rhythm', () => Games.open('rhythm')],
       ['🕺', 'arc_cypher', () => A.nav('#/cypher')],
       ['⚔', 'arc_battle', () => A.nav('#/battle')],
+      ['🗂', 'arc_forum', () => A.nav('#/forum')],
       ['🚶', 'arc_walk', () => { A.nav('#/'); setTimeout(() => A.startWalk && A.startWalk(), 900); }]
     ];
     const body = h(`<div class="arcade">${tiles.map(([ic, k], i) => `<button class="arc-tile" data-i="${i}"><span class="arc-ico">${ic}</span><b>${t(k)}</b><small>${t(k + '_d')}</small></button>`).join('')}</div>`);
@@ -286,6 +287,7 @@ window.Emotes = (() => {
     const y = /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/.exec(url || '');
     return y ? `https://www.youtube.com/embed/${y[1]}` : null;
   };
+  const isMp4 = url => /\.mp4(\?|$)/i.test(url || '') && /^https:\/\//.test(url || '');
   A.crumbs.battle = () => '⚔ ' + t('arc_battle');
   A.views.battle = async (r, stage) => {
     const view = h(`<div class="view city-view"><div class="city-inner"><p class="note">…</p></div></div>`);
@@ -305,7 +307,7 @@ window.Emotes = (() => {
           const em = embedOf(url);
           return `<div class="bt-side ${mine && mine.choice === k ? 'chosen' : ''} ${ended && ((k === 'a' && a > bb) || (k === 'b' && bb > a)) ? 'winner' : ''}">
             <div class="bt-name">${esc(name)}</div>
-            ${em ? `<div class="bt-video"><iframe src="${esc(em)}" title="${esc(name)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>` : /^https?:\/\//.test(url || '') ? `<a class="btn sm" href="${esc(url)}" target="_blank" rel="noopener">▶ ${t('res_video')}</a>` : ''}
+            ${isMp4(url) ? `<div class="bt-video"><video src="${esc(url)}" controls playsinline preload="metadata"></video></div>` : em ? `<div class="bt-video"><iframe src="${esc(em)}" title="${esc(name)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>` : /^https?:\/\//.test(url || '') ? `<a class="btn sm" href="${esc(url)}" target="_blank" rel="noopener">▶ ${t('res_video')}</a>` : ''}
             ${!ended && !mine ? `<button class="btn pink vote" data-b="${b.id}" data-c="${k}">👍 ${t('bt_vote')}</button>` : ''}
             ${show ? `<div class="bt-pct">${p}% <small>(${n})</small></div>` : ''}</div>`;
         };
@@ -313,23 +315,34 @@ window.Emotes = (() => {
         return `<div class="win battle">${UI.winHTML('⚔ ' + esc(b.title), ended ? 'yellow' : 'pink', false)}<div class="win-body">
           <div class="bt-row">${side('a', b.a_name, b.a_url, a, pa)}<div class="bt-vs">VS</div>${side('b', b.b_name, b.b_url, bb, 100 - pa)}</div>
           ${show ? `<div class="bt-bar"><i style="width:${pa}%"></i></div>` : ''}
-          <p class="note">${ended ? t('bt_ended', { n: vs.length }) : t('bt_left', { h: left, n: vs.length })}${Backend.isAdmin ? ` <button class="btn sm red del-b" data-b="${b.id}">${t('b_del')}</button>` : ''}</p></div></div>`;
+          <p class="note">${ended ? t('bt_ended', { n: vs.length }) : t('bt_left', { h: left, n: vs.length })}${Backend.isAdmin ? ` <button class="btn sm red del-b" data-b="${b.id}">${t('b_del')}</button>` : ''}</p>
+          ${A.battleExtras ? A.battleExtras(b) : ''}</div></div>`;
       };
       inner.innerHTML = `<div class="win">${UI.winHTML('⚔ ' + t('arc_battle'), 'blue', false)}<div class="win-body"><p>${t('bt_intro')}</p>
           ${Backend.isAdmin ? `<details class="bt-new"><summary>＋ ${t('bt_new')}</summary><form class="form" novalidate>
             <label class="field full"><span>${t('bt_t')}</span><input class="input" name="title" maxlength="80"></label>
-            <label class="field"><span>A</span><input class="input" name="a_name" maxlength="40"></label><label class="field"><span>A ${t('res_video')}</span><input class="input" name="a_url" type="url" placeholder="https://youtu.be/..."></label>
-            <label class="field"><span>B</span><input class="input" name="b_name" maxlength="40"></label><label class="field"><span>B ${t('res_video')}</span><input class="input" name="b_url" type="url" placeholder="https://youtu.be/..."></label>
+            <label class="field"><span>A</span><input class="input" name="a_name" maxlength="40"></label><label class="field"><span>A ${t('res_video')}</span><input class="input" name="a_url" type="url" placeholder="https://youtu.be/..."><small class="note">${t('bt_or_mp4')}</small><input class="input" name="a_file" type="file" accept="video/mp4"></label>
+            <label class="field"><span>B</span><input class="input" name="b_name" maxlength="40"></label><label class="field"><span>B ${t('res_video')}</span><input class="input" name="b_url" type="url" placeholder="https://youtu.be/..."><small class="note">${t('bt_or_mp4')}</small><input class="input" name="b_file" type="file" accept="video/mp4"></label>
+            <label class="field full"><span>📌 ${t('bt_q')}</span><input class="input" name="pinned_q" maxlength="200" placeholder="${esc(t('bt_q_ph'))}"></label>
             <label class="field"><span>${t('bt_days')}</span><input class="input" name="days" type="number" min="1" max="30" value="7"></label>
             <div class="full form-foot"><button class="btn pink">${t('bt_create')}</button></div></form></details>` : ''}</div></div>
         ${live.map(card).join('') || `<p class="note">${t('bt_none')}</p>`}
         ${past.length ? `<div class="list-head">${t('ev_w_past')}</div>${past.map(card).join('')}` : ''}`;
+      A.battleMount && A.battleMount(inner, battles);
       const f = inner.querySelector('.bt-new form');
       if (f) f.onsubmit = async e => {
         e.preventDefault();
         const v = k => f.elements[k].value.trim();
         if (!v('title') || !v('a_name') || !v('b_name')) return toast(t('e_name'), '✕');
-        try { await Backend.addBattle({ title: v('title'), a_name: v('a_name'), a_url: v('a_url') || null, b_name: v('b_name'), b_url: v('b_url') || null, ends_at: new Date(Date.now() + (+v('days') || 7) * 864e5).toISOString() }); await load(); draw(); toast(t('adm_done'), '⚔'); } catch (x) { toast(x.message, '✕'); }
+        const files = ['a_file', 'b_file'].map(k => f.elements[k].files[0] || null);
+        for (const fl of files) if (fl && (fl.type !== 'video/mp4' || fl.size > 50 * 1024 * 1024)) return toast(t('bt_mp4_bad'), '✕');
+        const btn = f.querySelector('button'); btn.disabled = true;
+        try {
+          const urls = [];
+          for (let i = 0; i < 2; i++) { if (files[i]) { btn.textContent = t('bt_uploading', { n: i + 1 }); urls[i] = await Backend.uploadVideo(files[i]); } }
+          await Backend.addBattle({ title: v('title'), a_name: v('a_name'), a_url: urls[0] || v('a_url') || null, b_name: v('b_name'), b_url: urls[1] || v('b_url') || null, pinned_q: v('pinned_q') || null, ends_at: new Date(Date.now() + (+v('days') || 7) * 864e5).toISOString() });
+          await load(); draw(); toast(t('adm_done'), '⚔');
+        } catch (x) { toast(x.message, '✕'); btn.disabled = false; btn.textContent = t('bt_create'); }
       };
     };
     inner.addEventListener('click', async e => {

@@ -1,0 +1,67 @@
+/* 多國語言（第六部分）：論壇、討論串、Battle 討論區、推薦活動 */
+I18N.extend({
+  zh: {
+    arc_forum: '舞者論壇', arc_forum_d: '發主題、留言回覆、找舞伴',
+    fo_title: '舞者論壇', fo_intro: '聊練舞、找 Crew、分享活動情報都可以！新主題要等管理員審核通過才會公開，回覆留言不用審核。',
+    fo_all: '全部', fo_cat: '分類', fo_cat_chat: '閒聊', fo_cat_crew: '找舞伴 / Crew', fo_cat_skill: '練舞技巧', fo_cat_event: '活動情報', fo_cat_music: '音樂', fo_cat_other: '其他',
+    fo_sort_new: '最新', fo_sort_hot: '熱門', fo_new: '發新主題', fo_mine: '我送出的主題', fo_empty: '這個分類還沒有主題，來發第一篇吧！',
+    fo_pinned: '置頂', fo_pending: '審核中', fo_rejected: '未通過', fo_t: '標題', fo_body: '內容', fo_submit: '送出審核', fo_need: '請填標題（至少 2 字）和內容',
+    fo_rule: '請友善發言，不要放廣告或連結賺錢的內容。送出後管理員審核通過才會出現在論壇。', fo_too_many: '今天發太多主題了，明天再來',
+    fo_sent_k: '收到你的主題了！管理員審核通過後就會出現在論壇喔 ✦', fo_sent_c: '審核中的主題在論壇最上面看得到 👌',
+    fo_back: '回論壇', fo_gone: '找不到這個主題（可能被刪除了）', fo_replies: '留言', fo_wait_note: '這個主題正在審核中，通過後大家才看得到、也才能留言。',
+    fo_pin: '置頂', fo_unpin: '取消置頂', fo_review: '論壇審核',
+    fo_reply: '回覆', fo_reply_ph: '留言…', fo_reply_to: '回覆 {n}…', fo_send: '送出', fo_no_reply: '還沒有人留言，搶頭香！', fo_login: '登入角色就能留言',
+    fo_now: '剛剛', fo_min: '{n} 分鐘前', fo_hr: '{n} 小時前', fo_day: '{n} 天前',
+    bt_q: '管理員提問', bt_q_ph: '例：你覺得哪一邊的音樂性比較好？', bt_talk: '討論區', bt_setq: '設定置頂問題', bt_setq_p: '置頂問題（留空就是取消）',
+    bt_or_mp4: '或上傳 MP4（最大 50MB）', bt_mp4_bad: '只能上傳 50MB 以內的 MP4 影片', bt_uploading: '上傳影片 {n}…',
+    rc_title: '為你推薦', rc_intro: '依照你的舞風 {s}、收藏和打卡紀錄挑選的活動', rc_style: '符合你的舞風 {s}', rc_like: '跟你收藏的活動很像', rc_home: '在你的國家', rc_soon: '快開始了', rc_reg: '報名中'
+  },
+  en: {
+    arc_forum: 'Dancer forum', arc_forum_d: 'Start topics, reply, find a crew',
+    fo_title: 'Dancer forum', fo_intro: 'Talk training, find a crew, share event news! New topics appear after an admin approves them. Replies go live right away.',
+    fo_all: 'All', fo_cat: 'Category', fo_cat_chat: 'Chat', fo_cat_crew: 'Find partners / crew', fo_cat_skill: 'Technique', fo_cat_event: 'Event news', fo_cat_music: 'Music', fo_cat_other: 'Other',
+    fo_sort_new: 'Newest', fo_sort_hot: 'Popular', fo_new: 'New topic', fo_mine: 'My submitted topics', fo_empty: 'No topics here yet — start the first one!',
+    fo_pinned: 'Pinned', fo_pending: 'Under review', fo_rejected: 'Not approved', fo_t: 'Title', fo_body: 'Content', fo_submit: 'Submit for review', fo_need: 'Please add a title (2+ characters) and some content',
+    fo_rule: 'Be kind. No ads or money-making links. An admin reviews each topic before it goes public.', fo_too_many: 'Too many topics today — come back tomorrow',
+    fo_sent_k: 'Got your topic! It will show up once an admin approves it ✦', fo_sent_c: 'You can see topics under review at the top of the forum 👌',
+    fo_back: 'Back to forum', fo_gone: "This topic doesn't exist (it may have been deleted)", fo_replies: 'Replies', fo_wait_note: 'This topic is under review. Others can see and reply after it is approved.',
+    fo_pin: 'Pin', fo_unpin: 'Unpin', fo_review: 'Forum review',
+    fo_reply: 'Reply', fo_reply_ph: 'Write a reply…', fo_reply_to: 'Reply to {n}…', fo_send: 'Send', fo_no_reply: 'No replies yet — be the first!', fo_login: 'Log in to reply',
+    fo_now: 'just now', fo_min: '{n} min ago', fo_hr: '{n} h ago', fo_day: '{n} d ago',
+    bt_q: 'Admin question', bt_q_ph: 'e.g. Which side had better musicality?', bt_talk: 'Discussion', bt_setq: 'Set pinned question', bt_setq_p: 'Pinned question (leave empty to remove)',
+    bt_or_mp4: 'or upload an MP4 (max 50MB)', bt_mp4_bad: 'Only MP4 videos up to 50MB', bt_uploading: 'Uploading video {n}…',
+    rc_title: 'Recommended for you', rc_intro: 'Picked from your style {s}, favorites and check-ins', rc_style: 'Matches your style {s}', rc_like: 'Like events you saved', rc_home: 'In your country', rc_soon: 'Coming up soon', rc_reg: 'Sign-ups open'
+  },
+  ja: {
+    arc_forum: 'ダンサー掲示板', arc_forum_d: 'トピック作成・返信・仲間探し',
+    fo_title: 'ダンサー掲示板', fo_intro: '練習の話、クルー探し、イベント情報なんでも OK！新しいトピックは管理者の承認後に公開されます。返信はすぐ反映されます。',
+    fo_all: 'すべて', fo_cat: 'カテゴリ', fo_cat_chat: '雑談', fo_cat_crew: '仲間・クルー募集', fo_cat_skill: 'テクニック', fo_cat_event: 'イベント情報', fo_cat_music: '音楽', fo_cat_other: 'その他',
+    fo_sort_new: '新着', fo_sort_hot: '人気', fo_new: '新規トピック', fo_mine: '自分が投稿したトピック', fo_empty: 'まだトピックがありません。最初の投稿をしよう！',
+    fo_pinned: '固定', fo_pending: '審査中', fo_rejected: '非承認', fo_t: 'タイトル', fo_body: '内容', fo_submit: '審査に送る', fo_need: 'タイトル（2 文字以上）と内容を入力してね',
+    fo_rule: '思いやりのある投稿を。広告やお金儲けのリンクは禁止です。管理者が確認してから公開されます。', fo_too_many: '今日はトピックを作りすぎです。また明日',
+    fo_sent_k: 'トピックを受け取ったよ！管理者が承認したら掲示板に表示されるね ✦', fo_sent_c: '審査中のトピックは掲示板の一番上で見られるよ 👌',
+    fo_back: '掲示板に戻る', fo_gone: 'このトピックは見つかりません（削除された可能性があります）', fo_replies: 'コメント', fo_wait_note: 'このトピックは審査中です。承認後にみんなが見たり返信したりできます。',
+    fo_pin: '固定する', fo_unpin: '固定解除', fo_review: '掲示板の審査',
+    fo_reply: '返信', fo_reply_ph: 'コメントする…', fo_reply_to: '{n} に返信…', fo_send: '送信', fo_no_reply: 'まだコメントはありません。一番乗りしよう！', fo_login: 'ログインするとコメントできるよ',
+    fo_now: 'たった今', fo_min: '{n} 分前', fo_hr: '{n} 時間前', fo_day: '{n} 日前',
+    bt_q: '管理者からの質問', bt_q_ph: '例：音楽性がよかったのはどっち？', bt_talk: 'ディスカッション', bt_setq: '固定質問を設定', bt_setq_p: '固定質問（空欄で削除）',
+    bt_or_mp4: 'または MP4 をアップロード（最大 50MB）', bt_mp4_bad: '50MB 以内の MP4 のみアップロードできます', bt_uploading: '動画 {n} をアップロード中…',
+    rc_title: 'あなたへのおすすめ', rc_intro: 'ジャンル {s}、お気に入り、チェックインから選んだイベント', rc_style: 'あなたのジャンル {s}', rc_like: 'お気に入りに似ている', rc_home: 'あなたの国', rc_soon: 'もうすぐ開催', rc_reg: 'エントリー受付中'
+  },
+  ko: {
+    arc_forum: '댄서 게시판', arc_forum_d: '주제 작성·댓글·크루 찾기',
+    fo_title: '댄서 게시판', fo_intro: '연습 이야기, 크루 찾기, 이벤트 정보 모두 환영! 새 주제는 관리자 승인 후 공개되고, 댓글은 바로 올라가요.',
+    fo_all: '전체', fo_cat: '분류', fo_cat_chat: '잡담', fo_cat_crew: '파트너·크루 찾기', fo_cat_skill: '테크닉', fo_cat_event: '이벤트 정보', fo_cat_music: '음악', fo_cat_other: '기타',
+    fo_sort_new: '최신', fo_sort_hot: '인기', fo_new: '새 주제', fo_mine: '내가 올린 주제', fo_empty: '아직 주제가 없어요. 첫 글을 올려 보세요!',
+    fo_pinned: '고정', fo_pending: '검토 중', fo_rejected: '미승인', fo_t: '제목', fo_body: '내용', fo_submit: '검토 요청', fo_need: '제목(2자 이상)과 내용을 입력해 주세요',
+    fo_rule: '친절하게 써 주세요. 광고나 돈 버는 링크는 금지예요. 관리자가 확인한 뒤 공개돼요.', fo_too_many: '오늘 주제를 너무 많이 올렸어요. 내일 다시 와 주세요',
+    fo_sent_k: '주제를 받았어! 관리자가 승인하면 게시판에 올라갈 거야 ✦', fo_sent_c: '검토 중인 주제는 게시판 맨 위에서 볼 수 있어 👌',
+    fo_back: '게시판으로', fo_gone: '주제를 찾을 수 없어요(삭제됐을 수 있어요)', fo_replies: '댓글', fo_wait_note: '이 주제는 검토 중이에요. 승인되면 모두가 보고 댓글을 달 수 있어요.',
+    fo_pin: '고정', fo_unpin: '고정 해제', fo_review: '게시판 검토',
+    fo_reply: '답글', fo_reply_ph: '댓글 쓰기…', fo_reply_to: '{n}님에게 답글…', fo_send: '보내기', fo_no_reply: '아직 댓글이 없어요. 첫 댓글을 남겨 보세요!', fo_login: '로그인하면 댓글을 달 수 있어요',
+    fo_now: '방금', fo_min: '{n}분 전', fo_hr: '{n}시간 전', fo_day: '{n}일 전',
+    bt_q: '관리자 질문', bt_q_ph: '예: 어느 쪽 음악성이 더 좋았나요?', bt_talk: '토론', bt_setq: '고정 질문 설정', bt_setq_p: '고정 질문(비우면 삭제)',
+    bt_or_mp4: '또는 MP4 업로드(최대 50MB)', bt_mp4_bad: '50MB 이하 MP4만 업로드할 수 있어요', bt_uploading: '영상 {n} 업로드 중…',
+    rc_title: '추천 이벤트', rc_intro: '장르 {s}, 즐겨찾기, 체크인 기록으로 고른 이벤트', rc_style: '내 장르 {s}', rc_like: '즐겨찾기와 비슷해요', rc_home: '내 나라', rc_soon: '곧 시작', rc_reg: '신청 중'
+  }
+});

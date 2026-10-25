@@ -1084,3 +1084,55 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .pvp-end:empty { display: none; }
 .nb-btns[hidden], .fr-badge[hidden], .pvp-end[hidden] { display: none !important; }
 .pc-av { width: 108px; height: 150px; overflow: hidden; }
+
+/* ---------- 論壇 ---------- */
+.fo-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.fo-bar .input { width: auto; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font: inherit; font-size: 12px; padding: 2px 8px; border: 2px solid var(--ink); background: var(--paper); cursor: pointer; }
+.chip.on { background: var(--yellow); }
+.fo-list { display: grid; gap: 6px; margin-bottom: 12px; }
+.fo-row { display: flex; align-items: center; gap: 10px; border: var(--px) solid var(--ink); background: var(--paper); padding: 8px 10px; color: inherit; text-decoration: none; box-shadow: 3px 3px 0 var(--ink); }
+.fo-row:hover { background: #fff; transform: translate(-1px, -1px); }
+.fo-row.pinned { background: #fff3c9; }
+.fo-ic { width: 32px; height: 40px; flex: none; display: grid; place-items: center; overflow: hidden; }
+.fo-main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.fo-top { display: flex; flex-wrap: wrap; gap: 4px; }
+.fo-tt { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fo-main small { font-size: 11px; color: var(--ink-soft); }
+.fo-n { display: grid; gap: 2px; font-size: 12px; text-align: right; flex: none; }
+.tag.pin { background: var(--yellow); } .tag.wait { background: #e3ebfb; } .tag.rej { background: #f3c1b8; }
+.fo-cat.cat-chat { background: #fde2ec; } .fo-cat.cat-crew { background: #d8f0e9; } .fo-cat.cat-skill { background: #e3ebfb; }
+.fo-cat.cat-event { background: #fff3c9; } .fo-cat.cat-music { background: #eadcf7; } .fo-cat.cat-other { background: #eee6dc; }
+.fo-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+.fo-meta .tm, .thr-h .tm { font-size: 11px; color: var(--ink-soft); }
+.fo-body { white-space: pre-wrap; word-break: break-word; line-height: 1.7; font-size: 15px; margin-bottom: 10px; }
+.fo-ta { min-height: 140px; }
+.fo-review { border: 2px solid var(--ink); background: var(--paper); padding: 8px 10px; margin-bottom: 8px; }
+.fo-review h4 { margin: 4px 0; }
+/* 討論串 */
+.thr { display: grid; gap: 10px; }
+.thr-list, .thr-kids ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.thr-item { display: flex; gap: 8px; }
+.thr-ic { width: 32px; height: 40px; flex: none; display: grid; place-items: center; overflow: hidden; }
+.thr-b { flex: 1; min-width: 0; }
+.thr-h { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; }
+.thr-t { background: #fff; border: 2px solid var(--ink); padding: 5px 9px; margin: 3px 0; font-size: 14px; line-height: 1.55; word-break: break-word; white-space: pre-wrap; }
+.thr-at { color: var(--blue); font-weight: bold; }
+.thr-a { display: flex; gap: 10px; }
+.thr-a button { font: inherit; font-size: 12px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink-soft); }
+.thr-a button:hover { color: var(--ink); text-decoration: underline; }
+.thr-a .lk.on { color: #d6336c; }
+.thr-kids { padding-left: 40px; border-left: 3px dotted rgba(59,43,43,.25); margin-left: 15px; }
+.thr-item.child .thr-t { background: #fbf6ee; }
+.thr-sub:empty { display: none; }
+.thr-sub, .thr-new { position: relative; }
+/* Battle 討論區 */
+.bt-talk { display: grid; gap: 8px; margin-top: 8px; border-top: 2px dashed rgba(59,43,43,.25); padding-top: 8px; }
+.bt-q { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #fff3c9; border: 2px solid var(--ink); padding: 6px 10px; }
+.bt-thr[hidden] { display: none; }
+.bt-video video { width: 100%; max-height: 360px; background: #000; display: block; }
+/* 推薦 */
+.rc-item { display: grid; gap: 4px; }
+.rc-why { display: flex; flex-wrap: wrap; gap: 4px; }
+.rc-why .tag { background: #fff3c9; }

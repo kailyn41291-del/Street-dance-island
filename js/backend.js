@@ -209,6 +209,30 @@ window.Backend = (() => {
       return () => sb.removeChannel(ch);
     },
 
+    /* 論壇 */
+    async forumPosts() { return must(await sb.from('forum_posts').select('*').order('pinned', { ascending: false }).order('created_at', { ascending: false }).limit(200)); },
+    async forumPost(id) { return must(await sb.from('forum_posts').select('*').eq('id', id).maybeSingle()); },
+    async addPost(p) { return must(await sb.from('forum_posts').insert(p).select().single()); },
+    async pendingPosts() { return must(await sb.from('forum_posts').select('*').eq('status', 'pending').order('created_at')); },
+    async reviewPost(id, status) { must(await sb.from('forum_posts').update({ status, reviewed_at: new Date().toISOString() }).eq('id', id)); },
+    async pinPost(id, pinned) { must(await sb.from('forum_posts').update({ pinned }).eq('id', id)); },
+    async deletePost(id) { must(await sb.from('forum_posts').delete().eq('id', id)); },
+    async replyCounts(threads) { if (!threads.length) return {}; const n = {}; must(await sb.from('replies').select('thread').in('thread', threads)).forEach(r => (n[r.thread] = (n[r.thread] || 0) + 1)); return n; },
+    async listReplies(thread) { return must(await sb.from('replies').select('*').eq('thread', thread).order('created_at').limit(500)); },
+    async addReply(thread, text, parent_id) { return must(await sb.from('replies').insert({ thread, text, parent_id: parent_id || null }).select().single()); },
+    async deleteReply(id) { must(await sb.from('replies').delete().eq('id', id)); },
+    async likesFor(targets) { return targets.length ? must(await sb.from('likes').select('target,user_id').in('target', targets)) : []; },
+    async like(target) { must(await sb.from('likes').insert({ target })); },
+    async unlike(target) { must(await sb.from('likes').delete().eq('target', target).eq('user_id', user.id)); },
+
+    /* Battle：置頂問題、MP4 上傳 */
+    async setPinnedQ(id, pinned_q) { must(await sb.from('battles').update({ pinned_q: pinned_q || null }).eq('id', id)); },
+    async uploadVideo(file, onProgress) {
+      const name = `battle/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.mp4`;
+      must(await sb.storage.from('videos').upload(name, file, { contentType: 'video/mp4', upsert: false }));
+      return sb.storage.from('videos').getPublicUrl(name).data.publicUrl;
+    },
+
     /* 即時頻道（線上 Cypher 舞池） */
     channel(name, key) { return sb.channel(name, { config: { presence: { key }, broadcast: { self: true } } }); },
     removeChannel(ch) { sb.removeChannel(ch); },

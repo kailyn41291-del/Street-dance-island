@@ -7,6 +7,7 @@
   const { h, esc, modal, toast, sparkle, npc } = UI;
   const A = window.App;
   const S = { favs: new Set(), checks: new Map(), follows: new Set(), unlocks: new Set(), stats: null, level: 1, loaded: false };
+  A.socialState = S;
   A.social = S;
 
   /* ---------- 等級：Lv = √(XP/30) + 1 ---------- */
@@ -149,6 +150,7 @@
           <div class="note">${t('daily_streak', { n: streak })}</div></div>
       </div></div>
 
+      ${A.recommendHTML ? A.recommendHTML() : ''}
       <div class="win">${UI.winHTML('📅 ' + t('me_plan'), 'teal', false)}<div class="win-body">
         ${upFav.length ? `<div class="cards">${upFav.map((e, i) => A.cardHTML(e, i, today, Store.canEdit(), { place: true })).join('')}</div>` : `<p class="note">${t('me_plan_none')}</p>`}
         ${pastFav.length ? `<details><summary>${t('ev_w_past')} (${pastFav.length})</summary><div class="cards">${pastFav.map((e, i) => A.cardHTML(e, i, today, Store.canEdit(), { place: true })).join('')}</div></details>` : ''}
