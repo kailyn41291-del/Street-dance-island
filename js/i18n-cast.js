@@ -1,6 +1,7 @@
 /* 多國語言：雙 NPC（Kailyn + Choco）對話、新手任務、分享邀請文字 */
 I18N.extend({
   zh: {
+    hud_forum: '論壇', hud_battle: '人氣投票',
     nav_map: '地圖', nav_events: '活動', nav_chat: '聊天', nav_me: '我的', 
     guide_choco: '夥伴 Choco',
     tut: [
@@ -31,6 +32,7 @@ I18N.extend({
     ]
   },
   en: {
+    hud_forum: 'Forum', hud_battle: 'Battle vote',
     nav_map: 'Map', nav_events: 'Events', nav_chat: 'Chat', nav_me: 'Me', 
     guide_choco: 'Choco',
     tut: [
@@ -61,6 +63,7 @@ I18N.extend({
     ]
   },
   ja: {
+    hud_forum: '掲示板', hud_battle: '人気投票',
     nav_map: 'マップ', nav_events: 'イベント', nav_chat: 'チャット', nav_me: 'マイ', 
     guide_choco: '相棒 Choco',
     tut: [
@@ -91,6 +94,7 @@ I18N.extend({
     ]
   },
   ko: {
+    hud_forum: '게시판', hud_battle: '인기 투표',
     nav_map: '지도', nav_events: '이벤트', nav_chat: '채팅', nav_me: '마이', 
     guide_choco: '동료 Choco',
     tut: [

@@ -66,8 +66,6 @@ window.Emotes = (() => {
       ['🃏', 'arc_mini', () => Games.open()],
       ['🎵', 'arc_rhythm', () => Games.open('rhythm')],
       ['🕺', 'arc_cypher', () => A.nav('#/cypher')],
-      ['⚔', 'arc_battle', () => A.nav('#/battle')],
-      ['🗂', 'arc_forum', () => A.nav('#/forum')],
       ['🚶', 'arc_walk', () => { A.nav('#/'); setTimeout(() => A.startWalk && A.startWalk(), 900); }]
     ];
     const body = h(`<div class="arcade">${tiles.map(([ic, k], i) => `<button class="arc-tile" data-i="${i}"><span class="arc-ico">${ic}</span><b>${t(k)}</b><small>${t(k + '_d')}</small></button>`).join('')}</div>`);

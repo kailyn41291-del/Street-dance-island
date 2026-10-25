@@ -280,7 +280,22 @@ window.Hub = (() => {
     const m = modal({ title: t('hub_title'), color: 'blue', body });
     body.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; SFX.play('confirm'); m.close(); setTimeout(items[+b.dataset.i], 230); };
   }
+  // 主畫面上方：舞者論壇、人氣 Battle（之前藏在小遊戲裡太難找）
+  function mountHudButtons() {
+    const ev = document.querySelector('.hud-events'); if (!ev || document.querySelector('.hud-forum')) return;
+    const mk = (cls, color, ic, file, key, go) => {
+      const b = h(`<button class="btn ${color} ${cls}"><span class="ic hud-ico" data-f="${file}">${ic}</span><span class="label"></span></button>`);
+      b.onclick = () => { SFX.play('select'); A.nav(go); };
+      const img = new Image(); img.alt = ''; img.onload = () => { const s = b.querySelector('.hud-ico'); s.textContent = ''; s.appendChild(img); };
+      img.onerror = () => {}; img.src = `assets/icons/hud/${file}.png?v=1`;
+      const lab = () => { b.querySelector('.label').textContent = t(key); b.title = t(key); };
+      lab(); I18N.onChange && I18N.onChange(lab);
+      return b;
+    };
+    ev.after(mk('hud-forum', 'teal', '🗂', 'forum', 'hud_forum', '#/forum'), mk('hud-battle', 'orange', '⚔', 'battle', 'hud_battle', '#/battle'));
+  }
   function mountPhone() {
+    mountHudButtons();
     if (document.querySelector('.hub-phone')) return;
     const el = h(`<button class="hub-phone" aria-label="${esc(t('hub_menu'))}"><span class="hp-body hp-img"><img src="assets/menu_phone.webp?v=1" alt=""></span><span class="hp-label"></span></button>`);
     el.onclick = openMenu;
