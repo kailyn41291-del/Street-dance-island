@@ -7,6 +7,6 @@
  * 這兩個值是「公開」的，放在網站上沒關係（資料庫有權限規則保護）
  * ========================================================= */
 window.DANCE_CONFIG = {
-  supabaseUrl: '',      // 例：https://abcdefgh.supabase.co
-  supabaseAnonKey: ''   // 例：eyJhbGciOi...（Project Settings → API → anon public）
+  supabaseUrl: 'https://xhawlryculasnpklephl.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoYXdscnljdWxhc25wa2xlcGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MzE3MzMsImV4cCI6MjEwODUwNzczM30.7XMLgm1a3aqEBpYTKvvwucVdkXfHfZ5IKtb-bmtJMb0'
 };
