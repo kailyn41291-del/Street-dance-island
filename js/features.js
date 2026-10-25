@@ -287,11 +287,11 @@ window.App = {
     draw();
   };
 
-  /* ---------- 世界地圖：倒數看板 + 日夜 / 節慶 ---------- */
-  const tpe = () => {
-    const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' })
-      .formatToParts(new Date()).map(x => [x.type, x.value]));
-    return { date: `${p.year}-${p.month}-${p.day}`, md: `${p.month}-${p.day}`, hour: +p.hour };
+  /* ---------- 世界地圖：倒數看板 + 日夜 / 節慶（依使用者當地時間） ---------- */
+  // 使用者所在地的時間（瀏覽器的時區）
+  const localNow = () => {
+    const d = new Date();
+    return { date: A.ymd(d), md: `${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`, hour: d.getHours() };
   };
   const LUNAR_NY = ['2027-02-06', '2028-01-26', '2029-02-13', '2030-02-03', '2031-01-23'];
   function festival(d) {
@@ -325,7 +325,7 @@ window.App = {
     const ctrls = view.querySelector('.map-ctrls');
     if (ctrls) { const b = h(`<button class="btn icon teal" aria-label="${esc(t('ev_near'))}" title="${esc(t('ev_near'))}">📍</button>`); b.onclick = () => { SFX.play('select'); A.nav('#/events/near'); }; ctrls.prepend(b); }
     // 日夜
-    const d = tpe(), hr = d.hour;
+    const d = localNow(), hr = d.hour;
     const phase = hr >= 6 && hr < 16 ? 'day' : hr >= 16 && hr < 19 ? 'dusk' : 'night';
     view.dataset.phase = phase;
     view.appendChild(h(`<div class="daynight ${phase}"></div>`));
