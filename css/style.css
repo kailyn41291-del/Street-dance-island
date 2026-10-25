@@ -1454,3 +1454,5 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
   .country-view { padding-top: 150px; }
 }
 @media (min-width: 761px) { .qbox, .hub-phone { top: 112px; } }
+/* 開場 LOGO */
+.boot-logo-img { display: block; width: min(420px, 82vw); height: auto; margin: 4px auto 10px; image-rendering: auto; animation: kBob 2.6s ease-in-out infinite; filter: drop-shadow(3px 4px 0 rgba(59,43,43,.25)); }

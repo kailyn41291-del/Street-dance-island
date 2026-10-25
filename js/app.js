@@ -1038,7 +1038,7 @@
     applyStatic();
     const bar = bootEl.querySelector('.bar');
     bar.innerHTML = '<i></i>'.repeat(20);
-    bootEl.querySelector('.boot-dancer').innerHTML = `<img class="k-full boot-k" src="${UI.Kailyn.FULL}" alt="Kailyn">`;
+    { const bd = bootEl.querySelector('.boot-dancer'); if (bd) bd.innerHTML = ''; }
     const dt = 0;
     const st = bootEl.querySelector('.boot-status span'), pct = bootEl.querySelector('.boot-status b');
     let i = 0, dataReady = false;
