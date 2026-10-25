@@ -186,6 +186,19 @@ window.Backend = (() => {
     async playerByHandle(handle) { return must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card,banned').eq('handle', handle).maybeSingle()); },
     async playersByIds(ids) { return ids.length ? must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,ig,card').in('user_id', ids)) : []; },
 
+    /* 找玩家：ID（開頭相符，對方沒關閉「可被搜尋」）、地區（對方有在名片公開地區） */
+    async searchPlayers(q) {
+      const k = q.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      if (k.length < 2) return [];
+      return must(await sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,card')
+        .ilike('handle', k + '%').eq('banned', false).or('card->>find.is.null,card->>find.neq.false').order('handle').limit(20));
+    },
+    async regionPlayers(cc, city) {
+      let q = sb.from('players').select('user_id,handle,name,title,look,nat,style,job,verified,card').eq('banned', false).eq('card->>rpub', 'true').eq('card->>rc', cc);
+      if (city) q = q.eq('card->>rcity', city);
+      return must(await q.limit(60));
+    },
+
     /* 好友 */
     async friendRequests() { return must(await sb.from('friend_requests').select('*').or(`from_user.eq.${user.id},to_user.eq.${user.id}`)); },
     async sendFriend(to_user) { must(await sb.from('friend_requests').insert({ to_user })); },

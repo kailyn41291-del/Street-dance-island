@@ -1,6 +1,7 @@
 /* 多國語言（第五部分）：名片、好友、私訊、玩家對戰 */
 I18N.extend({
   zh: {
+    fd_tab: '找好友', fd_id_ph: '輸入角色 ID（至少 2 個字）', fd_search: '搜尋', fd_region: '地區：', fd_any_city: '（全部城市）', fd_here: '用我的位置', fd_none: '找不到符合的玩家', fd_short: 'ID 至少要 2 個字', fd_res_id: 'ID 開頭是「{q}」的玩家', fd_res_reg: '在「{r}」的玩家', fd_geo_fail: '拿不到你的位置，請手動選地區', fd_note: '只會找到「允許被搜尋」的玩家；地區搜尋只會找到在名片上公開該地區的人。', fd_priv: '搜尋與隱私', fd_find_me: '讓別人可以用我的 ID 搜尋到我', fd_rpub: '在名片上顯示我的地區，並讓同地區的人找到我', fd_priv_note: '沒勾選公開地區時，地區不會被儲存，也不會出現在名片上。',
     hud_friends: '好友', fr_title: '👥 好友', fr_title_s: '好友', fr_tab_friends: '好友', fr_tab_req: '邀請', fr_tab_block: '封鎖名單',
     fr_none: '還沒有好友。在聊天室、留言或舞池點別人的名字，就能看名片、加好友！', fr_req_none: '沒有新的好友邀請', fr_block_none: '沒有封鎖任何人',
     fr_online: '在線', fr_offline: '離線', fr_add: '＋ 加好友', fr_sent: '已送出好友邀請', fr_pending: '等待對方回覆', fr_accept: '接受', fr_decline: '婉拒',
@@ -19,6 +20,7 @@ I18N.extend({
     pvp_win: '🏆 你贏了！', pvp_lose: '😵 你輸了…再接再厲！', pvp_left: '對手離開了 Battle', pvp_cheat: '對手的招式驗證失敗，判你獲勝', pvp_add: 'GG！要加 {n} 好友嗎？'
   },
   en: {
+    fd_tab: 'Find', fd_id_ph: 'Character ID (2+ characters)', fd_search: 'Search', fd_region: 'Region:', fd_any_city: '(All cities)', fd_here: 'Use my location', fd_none: 'No matching players', fd_short: 'Enter at least 2 characters', fd_res_id: 'Players whose ID starts with “{q}”', fd_res_reg: 'Players in {r}', fd_geo_fail: 'Could not get your location — pick a region instead', fd_note: 'Only players who allow search appear. Region search only finds people who show that region on their card.', fd_priv: 'Search & privacy', fd_find_me: 'Let others find me by my ID', fd_rpub: 'Show my region on my card and let people nearby find me', fd_priv_note: 'If you do not share your region, it is not saved and not shown on your card.',
     hud_friends: 'Friends', fr_title: '👥 Friends', fr_title_s: 'Friends', fr_tab_friends: 'Friends', fr_tab_req: 'Requests', fr_tab_block: 'Blocked',
     fr_none: 'No friends yet. Tap a name in the chat, comments or cypher to see their card and add them!', fr_req_none: 'No new friend requests', fr_block_none: "You haven't blocked anyone",
     fr_online: 'Online', fr_offline: 'Offline', fr_add: '+ Add friend', fr_sent: 'Friend request sent', fr_pending: 'Waiting for reply', fr_accept: 'Accept', fr_decline: 'Decline',
@@ -37,6 +39,7 @@ I18N.extend({
     pvp_win: '🏆 You win!', pvp_lose: '😵 You lost… run it back!', pvp_left: 'Your opponent left the battle', pvp_cheat: "Your opponent's move failed verification — you win", pvp_add: 'GG! Add {n} as a friend?'
   },
   ja: {
+    fd_tab: 'フレンド検索', fd_id_ph: 'キャラ ID（2 文字以上）', fd_search: '検索', fd_region: '地域：', fd_any_city: '（すべての都市）', fd_here: '現在地を使う', fd_none: '該当するプレイヤーがいません', fd_short: '2 文字以上入力してね', fd_res_id: 'ID が「{q}」で始まるプレイヤー', fd_res_reg: '「{r}」のプレイヤー', fd_geo_fail: '現在地を取得できません。地域を選んでね', fd_note: '検索を許可しているプレイヤーだけが表示されます。地域検索は名刺でその地域を公開している人だけです。', fd_priv: '検索とプライバシー', fd_find_me: 'ID で検索されてもいい', fd_rpub: '名刺に地域を表示して、近くの人に見つけてもらう', fd_priv_note: '地域を公開しない場合、地域は保存されず名刺にも表示されません。',
     hud_friends: 'フレンド', fr_title: '👥 フレンド', fr_title_s: 'フレンド', fr_tab_friends: 'フレンド', fr_tab_req: '申請', fr_tab_block: 'ブロック',
     fr_none: 'まだフレンドがいません。チャットやコメント、サイファーで名前をタップすると名刺を見てフレンド申請できるよ！', fr_req_none: '新しい申請はありません', fr_block_none: 'ブロックしている人はいません',
     fr_online: 'オンライン', fr_offline: 'オフライン', fr_add: '＋ フレンド申請', fr_sent: 'フレンド申請を送りました', fr_pending: '返事待ち', fr_accept: '承認', fr_decline: '断る',
@@ -55,6 +58,7 @@ I18N.extend({
     pvp_win: '🏆 勝利！', pvp_lose: '😵 負けちゃった…もう一回！', pvp_left: '相手がバトルから抜けました', pvp_cheat: '相手の技の確認に失敗したため、あなたの勝ちです', pvp_add: 'GG！{n} にフレンド申請する？'
   },
   ko: {
+    fd_tab: '친구 찾기', fd_id_ph: '캐릭터 ID(2자 이상)', fd_search: '검색', fd_region: '지역:', fd_any_city: '(모든 도시)', fd_here: '내 위치 사용', fd_none: '일치하는 플레이어가 없어요', fd_short: '2자 이상 입력해 주세요', fd_res_id: 'ID가 「{q}」로 시작하는 플레이어', fd_res_reg: '「{r}」의 플레이어', fd_geo_fail: '위치를 가져올 수 없어요. 지역을 직접 골라 주세요', fd_note: '검색을 허용한 플레이어만 나와요. 지역 검색은 명함에 그 지역을 공개한 사람만 찾아요.', fd_priv: '검색과 개인정보', fd_find_me: '내 ID로 검색되도록 허용', fd_rpub: '명함에 내 지역을 표시하고 같은 지역 사람이 찾을 수 있게 하기', fd_priv_note: '지역을 공개하지 않으면 저장되지 않고 명함에도 표시되지 않아요.',
     hud_friends: '친구', fr_title: '👥 친구', fr_title_s: '친구', fr_tab_friends: '친구', fr_tab_req: '신청', fr_tab_block: '차단 목록',
     fr_none: '아직 친구가 없어요. 채팅, 댓글, 사이퍼에서 이름을 누르면 명함을 보고 친구 신청할 수 있어요!', fr_req_none: '새 친구 신청이 없어요', fr_block_none: '차단한 사람이 없어요',
     fr_online: '온라인', fr_offline: '오프라인', fr_add: '+ 친구 신청', fr_sent: '친구 신청을 보냈어요', fr_pending: '답장 기다리는 중', fr_accept: '수락', fr_decline: '거절',

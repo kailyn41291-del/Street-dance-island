@@ -1138,3 +1138,12 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .rc-why .tag { background: #fff3c9; }
 /* Kailyn 新貼圖是全身圖：對話框裡只看上半身 */
 .k-face img[src*="assets/kailyn/"] { object-fit: cover; object-position: 50% 4%; }
+/* 找好友 */
+.fd-box { display: grid; gap: 8px; margin-bottom: 10px; padding: 8px; border: 2px dashed rgba(59,43,43,.3); }
+.fd-box[hidden], .cd-reg[hidden] { display: none; }
+.fd-reg, .cd-reg { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.fd-reg .input, .cd-reg .input { width: auto; max-width: 180px; }
+.cd-priv { border: 2px solid var(--ink); padding: 8px 10px; display: grid; gap: 6px; }
+.cd-priv legend { font-size: 13px; padding: 0 4px; }
+.chk { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; cursor: pointer; }
+.pc-reg { background: #fff3c9; }

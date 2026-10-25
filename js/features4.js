@@ -67,7 +67,24 @@ window.Friends = (() => {
   const BG = { pink: '#f6a8c4', teal: '#8fd3c7', blue: '#a9bdf0', yellow: '#f4d77a', purple: '#c7a8e8', night: '#3d3a5c' };
   const PAT = ['grid', 'dots', 'stripe', 'star', 'none'];
   const FRAME = ['pixel', 'double', 'gold'];
-  const defCard = () => ({ bg: 'pink', pat: 'grid', frame: 'pixel', crew: '', move: '', bio: '', ig: '' });
+  const defCard = () => ({ bg: 'pink', pat: 'grid', frame: 'pixel', crew: '', move: '', bio: '', ig: '', find: true, rpub: false, rc: '', rcity: '' });
+  // 地區：名片上公開的地區（rpub = true 才會存、才會被地區搜尋找到）
+  const regionName = c => { const k = c.rc && A.byCode[c.rc]; if (!k) return ''; const ci = c.rcity && A.cityOf(c.rc, c.rcity); return [nm(k), ci ? nm(ci) : ''].filter(Boolean).join('・'); };
+  const lonN = l => ((l + 540) % 360) - 180;
+  // 目前位置 → 最近的城市
+  const locate = () => new Promise((res, rej) => {
+    if (!navigator.geolocation) return rej(new Error('geo'));
+    navigator.geolocation.getCurrentPosition(p => {
+      const { latitude: la, longitude: lo } = p.coords; let best = null, bd = 1e9;
+      GEO.countries.forEach(k => (k.cities || []).forEach(ci => {
+        const dl = la - ci.lat, dn = (lo - lonN(ci.lon)) * Math.cos(la * Math.PI / 180), d = dl * dl + dn * dn;
+        if (d < bd) { bd = d; best = { rc: k.code, rcity: ci.id }; }
+      }));
+      best ? res(best) : rej(new Error('geo'));
+    }, rej, { timeout: 10000, maximumAge: 6e5 });
+  });
+  const countryOpts = sel => GEO.countries.slice().sort((a, b) => (b.home - a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
+  const cityOpts = (cc, sel) => `<option value="">${t('fd_any_city')}</option>` + ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
   function cardHTML(p, opt = {}) {
     const c = { ...defCard(), ...(p.card || {}) };
     const nat = p.nat && A.byCode[p.nat];
@@ -82,7 +99,7 @@ window.Friends = (() => {
           <div class="pc-name">${Player.nameHTML({ ...p, handle: null })}${p.user_id && p.user_id !== me() ? `<i class="dot ${isOn ? 'on' : ''}" title="${esc(t(isOn ? 'fr_online' : 'fr_offline'))}"></i>` : ''}</div>
           <div class="pc-handle">@${esc(p.handle || '')}</div>
           ${p.title ? `<div class="pc-title">${Titles.html(p.title)}</div>` : ''}
-          <div class="pc-tags">${nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''}${p.style ? `<span class="tag">${esc(p.style)}</span>` : ''}${p.job && J[p.job] ? `<span class="tag">${esc(J[p.job])}</span>` : ''}</div>
+          <div class="pc-tags">${c.rpub && regionName(c) ? `<span class="tag pc-reg">📍 ${esc(regionName(c))}</span>` : nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''}${p.style ? `<span class="tag">${esc(p.style)}</span>` : ''}${p.job && J[p.job] ? `<span class="tag">${esc(J[p.job])}</span>` : ''}</div>
         </div>
       </div>
       <dl class="pc-dl">${c.crew ? `<dt>${t('cd_crew')}</dt><dd>${esc(c.crew)}</dd>` : ''}${c.move ? `<dt>${t('cd_move')}</dt><dd>${esc(c.move)}</dd>` : ''}</dl>
@@ -111,10 +128,29 @@ window.Friends = (() => {
         <label class="field"><span>${t('cd_move')}</span><input class="input" name="move" maxlength="24" value="${esc(c.move)}" placeholder="${esc(t('cd_move_ph'))}"></label>
         <label class="field full"><span>${t('cd_bio')}</span><textarea class="input" name="bio" maxlength="80" placeholder="${esc(t('cd_bio_ph'))}">${esc(c.bio)}</textarea></label>
         <label class="field full"><span>${t('cd_ig')}</span><input class="input" name="ig" maxlength="31" value="${esc(c.ig)}" placeholder="yourname" autocapitalize="off" spellcheck="false"></label>
+        <fieldset class="full cd-priv"><legend>🔍 ${t('fd_priv')}</legend>
+          <label class="chk"><input type="checkbox" name="find" ${c.find !== false ? 'checked' : ''}> ${t('fd_find_me')}</label>
+          <label class="chk"><input type="checkbox" name="rpub" ${c.rpub ? 'checked' : ''}> ${t('fd_rpub')}</label>
+          <div class="cd-reg" ${c.rpub ? '' : 'hidden'}><select class="input sm" name="rc">${countryOpts(c.rc || (Backend.profile && Backend.profile.nat) || 'TW')}</select>
+            <select class="input sm" name="rcity"></select><button type="button" class="btn sm teal here">📍 ${t('fd_here')}</button></div>
+          <p class="note">${t('fd_priv_note')}</p></fieldset>
         <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button class="btn pink">${t('cd_save')}</button></div></div>
       </form></div>`);
     const prev = body.querySelector('.cd-prev'), f = body.querySelector('form');
-    const read = () => ({ ...c, crew: f.elements.crew.value.trim(), move: f.elements.move.value.trim(), bio: f.elements.bio.value.trim(), ig: f.elements.ig.value.trim().replace(/^@/, '') });
+    const E = f.elements;
+    const fillCity = sel => { E.rcity.innerHTML = cityOpts(E.rc.value, sel); };
+    fillCity(c.rcity);
+    E.rc.onchange = () => { fillCity(''); paint(); };
+    E.rpub.onchange = () => { f.querySelector('.cd-reg').hidden = !E.rpub.checked; paint(); };
+    f.querySelector('.here').onclick = async () => {
+      try { const r = await locate(); E.rc.value = r.rc; fillCity(r.rcity); SFX.play('coin'); paint(); } catch (x) { toast(t('fd_geo_fail'), '📍'); }
+    };
+    const read = () => {
+      const o = { ...c, crew: E.crew.value.trim(), move: E.move.value.trim(), bio: E.bio.value.trim(), ig: E.ig.value.trim().replace(/^@/, ''), find: E.find.checked, rpub: E.rpub.checked };
+      // 沒有勾選公開地區：地區不存
+      if (o.rpub) { o.rc = E.rc.value; o.rcity = E.rcity.value; } else { delete o.rc; delete o.rcity; }
+      return o;
+    };
     const paint = () => {
       const cur = read(); Object.assign(c, cur);
       prev.innerHTML = cardHTML({ ...p, card: cur }, { mine: true }); mountCard(prev, p);
@@ -187,15 +223,53 @@ window.Friends = (() => {
     if (!on()) return Player.prompt();
     await reload();
     const body = h(`<div class="fr-panel">
-      <div class="tabs"><button class="btn sm" data-t="friends">${t('fr_tab_friends')}</button><button class="btn sm" data-t="req">${t('fr_tab_req')}${incoming().length ? ` (${incoming().length})` : ''}</button><button class="btn sm" data-t="block">${t('fr_tab_block')}</button>
+      <div class="tabs"><button class="btn sm" data-t="friends">${t('fr_tab_friends')}</button><button class="btn sm" data-t="req">${t('fr_tab_req')}${incoming().length ? ` (${incoming().length})` : ''}</button><button class="btn sm" data-t="block">${t('fr_tab_block')}</button><button class="btn sm teal" data-t="find">🔍 ${t('fd_tab')}</button>
         <span class="grow"></span><button class="btn sm pink mycard">🪪 ${t('cd_edit')}</button></div>
+      <div class="fd-box" hidden>
+        <form class="fd-id chat-input"><input class="input sm" name="q" maxlength="16" placeholder="${esc(t('fd_id_ph'))}" autocapitalize="off" spellcheck="false"><button class="btn sm teal">🔍 ${t('fd_search')}</button></form>
+        <div class="fd-reg"><span>${t('fd_region')}</span><select class="input sm fd-cc"></select><select class="input sm fd-city"></select><button type="button" class="btn sm yellow fd-go">${t('fd_search')}</button><button type="button" class="btn sm teal fd-here">📍 ${t('fd_here')}</button></div>
+        <p class="note">${t('fd_note')}</p></div>
       <ul class="fr-list"></ul></div>`);
     const m = modal({ title: t('fr_title'), color: 'green', body, wide: true });
+    // 找好友：預設地區 = 我名片上的地區 → 國籍 → 台灣
+    const myCard = (Backend.profile && Backend.profile.card) || {};
+    const fcc = body.querySelector('.fd-cc'), fcity = body.querySelector('.fd-city');
+    fcc.innerHTML = countryOpts(myCard.rc || (Backend.profile && Backend.profile.nat) || 'TW'); fcity.innerHTML = cityOpts(fcc.value, myCard.rcity || '');
+    fcc.onchange = () => { fcity.innerHTML = cityOpts(fcc.value, ''); };
+    let found = null, foundNote = '';
+    const showFound = () => {
+      if (!found) { ul.innerHTML = ''; return; }
+      const list = found.filter(p => p.user_id !== me() && !blocks.has(p.user_id));
+      list.forEach(p => (people[p.user_id] = p));
+      ul.innerHTML = (foundNote ? `<li class="fr-sub">${esc(foundNote)}</li>` : '') + (list.length ? list.map(p => {
+        const r = rel(p.user_id), reg = (p.card && p.card.rpub && regionName(p.card)) || '';
+        return row(p, `${reg ? `<span class="tag">📍 ${esc(reg)}</span>` : ''}<i class="dot ${online.has(p.user_id) ? 'on' : ''}"></i>${r.type === 'friend' ? `<span class="tag fr-is">${t('fr_is')}</span>` : r.type === 'none' ? `<button class="btn sm green add" data-u="${esc(p.user_id)}">${t('fr_add')}</button>` : `<span class="tag">${t('fr_pending')}</span>`}<button class="btn sm cd">🪪</button>`);
+      }).join('') : `<li class="note">${t('fd_none')}</li>`);
+      ul.querySelectorAll('.fr-row').forEach(li => { const p = list.find(x => x.handle === li.dataset.h); if (p) li.querySelector('.fr-ic').appendChild(headIcon(p.look)); });
+    };
+    const drawFind = () => showFound();
+    body.querySelector('.fd-id').onsubmit = async ev => {
+      ev.preventDefault();
+      const q = ev.target.elements.q.value.trim();
+      if (q.replace(/[^a-z0-9_]/gi, '').length < 2) { toast(t('fd_short'), '🔍'); return; }
+      try { found = await Backend.searchPlayers(q); foundNote = t('fd_res_id', { q }); } catch (x) { toast(errMsg(x), '✕'); return; }
+      SFX.play('select'); showFound();
+    };
+    const regionSearch = async () => {
+      try { found = await Backend.regionPlayers(fcc.value, fcity.value); } catch (x) { toast(errMsg(x), '✕'); return; }
+      foundNote = t('fd_res_reg', { r: regionName({ rc: fcc.value, rcity: fcity.value }) }); SFX.play('select'); showFound();
+    };
+    body.querySelector('.fd-go').onclick = regionSearch;
+    body.querySelector('.fd-here').onclick = async () => {
+      try { const r = await locate(); fcc.value = r.rc; fcity.innerHTML = cityOpts(r.rc, r.rcity); regionSearch(); } catch (x) { toast(t('fd_geo_fail'), '📍'); }
+    };
     const ul = body.querySelector('.fr-list');
     const row = (p, extra) => `<li class="fr-row" data-h="${esc(p.handle)}"><span class="fr-ic"></span><span class="fr-nm"><b>${Player.nameHTML({ ...p, handle: null })}</b><small>@${esc(p.handle)}</small></span><span class="grow"></span>${extra}</li>`;
     const draw = async () => {
       body.querySelectorAll('[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
       let html = '';
+      body.querySelector('.fd-box').hidden = tab !== 'find';
+      if (tab === 'find') { ul.innerHTML = ''; return drawFind(); }
       if (tab === 'friends') {
         const ids = friendIds().sort((a, b) => (online.has(b) - online.has(a)));
         html = ids.length ? ids.map(id => { const p = people[id]; if (!p) return ''; const u = unread[id] || 0;
@@ -218,6 +292,7 @@ window.Friends = (() => {
       const li = e.target.closest('.fr-row'); if (!li) return;
       if (e.target.closest('.dm')) { m.close(); openDM(e.target.closest('.dm').dataset.u); }
       else if (e.target.closest('.cx')) { try { await Backend.removeFriend(+e.target.closest('.cx').dataset.id); await reload(); } catch (x) { toast(errMsg(x), '✕'); } draw(); }
+      else if (e.target.closest('.add')) { const b = e.target.closest('.add'); try { await Backend.sendFriend(b.dataset.u); await reload(); toast(rel(b.dataset.u).type === 'friend' ? t('fr_now', { n: (people[b.dataset.u] || {}).name || '' }) : t('fr_sent'), '💌'); SFX.play('coin'); } catch (x) { toast(errMsg(x), '✕'); } showFound(); }
       else if (e.target.closest('.ub')) { try { await Backend.unblock(e.target.closest('.ub').dataset.u); await reload(); } catch (x) { toast(errMsg(x), '✕'); } draw(); }
       else { m.close(); setTimeout(() => openCard(li.dataset.h, { request: tab === 'req' }), 220); }
     };
