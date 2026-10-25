@@ -1525,3 +1525,11 @@ i.dot.on { background: #4cd07d; box-shadow: 0 0 0 2px rgba(76,208,125,.35); }
 .scenes .scn { aspect-ratio: auto; height: 0; padding-bottom: calc(133% + 18px); position: relative; }
 .scenes .scn span { position: absolute; left: 0; right: 0; bottom: 0; }
 @media (max-width: 520px) { .scenes { grid-template-columns: repeat(3, 1fr) !important; } }
+/* 功能選單：電腦上圖示放大；之後換成 assets/icons/menu/ 的像素圖示 */
+@media (min-width: 761px) {
+  .ph-grid { grid-template-columns: repeat(5, 1fr); gap: 14px 10px; }
+  .ph-app { font-size: 13px; gap: 6px; }
+  .ph-ic { width: 76px; height: 76px; font-size: 38px; border-radius: 16px; border-width: 3px; box-shadow: 3px 3px 0 var(--ink); }
+  .ph-sec { font-size: 14px; margin-top: 8px; }
+}
+.ph-ic img { width: 86%; height: 86%; object-fit: contain; image-rendering: pixelated; }

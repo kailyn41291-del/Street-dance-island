@@ -257,6 +257,7 @@ window.Hub = (() => {
     showMenu();
   }
   const click = sel => () => { const b = document.querySelector(sel); b && b.click(); };
+  let menuIcons = null;
   function showMenu() {
     const S = [
       ['hub_sec_ev', [['📋', 'hub_events', nav('#/events')], ['📍', 'hub_near', nav('#/events/near')], ['➕', 'hub_add', click('.hud-add')]]],
@@ -267,7 +268,14 @@ window.Hub = (() => {
     ];
     const items = [];
     const body = h(`<div class="phone-ui"><div class="ph-bar"><span>DANCE ISLAND</span><span class="ph-clock"></span></div>
-      ${S.map(([sec, list]) => `<div class="ph-sec">${t(sec)}</div><div class="ph-grid">${list.map(([ic, k, fn]) => { items.push(fn); return `<button class="ph-app" data-i="${items.length - 1}"><span class="ph-ic">${ic}</span><span>${t(k)}</span></button>`; }).join('')}</div>`).join('')}</div>`);
+      ${S.map(([sec, list]) => `<div class="ph-sec">${t(sec)}</div><div class="ph-grid">${list.map(([ic, k, fn]) => { items.push(fn); return `<button class="ph-app" data-i="${items.length - 1}"><span class="ph-ic" data-k="${k}">${ic}</span><span>${t(k)}</span></button>`; }).join('')}</div>`).join('')}</div>`);
+    // 像素圖示：assets/icons/menu/<名稱>.png；先試一張，有的話才全部換（沒有就繼續用 emoji）
+    const useIcons = () => body.querySelectorAll('.ph-ic[data-k]').forEach(el => {
+      const img = new Image(); img.alt = ''; img.onload = () => { el.textContent = ''; el.appendChild(img); };
+      img.src = `assets/icons/menu/${el.dataset.k.replace('hub_', '')}.png?v=1`;
+    });
+    if (menuIcons === true) useIcons();
+    else if (menuIcons === null) { const p = new Image(); p.onload = () => { menuIcons = true; useIcons(); }; p.onerror = () => { menuIcons = false; }; p.src = 'assets/icons/menu/events.png?v=1'; }
     const d = new Date(); body.querySelector('.ph-clock').textContent = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     const m = modal({ title: t('hub_title'), color: 'blue', body });
     body.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; SFX.play('confirm'); m.close(); setTimeout(items[+b.dataset.i], 230); };
