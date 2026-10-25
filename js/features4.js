@@ -184,6 +184,7 @@ window.Friends = (() => {
     if (!p) { toast(t('cd_notfound'), '✕'); return; }
     people[p.user_id] = p;
     const mine = p.user_id === me();
+    if (!mine) diAct('card');
     const body = h(`<div class="pc-wrap">${opt.request ? `<p class="pc-req">💌 ${esc(t('fr_wants', { n: p.name }))}</p>` : ''}<div class="pc-slot">${cardHTML(p, { mine })}</div><div class="pc-acts"></div></div>`);
     mountCard(body, p);
     const m = modal({ title: mine ? t('cd_me') : t('cd_title'), color: opt.request ? 'yellow' : 'blue', body });

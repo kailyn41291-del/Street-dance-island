@@ -60,6 +60,9 @@ window.UI = (() => {
     return { MOODS, url, FULL, preload, guess };
   })();
 
+  /* 玩家做了某件事（每日任務用來算進度）：diAct('view') 之類 */
+  window.diAct = (k, n = 1) => { try { window.dispatchEvent(new CustomEvent('di:act', { detail: { k, n } })); } catch (e) {} };
+
   /* 夥伴 Choco：對話框貼圖（24 種表情） */
   const Choco = (() => {
     const MOODS = ['cool', 'thumbs', 'think', 'laugh', 'love', 'angry', 'speechless', 'sleepy', 'confused', 'work', 'music', 'drink',
@@ -86,14 +89,18 @@ window.UI = (() => {
      opt.duo = true：沒指定 who 的句子 Kailyn / Choco 輪流說 */
 
   const npc = (() => {
-    let box, txt, timer, queue = [], typing = false, full = '', done, faceImg;
+    let box, txt, timer, queue = [], typing = false, full = '', done, faceImg, choices = null, chEl;
     const ensure = () => {
       if (box) return;
       box = h(`<div id="npc" class="hidden" role="status"><div class="face k-face"><img alt="Kailyn" src="${Kailyn.url('happy')}"></div>
-        <div><div class="who">${t('guide')}</div><div class="txt"></div></div><div class="next">▼</div></div>`);
+        <div class="npc-main"><div class="who">${t('guide')}</div><div class="txt"></div><div class="npc-choices" hidden></div></div><div class="next">▼</div></div>`);
       faceImg = box.querySelector('.face img');
-      txt = box.querySelector('.txt');
-      box.onclick = advance;
+      txt = box.querySelector('.txt'); chEl = box.querySelector('.npc-choices');
+      box.onclick = e => {
+        const c = e.target.closest('[data-ch]');
+        if (c) { e.stopPropagation(); const v = choices[+c.dataset.ch].value; choices = null; chEl.hidden = true; box.classList.remove('asking'); box.classList.add('hidden'); SFX.play('confirm'); const cb = done; done = null; cb && cb(v); return; }
+        advance();
+      };
       document.body.appendChild(box);
     };
     const type = item => {
@@ -107,12 +114,19 @@ window.UI = (() => {
       timer = setInterval(() => {
         txt.textContent = full.slice(0, ++i);
         if (i % 2) SFX.play('blip');
-        if (i >= full.length) { clearInterval(timer); typing = false; }
+        if (i >= full.length) { clearInterval(timer); typing = false; showChoices(); }
       }, 32);
+    };
+    // 最後一句講完 → 顯示選項（RPG 的「是 / 否」）
+    const showChoices = () => {
+      if (!choices || queue.length || typing) return;
+      chEl.innerHTML = choices.map((c, i) => `<button class="npc-ch" data-ch="${i}">▶ ${esc(c.label)}</button>`).join('');
+      chEl.hidden = false; box.classList.add('asking');
     };
     function advance() {
       if (box.classList.contains('hidden')) return;
-      if (typing) { clearInterval(timer); txt.textContent = full; typing = false; return; }
+      if (typing) { clearInterval(timer); txt.textContent = full; typing = false; showChoices(); return; }
+      if (choices && !queue.length) return;   // 等玩家選
       if (queue.length) type(queue.shift());
       else { box.classList.add('hidden'); const cb = done; done = null; cb && cb(); }
     }
@@ -125,12 +139,14 @@ window.UI = (() => {
           if (!o.who) o.who = opt.duo ? (i % 2 ? (first === 'choco' ? 'kailyn' : 'choco') : first) : (opt.who || 'kailyn');
           return o;
         });
-        done = cb;
+        done = cb; choices = opt.choices || null; chEl.hidden = true; chEl.innerHTML = ''; box.classList.remove('asking');
         box.classList.remove('hidden');
         box.style.animation = 'none'; box.offsetHeight; box.style.animation = '';
         type(queue.shift());
       },
-      hide() { if (box) box.classList.add('hidden'); clearInterval(timer); }
+      hide() { if (box) box.classList.add('hidden'); clearInterval(timer); choices = null; },
+      /** 問玩家問題：ask(lines, [{ label, value }]) → Promise(value) */
+      ask(lines, opts, opt = {}) { return new Promise(res => this.say(lines, res, { ...opt, choices: opts })); }
     };
   })();
 

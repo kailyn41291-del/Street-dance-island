@@ -146,7 +146,7 @@ window.Emotes = (() => {
       raf = requestAnimationFrame(loop);
     };
     const finish = async () => {
-      running = false; cancelAnimationFrame(raf);
+      running = false; cancelAnimationFrame(raf); diAct('rhythm');
       pane.querySelector('.rh-start').disabled = false;
       const rank = score >= 6000 ? 'S' : score >= 5000 ? 'A' : score >= 3800 ? 'B' : score >= 2500 ? 'C' : 'D';
       judge(`RANK ${rank}`, 'r'); SFX.play(rank <= 'B' ? 'fanfare' : 'coin');
@@ -200,7 +200,7 @@ window.Emotes = (() => {
       else { them++; msg.textContent = t('npc_lose_r', { a: RPS[mine].icon, b: RPS[theirs].icon }); }
       body.querySelector('.s-me').textContent = you; body.querySelector('.s-npc').textContent = them;
       if (you >= 2) {
-        SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 24);
+        diAct('npc'); SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 24);
         let extra = '';
         if (loggedCloud()) { try { const r = await Backend.npcWin(); extra = ' ' + t('npc_wins', { n: r.wins }); if (r.wins === 5 || r.wins === 30) extra += ' 🎁 ' + t('npc_title_get'); } catch (x) { extra = /too fast/.test(x.message) ? ' ' + t('npc_rest') : ''; } }
         msg.textContent = t('npc_victory') + extra;
@@ -396,6 +396,7 @@ window.Emotes = (() => {
     view.querySelector('.cy-moves').onclick = e => {
       if (e.target.closest('.join')) return Player.prompt();
       const b = e.target.closest('[data-mv]'); if (!b) return;
+      if (me) diAct('cypher');
       if (!me) return Player.prompt();
       if (ch) ch.send({ type: 'broadcast', event: 'move', payload: { handle: me.id, move: b.dataset.mv } });
       else doMove(me.id, b.dataset.mv);
