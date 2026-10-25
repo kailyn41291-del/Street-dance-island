@@ -939,3 +939,4 @@ details summary { cursor: pointer; margin: 10px 0; }
 #npc .face, .tut .face { width: 92px; height: 92px; }
 @media (max-width: 760px) { #npc .face, .tut .face { width: 64px; height: 64px; } .k-hero { height: 80px; } }
 .msg .k-ico { object-fit: cover; object-position: 50% 15%; background: #fff6dc; }
+.passport > .note { grid-column: 1 / -1; }
