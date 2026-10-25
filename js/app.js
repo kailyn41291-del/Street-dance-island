@@ -53,7 +53,7 @@
   const hud = document.getElementById('hud');
   function updateHUD() {
     const r = current || { view: 'world' };
-    let html = `<a href="#/">🌏 ${t('world')}</a>`;
+    let html = `<a href="#/">${PXI.img('menu/world', '🌏')} ${t('world')}</a>`;
     if (r.cc) html += `<span class="sep">›</span><a href="#/c/${r.cc}">${esc(nm(byCode[r.cc]))}</a>`;
     if (r.view === 'city') html += `<span class="sep">›</span><span>${esc(nm(cityOf(r.cc, r.city)))}</span>`;
     if (App.crumbs[r.view]) html += `<span class="sep">›</span><span>${App.crumbs[r.view](r)}</span>`;
@@ -79,7 +79,7 @@
     pl.insertAdjacentHTML('beforeend', `<span class="label">${Player.me ? Player.nameHTML(Player.me) : t('login')}</span>${Player.me && Player.me.level ? `<span class="lv-chip">Lv.${Player.me.level}</span>` : ''}`);
     beatLoop(d, 400);
     const snd = hud.querySelector('.hud-sound');
-    snd.innerHTML = SFX.on ? I.sound : I.mute;
+    snd.innerHTML = SFX.on ? PXI.img('menu/sound_on', I.sound) : PXI.img('menu/sound_off', I.mute);
     snd.setAttribute('aria-label', SFX.on ? t('sound_on') : t('sound_off'));
   }
 
@@ -371,7 +371,7 @@
     const ctrls = h(`<div class="map-ctrls">
       <button class="btn icon" data-z="in" aria-label="${t('zoom_in')}">${I.plus}</button>
       <button class="btn icon" data-z="out" aria-label="${t('zoom_out')}"><b style="font-size:16px;line-height:1">－</b></button>
-      <button class="btn icon yellow" data-z="all" aria-label="${t('see_world')}">🌏</button>
+      <button class="btn icon yellow" data-z="all" aria-label="${t('see_world')}">${PXI.img('menu/world', '🌏')}</button>
       <button class="btn icon pink" data-z="home" aria-label="${t('go_home')}">⌂</button></div>`);
     ctrls.onclick = e => {
       const b = e.target.closest('button'); if (!b) return; SFX.play('select');
@@ -649,7 +649,7 @@
       form.querySelector('button').onclick = () => Player.prompt();
       return;
     }
-    form.innerHTML = `<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button><input class="input sm" maxlength="200" placeholder="${esc(t('cmt_ph'))}"><button class="btn sm pink">${t('chat_send')}</button></div>`;
+    form.innerHTML = `<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji"><img class="pxemo" src="assets/stickers/c/7.webp?v=1" alt=""></button><input class="input sm" maxlength="200" placeholder="${esc(t('cmt_ph'))}"><button class="btn sm pink">${t('chat_send')}</button></div>`;
     const input = form.querySelector('input');
     form.querySelector('.emo-btn').onclick = e => Chat.togglePicker(e.currentTarget, input);
     form.onsubmit = async ev => {
@@ -697,13 +697,13 @@
         <div class="tags">${(e.styles || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('')}
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}${App.viewTag ? App.viewTag(e) : ''}</div>
         <h3 data-trn>${esc(e.name)}</h3>
-        ${opt.place ? `<div class="place-tag">📍 ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
-        <dl class="info">${e.organizer ? `<dt>${t('r_org')}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${k}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}</dl>
+        ${opt.place ? `<div class="place-tag">${PXI.img('event/pin', '📍')} ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
+        <dl class="info">${e.organizer ? `<dt>${PXI.lead(t('r_org'))}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${PXI.lead(k)}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}</dl>
         ${App.cardResults(e)}
       </div>
       <div class="acts">
-        ${(e.address || e.venue || e.mapUrl) && safeMap ? `<a class="btn sm teal" data-act="map" href="${esc(safeMap)}" target="_blank" rel="noopener">${I.pin} ${t('b_map')}</a>` : ''}
-        ${safeLink ? `<a class="btn sm orange" data-act="link" href="${esc(safeLink)}" target="_blank" rel="noopener">${I.link} ${t('b_link')}</a>` : ''}
+        ${(e.address || e.venue || e.mapUrl) && safeMap ? `<a class="btn sm teal" data-act="map" href="${esc(safeMap)}" target="_blank" rel="noopener">${PXI.img('event/pin', I.pin)} ${t('b_map')}</a>` : ''}
+        ${safeLink ? `<a class="btn sm orange" data-act="link" href="${esc(safeLink)}" target="_blank" rel="noopener">${PXI.img('event/link', I.link)} ${t('b_link')}</a>` : ''}
         <button class="btn sm yellow" data-act="cmt" data-ev="${esc(e.id)}">💬 ${t('cmt')} <span class="cc" data-cc="${esc(e.id)}">${cmtCounts[e.id] || 0}</span></button>
         ${App.cardExtras(e, past)}
         ${canEdit ? `<button class="btn sm" data-act="edit" data-ev="${esc(e.id)}">${I.edit} ${t('b_edit')}</button>
@@ -897,7 +897,7 @@
       <h4>${t('ann_title')}</h4>
       <div class="ann-row"><span>${t('ann_every')}</span><select class="input sm ann-every">${[15, 30, 60, 120, 300, 600].map(v => `<option value="${v}">${v < 60 ? v + ' ' + t('sec') : v / 60 + ' ' + t('min')}</option>`).join('')}</select></div>
       <ul class="ann-list"></ul>
-      <form class="ann-form"><div class="chat-input"><button type="button" class="btn sm emo-btn">😺</button><input class="input sm" maxlength="200" placeholder="${esc(t('ann_ph'))}"><button class="btn sm yellow">${t('ann_add')}</button></div></form>
+      <form class="ann-form"><div class="chat-input"><button type="button" class="btn sm emo-btn"><img class="pxemo" src="assets/stickers/c/7.webp?v=1" alt=""></button><input class="input sm" maxlength="200" placeholder="${esc(t('ann_ph'))}"><button class="btn sm yellow">${t('ann_add')}</button></div></form>
       ${Store.cloud ? `<hr><div class="btn-row"><button class="btn sm up">${t('admin_upload')}</button></div>` : ''}
       </div><div class="err"></div></div>`);
     const m = modal({ title: t('admin_panel'), color: 'blue', body, wide: true });
@@ -1096,7 +1096,7 @@
   // 按鈕前面的 emoji 換成像素圖示（有圖才換）
   const swapLead = (sel, name, all) => { const b = hud.querySelector(sel); if (!b || !PXI.has(name)) return; const n = [...b.childNodes].find(x => x.nodeType === 3 && x.textContent.trim()); if (n) n.replaceWith(document.createRange().createContextualFragment(PXI.img(name) + (all ? '' : ' '))); };
   swapLead('.hud-events', 'menu/events'); swapLead('.hud-lang', 'menu/lang'); swapLead('.hud-help', 'menu/tut', true);
-  hud.querySelector('.hud-save .ic').innerHTML = I.disk;
+  hud.querySelector('.hud-save .ic').innerHTML = PXI.img('menu/save', I.disk);
 
   Player.init({ goEvent });
   Object.assign(App, { nav, render, byCode, cityOf, cardHTML, cardAct, loadCommentCounts, goEvent, openForm, todayStr, parseDate, ymd, beatLoop, myLook, CONTS, contName });

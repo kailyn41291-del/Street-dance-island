@@ -175,7 +175,7 @@ window.UI = (() => {
   function toast(msg, ic = '★') {
     let wrap = document.getElementById('toasts');
     if (!wrap) { wrap = h('<div id="toasts"></div>'); document.body.appendChild(wrap); }
-    const t = h(`<div class="toast"><span class="ic">${ic}</span><span>${esc(msg)}</span></div>`);
+    const t = h(`<div class="toast"><span class="ic">${window.PXI ? PXI.emo(ic) : ic}</span><span>${esc(msg)}</span></div>`);
     wrap.appendChild(t);
     setTimeout(() => t.remove(), 2800);
   }

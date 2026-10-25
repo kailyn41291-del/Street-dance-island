@@ -1,6 +1,6 @@
 /* =========================================================
- * 像素表情符號：貓咪 / 吉娃娃（各 12 個）
- * 文字裡用 :c1: ~ :c12:、:d1: ~ :d12: 代表，顯示時換成圖片
+ * 像素貼圖：貓咪 50 張 / 吉娃娃 60 張
+ * 文字裡用 :c1: ~ :c50:、:d1: ~ :d60: 代表，顯示時換成圖片
  * ========================================================= */
 window.Emoji = (() => {
   const S = 16, INK = '#2a1f2e';
@@ -76,77 +76,17 @@ window.Emoji = (() => {
   make('c', catBase, ['cat', 'cat', 'cat2', 'cat', 'cat3', 'cat2', 'cat', 'cat3', 'cat', 'cat', 'cat2', 'cat3'], 7);
   make('d', dogBase, ['dog', 'dog', 'dog2', 'dog', 'dog3', 'dog2', 'dog', 'dog3', 'dog', 'dog', 'dog2', 'dog3'], 7);
 
-  /* ---------- 使用自己的表情圖（emoji/cats.png、emoji/dogs.png） ----------
-   * 網站會自動把整張圖切成一個一個表情：先找出一列一列，再找出每一個
-   * 想換表情：直接換掉這兩張圖就好（白色或透明背景，表情之間留一點空白）
+  /* ---------- 貼圖圖檔：assets/stickers/c/1.webp ~、assets/stickers/d/1.webp ~ ----------
+   * 想加貼圖：放新的編號圖檔，再把下面的數量改大
    */
-  const SHEETS = [{ kind: 'c', src: 'emoji/cats.png' }, { kind: 'd', src: 'emoji/dogs.png' }];
-  const sheetItems = { c: [], d: [] };
-  const isInk = (d, i) => d[i + 3] > 40 && !(d[i] > 236 && d[i + 1] > 236 && d[i + 2] > 236);
-  function slice(img) {
-    const W = img.naturalWidth, H = img.naturalHeight;
-    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-    const g = cv.getContext('2d'); g.drawImage(img, 0, 0);
-    const d = g.getImageData(0, 0, W, H).data;
-    const rowInk = new Uint32Array(H);
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (isInk(d, (y * W + x) * 4)) rowInk[y]++;
-    // 一段一段找出有內容的範圍，太小的段落併到旁邊
-    const bands = (arr, len, minGap) => {
-      const out = []; let start = -1, gap = 0;
-      for (let i = 0; i < len; i++) {
-        if (arr[i] > 1) { if (start < 0) start = i; gap = 0; }
-        else if (start >= 0 && ++gap >= minGap) { out.push([start, i - gap]); start = -1; gap = 0; }
-      }
-      if (start >= 0) out.push([start, len - 1]);
-      return out;
-    };
-    const mergeSmall = list => {
-      if (list.length < 2) return list;
-      const sizes = list.map(([a, b]) => b - a).sort((p, q) => p - q), med = sizes[Math.floor(sizes.length / 2)];
-      const out = [];
-      list.forEach(seg => {
-        if (seg[1] - seg[0] < med * 0.35 && out.length) { const prev = out[out.length - 1]; prev[1] = seg[1]; }
-        else out.push([...seg]);
-      });
-      // 開頭的小段併到後面
-      if (out.length > 1 && out[0][1] - out[0][0] < med * 0.35) { out[1][0] = out[0][0]; out.shift(); }
-      return out;
-    };
-    const rows = mergeSmall(bands(rowInk, H, Math.max(4, H * 0.008)));
-    const items = [];
-    rows.forEach(([y0, y1]) => {
-      const colInk = new Uint32Array(W);
-      for (let y = y0; y <= y1; y++) for (let x = 0; x < W; x++) if (isInk(d, (y * W + x) * 4)) colInk[x]++;
-      mergeSmall(bands(colInk, W, Math.max(3, W * 0.004))).forEach(([x0, x1]) => {
-        let t = y1, b = y0;                       // 這一格實際的上下界
-        for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x += 2) if (isInk(d, (y * W + x) * 4)) { if (y < t) t = y; if (y > b) b = y; }
-        const w = x1 - x0 + 1, hh = b - t + 1, size = Math.max(w, hh) + 4, out = document.createElement('canvas');
-        out.width = out.height = 72;
-        const o = out.getContext('2d');
-        o.imageSmoothingEnabled = true; o.imageSmoothingQuality = 'high';
-        const k = 72 / size;
-        o.drawImage(cv, x0, t, w, hh, (72 - w * k) / 2, (72 - hh * k) / 2, w * k, hh * k);
-        // 把白底變透明
-        const id = o.getImageData(0, 0, 72, 72), p = id.data;
-        for (let i = 0; i < p.length; i += 4) if (p[i] > 240 && p[i + 1] > 240 && p[i + 2] > 240) p[i + 3] = 0;
-        o.putImageData(id, 0, 0);
-        items.push(out.toDataURL());
-      });
-    });
-    return items;
-  }
-  const ready = Promise.all(SHEETS.map(sh => new Promise(res => {
-    const img = new Image();
-    img.onload = () => { try { sheetItems[sh.kind] = slice(img); } catch (e) { console.warn('[Emoji]', e); } res(); };
-    img.onerror = () => res();                    // 沒有圖就用內建的像素表情
-    img.src = sh.src;
-  })));
-  const codesOf = k => (sheetItems[k].length ? sheetItems[k].map((_, i) => `${k}${i + 1}`) : LIST.filter(e => e.kind === k).map(e => e.code));
+  const COUNT = { c: 50, d: 60 }, VER = '1';
+  const stk = code => { const k = code[0], n = +code.slice(1); return COUNT[k] && n >= 1 && n <= COUNT[k] ? `assets/stickers/${k}/${n}.webp?v=${VER}` : ''; };
+  const ready = Promise.resolve();
+  const codesOf = k => Array.from({ length: COUNT[k] }, (_, i) => `${k}${i + 1}`);
 
   const urls = {};
   function url(code) {
-    const k = code[0], n = +code.slice(1);
-    if (sheetItems[k] && sheetItems[k].length) return sheetItems[k][n - 1] || '';
+    const f = stk(code); if (f) return f;
     if (urls[code]) return urls[code];
     const e = LIST.find(x => x.code === code); if (!e) return '';
     const g = e.draw(), sc = 2, cv = document.createElement('canvas');
@@ -163,13 +103,16 @@ window.Emoji = (() => {
 
   /** 把文字轉成安全的 HTML，並把 :c1: 之類換成像素表情 */
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const toHTML = text => esc(text).replace(/:([cd][1-9]\d?):/g, (m, code) => { const u = url(code); return u ? `<img class="pxemo" src="${u}" alt="${m}">` : m; });
+  const toHTML = text => {
+    const big = /^\s*:[cd][1-9]\d?:\s*$/.test(String(text ?? ''));   // 只傳一張貼圖 → 顯示大張
+    return esc(text).replace(/:([cd][1-9]\d?):/g, (m, code) => { const u = url(code); return u ? `<img class="pxemo${big ? ' big' : ''}" src="${u}" alt="${m}" loading="lazy" draggable="false">` : m; });
+  };
 
   /** 表情選單：picker(onPick) → 元素 */
   function picker(onPick) {
     const el = document.createElement('div');
     el.className = 'emo-pick win';
-    el.innerHTML = `<div class="emo-tabs"><button data-k="c" class="on">🐱</button><button data-k="d">🐶</button></div><div class="emo-grid"></div>`;
+    el.innerHTML = `<div class="emo-tabs"><button data-k="c" class="on"><img class="pxemo" src="${url('c3')}" alt="cat"></button><button data-k="d"><img class="pxemo" src="${url('d1')}" alt="dog"></button></div><div class="emo-grid"></div>`;
     const gridEl = el.querySelector('.emo-grid');
     const show = k => {
       el.querySelectorAll('.emo-tabs button').forEach(b => b.classList.toggle('on', b.dataset.k === k));

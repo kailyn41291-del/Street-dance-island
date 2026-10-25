@@ -31,7 +31,7 @@
     let rows = [], likes = [];
     const composer = (f, parent, ph) => {
       if (!logged()) { f.innerHTML = `<button type="button" class="btn sm pink lg">${t('fo_login')}</button>`; f.querySelector('.lg').onclick = () => Player.prompt(); return; }
-      f.innerHTML = `<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button><input class="input sm" maxlength="1000" placeholder="${esc(ph || t('fo_reply_ph'))}"><button class="btn sm yellow">${t('fo_send')}</button></div>`;
+      f.innerHTML = `<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji"><img class="pxemo" src="assets/stickers/c/7.webp?v=1" alt=""></button><input class="input sm" maxlength="1000" placeholder="${esc(ph || t('fo_reply_ph'))}"><button class="btn sm yellow">${t('fo_send')}</button></div>`;
       const input = f.querySelector('input');
       let pick = null;
       f.querySelector('.emo-btn').onclick = () => { if (pick) { pick.remove(); pick = null; return; } pick = Emoji.picker(c => { input.value += c; input.focus(); }); f.appendChild(pick); };

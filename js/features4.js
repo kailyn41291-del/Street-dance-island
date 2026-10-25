@@ -104,7 +104,7 @@ window.Friends = (() => {
           <div class="pc-name">${Player.nameHTML({ ...p, handle: null })}${p.user_id && p.user_id !== me() ? `<i class="dot ${isOn ? 'on' : ''}" title="${esc(t(isOn ? 'fr_online' : 'fr_offline'))}"></i>` : ''}</div>
           <div class="pc-handle">@${esc(p.handle || '')}</div>
           ${p.title ? `<div class="pc-title">${Titles.html(p.title)}</div>` : ''}
-          <div class="pc-tags">${c.rpub && regionName(c) ? `<span class="tag pc-reg">📍 ${esc(regionName(c))}</span>` : nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''}${p.style ? `<span class="tag">${esc(p.style)}</span>` : ''}${p.job && J[p.job] ? `<span class="tag">${esc(J[p.job])}</span>` : ''}</div>
+          <div class="pc-tags">${c.rpub && regionName(c) ? `<span class="tag pc-reg">${PXI.img('event/pin', '📍')} ${esc(regionName(c))}</span>` : nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''}${p.style ? `<span class="tag">${esc(p.style)}</span>` : ''}${p.job && J[p.job] ? `<span class="tag">${esc(J[p.job])}</span>` : ''}</div>
         </div>
       </div>
       <dl class="pc-dl">${c.crew ? `<dt>${t('cd_crew')}</dt><dd>${esc(c.crew)}</dd>` : ''}${c.move ? `<dt>${t('cd_move')}</dt><dd>${esc(c.move)}</dd>` : ''}</dl>
@@ -139,7 +139,7 @@ window.Friends = (() => {
           <label class="chk"><input type="checkbox" name="find" ${c.find !== false ? 'checked' : ''}> ${t('fd_find_me')}</label>
           <label class="chk"><input type="checkbox" name="rpub" ${c.rpub ? 'checked' : ''}> ${t('fd_rpub')}</label>
           <div class="cd-reg" ${c.rpub ? '' : 'hidden'}><select class="input sm" name="rc">${countryOpts(c.rc || (Backend.profile && Backend.profile.nat) || 'TW')}</select>
-            <select class="input sm" name="rcity"></select><button type="button" class="btn sm teal here">📍 ${t('fd_here')}</button></div>
+            <select class="input sm" name="rcity"></select><button type="button" class="btn sm teal here">${PXI.img('event/pin', '📍')} ${t('fd_here')}</button></div>
           <p class="note">${t('fd_priv_note')}</p></fieldset>
         <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button class="btn pink">${t('cd_save')}</button></div></div>
       </form></div>`);
@@ -257,7 +257,7 @@ window.Friends = (() => {
       list.forEach(p => (people[p.user_id] = p));
       ul.innerHTML = (foundNote ? `<li class="fr-sub">${esc(foundNote)}</li>` : '') + (list.length ? list.map(p => {
         const r = rel(p.user_id), reg = (p.card && p.card.rpub && regionName(p.card)) || '';
-        return row(p, `${reg ? `<span class="tag">📍 ${esc(reg)}</span>` : ''}<i class="dot ${online.has(p.user_id) ? 'on' : ''}"></i>${r.type === 'friend' ? `<span class="tag fr-is">${t('fr_is')}</span>` : r.type === 'none' ? `<button class="btn sm green add" data-u="${esc(p.user_id)}">${t('fr_add')}</button>` : `<span class="tag">${t('fr_pending')}</span>`}<button class="btn sm cd">🪪</button>`);
+        return row(p, `${reg ? `<span class="tag">${PXI.img('event/pin', '📍')} ${esc(reg)}</span>` : ''}<i class="dot ${online.has(p.user_id) ? 'on' : ''}"></i>${r.type === 'friend' ? `<span class="tag fr-is">${t('fr_is')}</span>` : r.type === 'none' ? `<button class="btn sm green add" data-u="${esc(p.user_id)}">${t('fr_add')}</button>` : `<span class="tag">${t('fr_pending')}</span>`}<button class="btn sm cd">🪪</button>`);
       }).join('') : `<li class="note">${t('fd_none')}</li>`);
       ul.querySelectorAll('.fr-row').forEach(li => { const p = list.find(x => x.handle === li.dataset.h); if (p) li.querySelector('.fr-ic').appendChild(headIcon(p.look)); });
     };
@@ -354,7 +354,7 @@ window.Friends = (() => {
         <div class="msn-who"><span class="dm-ic"></span><b>${Player.nameHTML({ ...p, handle: null })}</b><span class="msn-tag">· ${t('fr_is').replace('✓ ', '')}</span></div>
         <div class="msn-st"><i class="dot ${online.has(uid) ? 'on' : ''}"></i> <span class="st-t">${esc(seenText(p))}</span></div>
         <div class="dm-list"><p class="note">…</p></div>
-        <form class="msn-form dm-form"><button type="button" class="msn-tool emo-btn" aria-label="emoji">😺</button><label class="msn-tool img-btn" title="${esc(t('dm_img'))}">🖼<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
+        <form class="msn-form dm-form"><button type="button" class="msn-tool emo-btn" aria-label="emoji"><img class="pxemo" src="assets/stickers/c/7.webp?v=1" alt=""></button><label class="msn-tool img-btn" title="${esc(t('dm_img'))}">🖼<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
           <input class="msn-input" maxlength="500" placeholder="${esc(t('dm_ph'))}"><button class="msn-send" aria-label="${esc(t('dm_send'))}">➤</button></form>
       </div></div>`);
     el.querySelector('.dm-ic').appendChild(headIcon(p.look));

@@ -1790,3 +1790,18 @@ img.pxi { width: 1.5em; height: 1.5em; object-fit: contain; vertical-align: midd
 #hud[data-fit="2"] .hud-btns > .btn:is(.hud-game, .hud-lang, .hud-events, .hud-friends) .label,
 #hud[data-fit="3"] .hud-btns > .btn:is(.hud-game, .hud-lang, .hud-events, .hud-friends, .hud-add) .label,
 #hud[data-fit="4"] .hud-btns > .btn:not(.hud-player) .label, #hud[data-fit="4"] .hud-btns > .hud-player .label { display: none; }
+
+/* 貼圖（新版圖檔） */
+.emo-grid { grid-template-columns: repeat(6, 1fr); max-height: 260px; }
+.emo-grid .pxemo { width: 44px; height: 44px; }
+.emo-tabs .pxemo { width: 26px; height: 26px; vertical-align: middle; }
+.emo-btn .pxemo { width: 22px; height: 22px; vertical-align: middle; }
+.pxemo.big { width: 84px; height: 84px; vertical-align: middle; }
+@media (max-width:600px) { .emo-grid { grid-template-columns: repeat(5, 1fr); } .emo-grid .pxemo { width: 40px; height: 40px; } }
+
+/* 活動卡片：像素圖示 */
+.card .info dt img.pxi { width: 18px; height: 18px; margin: -3px 3px 0 0; }
+.card .acts .btn img.pxi, .tag img.pxi, .place-tag img.pxi { width: 18px; height: 18px; margin: -3px 0; }
+.toast .ic img.pxi { width: 22px; height: 22px; }
+.crumbs img.pxi { width: 20px; height: 20px; margin: -4px 0; }
+.hud-sound img.pxi { width: 26px; height: 26px; }

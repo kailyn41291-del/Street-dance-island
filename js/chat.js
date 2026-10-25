@@ -5,7 +5,7 @@
  * ========================================================= */
 window.Chat = (() => {
   const { h, esc, toast } = UI;
-  const CHANNELS = [['world', '🌏'], ['tw', '🇹🇼']];
+  const CHANNELS = [['world', PXI.img('menu/world', '🌏')], ['tw', '🇹🇼']];
   let el, list, form, input, cur = 'world', open = false, autoTr = true, ann = [], annIdx = 0, annTimer = null;
   const cache = { world: [], tw: [] };
   const unread = { world: 0, tw: 0 };
@@ -111,7 +111,7 @@ window.Chat = (() => {
       form.querySelector('.login').onclick = () => Player.prompt();
       return;
     }
-    form.appendChild(h(`<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji">😺</button><button type="button" class="btn sm mv-btn" aria-label="emote">🕺</button>
+    form.appendChild(h(`<div class="chat-input"><button type="button" class="btn sm emo-btn" aria-label="emoji"><img class="pxemo" src="assets/stickers/c/7.webp?v=1" alt=""></button><button type="button" class="btn sm mv-btn" aria-label="emote">🕺</button>
       <input class="input sm" maxlength="200" placeholder="${esc(t('chat_ph'))}"><button class="btn sm pink">${t('chat_send')}</button></div>`));
     input = form.querySelector('input');
     input.addEventListener('input', () => mentionPick(input));

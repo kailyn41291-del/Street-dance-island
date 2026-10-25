@@ -274,7 +274,7 @@ window.Hub = (() => {
     ];
     const items = [];
     const body = h(`<div class="phone-ui"><div class="ph-bar"><span>DANCE ISLAND</span><span class="ph-clock"></span></div>
-      ${S.map(([sec, list]) => `<div class="ph-sec">${t(sec)}</div><div class="ph-grid">${list.map(([ic, k, fn]) => { items.push(fn); return `<button class="ph-app" data-i="${items.length - 1}"><span class="ph-ic">${PXI.img('menu/' + k.replace('hub_', ''), ic)}</span><span>${t(k)}</span></button>`; }).join('')}</div>`).join('')}</div>`);
+      ${S.map(([sec, list]) => `<div class="ph-sec">${t(sec)}</div><div class="ph-grid">${list.map(([ic, k, fn]) => { items.push(fn); return `<button class="ph-app" data-i="${items.length - 1}"><span class="ph-ic">${PXI.img('menu/' + ({ sound: 'sound_on' }[k.replace('hub_', '')] || k.replace('hub_', '')), ic)}</span><span>${t(k)}</span></button>`; }).join('')}</div>`).join('')}</div>`);
     const d = new Date(); body.querySelector('.ph-clock').textContent = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     const m = modal({ title: t('hub_title'), color: 'blue', body });
     body.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; SFX.play('confirm'); m.close(); setTimeout(items[+b.dataset.i], 230); };

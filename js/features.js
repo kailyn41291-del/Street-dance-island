@@ -175,7 +175,8 @@ window.App = {
     for (const [ic, v] of info) {
       if (iy > footTop - 36) break;
       const w = WW - 140 - (iy + 50 > avTop ? avW : 0);
-      g.fillText(ic, X + 40, iy);
+      const icImg = SHARE_IC[ic];
+      if (icImg && icImg.complete && icImg.naturalWidth) g.drawImage(icImg, X + 36, iy - 36, 46, 46); else g.fillText(ic, X + 40, iy);
       const two = !poster && iy + 46 < footTop - 40;
       iy += (two ? wrap(v, X + 100, iy, w, 46, 2) : (g.fillText(fit(v, w), X + 100, iy), 46)) + (poster ? 12 : 26);
     }
@@ -194,10 +195,15 @@ window.App = {
     const place = [nm(A.byCode[e.country]), nm(A.cityOf(e.country, e.city))].filter(Boolean).join('・');
     return tpl.replace(/\{(\w+)\}/g, (_, k) => ({ name: e.name || '', date, place, url })[k] ?? '');
   }
+  // 分享圖上的像素圖示（先載入，畫圖時直接用）
+  const SHARE_IC = {};
+  [['🕒', 'time'], ['📍', 'pin'], ['🏠', 'organizer'], ['💰', 'fee'], ['📝', 'register']].forEach(([k, n]) => {
+    if (window.PXI && PXI.has('event/' + n)) { const im = new Image(); im.src = PXI.src('event/' + n); SHARE_IC[k] = im; }
+  });
   async function openShare(e) {
     const url = eventUrl(e); diAct('share', 1, e.id);
     const body = h(`<div class="share"><div class="share-prev"><p class="note">…</p></div>
-      <div class="btn-row"><button class="btn pink sh">📤 ${t('share_send')}</button><button class="btn dl">⬇ ${t('share_dl')}</button><button class="btn teal cp">🔗 ${t('share_copy')}</button>
+      <div class="btn-row"><button class="btn pink sh">${PXI.img('event/share', '📤')} ${t('share_send')}</button><button class="btn dl">⬇ ${t('share_dl')}</button><button class="btn teal cp">${PXI.img('event/link', '🔗')} ${t('share_copy')}</button>
       <a class="btn" target="_blank" rel="noopener" href="https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}">LINE</a>
       <a class="btn blue" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}">Facebook</a></div>
       <pre class="invite-prev"></pre></div>`);
@@ -286,9 +292,9 @@ window.App = {
     Backend.viewCounts().then(n => { views = n; paintViews(); }).catch(() => { vLoading = false; });
   };
   A.viewTag = e => (loadViews(), views === null) ? `<span class="tag views" data-vc="${esc(e.id)}" hidden></span>`
-    : `<span class="tag views" data-vc="${esc(e.id)}" title="${esc(t('views'))}">👁 ${fmtN(views[e.id] || 0)}</span>`;
+    : `<span class="tag views" data-vc="${esc(e.id)}" title="${esc(t('views'))}">${PXI.img('event/views', '👁')} ${fmtN(views[e.id] || 0)}</span>`;
   const paintViews = () => document.querySelectorAll('[data-vc]').forEach(x => {
-    x.hidden = views === null; if (views) { x.textContent = '👁 ' + fmtN(views[x.dataset.vc] || 0); x.title = t('views'); }
+    x.hidden = views === null; if (views) { x.innerHTML = PXI.img('event/views', '👁') + ' ' + fmtN(views[x.dataset.vc] || 0); x.title = t('views'); }
   });
   const viewedToday = () => { try { const o = JSON.parse(localStorage.getItem(VKEY) || '{}'); return o.day === A.todayStr() ? o : { day: A.todayStr(), ids: [] }; } catch (x) { return { day: A.todayStr(), ids: [] }; } };
   function countView(id) {
@@ -313,7 +319,7 @@ window.App = {
 
   A.cardExtras = (e, past) => `
     <button class="btn sm" data-act="cal" data-ev="${esc(e.id)}">📅 ${t('b_cal')}</button>
-    <button class="btn sm pink" data-act="share" data-ev="${esc(e.id)}">📤 ${t('b_share')}</button>` + (A.cardExtras2 ? A.cardExtras2(e, past) : '') + (A.cardExtras3 ? A.cardExtras3(e) : '');
+    <button class="btn sm pink" data-act="share" data-ev="${esc(e.id)}">${PXI.img('event/share', '📤')} ${t('b_share')}</button>` + (A.cardExtras2 ? A.cardExtras2(e, past) : '') + (A.cardExtras3 ? A.cardExtras3(e) : '');
   A.onCardAct = (a, ev, tg, redraw) => {
     if (!ev) return false;
     if (a === 'cal') { SFX.play('select'); openCalendar(ev); return true; }
@@ -345,7 +351,7 @@ window.App = {
 
   /* ---------- 活動總覽 ---------- */
   const fs = { q: '', when: 'upcoming', region: '', styles: new Set(), open: false };
-  A.crumbs.events = r => (r.arg[0] === 'near' ? '📍 ' + t('ev_near') : '📋 ' + t('ev_all'));
+  A.crumbs.events = r => (r.arg[0] === 'near' ? PXI.img('menu/near', '📍') + ' ' + t('ev_near') : PXI.img('menu/events', '📋') + ' ' + t('ev_all'));
   A.views.events = (r, stage) => {
     if (r.arg[0] === 'near') fs.region = 'near';
     const view = h(`<div class="view city-view"><div class="city-inner"></div></div>`);
@@ -452,7 +458,7 @@ window.App = {
     }
     // 附近活動按鈕
     const ctrls = view.querySelector('.map-ctrls');
-    if (ctrls) { const b = h(`<button class="btn icon teal" aria-label="${esc(t('ev_near'))}" title="${esc(t('ev_near'))}">📍</button>`); b.onclick = () => { SFX.play('select'); A.nav('#/events/near'); }; ctrls.prepend(b); }
+    if (ctrls) { const b = h(`<button class="btn icon teal" aria-label="${esc(t('ev_near'))}" title="${esc(t('ev_near'))}">${PXI.img('menu/near', '📍')}</button>`); b.onclick = () => { SFX.play('select'); A.nav('#/events/near'); }; ctrls.prepend(b); }
     // 日夜
     const d = localNow(), hr = d.hour;
     const phase = hr >= 6 && hr < 16 ? 'day' : hr >= 16 && hr < 19 ? 'dusk' : 'night';

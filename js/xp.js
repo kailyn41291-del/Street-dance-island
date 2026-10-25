@@ -233,7 +233,7 @@ window.XP = (() => {
   }
 
   /* ---------- 活動資訊糾錯 ---------- */
-  A.cardExtras3 = e => (Backend.enabled ? `<button class="btn sm" data-act="evreport" data-ev="${esc(e.id)}">⚠ ${t('rp_btn')}</button>` : '');
+  A.cardExtras3 = e => (Backend.enabled ? `<button class="btn sm" data-act="evreport" data-ev="${esc(e.id)}">${PXI.img('event/report', '⚠')} ${t('rp_btn')}</button>` : '');
   const _act = A.onCardAct;
   A.onCardAct = (a, ev, tg, redraw) => {
     if (a !== 'evreport') return _act ? _act(a, ev, tg, redraw) : false;

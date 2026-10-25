@@ -12,5 +12,10 @@ window.PXI = (() => {
   // 先載入常用的，換頁時不會閃
   const preload = list => list.forEach(n => { if (has(n)) { const i = new Image(); i.src = src(n); } });
   preload(['menu/forum', 'menu/battle', 'menu/friends', 'menu/events', 'menu/chat', 'menu/me', 'menu/add', 'menu/games', 'menu/lang', 'menu/tut']);
-  return { has, src, img };
+  /** 常用 emoji → 像素圖示（有圖就換，沒圖維持原樣）；toast 等地方會自動用 */
+  const EMO = { '🔗': 'event/link', '📍': 'event/pin', '⚠': 'event/report', '🛂': 'event/checkin', '📤': 'event/share', '🏠': 'event/organizer', '💰': 'event/fee', '📝': 'event/register', '🕒': 'event/time', '👁': 'event/views', '⏰': 'event/time', '💾': 'menu/save', '🌏': 'menu/world', '📮': 'menu/add', '📢': 'menu/notice', '🌐': 'menu/lang' };
+  const emo = ic => (EMO[ic] && has(EMO[ic]) ? img(EMO[ic]) : ic);
+  /** '🕒 日期時間' → 像素圖示 + '日期時間'（開頭的 emoji 有對應圖示才換；回傳 HTML，文字要先 escape） */
+  const lead = html => { const m = /^(\S+?)\uFE0F?\s/.exec(html); return m && EMO[m[1]] && has(EMO[m[1]]) ? img(EMO[m[1]]) + html.slice(m[0].length) : html; };
+  return { has, src, img, emo, lead };
 })();

@@ -38,8 +38,8 @@
   const canCheckin = (e, today) => e.date <= today && (e.endDate || e.date) >= A.ymd(new Date(Date.now() - 14 * 864e5));
   A.cardExtras2 = (e, past) => {
     const today = A.todayStr(), fav = S.favs.has(e.id), done = S.checks.has(e.id);
-    return `<button class="btn sm ${fav ? 'yellow' : ''} fav-b" data-act="fav" data-ev="${esc(e.id)}" aria-pressed="${fav}">${fav ? '★' : '☆'} ${t(fav ? 'b_faved' : 'b_fav')}</button>`
-      + (canCheckin(e, today) || done ? `<button class="btn sm ${done ? 'green' : 'blue'}" data-act="checkin" data-ev="${esc(e.id)}">🛂 ${t(done ? 'b_checked' : 'b_checkin')}</button>` : '');
+    return `<button class="btn sm ${fav ? 'yellow' : ''} fav-b" data-act="fav" data-ev="${esc(e.id)}" aria-pressed="${fav}">${fav ? PXI.img('event/fav_on', '★') : PXI.img('event/fav', '☆')} ${t(fav ? 'b_faved' : 'b_fav')}</button>`
+      + (canCheckin(e, today) || done ? `<button class="btn sm ${done ? 'green' : 'blue'}" data-act="checkin" data-ev="${esc(e.id)}">${PXI.img('event/checkin', '🛂')} ${t(done ? 'b_checked' : 'b_checkin')}</button>` : '');
   };
   A.cardResults = e => {
     const rs = (e.results || []).filter(r => r && r.name);
@@ -88,7 +88,7 @@
   /* ---------- 主辦方：拆成多個（「A / B / C」） ---------- */
   const splitOrg = s => String(s || '').split(/\s*[\/／、,，]\s*/).map(x => x.trim()).filter(Boolean);
   A.orgLinks = s => splitOrg(s).map(o => `<a class="org-link" href="#/org/${encodeURIComponent(o)}">${esc(o)}</a>`).join(' / ');
-  A.crumbs.org = r => '🏠 ' + esc(r.arg[0] || '');
+  A.crumbs.org = r => PXI.img('event/organizer', '🏠') + ' ' + esc(r.arg[0] || '');
   A.views.org = (r, stage) => {
     const org = r.arg[0] || '';
     const today = A.todayStr();
@@ -99,7 +99,7 @@
     stage.appendChild(view);
     const draw = () => {
       const on = S.follows.has(org);
-      inner.innerHTML = `<div class="win">${UI.winHTML('🏠 ' + esc(org), 'orange', false)}<div class="win-body org-head">
+      inner.innerHTML = `<div class="win">${UI.winHTML(PXI.img('event/organizer', '🏠') + ' ' + esc(org), 'orange', false)}<div class="win-body org-head">
           <div><div class="note">${t('org_stats', { a: up.length, b: past.length })}</div></div><span class="grow"></span>
           <button class="btn ${on ? 'yellow' : 'pink'} follow">${on ? '✓ ' + t('org_following') : '＋ ' + t('org_follow')}</button></div></div>
         <div class="list-head">${t('list_upcoming')} <span class="badge">${up.length}</span></div>
@@ -160,7 +160,7 @@
         <div class="me-av"></div>
         <div class="me-info"><div class="me-name">${Player.nameHTML(me)} ${me.title ? Titles.html(me.title) : ''}</div>
           <div class="lv-row"><span class="lv">Lv.${lv}</span><div class="xpbar"><i style="width:${pct}%"></i></div><span class="note">${st.xp} / ${nxt} XP</span></div>
-          <div class="me-nums"><span>🛂 ${st.checkins}</span><span>💬 ${st.comments}</span><span>🗨 ${st.messages}</span><span>📅 ${st.days}</span></div>
+          <div class="me-nums"><span>${PXI.img('event/checkin', '🛂')} ${st.checkins}</span><span>💬 ${st.comments}</span><span>🗨 ${st.messages}</span><span>📅 ${st.days}</span></div>
           <div class="btn-row"><button class="btn sm pink ed">✎ ${t('p_edit')}</button>${Backend.enabled ? `<button class="btn sm yellow mycard">🪪 ${t('cd_edit')}</button><button class="btn sm green myfr">👥 ${t('fr_title_s')}</button>` : ''}${Backend.enabled && !me.verified ? `<button class="btn sm blue vf">${t('v_apply')}</button>` : ''}</div>
         </div>
         <div class="spin-box"><div class="spin-title">🎰 ${t('daily_title')}</div><div class="wheel"><span>${doneToday ? '✓' : '?'}</span></div>
@@ -175,14 +175,14 @@
         ${pastFav.length ? `<details><summary>${t('ev_w_past')} (${pastFav.length})</summary><div class="cards">${pastFav.map((e, i) => A.cardHTML(e, i, today, Store.canEdit(), { place: true })).join('')}</div></details>` : ''}
       </div></div>
 
-      <div class="win">${UI.winHTML('🛂 ' + t('me_passport'), 'blue', false)}<div class="win-body">
+      <div class="win">${UI.winHTML(PXI.img('event/checkin', '🛂') + ' ' + t('me_passport'), 'blue', false)}<div class="win-body">
         <div class="btn-row"><button class="btn blue open-pp">📘 ${t('pp_open')}</button></div>
-        <div class="pass-stats"><span>🇹🇼 ${twDone} / ${twAll}</span><span>🌏 ${t('me_countries', { n: countries })}</span><span>🛂 ${stamps.length}</span></div>
+        <div class="pass-stats"><span>🇹🇼 ${twDone} / ${twAll}</span><span>${PXI.img('menu/world', '🌏')} ${t('me_countries', { n: countries })}</span><span>${PXI.img('event/checkin', '🛂')} ${stamps.length}</span></div>
         <div class="tw-prog"><i style="width:${Math.round((twDone / twAll) * 100)}%"></i></div>
         <div class="passport">${stamps.length ? stamps.map((s, i) => `<div class="stamp" style="--sc:${STAMP_COLORS[i % STAMP_COLORS.length]};--rot:${((i * 37) % 14) - 7}deg">${stampInner(s.country, s.city, s.created_at)}</div>`).join('') : `<p class="note">${t('me_pass_none')}</p>`}</div>
       </div></div>
 
-      <div class="win">${UI.winHTML('🏠 ' + t('me_follows'), 'orange', false)}<div class="win-body">
+      <div class="win">${UI.winHTML(PXI.img('event/organizer', '🏠') + ' ' + t('me_follows'), 'orange', false)}<div class="win-body">
         ${S.follows.size ? `<ul class="follow-list">${[...S.follows].map(o => { const n = Store.all().filter(e => (e.endDate || e.date) >= today && splitOrg(e.organizer).some(x => x.toLowerCase() === o.toLowerCase())).length; return `<li><a href="#/org/${encodeURIComponent(o)}">${esc(o)}</a> <span class="badge">${n}</span></li>`; }).join('')}</ul>` : `<p class="note">${t('me_follow_none')}</p>`}
       </div></div>
 
