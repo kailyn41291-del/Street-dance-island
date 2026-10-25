@@ -67,7 +67,7 @@ window.Friends = (() => {
   const BG = { pink: '#f6a8c4', teal: '#8fd3c7', blue: '#a9bdf0', yellow: '#f4d77a', purple: '#c7a8e8', night: '#3d3a5c' };
   const PAT = ['grid', 'dots', 'stripe', 'star', 'none'];
   // 人物背後的像素背景
-  const SCENE = ['none', 'beach', 'meadow', 'forest', 'school', 'nightmarket', 'leopard_pink', 'leopard_gold'];
+  const SCENE = ['none', 'beach', 'meadow', 'forest', 'school', 'nightmarket', 'ximen', 'leopard_pink', 'leopard_gold'];
   // 專屬底色：豹紋只有網站架設者（Kailyn）能用
   const OWNER_BG = { leopard: '#d9b27a' };
   const bgOk = k => BG[k] || (OWNER_BG[k] && true);
