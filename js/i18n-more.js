@@ -29,7 +29,7 @@ I18N.extend({
       tee: 'T 恤', hoodie: '帽 T', jacket: '外套', varsity: '棒球外套', track: '運動外套', oversize: 'Oversize T', crop: '短版上衣', tank: '背心', locker: 'Locker 條紋吊帶', vest: '西裝背心',
       cargo: '工作褲', baggy: '垮褲', joggers: '縮口褲', jeans: '寬版牛仔褲', shorts: '短褲', knickers: 'Locker 燈籠褲', skirt: '裙子',
       sneakers: '球鞋', hightops: '高筒鞋', boots: '靴子', glasses: '眼鏡', shades: '墨鏡', mask: '口罩', headphones: '耳機', scarf: '圍巾', chain: '項鍊',
-      admin: '管理員披風', owner: '網站架設者皇冠'
+      admin: '管理員披風', owner: '網站架設者皇冠', kailyn: '✨ Kailyn 本人'
     },
     jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'Locker', popper: 'Popper', hiphop: 'Hip Hopper', house: 'House Dancer', waacker: 'Waacker', krumper: 'Krumper', voguer: 'Voguer', choreo: '編舞者', dj: 'DJ', mc: 'MC', fan: '舞迷', host: '主辦方' }
   },
@@ -60,7 +60,7 @@ I18N.extend({
       tee: 'Tee', hoodie: 'Hoodie', jacket: 'Jacket', varsity: 'Varsity', track: 'Track jacket', oversize: 'Oversized tee', crop: 'Crop top', tank: 'Tank top', locker: 'Locker stripes', vest: 'Vest',
       cargo: 'Cargo', baggy: 'Baggy', joggers: 'Joggers', jeans: 'Wide jeans', shorts: 'Shorts', knickers: 'Locker knickers', skirt: 'Skirt',
       sneakers: 'Sneakers', hightops: 'High-tops', boots: 'Boots', glasses: 'Glasses', shades: 'Shades', mask: 'Mask', headphones: 'Headphones', scarf: 'Scarf', chain: 'Chain',
-      admin: 'Admin cape', owner: 'Architect crown'
+      admin: 'Admin cape', owner: 'Architect crown', kailyn: '✨ Kailyn (original)'
     },
     jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'Locker', popper: 'Popper', hiphop: 'Hip Hopper', house: 'House Dancer', waacker: 'Waacker', krumper: 'Krumper', voguer: 'Voguer', choreo: 'Choreographer', dj: 'DJ', mc: 'MC', fan: 'Dance Fan', host: 'Organizer' }
   },
@@ -91,7 +91,7 @@ I18N.extend({
       tee: 'Tシャツ', hoodie: 'パーカー', jacket: 'ジャケット', varsity: 'スタジャン', track: 'ジャージ', oversize: 'ビッグT', crop: 'クロップ丈', tank: 'タンクトップ', locker: 'ロッカーボーダー', vest: 'ベスト',
       cargo: 'カーゴ', baggy: 'バギー', joggers: 'ジョガー', jeans: 'ワイドデニム', shorts: 'ショーツ', knickers: 'ロッカーニッカ', skirt: 'スカート',
       sneakers: 'スニーカー', hightops: 'ハイカット', boots: 'ブーツ', glasses: 'メガネ', shades: 'サングラス', mask: 'マスク', headphones: 'ヘッドホン', scarf: 'マフラー', chain: 'チェーン',
-      admin: '管理者マント', owner: '創設者の王冠'
+      admin: '管理者マント', owner: '創設者の王冠', kailyn: '✨ Kailyn 本人'
     },
     jobs: { bboy: 'Bboy', bgirl: 'Bgirl', locker: 'ロッカー', popper: 'ポッパー', hiphop: 'ヒップホッパー', house: 'ハウスダンサー', waacker: 'ワッカー', krumper: 'クランパー', voguer: 'ヴォーガー', choreo: '振付師', dj: 'DJ', mc: 'MC', fan: 'ダンスファン', host: '主催者' }
   },
@@ -122,7 +122,7 @@ I18N.extend({
       tee: '티셔츠', hoodie: '후드티', jacket: '재킷', varsity: '바시티', track: '트랙 재킷', oversize: '오버핏 티', crop: '크롭탑', tank: '나시', locker: '락킹 스트라이프', vest: '베스트',
       cargo: '카고', baggy: '배기', joggers: '조거', jeans: '와이드 청바지', shorts: '반바지', knickers: '락킹 니커즈', skirt: '치마',
       sneakers: '스니커즈', hightops: '하이탑', boots: '부츠', glasses: '안경', shades: '선글라스', mask: '마스크', headphones: '헤드폰', scarf: '목도리', chain: '체인',
-      admin: '관리자 망토', owner: '창설자 왕관'
+      admin: '관리자 망토', owner: '창설자 왕관', kailyn: '✨ Kailyn 본인'
     },
     jobs: { bboy: '비보이', bgirl: '비걸', locker: '락커', popper: '팝퍼', hiphop: '힙합 댄서', house: '하우스 댄서', waacker: '왁커', krumper: '크럼퍼', voguer: '보거', choreo: '안무가', dj: 'DJ', mc: 'MC', fan: '댄스 팬', host: '주최자' }
   }

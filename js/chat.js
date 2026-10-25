@@ -15,6 +15,9 @@ window.Chat = (() => {
 
   // 聊天室裡的小頭像（裁出角色的頭）
   function headIcon(look) {
+    if (look && look.special === 'kailyn') {            // 網站架設者 Kailyn：用表情頭像
+      const img = new Image(); img.className = 'head-ico k-ico'; img.alt = 'Kailyn'; img.src = UI.Kailyn.url('cool'); return img;
+    }
     const src = Avatar.render(look || Avatar.DEFAULT, 0, 1);
     const c = document.createElement('canvas');
     c.width = 34; c.height = 24; c.className = 'head-ico';

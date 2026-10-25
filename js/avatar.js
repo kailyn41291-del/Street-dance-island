@@ -24,7 +24,7 @@ window.Avatar = (() => {
     shoes: ['sneakers', 'hightops', 'boots'],
     faceAcc: ['none', 'glasses', 'shades', 'mask'],
     acc: ['none', 'headphones', 'scarf', 'chain'],
-    special: ['none', 'admin', 'owner']
+    special: ['none', 'admin', 'owner', 'kailyn']
   };
   const COLORS = {
     skin: ['#ffe3cc', '#f6c9a0', '#e8b088', '#c98d5f', '#9a6440', '#6b4128'],
@@ -427,7 +427,27 @@ window.Avatar = (() => {
   }
 
   const cache = new Map();
+  // 網站架設者專屬：「Kailyn 本人」造型直接用原畫
+  const KIMG = new Image(); KIMG.src = 'assets/kailyn/full.webp';
+  function renderKailyn(frame, scale) {
+    const out = document.createElement('canvas');
+    out.width = (W + 2) * scale; out.height = (H + 2) * scale;
+    if (KIMG.complete && KIMG.naturalWidth) {
+      const g = out.getContext('2d'), h = out.height, w = (KIMG.naturalWidth / KIMG.naturalHeight) * h;
+      const bob = [0, -1, 0, 1][frame % 4] * scale;
+      g.imageSmoothingQuality = 'high';
+      g.drawImage(KIMG, (out.width - w) / 2, bob, w, h);
+    }
+    return out;
+  }
   function render(look, frame = 0, scale = 3) {
+    if (look && look.special === 'kailyn') {
+      const key = 'kailyn|' + frame + '|' + scale;
+      if (cache.has(key)) return cache.get(key);
+      const c = renderKailyn(frame, scale);
+      if (KIMG.complete && KIMG.naturalWidth) cache.set(key, c);
+      return c;
+    }
     const key = JSON.stringify(normalize(look)) + '|' + frame + '|' + scale;
     if (cache.has(key)) return cache.get(key);
     const { cv: c, L } = paint(look, frame);
