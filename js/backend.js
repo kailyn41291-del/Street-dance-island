@@ -105,6 +105,8 @@ window.Backend = (() => {
     /* 活動瀏覽次數 */
     async viewCounts() { const n = {}; must(await sb.from('event_views').select('event_id,n')).forEach(r => (n[r.event_id] = r.n)); return n; },
     async bumpView(eid) { must(await sb.rpc('bump_view', { eid })); },
+    async bumpClick(eid, k) { must(await sb.rpc('bump_click', { eid, k })); },
+    async clickStats() { return must(await sb.from('event_clicks').select('event_id,kind,day,n')); },
 
     /* 留言板 */
     async commentCounts() {

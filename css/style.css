@@ -957,3 +957,45 @@ details summary { cursor: pointer; margin: 10px 0; }
 .quest-npc.choco .bub b { background: var(--blue); color: #fff; }
 .invite-prev { display: none; margin: 10px 0 0; padding: 8px 10px; background: var(--paper); border: 2px dashed var(--ink); font: inherit; font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
 .invite-prev.on { display: block; }
+
+/* ---------- 後台統計 ---------- */
+.st { display: grid; gap: 12px; }
+.st-filters { display: flex; gap: 8px; }
+.st-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.st-tile { border: 2px solid var(--ink); background: var(--paper); padding: 6px 10px; display: grid; gap: 2px; }
+.st-tile span { font-size: 11px; color: var(--ink-soft); }
+.st-tile b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.st-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.st-card { border: 2px solid var(--ink); background: var(--paper); padding: 10px 12px; min-width: 0; }
+.st-card h4 { margin: 0 0 8px; font-size: 14px; }
+.st .note.warn { color: #a5452f; }
+/* 橫條 */
+.st-hb { display: grid; gap: 2px; }
+.st-hr { display: grid; grid-template-columns: 5.5em 1fr 3em; align-items: center; gap: 8px; font-size: 12px; padding: 2px 0; cursor: default; }
+.st-hr:hover { background: rgba(120,149,223,.12); }
+.st-hl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-ht { height: 12px; display: block; }
+.st-ht i { display: block; height: 100%; min-width: 2px; background: var(--blue); border-radius: 0 4px 4px 0; }
+.st-hv { text-align: right; font-variant-numeric: tabular-nums; }
+.st-hr.zero { color: #a99c90; }
+.st-hr.zero .st-ht i { background: #d9d0c6; }
+/* 直條 */
+.st-vb { display: grid; grid-template-columns: auto 1fr; gap: 6px; height: 180px; }
+.st-axis { display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: var(--ink-soft); text-align: right; padding-bottom: 18px; font-variant-numeric: tabular-nums; }
+.st-plot { position: relative; display: flex; align-items: stretch; gap: 2px; border-bottom: 2px solid var(--ink); }
+.st-grid { position: absolute; inset: 0 0 18px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+.st-grid i { border-top: 1px dashed rgba(59,43,43,.15); }
+.st-vc { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; cursor: default; }
+.st-vc:hover { background: rgba(120,149,223,.12); }
+.st-vt { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.st-vt i { display: block; width: min(28px, 70%); min-height: 2px; background: var(--blue); border-radius: 4px 4px 0 0; }
+.st-vl { height: 18px; font-size: 10px; line-height: 18px; color: var(--ink-soft); }
+/* 表格 */
+.st-tw { overflow-x: auto; }
+.st-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.st-table th, .st-table td { padding: 5px 6px; border-bottom: 1px solid rgba(59,43,43,.15); text-align: left; vertical-align: top; }
+.st-table th { font-size: 11px; color: var(--ink-soft); white-space: nowrap; }
+.st-table .n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.st-table small { display: block; color: var(--ink-soft); font-size: 10px; }
+.st-tip { position: fixed; z-index: 200; background: var(--ink); color: #fff6e8; font-size: 12px; padding: 4px 8px; pointer-events: none; white-space: nowrap; }
+.st-filters .input { width: auto; }
