@@ -273,6 +273,7 @@
           <h4>${t('cr_edit')}</h4><form class="form cr-edit" novalidate><label class="field full"><span>${t('cr_logo_up')}</span><input class="input" name="logo" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label>
             <label class="field full"><span>${t('cr_desc')}</span><textarea class="input" name="intro" maxlength="300" rows="3">${esc(c.intro || '')}</textarea></label><div class="full form-foot"><span class="grow"></span><button class="btn pink">${t('cr_save')}</button></div></form>
         </div></div>` : ''}`;
+      if (window.CrewPK) CrewPK.mount(inner, c, myRank);
       inner.querySelectorAll('.fr-row').forEach(li => { const p = Object.values(people).find(x => x.handle === li.dataset.h); if (p) li.querySelector('.fr-ic').appendChild(Chat.headIcon(p.look)); });
       const act = async (fn, args, ok) => { try { await Backend.crewRpc(fn, args); SFX.play('coin'); toast(ok || t('cr_ok'), '👯'); await loadMine(); await load(); if (!c) return A.nav('#/crew'); draw(); } catch (x) { SFX.play('error'); toast(err(x), '✕'); } };
       const jn = inner.querySelector('.jn'); if (jn) jn.onclick = async () => { try { await Backend.crewRpc('crew_code_join', { p_code: join.code }); SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 3, 24); toast(t('cr_joined_ok'), '👯'); await loadMine(); A.nav('#/crew/' + id); } catch (x) { toast(/bad code/.test(x.message) ? t('cr_code_bad') : err(x), '✕'); } };

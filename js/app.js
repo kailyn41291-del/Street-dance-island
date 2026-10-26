@@ -821,6 +821,7 @@
           <label class="field"><span>${t('f_judges')}</span><textarea class="input" name="judges" rows="4" placeholder="${esc(t('f_line_ph'))}">${esc(lines(e.judges).join('\n'))}</textarea></label>
           <label class="field"><span>${t('f_show')}</span><textarea class="input" name="showcase" rows="4" placeholder="${esc(t('f_line_ph'))}">${esc(lines(e.showcase).join('\n'))}</textarea></label></div>
       </fieldset>
+      <fieldset class="fieldset full"><legend>${t('fl_title')}</legend><textarea class="input" name="flow" rows="5" placeholder="${esc(t('fl_ph'))}">${esc((e.flow || []).map(x => [x.t, x.x].filter(Boolean).join(' ')).join('\n'))}</textarea></fieldset>
       <label class="field full"><span>${I.link} ${t('f_link')}</span><input class="input" name="link" type="url" value="${esc(e.link)}" placeholder="https://www.instagram.com/..."></label>
       <label class="field full"><span>${I.pin} ${t('f_map')}</span><input class="input" name="mapUrl" type="url" value="${esc(e.mapUrl)}" placeholder="https://maps.app.goo.gl/..."></label>
       <fieldset class="fieldset full"><legend>${I.image} ${t('f_poster')}</legend>
@@ -898,6 +899,7 @@
         date: get('date'), endDate: get('endDate'), startTime: get('startTime'), endTime: get('endTime'),
         regType: get('regType') === 'open' ? '' : get('regType'),
         regStart: get('regType') === 'open' ? get('regStart') : '', regEnd: get('regType') === 'open' ? get('regEnd') : '', regMethod: get('regType') === 'open' ? get('regMethod') : '', fee: get('fee'),
+        flow: window.Organizer && Organizer.parseFlow(get('flow')).length ? Organizer.parseFlow(get('flow')) : undefined,
         teams: lines(get('teams')).length ? lines(get('teams')) : undefined, judges: lines(get('judges')).length ? lines(get('judges')) : undefined, showcase: lines(get('showcase')).length ? lines(get('showcase')) : undefined,
         link: get('link'), mapUrl: get('mapUrl'), note: get('note'), video: get('video'),
         results: get('results') ? get('results').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const m = l.match(/^(.+?)[：:]\s*(.+)$/); return m ? { place: m[1].trim(), name: m[2].trim() } : { place: '', name: l }; }) : undefined,

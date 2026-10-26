@@ -2068,3 +2068,34 @@ html[data-theme="night"] img.pxi, html[data-theme="night"] .pxemo { filter: none
 /* 自動換上的像素圖示大小 */
 button img.pxi, .btn img.pxi, .tag img.pxi, legend img.pxi, h4 img.pxi, .chip img.pxi, .win-title img.pxi { width: 1.4em; height: 1.4em; vertical-align: -0.35em; margin-right: 2px; }
 .crumbs img.pxi { width: 18px; height: 18px; }
+
+/* ===== 第五批：主辦方工具、師徒、PK、懸賞 ===== */
+.bk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin: 10px 0; }
+.bk-grid .fieldset { display: grid; gap: 8px; align-content: start; }
+.bk-paste { width: 100%; }
+.bk-colw { display: grid; gap: 4px; }
+.bk-cv { width: 100%; height: auto; border: var(--px) solid var(--ink); background: #fff; display: block; }
+.bk-themes { display: flex; gap: 6px; }
+.bk-themes button { width: 36px; height: 36px; border: 3px solid var(--ink); background: linear-gradient(135deg, var(--a) 50%, var(--b) 50%); cursor: pointer; }
+.bk-themes button.on { outline: 3px solid var(--pink); outline-offset: 2px; }
+.ft { border: 3px solid var(--pink); background: #fff0f6; padding: 10px; display: grid; gap: 6px; }
+html[data-theme="night"] .ft { background: #3a2440; }
+.ft-t { margin: 0; line-height: 1.6; }
+.ft-hi { outline: 4px solid var(--pink); outline-offset: 4px; animation: ftPulse 1s steps(2) infinite; }
+@keyframes ftPulse { 50% { outline-color: var(--yellow); } }
+.fl-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.fl-list li { display: flex; gap: 10px; align-items: center; padding: 6px 8px; border: 2px solid var(--ink); background: var(--paper); }
+.fl-list li .tm { font-family: var(--font-en); font-size: 12px; min-width: 52px; }
+.fl-list li.done { opacity: .5; } .fl-list li.now { background: var(--yellow); color: #2a1f2e; } .fl-list li.next { border-style: dashed; }
+.fl-list li .tag { margin-left: auto; }
+.pdf-bar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.pdf-snap .pdf-bar { display: none; }
+.mt-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.mt-card { border: var(--px) solid var(--ink); background: var(--paper); box-shadow: var(--shadow); padding: 10px; display: grid; gap: 4px; }
+.mt-card small { color: var(--ink-soft); } .mt-card p { margin: 0; font-size: 13px; white-space: pre-wrap; }
+.mt-row { display: flex; gap: 6px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line, #d9c8b4); }
+.pk-on { color: var(--red); font-weight: bold; }
+.pk-score { display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 14px; }
+.pk-score span { display: grid; justify-items: center; } .pk-score b { font-family: var(--font-en); font-size: 22px; }
+.pk-score i { font-family: var(--font-en); font-style: normal; color: var(--pink); font-size: 20px; }
+.tag.qb-tag { --c: #cfe9ff; }

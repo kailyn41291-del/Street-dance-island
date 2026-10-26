@@ -327,6 +327,11 @@ window.Backend = (() => {
     /* 經驗值系統（全部在伺服器端計算） */
     async rpc(fn, args) { return must(await sb.rpc(fn, args || {})); },
     async logAct(k, r) { must(await sb.rpc('log_act', { k, r: String(r) })); },
+    /* 第五批：師徒、舞團 PK */
+    async myMentorships() { return user ? must(await sb.from('mentorships').select('*').or(`mentor.eq.${user.id},apprentice.eq.${user.id}`).order('created_at', { ascending: false })) : []; },
+    async mentorProfile(uid) { return must(await sb.from('mentor_profiles').select('*').eq('user_id', uid).maybeSingle()); },
+    async crewPK(cid) { return must(await sb.from('crew_pk').select('*').or(`crew_a.eq.${cid},crew_b.eq.${cid}`).order('week', { ascending: false }).limit(4)); },
+
     /* 第四批・便民 */
     async spots() { return must(await sb.from('practice_spots').select('*').order('created_at', { ascending: false }).limit(500)); },
     async saveSpot(row) { const { id, ...d } = row; return id ? must(await sb.from('practice_spots').update(d).eq('id', id).select().single()) : must(await sb.from('practice_spots').insert(d).select().single()); },
