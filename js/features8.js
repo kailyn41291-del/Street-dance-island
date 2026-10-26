@@ -584,7 +584,7 @@ window.Daily = (() => {
   async function openLuck(auto) {
     const today = A.todayStr(), uid = Backend.uid || 'guest';
     const R = rng(uid + today);
-    const quote = QUOTES[Math.floor(R() * QUOTES.length)], move = MOVES[Math.floor(R() * MOVES.length)];
+    const quote = window.Lines ? Lines.quoteOf(uid, today) : QUOTES[Math.floor(R() * QUOTES.length)]; R(); const move = MOVES[Math.floor(R() * MOVES.length)];
     const ci = Math.floor(R() * COLORS.length), color = COLORS[ci], stars = 3 + Math.floor(R() * 3);
     const colorName = I18N.lang === 'zh' ? color[0] : (COLOR_N[I18N.lang] || COLOR_N.en)[ci];
     const styles = myStyles();

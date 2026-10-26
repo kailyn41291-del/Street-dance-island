@@ -210,7 +210,7 @@ window.Emotes = (() => {
     if (!view.isConnected || document.querySelector('.npc-walker')) return;
     const look = Avatar.random(), name = pick(NPC_NAMES), fromLeft = Math.random() < 0.5;
     const rare = !!window.RPG && Math.random() < 0.18;   // 偶爾出現神秘路人（可以聊天拿小彩蛋）
-    const el = h(`<button class="npc-walker ${fromLeft ? 'l' : 'r'} ${rare ? 'rare' : ''}" aria-label="${esc(name)}"><span class="npc-bubble">${esc(rare ? '？？？' : UI.kao(pick(t('npc_lines'))))}</span></button>`);
+    const el = h(`<button class="npc-walker ${fromLeft ? 'l' : 'r'} ${rare ? 'rare' : ''}" aria-label="${esc(name)}"><span class="npc-bubble">${esc(rare ? '？？？' : UI.kao(window.Lines ? Lines.npc() : pick(t('npc_lines'))))}</span></button>`);
     const d = Avatar.dancer(3, look);
     if (!fromLeft) d.el.style.transform = 'scaleX(-1)';
     el.prepend(d.el);
