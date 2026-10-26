@@ -96,7 +96,11 @@ window.Titles = (() => {
   const html = id => {
     const x = byId[id]; if (!x) return '';
     const txt = label(id).replace(/[&<>]/g, ''), fx = frameStyle(id);
-    if (fx) return `<span class="ttl ttl-fx" style="${fx}"><span class="ttl-in">${txt}</span></span>`;
+    if (fx) {
+      // 所有框一樣大：字太長就縮小字
+      const len = [...txt].reduce((n, ch) => n + (/[\x00-\xff]/.test(ch) ? 0.55 : 1), 0);
+      return `<span class="ttl ttl-fx" style="${fx};--fz:${Math.min(1, 5.6 / Math.max(len, 1)).toFixed(3)}"><span class="ttl-in">${txt}</span></span>`;
+    }
     const e = earned(id); return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''} ${e ? 'ttl-earned' : ''}"${e ? ` style="--tc:${color(id)}"` : ''}>${e ? '★ ' : ''}${txt}</span>`;
   };
   return { LIST, label, allowed, html, byId, earned, color, FRAME };

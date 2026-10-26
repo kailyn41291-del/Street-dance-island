@@ -2304,12 +2304,12 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .title-grid .opt-b.earned.on { outline: 3px solid var(--ink); outline-offset: 1px; filter: brightness(1.05); }
 
 /* 特別稱號的華麗框：左右裝飾固定、中間框條跟著字拉長（--fh = 框的高度） */
-.ttl.ttl-fx { --fh: 34px; display: inline-block; vertical-align: middle; margin: -4px 0 -4px 2px; padding: 0 2px; background: none; animation: none; box-sizing: content-box;
+.ttl.ttl-fx { --fh: 34px; display: inline-block; vertical-align: middle; margin: -4px 0 -4px 2px; padding: 0; background: none; animation: none; box-sizing: content-box;
   border-style: solid; border-color: transparent; border-image-repeat: stretch; border-image-width: 1; border-image-outset: 0;
   border-width: calc(var(--fh) * var(--ft)) calc(var(--fh) * var(--fr)) calc(var(--fh) * var(--fb)) calc(var(--fh) * var(--fl));
-  height: calc(var(--fh) * var(--fin)); line-height: calc(var(--fh) * var(--fin)); font-size: calc(var(--fh) * var(--fin) * .86); color: #2a1f2e; font-weight: 700; white-space: nowrap; }
+  width: calc(var(--fh) * (6.4 - var(--fl) - var(--fr))); text-align: center; overflow: hidden; height: calc(var(--fh) * var(--fin)); line-height: calc(var(--fh) * var(--fin)); font-size: calc(var(--fh) * .37 * var(--fz, 1)); color: #2a1f2e; font-weight: 700; white-space: nowrap; }
 .ttl.ttl-fx .ttl-in { display: inline-block; vertical-align: top; }
-.title-grid .opt-b .ttl.ttl-fx { --fh: 44px; margin: 0; border-style: solid; border-color: transparent; padding: 0 2px; }
+.title-grid .opt-b .ttl.ttl-fx { --fh: 44px; margin: 0; border-style: solid; border-color: transparent; padding: 0; }
 .title-grid .opt-b.fx { background: none; border-color: transparent; box-shadow: none; padding: 2px; }
 .title-grid .opt-b.fx.on { background: var(--yellow); border-color: var(--ink); }
 .stage-tags .ttl.ttl-fx { --fh: 34px; }
