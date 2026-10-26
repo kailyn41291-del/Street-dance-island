@@ -14,7 +14,7 @@ window.Dungeon = (() => {
 
   I18N.extend({
     zh: {
-      dg_closed: '此地區暫未開放 先去探索其他地區吧！', dg_preview: '🔒 管理員預覽：一般玩家目前還進不來', dg_islands: '群島', dg_year: '年份', dg_live: '📺 看直播', dg_predict: '🔮 冠軍預測', dg_back: '◀ 回世界地圖',
+      dg_soon: '即將開放', dg_closed: '此地區暫未開放 先去探索其他地區吧！', dg_preview: '🔒 管理員預覽：一般玩家目前還進不來', dg_islands: '群島', dg_year: '年份', dg_live: '📺 看直播', dg_predict: '🔮 冠軍預測', dg_back: '◀ 回世界地圖',
       dg_final: '世界決賽', dg_world_champ: 'World Champion', dg_cheers: '📣 {n}', dg_cheer: '📣 幫 {n} 應援！', dg_cheered: '已經在應援 {n} 了！', dg_card: '🪪 看名片', dg_bye: '👋 下次再聊',
       dg_cheer_ok: '應援成功！你現在是 {n} 的應援團 📣', dg_cheer_login: '登入角色後就能幫選手應援', dg_egg: '🥚 發現彩蛋！+{n} XP', dg_trophy: '🎂 8/11 是 Hip Hop 的生日！你發現了冠軍獎盃的秘密',
       dg_p_title: '🔮 {y} 年冠軍預測', dg_p_note: '猜猜今年 B-Boy 和 B-Girl 的世界冠軍是誰！結果出來後，猜中的人 +100 XP。截止前都可以改。', dg_p_until: '預測截止：{d}', dg_p_save: '送出預測', dg_p_saved: '預測已送出！等結果揭曉吧 🔮', dg_p_closed: '這一年的預測已經截止了',
@@ -25,7 +25,7 @@ window.Dungeon = (() => {
       dg_a_save: '儲存設定', dg_a_links: '選手 ↔ 玩家帳號', dg_a_links_note: '選手有註冊舞島的話，填他的玩家 ID，點島上的選手就會跳出他的名片。', dg_a_settle: '預測結算', dg_a_settle_btn: '結算（猜中的人 +100 XP）', dg_a_settled: '已結算，{n} 人猜中！', dg_a_open_now: '目前狀態：{s}', dg_a_on: '開放中', dg_a_off: '未開放'
     },
     en: {
-      dg_closed: 'This area isn’t open yet — go explore somewhere else first!', dg_preview: '🔒 Admin preview: players can’t enter yet', dg_islands: 'Islands', dg_year: 'Year', dg_live: '📺 Watch live', dg_predict: '🔮 Predict the champions', dg_back: '◀ Back to world map',
+      dg_soon: 'Coming soon', dg_closed: 'This area isn’t open yet — go explore somewhere else first!', dg_preview: '🔒 Admin preview: players can’t enter yet', dg_islands: 'Islands', dg_year: 'Year', dg_live: '📺 Watch live', dg_predict: '🔮 Predict the champions', dg_back: '◀ Back to world map',
       dg_final: 'World Final', dg_world_champ: 'World Champion', dg_cheers: '📣 {n}', dg_cheer: '📣 Cheer for {n}!', dg_cheered: 'You’re already cheering for {n}!', dg_card: '🪪 View card', dg_bye: '👋 Talk later',
       dg_cheer_ok: 'You’re now on {n}’s cheer squad 📣', dg_cheer_login: 'Create a character to cheer for dancers', dg_egg: '🥚 Easter egg found! +{n} XP', dg_trophy: '🎂 Aug 11 is Hip Hop’s birthday! You found the trophy’s secret',
       dg_p_title: '🔮 {y} champion predictions', dg_p_note: 'Who will be this year’s B-Boy and B-Girl world champions? Correct guesses get +100 XP once results are in. You can change your pick until the deadline.', dg_p_until: 'Predictions close: {d}', dg_p_save: 'Submit', dg_p_saved: 'Prediction submitted! 🔮', dg_p_closed: 'Predictions for this year are closed',
@@ -36,7 +36,7 @@ window.Dungeon = (() => {
       dg_a_save: 'Save', dg_a_links: 'Dancers ↔ player accounts', dg_a_links_note: 'If a dancer has a Dance Island account, enter their player ID — tapping them on the island opens their card.', dg_a_settle: 'Settle predictions', dg_a_settle_btn: 'Settle (+100 XP for correct picks)', dg_a_settled: 'Settled — {n} correct!', dg_a_open_now: 'Status: {s}', dg_a_on: 'Open', dg_a_off: 'Closed'
     },
     ja: {
-      dg_closed: 'このエリアはまだ開放されていません。先に他の場所を探検しよう！', dg_preview: '🔒 管理者プレビュー：プレイヤーはまだ入れません', dg_islands: '群島', dg_year: '年', dg_live: '📺 生配信', dg_predict: '🔮 優勝予想', dg_back: '◀ 世界地図へ',
+      dg_soon: '近日開放', dg_closed: 'このエリアはまだ開放されていません。先に他の場所を探検しよう！', dg_preview: '🔒 管理者プレビュー：プレイヤーはまだ入れません', dg_islands: '群島', dg_year: '年', dg_live: '📺 生配信', dg_predict: '🔮 優勝予想', dg_back: '◀ 世界地図へ',
       dg_final: '世界決勝', dg_world_champ: 'World Champion', dg_cheers: '📣 {n}', dg_cheer: '📣 {n} を応援する！', dg_cheered: 'もう {n} を応援しています！', dg_card: '🪪 名刺を見る', dg_bye: '👋 またね',
       dg_cheer_ok: '{n} の応援団になりました 📣', dg_cheer_login: 'キャラを作ると応援できます', dg_egg: '🥚 隠し要素発見！+{n} XP', dg_trophy: '🎂 8 月 11 日はヒップホップの誕生日！トロフィーの秘密を見つけた',
       dg_p_title: '🔮 {y} 年 優勝予想', dg_p_note: '今年の B-Boy と B-Girl の世界王者は誰？当たったら +100 XP。締切まで変更できます。', dg_p_until: '予想締切：{d}', dg_p_save: '予想を送信', dg_p_saved: '予想を送信しました！🔮', dg_p_closed: 'この年の予想は締め切りました',
@@ -47,7 +47,7 @@ window.Dungeon = (() => {
       dg_a_save: '保存', dg_a_links: 'ダンサー ↔ プレイヤー', dg_a_links_note: 'ダンサーがダンスアイランドに登録していれば ID を入力。島のダンサーをタップすると名刺が開きます。', dg_a_settle: '予想の集計', dg_a_settle_btn: '集計（的中 +100 XP）', dg_a_settled: '集計完了：{n} 人的中！', dg_a_open_now: '状態：{s}', dg_a_on: '開放中', dg_a_off: '未開放'
     },
     ko: {
-      dg_closed: '이 지역은 아직 열리지 않았어요. 먼저 다른 곳을 탐험해 보세요!', dg_preview: '🔒 관리자 미리보기: 플레이어는 아직 들어올 수 없어요', dg_islands: '군도', dg_year: '연도', dg_live: '📺 생중계', dg_predict: '🔮 우승 예측', dg_back: '◀ 세계 지도로',
+      dg_soon: '오픈 예정', dg_closed: '이 지역은 아직 열리지 않았어요. 먼저 다른 곳을 탐험해 보세요!', dg_preview: '🔒 관리자 미리보기: 플레이어는 아직 들어올 수 없어요', dg_islands: '군도', dg_year: '연도', dg_live: '📺 생중계', dg_predict: '🔮 우승 예측', dg_back: '◀ 세계 지도로',
       dg_final: '월드 파이널', dg_world_champ: 'World Champion', dg_cheers: '📣 {n}', dg_cheer: '📣 {n} 응원하기!', dg_cheered: '이미 {n} 님을 응원하고 있어요!', dg_card: '🪪 명함 보기', dg_bye: '👋 다음에 얘기해요',
       dg_cheer_ok: '이제 {n} 님의 응원단이에요 📣', dg_cheer_login: '캐릭터를 만들면 응원할 수 있어요', dg_egg: '🥚 이스터에그 발견! +{n} XP', dg_trophy: '🎂 8월 11일은 힙합의 생일! 트로피의 비밀을 찾았어요',
       dg_p_title: '🔮 {y}년 우승 예측', dg_p_note: '올해 B-Boy와 B-Girl 월드 챔피언은 누구일까요? 맞히면 +100 XP. 마감 전까지 바꿀 수 있어요.', dg_p_until: '예측 마감: {d}', dg_p_save: '예측 제출', dg_p_saved: '예측을 보냈어요! 🔮', dg_p_closed: '이 연도의 예측은 마감됐어요',
@@ -86,8 +86,14 @@ window.Dungeon = (() => {
   A.dungeonWorld = (world, L) => {
     Object.entries(D).forEach(([id, d]) => {
       const [x, y] = L.toWorld(d.lon, d.lat);
+      const yrs = Object.keys(d.editions).sort(), ed = d.editions[yrs[yrs.length - 1]], yr = yrs[yrs.length - 1];
       const el = h(`<div class="dg-portal ${isOpen(id) ? 'open' : 'locked'}" data-dungeon="${esc(id)}" style="left:${x}px;top:${y}px;--dc:${d.color};--dg:${d.gold}">
-        <div class="dg-p-isle"><i></i><i></i><i></i></div><div class="dg-p-flag">${esc(d.short || d.name)}</div><div class="dg-p-lock">🔒</div></div>`);
+        <div class="dg-p-sign"><b>${esc(d.name)}</b></div>
+        <div class="dg-p-stage"><canvas class="dg-p-ground"></canvas>
+          <div class="dg-p-champs">${ed && ed.final ? ['bboy', 'bgirl'].map(k => `<img src="${img(id, yr, ed.final[k].img)}" alt="" draggable="false">`).join('') : ''}</div>
+          <div class="dg-p-fog"></div></div>
+        <div class="dg-p-lock">🔒 ${esc(t('dg_soon'))}</div></div>`);
+      drawGround(el.querySelector('.dg-p-ground'), 5, true);
       world.appendChild(el);
     });
     load().then(() => world.querySelectorAll('.dg-portal').forEach(el => { const o = isOpen(el.dataset.dungeon); el.classList.toggle('open', o); el.classList.toggle('locked', !o); }));
