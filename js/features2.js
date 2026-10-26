@@ -162,7 +162,7 @@
         <div class="me-info"><div class="me-name">${Player.nameHTML(me)} ${me.title ? Titles.html(me.title) : ''}</div>
           <div class="lv-row"><span class="lv">Lv.${lv}</span><div class="xpbar"><i style="width:${pct}%"></i></div><span class="note">${st.xp} / ${nxt} XP</span></div>
           <div class="me-nums"><span>${PXI.img('event/checkin', '🛂')} ${st.checkins}</span><span>💬 ${st.comments}</span><span>🗨 ${st.messages}</span><span>📅 ${st.days}</span></div>
-          <div class="btn-row"><button class="btn sm pink ed">✎ ${t('p_edit')}</button>${Backend.enabled ? `<button class="btn sm yellow mycard">🪪 ${t('cd_edit')}</button><button class="btn sm green myfr">👥 ${t('fr_title_s')}</button>` : ''}${Backend.enabled && !me.verified ? `<button class="btn sm blue vf">${t('v_apply')}</button>` : ''}</div>
+          <div class="btn-row"><button class="btn sm pink ed">${t('p_edit')}</button>${Backend.enabled ? `<button class="btn sm yellow mycard">🪪 ${t('cd_edit')}</button><button class="btn sm green myfr">👥 ${t('fr_title_s')}</button>` : ''}${Backend.enabled && !me.verified ? `<button class="btn sm blue vf">${t('v_apply')}</button>` : ''}</div>
         </div>
         <div class="spin-box"><div class="spin-title">🎰 ${t('daily_title')}</div><div class="wheel"><span>${doneToday ? '✓' : '?'}</span></div>
           <button class="btn ${doneToday ? '' : 'yellow'} spin" ${doneToday ? 'disabled' : ''}>${doneToday ? t('daily_done') : t('daily_spin')}</button>

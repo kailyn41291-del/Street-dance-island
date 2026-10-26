@@ -388,12 +388,13 @@
     view.appendChild(ctrls);
 
     // 快速傳送
-    const menu = h(`<div class="win world-menu ${matchMedia('(max-width: 1024px), (pointer: coarse) and (max-width: 1400px)').matches ? 'collapsed' : ''}">${winHTML(`🧭 ${t('quick_travel', { n: G.countries.length })}`, 'yellow', false)}
+    // 預設收起來，不擋地圖；點標題展開
+    const menu = h(`<div class="win world-menu collapsed">${winHTML(`🧭 ${t('quick_travel', { n: G.countries.length })}`, 'yellow', false)}
       <div class="win-body"><input class="input sm search" placeholder="${esc(t('search_ph'))}" aria-label="${esc(t('search_ph'))}">
         <div class="cont-tabs"><button data-cont="" class="on">${t('popular')}</button>${CONTS.map(k => `<button data-cont="${k}">${contName(k)}</button>`).join('')}</div>
         <div class="country-grid"></div></div></div>`);
     menu.querySelector('.win-title').insertAdjacentHTML('beforeend', `<button class="btn sm toggle" aria-label="toggle">▾</button>`);
-    menu.querySelector('.toggle').onclick = () => { menu.classList.toggle('collapsed'); SFX.play('select'); };
+    menu.querySelector('.win-title').onclick = e => { if (e.target.closest('input')) return; menu.classList.toggle('collapsed'); SFX.play('select'); if (!menu.classList.contains('collapsed')) setTimeout(() => menu.querySelector('.search').focus({ preventScroll: true }), 50); };
     const gridEl = menu.querySelector('.country-grid'), search = menu.querySelector('.search');
     let cont = '';
     const POPULAR = ['TW', 'JP', 'KR', 'CN', 'HK', 'VN', 'TH', 'PH', 'SG', 'MY', 'ID', 'US', 'FR', 'GB', 'DE', 'AU'];
