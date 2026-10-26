@@ -12,22 +12,28 @@ window.Festivals = (() => {
   const logged = () => Backend.enabled && !!Backend.uid && !!Player.me;
 
   /* ---------- 節日日曆（畫面用；獎勵以伺服器的 fest_days 為準） ---------- */
-  const FIXED = { newyear: ['01-01', '01-01'], valentine: ['02-12', '02-14'], danceday: ['04-27', '05-03'], hiphop: ['08-08', '08-14'], halloween: ['10-24', '11-01'], xmas: ['12-20', '12-26'] };
-  const LUNAR = { 2027: ['2027-02-03', '2027-02-13'], 2028: ['2028-01-23', '2028-02-02'] };
-  const MOON = { 2027: ['2027-09-12', '2027-09-18'], 2028: ['2028-09-30', '2028-10-06'] };
+  // 每個節日活動大約兩週，最後一天就是節日當天；跨年接在聖誕節後面（12/26 ~ 隔年 1/1）
+  const FIXED = { valentine: ['02-01', '02-14'], danceday: ['04-16', '04-29'], hiphop: ['07-29', '08-11'], halloween: ['10-18', '10-31'], xmas: ['12-12', '12-25'] };
+  const LUNAR = { 2027: ['2027-01-24', '2027-02-06'], 2028: ['2028-01-13', '2028-01-26'] };
+  const MOON = { 2027: ['2027-09-02', '2027-09-15'], 2028: ['2028-09-20', '2028-10-03'] };
   const ORDER = ['newyear', 'lunar', 'valentine', 'danceday', 'summer100', 'hiphop', 'moon', 'halloween', 'xmas'];
   const ICON = { newyear: 'fest/newyear', lunar: 'fest/lunar', valentine: 'fest/valentine', danceday: 'xp/island', summer100: 'xp/streak', hiphop: 'fest/party', moon: 'fest/party', halloween: 'fest/halloween', xmas: 'fest/xmas' };
   const FALLBACK = { newyear: '★', lunar: '☆', valentine: '♡', danceday: '♪', summer100: '★', hiphop: '♪', moon: '☾', halloween: '☆', xmas: '★' };
   const ymd = d => A.ymd(d);
   const addDays = (s, n) => ymd(new Date(new Date(s + 'T00:00:00').getTime() + n * 864e5));
   function windowOf(fid, year) {
+    if (fid === 'newyear') return [`${year}-12-26`, `${year + 1}-01-01`];
     if (FIXED[fid]) return [`${year}-${FIXED[fid][0]}`, `${year}-${FIXED[fid][1]}`];
     if (fid === 'summer100') return [`${year}-07-01`, addDays(`${year}-07-01`, 99)];
     if (fid === 'lunar') return LUNAR[year] || null;
     if (fid === 'moon') return MOON[year] || null;
     return null;
   }
-  const active = (today = A.todayStr()) => ORDER.filter(f => { const w = windowOf(f, +today.slice(0, 4)); return w && today >= w[0] && today <= w[1]; });
+  // 今天所在的活動期間（跨年會跨到隔年，所以也看前一年）
+  const curWindow = (f, today = A.todayStr()) => { const y = +today.slice(0, 4); return [windowOf(f, y), windowOf(f, y - 1)].find(w => w && today >= w[0] && today <= w[1]) || null; };
+  const active = (today = A.todayStr()) => ORDER.filter(f => curWindow(f, today));
+  // 節日當天（活動最後一天；跨年顯示 12/31）
+  const mainDay = (f, w) => (f === 'newyear' ? w[0].slice(0, 4) + '-12-31' : f === 'summer100' ? w[0] : w[1]);
   const upcoming = (today = A.todayStr()) => {
     const y = +today.slice(0, 4), out = [];
     [y, y + 1].forEach(yy => ORDER.forEach(f => { const w = windowOf(f, yy); if (w && w[0] > today) out.push({ f, w }); }));
@@ -38,7 +44,7 @@ window.Festivals = (() => {
   I18N.extend({
     zh: {
       fs_wear: '去掛上稱號', fs_wear_tip: '拿到「{t}」了！到「編輯角色 → 稱號」就能掛在名字旁邊喔，特別稱號會發光 ★', hub_fest: '節慶活動', fs_title: '🎪 節慶活動', fs_now: '進行中的節日', fs_none_now: '現在沒有進行中的節日，看看接下來的節日吧！', fs_next: '接下來的節日', fs_days: '還有 {n} 天',
-      fs_newyear: '新年', fs_lunar: '農曆新年', fs_valentine: '情人節', fs_danceday: '世界舞蹈日', fs_summer100: '暑假百日練舞挑戰', fs_hiphop: 'Hip Hop 生日週', fs_moon: '中秋節', fs_halloween: '萬聖節', fs_xmas: '聖誕節',
+      fs_newyear: '跨年', fs_lunar: '農曆新年', fs_valentine: '情人節', fs_danceday: '世界舞蹈日', fs_summer100: '暑假百日練舞挑戰', fs_hiphop: 'Hip Hop 生日週', fs_moon: '中秋節', fs_halloween: '萬聖節', fs_xmas: '聖誕節',
       fs_q_title: '節日期間登入，並把今天的每日任務全部解完 → 限定稱號「{t}」+50 XP', fs_claim: '領取', fs_claimed: '已領取 ✔', fs_got: '🎉 拿到節日限定稱號「{t}」！+{n} XP', fs_e_quests: '先把今天的每日任務全部解完再來領喔！', fs_e_today: '今天不是活動期間',
       fs_q_rp: '新年紅包：每天有 3 個紅包藏在網站的各個頁面，找到一個 +8 XP', fs_rp_found: '今天找到 {n} / 3 個', fs_rp_got: '🧧 找到紅包了！+{n} XP', fs_rp_tip: '紅包會在你逛不同頁面時突然出現，看到就快點它！',
       fs_q_val: '情人節雙人任務：跟一位朋友組隊練舞（集合時間在情人節期間）→ +80 XP 和稱號', fs_q_moon: '中秋烤肉 Cypher：揪人組隊一起跳（集合時間在中秋期間）→ +80 XP 和稱號', fs_go_party: '去組隊', fs_e_party: '還沒找到符合的隊伍：要 2 人以上、集合時間在節日期間',
@@ -49,7 +55,7 @@ window.Festivals = (() => {
     },
     en: {
       fs_wear: 'Wear title', fs_wear_tip: 'You got “{t}”! Go to Edit character → Titles to show it next to your name ★', hub_fest: 'Festivals', fs_title: '🎪 Festival events', fs_now: 'Happening now', fs_none_now: 'No festival right now — here’s what’s coming up!', fs_next: 'Coming up', fs_days: 'in {n} days',
-      fs_newyear: 'New Year', fs_lunar: 'Lunar New Year', fs_valentine: 'Valentine’s Day', fs_danceday: 'International Dance Day', fs_summer100: '100-Day Summer Practice', fs_hiphop: 'Hip Hop Birthday Week', fs_moon: 'Mid-Autumn Festival', fs_halloween: 'Halloween', fs_xmas: 'Christmas',
+      fs_newyear: 'New Year’s Eve', fs_lunar: 'Lunar New Year', fs_valentine: 'Valentine’s Day', fs_danceday: 'International Dance Day', fs_summer100: '100-Day Summer Practice', fs_hiphop: 'Hip Hop Birthday Week', fs_moon: 'Mid-Autumn Festival', fs_halloween: 'Halloween', fs_xmas: 'Christmas',
       fs_q_title: 'Log in during the festival and clear today’s daily quests → limited title “{t}” +50 XP', fs_claim: 'Claim', fs_claimed: 'Claimed ✔', fs_got: '🎉 Festival title “{t}” unlocked! +{n} XP', fs_e_quests: 'Clear all of today’s daily quests first!', fs_e_today: 'The festival isn’t on today',
       fs_q_rp: 'Red packets: 3 are hidden around the site every day, +8 XP each', fs_rp_found: '{n} / 3 found today', fs_rp_got: '🧧 Red packet found! +{n} XP', fs_rp_tip: 'Red packets pop up as you browse different pages — tap them quickly!',
       fs_q_val: 'Valentine duo quest: practice in a party with a friend (meet-up during the festival) → +80 XP and a title', fs_q_moon: 'Mid-Autumn BBQ cypher: form a party and dance together (meet-up during the festival) → +80 XP and a title', fs_go_party: 'Find a party', fs_e_party: 'No matching party yet: 2+ members, meeting during the festival',
@@ -60,7 +66,7 @@ window.Festivals = (() => {
     },
     ja: {
       fs_wear: '称号をつける', fs_wear_tip: '「{t}」ゲット！「キャラ編集 → 称号」で名前の横につけられるよ ★', hub_fest: 'イベント', fs_title: '🎪 季節イベント', fs_now: '開催中', fs_none_now: '今は開催中のイベントはありません。次のイベントをチェック！', fs_next: 'これからのイベント', fs_days: 'あと {n} 日',
-      fs_newyear: 'お正月', fs_lunar: '旧正月', fs_valentine: 'バレンタイン', fs_danceday: '国際ダンスデー', fs_summer100: '夏休み 100 日練習チャレンジ', fs_hiphop: 'ヒップホップ誕生週間', fs_moon: '中秋節', fs_halloween: 'ハロウィン', fs_xmas: 'クリスマス',
+      fs_newyear: '年越し', fs_lunar: '旧正月', fs_valentine: 'バレンタイン', fs_danceday: '国際ダンスデー', fs_summer100: '夏休み 100 日練習チャレンジ', fs_hiphop: 'ヒップホップ誕生週間', fs_moon: '中秋節', fs_halloween: 'ハロウィン', fs_xmas: 'クリスマス',
       fs_q_title: '期間中にログインして今日のデイリークエストを全部クリア → 限定称号「{t}」+50 XP', fs_claim: '受け取る', fs_claimed: '受け取り済み ✔', fs_got: '🎉 限定称号「{t}」を獲得！+{n} XP', fs_e_quests: '先に今日のデイリークエストを全部クリアしよう！', fs_e_today: '今日は期間外です',
       fs_q_rp: 'お年玉：毎日 3 つ、サイトのどこかに隠れています。見つけたら +8 XP', fs_rp_found: '今日 {n} / 3 個', fs_rp_got: '🧧 お年玉発見！+{n} XP', fs_rp_tip: 'いろんなページを見ているとお年玉が現れます。見つけたらすぐタップ！',
       fs_q_val: 'バレンタイン二人クエスト：友達とパーティーを組んで練習（集合が期間中）→ +80 XP と称号', fs_q_moon: '中秋 BBQ サイファー：パーティーを組んで踊ろう（集合が期間中）→ +80 XP と称号', fs_go_party: 'パーティーへ', fs_e_party: '条件に合うパーティーがありません：2 人以上・集合が期間中',
@@ -71,7 +77,7 @@ window.Festivals = (() => {
     },
     ko: {
       fs_wear: '칭호 달기', fs_wear_tip: '「{t}」 획득! 「캐릭터 편집 → 칭호」에서 이름 옆에 달 수 있어요 ★', hub_fest: '시즌 이벤트', fs_title: '🎪 시즌 이벤트', fs_now: '진행 중', fs_none_now: '지금은 진행 중인 이벤트가 없어요. 다음 이벤트를 확인해 보세요!', fs_next: '다가오는 이벤트', fs_days: '{n}일 남음',
-      fs_newyear: '새해', fs_lunar: '설날', fs_valentine: '밸런타인데이', fs_danceday: '세계 무용의 날', fs_summer100: '여름 100일 연습 챌린지', fs_hiphop: '힙합 생일 주간', fs_moon: '추석', fs_halloween: '할로윈', fs_xmas: '크리스마스',
+      fs_newyear: '새해 카운트다운', fs_lunar: '설날', fs_valentine: '밸런타인데이', fs_danceday: '세계 무용의 날', fs_summer100: '여름 100일 연습 챌린지', fs_hiphop: '힙합 생일 주간', fs_moon: '추석', fs_halloween: '할로윈', fs_xmas: '크리스마스',
       fs_q_title: '기간 중 접속하고 오늘 일일 퀘스트를 모두 완료 → 한정 칭호 「{t}」 +50 XP', fs_claim: '받기', fs_claimed: '받음 ✔', fs_got: '🎉 한정 칭호 「{t}」 획득! +{n} XP', fs_e_quests: '오늘 일일 퀘스트를 먼저 모두 완료하세요!', fs_e_today: '오늘은 이벤트 기간이 아니에요',
       fs_q_rp: '세뱃돈 봉투: 매일 3개가 사이트 곳곳에 숨어 있어요. 찾으면 +8 XP', fs_rp_found: '오늘 {n} / 3개', fs_rp_got: '🧧 봉투 발견! +{n} XP', fs_rp_tip: '여러 페이지를 둘러보다 보면 봉투가 나타나요. 보이면 바로 누르세요!',
       fs_q_val: '밸런타인 2인 퀘스트: 친구와 파티를 짜서 연습 (집합이 기간 중) → +80 XP와 칭호', fs_q_moon: '추석 바비큐 사이퍼: 파티를 짜서 함께 춤춰요 (집합이 기간 중) → +80 XP와 칭호', fs_go_party: '파티 찾기', fs_e_party: '조건에 맞는 파티가 없어요: 2명 이상, 집합이 기간 중',
@@ -84,7 +90,7 @@ window.Festivals = (() => {
   const fname = f => t('fs_' + f);
   const titleName = f => (window.Titles && Titles.label ? Titles.label('r_f_' + f) : fname(f));
   const err = x => { const m = String(x && x.message || x); if (/quests first/.test(m)) return t('fs_e_quests'); if (/not today/.test(m)) return t('fs_e_today'); if (/no party/.test(m)) return t('fs_e_party'); if (/need character/.test(m)) return t('fs_login'); if (/duplicate|unique/.test(m)) return t('fs_dd_done'); return m; };
-  const claimedKey = f => `danceIsland.fest.${Backend.uid}.${f}.${A.todayStr().slice(0, 4)}`;
+  const claimedKey = f => `danceIsland.fest.${Backend.uid}.${f}.${((curWindow(f) || [])[1] || A.todayStr()).slice(0, 4)}`;
   const isClaimed = f => { try { return !!localStorage.getItem(claimedKey(f)); } catch (e) { return false; } };
   const setClaimed = f => { try { localStorage.setItem(claimedKey(f), '1'); } catch (e) {} };
 
@@ -116,7 +122,7 @@ window.Festivals = (() => {
     const inner = view.querySelector('.city-inner'); stage.appendChild(view);
     const today = A.todayStr(), now = active(today), next = upcoming(today);
     const card = f => {
-      const w = windowOf(f, +today.slice(0, 4));
+      const w = curWindow(f, today);
       let quests = '';
       if (f !== 'summer100') quests += quest('title', t('fs_q_title', { t: titleName(f) }), isClaimed(f) ? `<span class="tag">${t('fs_claimed')}</span>${wearBtn0()}` : `<button class="btn sm pink fs-claim" data-f="${f}">${t('fs_claim')}</button>`);
       if (f === 'lunar') quests += quest('rp', t('fs_q_rp'), `<span class="tag">${t('fs_rp_found', { n: rpFound() })}</span>`, t('fs_rp_tip'));
@@ -129,7 +135,7 @@ window.Festivals = (() => {
     const quest = (k, text, act, tip) => `<div class="fs-q"><p>${esc(text)}</p>${tip ? `<p class="note">${esc(tip)}</p>` : ''}<div class="btn-row">${act}</div></div>`;
     inner.innerHTML = `<div class="win">${UI.winHTML(t('fs_title'), 'pink', false)}<div class="win-body"><h4>${t('fs_now')}</h4>${now.length ? '' : `<p class="note">${t('fs_none_now')}</p>`}</div></div>
       ${now.map(card).join('')}
-      <div class="win">${UI.winHTML(t('fs_next'), 'teal', false)}<div class="win-body"><ul class="fs-next">${next.map(x => `<li>${icon(x.f)} <b>${esc(fname(x.f))}</b><span>${esc(x.w[0].replace(/-/g, '/'))}</span><small>${t('fs_days', { n: Math.ceil((new Date(x.w[0] + 'T00:00:00') - new Date(today + 'T00:00:00')) / 864e5) })}</small></li>`).join('')}</ul></div></div>`;
+      <div class="win">${UI.winHTML(t('fs_next'), 'teal', false)}<div class="win-body"><ul class="fs-next">${next.map(x => `<li>${icon(x.f)} <b>${esc(fname(x.f))}</b><span>${esc(mainDay(x.f, x.w).replace(/-/g, '/'))} <small>(${esc(x.w[0].slice(5).replace('-', '/'))} ~ ${esc(x.w[1].slice(5).replace('-', '/'))})</small></span><small>${t('fs_days', { n: Math.ceil((new Date(x.w[0] + 'T00:00:00') - new Date(today + 'T00:00:00')) / 864e5) })}</small></li>`).join('')}</ul></div></div>`;
     const on = (s, fn) => inner.querySelectorAll(s).forEach(b => (b.onclick = () => fn(b)));
     const bindWear = () => on('.fs-wear', () => Player.openMenu('title'));
     bindWear();
@@ -199,7 +205,7 @@ window.Festivals = (() => {
   const bannerHTML = () => { const now = active(); return now.length ? `<a class="fs-banner" href="#/fest">${icon(now[0])} ${esc(t('fs_banner', { f: fname(now[0]) }))}</a>` : ''; };
   const introOnce = () => {
     const now = active(); if (!now.length) return;
-    const k = 'danceIsland.festIntro.' + now[0] + '.' + A.todayStr().slice(0, 4);
+    const k = 'danceIsland.festIntro.' + now[0] + '.' + curWindow(now[0])[1];
     try { if (localStorage.getItem(k)) return; localStorage.setItem(k, '1'); } catch (e) { return; }
     setTimeout(() => npc.say([{ who: 'kailyn', mood: 'celebrate', text: t('fs_k1', { f: fname(now[0]) }) }, { who: 'choco', mood: 'thumbs', text: t('fs_k2') }]), 6000);
   };
@@ -208,5 +214,5 @@ window.Festivals = (() => {
   /* ---------- 裝飾：十二月島上積雪 ---------- */
   const islandPal = () => (A.todayStr().slice(5, 7) === '12' ? { grass: '#eef3fb', grass2: '#dde7f5', grassHi: '#ffffff' } : null);
 
-  return { active, upcoming, bannerHTML, islandPal, windowOf };
+  return { active, upcoming, bannerHTML, islandPal, windowOf, mainDay };
 })();

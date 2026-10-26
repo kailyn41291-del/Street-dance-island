@@ -12,19 +12,19 @@
 
   I18N.extend({
     zh: { hub_titles: '稱號圖鑑', dx_title: '🎖 稱號圖鑑', dx_total: '已收集 {a} / {b} 個稱號', dx_all: '全部', dx_got: '已獲得', dx_not: '還沒拿到', dx_go: '導覽', dx_wear: '掛上', dx_done: '已獲得 ✔',
-      dx_guide: '「{c}」就能拿到喔！我帶你過去～', dx_stay: '「{c}」就能拿到喔！加油 (๑•̀ㅂ•́)و✧', dx_fest_not: '現在還沒到專屬節日喔！到時候再來看看吧！', dx_fest_when: '{f}是 {d}，記得回來喔～', dx_fest_go: '{f}進行中！我帶你去節慶活動頁～',
+      dx_guide: '「{c}」就能拿到喔！我帶你過去～', dx_stay: '「{c}」就能拿到喔！加油 (๑•̀ㅂ•́)و✧', dx_fest_not: '現在還沒到專屬節日喔！到時候再來看看吧！', dx_fest_when: '{f}是 {d}，節日任務 {a} ~ {b} 開放，記得回來喔～', dx_fest_go: '{f}進行中！我帶你去節慶活動頁～',
       dx_login: '登入角色後才看得到自己的進度', dx_next: '下一級', dx_max: '最高級了！',
       dx_c_id: '身分', dx_c_daily: '每天都來', dx_c_battle: '對戰', dx_c_event: '活動', dx_c_social: '交朋友', dx_c_create: '分享 / 收集', dx_c_fest: '節日限定', dx_c_honor: '榮譽', dx_c_role: 'DJ / MC / 評審 / 主辦' },
     en: { hub_titles: 'Title book', dx_title: '🎖 Title book', dx_total: '{a} / {b} titles collected', dx_all: 'All', dx_got: 'Earned', dx_not: 'Not yet', dx_go: 'Guide', dx_wear: 'Wear', dx_done: 'Earned ✔',
-      dx_guide: '“{c}” and it’s yours! Let me take you there~', dx_stay: '“{c}” and it’s yours! You got this (๑•̀ㅂ•́)و✧', dx_fest_not: 'That festival isn’t here yet! Come back when it starts!', dx_fest_when: '{f} is on {d} — see you then~', dx_fest_go: '{f} is on now! Let me take you to the festival page~',
+      dx_guide: '“{c}” and it’s yours! Let me take you there~', dx_stay: '“{c}” and it’s yours! You got this (๑•̀ㅂ•́)و✧', dx_fest_not: 'That festival isn’t here yet! Come back when it starts!', dx_fest_when: '{f} is on {d} — festival quests open {a} ~ {b}, see you then~', dx_fest_go: '{f} is on now! Let me take you to the festival page~',
       dx_login: 'Create a character to see your progress', dx_next: 'Next tier', dx_max: 'Max tier!',
       dx_c_id: 'Identity', dx_c_daily: 'Every day', dx_c_battle: 'Battles', dx_c_event: 'Events', dx_c_social: 'Friends', dx_c_create: 'Share / collect', dx_c_fest: 'Festival only', dx_c_honor: 'Honors', dx_c_role: 'DJ / MC / Judge / Organizer' },
     ja: { hub_titles: '称号図鑑', dx_title: '🎖 称号図鑑', dx_total: '{a} / {b} 個の称号を収集', dx_all: 'すべて', dx_got: '獲得済み', dx_not: '未獲得', dx_go: 'ガイド', dx_wear: 'つける', dx_done: '獲得済み ✔',
-      dx_guide: '「{c}」でもらえるよ！案内するね～', dx_stay: '「{c}」でもらえるよ！がんばって (๑•̀ㅂ•́)و✧', dx_fest_not: 'まだそのイベントの時期じゃないよ！始まったらまた見に来てね！', dx_fest_when: '{f}は {d} だよ、また来てね～', dx_fest_go: '{f}開催中！イベントページに案内するね～',
+      dx_guide: '「{c}」でもらえるよ！案内するね～', dx_stay: '「{c}」でもらえるよ！がんばって (๑•̀ㅂ•́)و✧', dx_fest_not: 'まだそのイベントの時期じゃないよ！始まったらまた見に来てね！', dx_fest_when: '{f}は {d}！イベントクエストは {a} ~ {b}、また来てね～', dx_fest_go: '{f}開催中！イベントページに案内するね～',
       dx_login: 'キャラを作ると進捗が見られます', dx_next: '次のランク', dx_max: '最高ランク！',
       dx_c_id: '身分', dx_c_daily: '毎日', dx_c_battle: 'バトル', dx_c_event: 'イベント', dx_c_social: 'フレンド', dx_c_create: 'シェア / 収集', dx_c_fest: 'イベント限定', dx_c_honor: '栄誉', dx_c_role: 'DJ / MC / ジャッジ / 主催' },
     ko: { hub_titles: '칭호 도감', dx_title: '🎖 칭호 도감', dx_total: '칭호 {a} / {b}개 수집', dx_all: '전체', dx_got: '획득', dx_not: '미획득', dx_go: '안내', dx_wear: '달기', dx_done: '획득 ✔',
-      dx_guide: '「{c}」하면 받을 수 있어요! 제가 데려다줄게요~', dx_stay: '「{c}」하면 받을 수 있어요! 화이팅 (๑•̀ㅂ•́)و✧', dx_fest_not: '아직 그 기념일이 아니에요! 그때 다시 와 주세요!', dx_fest_when: '{f}는 {d}예요, 그때 꼭 와요~', dx_fest_go: '{f} 진행 중! 이벤트 페이지로 데려다줄게요~',
+      dx_guide: '「{c}」하면 받을 수 있어요! 제가 데려다줄게요~', dx_stay: '「{c}」하면 받을 수 있어요! 화이팅 (๑•̀ㅂ•́)و✧', dx_fest_not: '아직 그 기념일이 아니에요! 그때 다시 와 주세요!', dx_fest_when: '{f}는 {d}예요! 이벤트 퀘스트는 {a} ~ {b}, 그때 꼭 와요~', dx_fest_go: '{f} 진행 중! 이벤트 페이지로 데려다줄게요~',
       dx_login: '캐릭터를 만들면 진행도를 볼 수 있어요', dx_next: '다음 단계', dx_max: '최고 단계!',
       dx_c_id: '신분', dx_c_daily: '매일', dx_c_battle: '배틀', dx_c_event: '이벤트', dx_c_social: '친구', dx_c_create: '공유 / 수집', dx_c_fest: '기념일 한정', dx_c_honor: '명예', dx_c_role: 'DJ / MC / 저지 / 주최' }
   });
@@ -121,7 +121,7 @@
       const fn = t('fs_' + it.fest);
       if (now.includes(it.fest)) return say(t('dx_fest_go', { f: fn }), 'celebrate', () => GO.fest());
       const up = window.Festivals && Festivals.upcoming().find(x => x.f === it.fest);
-      return npc.say([{ who: 'kailyn', mood: 'sad', text: t('dx_fest_not') }].concat(up ? [{ who: 'choco', mood: 'thumbs', text: t('dx_fest_when', { f: fn, d: up.w[0].replace(/-/g, '/') }) }] : []));
+      return npc.say([{ who: 'kailyn', mood: 'sad', text: t('dx_fest_not') }].concat(up ? [{ who: 'choco', mood: 'thumbs', text: t('dx_fest_when', { f: fn, d: Festivals.mainDay(it.fest, up.w).replace(/-/g, '/'), a: up.w[0].slice(5).replace('-', '/'), b: up.w[1].slice(5).replace('-', '/') }) }] : []));
     }
     if (it.go === 'honor') return say(t('dx_stay', { c: tx(it.c) }), 'cheer');
     if (!logged()) return Player.prompt();
