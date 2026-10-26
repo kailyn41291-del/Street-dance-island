@@ -169,7 +169,7 @@ window.Daily = (() => {
   const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('');
   const placeName = s => [nm(A.byCode[s.country]), s.city ? nm(A.cityOf(s.country, s.city)) : ''].filter(Boolean).join('・');
   const coverHTML = (s, cls = '') => (safeUrl(s.cover) ? `<img class="sd-cover ${cls}" src="${esc(s.cover)}" alt="" loading="lazy">` : `<span class="sd-cover ${cls} sd-cover-none">🏫</span>`);
-  const countryOpts = (sel, any) => (any ? `<option value="">${t('sd_all_cc')}</option>` : '') + GEO.countries.slice().sort((a, b) => (b.home - a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
+  const countryOpts = (sel, any) => (any ? `<option value="">${t('sd_all_cc')}</option>` : '') + GEO.countries.slice().sort((a, b) => (!!b.home - !!a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
   const cityOpts = (cc, sel, any) => (any ? `<option value="">${t('sd_all_city')}</option>` : '') + ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
   const locate = () => new Promise((res, rej) => {
     if (!navigator.geolocation) return rej(new Error('geo'));

@@ -88,7 +88,7 @@ window.Friends = (() => {
       best ? res(best) : rej(new Error('geo'));
     }, rej, { timeout: 10000, maximumAge: 6e5 });
   });
-  const countryOpts = sel => GEO.countries.slice().sort((a, b) => (b.home - a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
+  const countryOpts = sel => GEO.countries.slice().sort((a, b) => (!!b.home - !!a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
   const cityOpts = (cc, sel) => `<option value="">${t('fd_any_city')}</option>` + ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
   function cardHTML(p, opt = {}) {
     const c = { ...defCard(), ...(p.card || {}) };

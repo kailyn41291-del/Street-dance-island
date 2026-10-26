@@ -94,7 +94,7 @@ window.Party = (() => {
   const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('');
   const myRegion = () => { const p = Backend.profile || {}; const c = p.card || {}; return { cc: c.rc || p.nat || 'TW', city: c.rcity || '' }; };
   const isNear = x => { const r = myRegion(); return x.country === r.cc && (!r.city || !x.city || x.city === r.city); };
-  const countryOpts = sel => GEO.countries.slice().sort((a, b) => (b.home - a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
+  const countryOpts = sel => GEO.countries.slice().sort((a, b) => (!!b.home - !!a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
   const cityOpts = (cc, sel) => ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
 
   let parties = [], members = {}, mine = new Set(), loadedAt = 0;
