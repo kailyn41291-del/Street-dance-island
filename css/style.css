@@ -2372,3 +2372,33 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .stage-tags .ttl.ttl-img { --fh: 30px; --iw: 5.4; --fzb: 12px; }
 .me-name .ttl.ttl-img { --fh: 34px; --iw: 5.6; --fzb: 13px; }
 .pc-title .ttl.ttl-img { --fh: 30px; --iw: 6; --fzb: 12px; margin: 0; }
+
+/* =========================================================
+ * 介面整理（第 1 步：首頁）
+ * ========================================================= */
+/* 上方列只留常用的；論壇、人氣投票、小遊戲、教學、音效都在「功能選單」裡 */
+#hud .hud-forum, #hud .hud-battle, #hud .hud-game, #hud .hud-help, #hud .hud-sound { display: none !important; }
+#hud .hud-lang .label { display: none; }
+/* 快速傳送：收起來時只剩一顆按鈕大小，點標題展開 */
+.world-menu .win-title { cursor: pointer; }
+/* 地圖右側按鈕：手機用兩指縮放，不需要 ＋／－；電腦滑過去顯示按鈕名稱 */
+@media (max-width: 760px) { .map-ctrls [data-z="in"], .map-ctrls [data-z="out"] { display: none; } }
+@media (hover: hover) and (pointer: fine) {
+  .map-ctrls .btn { position: relative; }
+  .map-ctrls .btn[aria-label]:hover::after { content: attr(aria-label); position: absolute; right: calc(100% + 8px); top: 50%; transform: translateY(-50%); padding: 3px 8px; background: var(--ink); color: var(--paper); font-size: 12px; white-space: nowrap; border-radius: 4px; pointer-events: none; }
+}
+
+/* ---------- 按鈕高度統一：同一個畫面裡的按鈕看起來一樣高（寬度可以不同） ----------
+ * 一般、小（.sm）、圖示（.icon）按鈕都是同一個高度；小按鈕只是字比較小
+ * 活動卡片上的按鈕維持原樣 */
+:root { --bh: 38px; }
+@media (pointer: coarse), (max-width: 760px) { :root { --bh: 40px; } }
+.btn:not(.card .btn):not(#boot *) { min-height: var(--bh); padding-top: 0; padding-bottom: 0; box-sizing: border-box; line-height: 1.15; }
+.btn.sm:not(.card .btn):not(#boot *) { padding-left: 10px; padding-right: 10px; }
+.btn.icon:not(.card .btn):not(#boot *) { min-width: var(--bh); padding-left: 6px; padding-right: 6px; }
+/* 首頁下方的「快速傳送」和「每日任務」一樣高 */
+.world-menu.collapsed .win-title, .qbox:not(.open) .qb-head { min-height: var(--bh); box-sizing: border-box; font-size: 14px; }
+.world-menu .win-title .toggle { min-height: 26px !important; min-width: 26px !important; padding: 0 !important; }
+/* 跟按鈕排在同一列的標籤（例：Like 數、已領取 ✔、已獲得）也一樣高 */
+.btn-row > .tag, .pc-social > .tag, .dx-act > .tag, .ac-acts > .tag, .fs-q .btn-row > .tag { min-height: var(--bh); display: inline-flex; align-items: center; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
+.pc-social { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
