@@ -332,9 +332,14 @@ window.Hub = (() => {
   /* 電腦版上方按鈕列：放不下時，依重要程度一組一組藏起按鈕文字（只留圖示） */
   const desktopHud = () => !matchMedia('(max-width: 1024px), (pointer: coarse) and (max-width: 1400px)').matches;
   let fitting = false;
+  // 記下上方列的底部位置，跑馬燈、每日任務、功能選單手機就排在它下面（不會被壓到）
+  const markHudBottom = () => { const hud = document.getElementById('hud'); if (!hud || hud.classList.contains('hidden')) return;
+    let b = 0; hud.querySelectorAll('.logo, .crumbs, .hud-btns > *').forEach(e => { if (e.offsetParent) b = Math.max(b, e.getBoundingClientRect().bottom); });
+    if (b) document.documentElement.style.setProperty('--hud-b', Math.round(b + 4) + 'px'); };
   function fitHud() {
     const hud = document.getElementById('hud'), btns = hud && hud.querySelector('.hud-btns');
     if (!btns || fitting) return;
+    setTimeout(markHudBottom, 0);
     if (!desktopHud()) { delete hud.dataset.fit; return; }
     fitting = true;
     const crumbs = hud.querySelector('.crumbs');

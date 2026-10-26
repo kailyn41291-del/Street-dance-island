@@ -2404,3 +2404,8 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .pc-social { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
 /* 一列按鈕不要被同一列最高的東西撐高 */
 .btn-row { align-items: center; }
+/* 電腦版：跑馬燈、每日任務、功能選單手機跟著上方列的底部往下排 */
+@media (min-width: 1025px) {
+  .cd-ticker { top: calc(var(--hud-b, 56px) + 8px); }
+  .qbox, .hub-phone { top: calc(var(--hud-b, 56px) + 44px); }
+}
