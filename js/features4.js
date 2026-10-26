@@ -29,10 +29,12 @@ window.Friends = (() => {
     try { (await Backend.playersByIds(need)).forEach(p => (people[p.user_id] = p)); } catch (x) {}
   }
   async function reload() {
-    try { rels = await Backend.friendRequests(); } catch (x) { rels = []; }
-    try { blocks = new Set(await Backend.listBlocks()); } catch (x) {}
+    // 三個請求同時發，不要排隊等
+    const [r1, r2, r3] = await Promise.all([Backend.friendRequests().catch(() => null), Backend.listBlocks().catch(() => null), Backend.unreadDMs().catch(() => null)]);
+    rels = r1 || [];
+    if (r2) blocks = new Set(r2);
     await loadPeople(rels.map(other));
-    try { unread = {}; (await Backend.unreadDMs()).forEach(r => (unread[r.from_user] = (unread[r.from_user] || 0) + 1)); } catch (x) {}
+    if (r3) { unread = {}; r3.forEach(r => (unread[r.from_user] = (unread[r.from_user] || 0) + 1)); }
     badge();
   }
   const errMsg = x => {
@@ -239,7 +241,7 @@ window.Friends = (() => {
   async function openPanel(tab = 'friends') {
     if (!on()) return Player.prompt();
     friendIds().forEach(id => delete people[id]);   // 重新抓上線時間
-    await reload();
+    const ready = reload();                         // 先打開視窗，資料回來再畫（不要讓人乾等）
     const body = h(`<div class="fr-panel">
       <div class="tabs"><button class="btn sm" data-t="friends">${t('fr_tab_friends')}</button><button class="btn sm" data-t="req">${t('fr_tab_req')}${incoming().length ? ` (${incoming().length})` : ''}</button><button class="btn sm" data-t="block">${t('fr_tab_block')}</button><button class="btn sm teal" data-t="find">🔍 ${t('fd_tab')}</button>
         <span class="grow"></span><button class="btn sm pink mycard">🪪 ${t('cd_edit')}</button></div>
@@ -314,6 +316,10 @@ window.Friends = (() => {
       else if (e.target.closest('.ub')) { try { await Backend.unblock(e.target.closest('.ub').dataset.u); await reload(); } catch (x) { toast(errMsg(x), '✕'); } draw(); }
       else { m.close(); setTimeout(() => openCard(li.dataset.h, { request: tab === 'req' }), 220); }
     };
+    ul.innerHTML = `<li class="note">${t('fr_loading')}</li>`;
+    await ready;
+    const rq = body.querySelector('[data-t="req"]'); if (rq) rq.textContent = t('fr_tab_req') + (incoming().length ? ` (${incoming().length})` : '');
+    if (m.el && !m.el.isConnected) return;
     draw();
   }
   const headIcon = look => {
