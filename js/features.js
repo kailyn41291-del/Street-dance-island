@@ -463,7 +463,7 @@ window.App = {
     const d = localNow(), hr = d.hour;
     const phase = hr >= 6 && hr < 16 ? 'day' : hr >= 16 && hr < 19 ? 'dusk' : 'night';
     view.dataset.phase = phase;
-    view.appendChild(h(`<div class="daynight ${phase}"></div>`));
+    view.appendChild(h(`<div class="daynight ${phase === 'day' ? '' : phase}"></div>`));   // 不能用 .day（會套到月曆格子的樣式）
     if (phase === 'night') { const l = Themes.fxLayer('spark'); if (l) { l.classList.add('fixed'); view.appendChild(l); } }
     (A.worldHooks || []).forEach(f => f(view));
     // 節慶
