@@ -156,13 +156,22 @@ window.App = {
 
     // 資訊（精簡）
     const first = v => String(v || '').split(/\s*(?:[\/／|｜；;\n]|、)\s*/)[0].trim();
+    // 費用：有好幾種票價時顯示「最低價 起（幾種票價）」，不要只取第一段（例如只顯示身障票）
+    const feeSummary = v => {
+      const txt = String(v || ''), seen = new Map();
+      const re = /(NT\$|US\$|HK\$|\$|¥|￥|₩|€|£)\s?(\d[\d,]*)|(\d[\d,]*)\s?(元|円|圓|원)/g; let m;
+      while ((m = re.exec(txt))) { const n = +(m[2] || m[3]).replace(/,/g, ''); if (n > 0 && !seen.has(n)) seen.set(n, [m[1] || '', m[4] || '', m[2] || m[3]]); }
+      if (seen.size < 2) return first(txt);
+      const min = Math.min(...seen.keys()), [pre, post, raw] = seen.get(min);
+      return t('share_fee_from', { p: pre + raw + post, n: seen.size });
+    };
     const venue = first(e.venue).replace(/\s*[（(].*?[)）]\s*/g, ' ').trim();
     const ed = e.endDate && e.endDate !== e.date ? ' – ' + e.endDate.slice(5).replace('-', '/') : '';
     const info = [
       ['🕒', [ed ? e.date.slice(5).replace('-', '/') + ed : '', [e.startTime, e.endTime].filter(Boolean).join(' – ')].filter(Boolean).join('　')],
       ['📍', [nm(A.cityOf(e.country, e.city)), venue].filter(Boolean).join('・')],
       ['🏠', String(e.organizer || '').replace(/\s*[\/／]\s*/g, ' / ')],
-      ['💰', first(e.fee)],
+      ['💰', feeSummary(e.fee)],
       ['📝', e.regEnd ? t('share_reg_end', { d: e.regEnd.replace(/-/g, '/') }) : '']
     ].filter(r => r[1]);
     // 角色（右下角）
