@@ -2362,3 +2362,13 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .dx-stars i { font-style: normal; color: #c9bfb5; }
 .dx-stars i.on { color: #eac45a; text-shadow: 0 1px 0 #2a1f2e; }
 @media (max-width: 560px) { .dx-act { width: 100%; justify-content: flex-end; } }
+
+/* 新框（31～50）：原本比例，字放在框中間的空白 */
+.ttl.ttl-img { --fh: 24px; --iw: 4.8; --fzb: 10.5px; --W: calc(var(--fh) * var(--iw)); position: relative; display: inline-block; vertical-align: middle; width: var(--W); height: calc(var(--W) * var(--ar)); margin: -4px 0 -4px 3px; padding: 0; border: 0; background: none center / 100% 100% no-repeat; animation: none; white-space: nowrap; }
+.ttl.ttl-img .ttl-in { position: absolute; left: calc(var(--x0) * 100%); top: calc(var(--y0) * 100%); width: calc(var(--pw) * 100%); height: calc(var(--ph) * 100%); display: flex; align-items: center; justify-content: center; color: #2a1f2e; font-weight: 700; transform: none;
+  font-size: max(7.5px, min(var(--fzb), calc(var(--W) * var(--ar) * var(--ph) * .62), calc(var(--W) * var(--pw) / var(--len) * .9))); }
+.title-grid .opt-b .ttl.ttl-img { --fh: 44px; --iw: 6.4; --fzb: 15px; margin: 0; }
+.dx-row .dx-fr .ttl.ttl-img, .tg-row .tg-fr .ttl.ttl-img { --fh: 34px; --iw: 6.4; --fzb: 13px; margin: 0; }
+.stage-tags .ttl.ttl-img { --fh: 30px; --iw: 5.4; --fzb: 12px; }
+.me-name .ttl.ttl-img { --fh: 34px; --iw: 5.6; --fzb: 13px; }
+.pc-title .ttl.ttl-img { --fh: 30px; --iw: 6; --fzb: 12px; margin: 0; }
