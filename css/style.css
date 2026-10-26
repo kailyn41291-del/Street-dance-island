@@ -2249,3 +2249,20 @@ html[data-theme="night"] .ft { background: #3a2440; }
   .dg-sea .dg-ground { margin-top: -22%; }
   .dg-sea .dg-trophy { bottom: auto; top: 30%; }
 }
+
+/* ===== 群島排版（最後版本）：決賽島一整排、區域島一排 3 座；每座由上往下「名稱 → 選手 → 島」 ===== */
+.dg-sea { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-areas: "F F F" "r1 r2 r3" "r4 r5 r6" !important; gap: 34px 18px !important; }
+.dg-sea .dg-isle { max-width: 420px !important; }
+.dg-sea .dg-isle.final { max-width: 720px !important; }
+.dg-sea .dg-stand { position: relative !important; top: 0 !important; display: flex; justify-content: space-between; align-items: flex-start; padding: 0 5%; }
+.dg-sea .dg-ath { width: 44% !important; }
+.dg-sea .final .dg-ath { width: 36% !important; }
+.dg-sea .dg-ground { margin-top: -26%; }
+.dg-sea .dg-trophy { position: static !important; transform: none !important; align-self: center; font-size: 40px; }
+.dg-nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+@media (max-width: 1100px) { .dg-sea { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-template-areas: "F F" "r1 r2" "r3 r4" "r5 r6" !important; } }
+@media (max-width: 700px) {
+  .dg-sea { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: "F" "r1" "r2" "r3" "r4" "r5" "r6" !important; }
+  .dg-sea .final .dg-ath { width: 42% !important; }
+  .dg-sea .dg-trophy { font-size: 28px; }
+}
