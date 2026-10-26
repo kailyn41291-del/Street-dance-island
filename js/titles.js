@@ -82,8 +82,22 @@ window.Titles = (() => {
     return (x.only === 'admin' && role) || (x.only === 'owner' && role === 'owner') || (x.only === 'verified' && verified) || (x.only === 'unlock' && unlocks && unlocks.has(x.id));
   });
   // 後來拿到的稱號（成就、節慶、等級、認證…）跟一般稱號分開，用顏色和 ★ 標出來
+  // 特別稱號的華麗框（assets/title_frames/NN.webp）：[寬, 高, 中間那一條的位置, 上邊框, 下邊框]
+  // 左右兩端的裝飾固定，中間的框條會跟著稱號長短拉長
+  const FR = {"01":[447,120,223,35,28],"02":[409,120,204,38,27],"03":[415,120,208,34,32],"04":[413,120,207,38,31],"05":[425,120,212,36,33],"06":[404,120,202,36,33],"07":[425,120,212,27,39],"08":[407,120,204,34,39],"09":[433,120,216,33,38],"10":[436,120,218,34,29],"11":[495,120,248,43,17],"12":[493,120,247,43,15],"13":[471,120,236,40,25],"14":[464,120,232,28,34],"15":[455,120,228,35,23],"16":[458,120,229,30,30],"17":[459,120,229,27,32],"18":[474,120,237,33,26],"19":[460,120,230,32,27],"20":[459,120,229,36,30],"21":[445,120,222,45,24],"22":[450,120,225,47,23],"23":[469,120,234,42,19],"24":[461,120,231,35,20],"25":[439,120,220,33,30],"26":[441,120,221,39,24],"27":[456,120,228,30,30],"28":[475,120,237,32,31],"29":[477,120,238,36,33],"30":[475,120,237,30,32]};
+  const FRAME = {"owner":"22","admin":"03","verified":"26","r_lucky":"09","r_spinner":"16","r_goldfeet":"17","r_cypherking":"21","r_vinyl":"24","r_rainbow":"27","r_moonwalk":"01","r_sushi":"07","r_week7":"05","r_npcslayer":"30","r_npcboss":"29","r_moveking":"23","r_master":"13","r_graduate":"10","r_reliable":"02","r_duo":"11","r_f_newyear":"18","r_f_lunar":"04","r_f_valentine":"06","r_f_danceday":"28","r_f_summer100":"15","r_f_hiphop":"25","r_f_moon":"12","r_f_halloween":"08","r_f_xmas":"19","r_islander":"20","r_comp1":"14","r_comp5":"21","r_comp10":"23","r_challenger":"30","lv5":"20","lv10":"17","lv20":"01"};
+  const frameStyle = id => {
+    const n = FRAME[id], m = n && FR[n]; if (!m) return '';
+    const [w, hh, c, tp, bt] = m, r = v => +(v / hh).toFixed(4);
+    return `border-image-source:url(assets/title_frames/${n}.webp?v=1);border-image-slice:${tp} ${w - c - 2} ${bt} ${c} fill;--ft:${r(tp)};--fr:${r(w - c - 2)};--fb:${r(bt)};--fl:${r(c)};--fin:${r(hh - tp - bt)}`;
+  };
   const earned = id => { const x = byId[id]; return !!x && !!(x.only === 'unlock' || x.only === 'verified' || x.minLv); };
   const color = id => (byId[id] && byId[id].color) || '#ffe08a';
-  const html = id => { const x = byId[id]; if (!x) return ''; const e = earned(id); return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''} ${e ? 'ttl-earned' : ''}"${e ? ` style="--tc:${color(id)}"` : ''}>${e ? '★ ' : ''}${label(id).replace(/[&<>]/g, '')}</span>`; };
-  return { LIST, label, allowed, html, byId, earned, color };
+  const html = id => {
+    const x = byId[id]; if (!x) return '';
+    const txt = label(id).replace(/[&<>]/g, ''), fx = frameStyle(id);
+    if (fx) return `<span class="ttl ttl-fx" style="${fx}"><span class="ttl-in">${txt}</span></span>`;
+    const e = earned(id); return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''} ${e ? 'ttl-earned' : ''}"${e ? ` style="--tc:${color(id)}"` : ''}>${e ? '★ ' : ''}${txt}</span>`;
+  };
+  return { LIST, label, allowed, html, byId, earned, color, FRAME };
 })();

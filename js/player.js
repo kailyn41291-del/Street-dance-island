@@ -77,7 +77,7 @@ window.Player = (() => {
           <button type="button" class="btn sm pink job-apply">${t('job_apply')}</button>`,
         title: (() => {
           const all = Titles.allowed(role, !!(me && me.verified), me && me.unlocks, (me && me.level) || 1);
-          const btn = x => `<button type="button" class="opt-b ${Titles.earned(x.id) ? 'earned' : ''}" data-title="${x.id}"${Titles.earned(x.id) ? ` style="--tc:${Titles.color(x.id)}"` : ''}>${Titles.html(x.id)}</button>`;
+          const btn = x => `<button type="button" class="opt-b ${Titles.FRAME[x.id] ? 'fx' : Titles.earned(x.id) ? 'earned' : ''}" data-title="${x.id}"${Titles.earned(x.id) ? ` style="--tc:${Titles.color(x.id)}"` : ''}>${Titles.html(x.id)}</button>`;
           const got = all.filter(x => Titles.earned(x.id) || x.only === 'owner' || x.only === 'admin'), basic = all.filter(x => !got.includes(x));
           return `<p class="note">${t('title_pick')}</p>
             ${me ? `<h4 class="title-h">${t('title_earned')} <small>${got.length}</small></h4>
