@@ -2169,22 +2169,45 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .dg-ath.champ img { height: 220px; }
 .dg-trophy { background: none; border: 0; font-size: 44px; cursor: pointer; align-self: center; filter: drop-shadow(0 3px 0 rgba(0,0,0,.3)); }
 .dg-trophy.bump { animation: dgBump .3s; } @keyframes dgBump { 50% { transform: scale(1.3) rotate(-8deg); } }
-/* 選手字卡 */
-.dg-cap { display: grid; justify-items: center; text-align: center; gap: 1px; margin-top: -8px; position: relative; padding: 5px 8px 4px; max-width: 150px; }
-.dg-cap b { font-size: 13px; line-height: 1.2; } .dg-cap small { font-size: 9px; line-height: 1.25; } .dg-cap em { font-style: normal; font-size: 10px; }
-.dg-cap.reg { background: #fff6e8; border: 3px solid var(--dg); outline: 2px solid #3b2b2b; box-shadow: 3px 3px 0 #3b2b2b; color: #2a1f2e; }
+/* 選手字卡：名字 → 分隔線 → 賽事 → 頭銜重點，應援數在右下角 */
+.dg-cap { position: relative; display: grid; justify-items: center; text-align: center; margin-top: -8px; padding: 7px 10px 14px; width: 150px; box-sizing: border-box; line-height: 1.15; }
+.dg-nm { font-size: 14px; letter-spacing: .5px; }
+.dg-rule { width: 70%; height: 2px; margin: 4px 0 3px; background: currentColor; opacity: .35; }
+.dg-ev { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; opacity: .8; }
+.dg-role { font-size: 10px; letter-spacing: .8px; text-transform: uppercase; margin-top: 2px; }
+.dg-cn { position: absolute; right: -6px; bottom: -9px; font-style: normal; font-size: 10px; padding: 1px 6px; border: 2px solid #2a1f2e; background: #fff6e8; color: #2a1f2e; white-space: nowrap; }
+.dg-cap.reg { background: #fff6e8; border: 3px solid var(--dg); outline: 2px solid #2a1f2e; box-shadow: 3px 3px 0 #2a1f2e; color: #2a1f2e; }
 .dg-cap.reg::before { content: ''; position: absolute; left: -3px; right: -3px; top: -3px; height: 5px; background: var(--dc); }
-.dg-cap.champ { max-width: 200px; padding: 8px 12px 6px; color: #5a1a00; border: 3px solid #3b2b2b; box-shadow: 0 0 0 3px #fff3c4, 0 0 0 6px var(--dc), 5px 7px 0 6px #3b2b2b;
+.dg-cap.reg .dg-role { color: var(--dc); }
+.dg-cap.champ { width: 210px; padding: 10px 14px 16px; color: #4a1500; border: 3px solid #2a1f2e; box-shadow: 0 0 0 3px #fff3c4, 0 0 0 6px var(--dc), 5px 7px 0 6px #2a1f2e;
   background: linear-gradient(135deg, #fff3c4 0%, #f5c542 35%, #ffe58a 50%, #d49b1a 75%, #f5c542 100%); background-size: 250% 250%; animation: dgShine 3s linear infinite; }
-.dg-cap.champ b { font-size: 16px; text-shadow: 1px 1px 0 #fff3c4; } .dg-cap.champ small { font-size: 10px; font-weight: bold; color: var(--dc); }
-.dg-crown { position: absolute; top: -22px; font-size: 22px; filter: drop-shadow(0 2px 0 #3b2b2b); }
+.dg-cap.champ .dg-nm { font-size: 18px; text-shadow: 1px 1px 0 #fff3c4; }
+.dg-cap.champ .dg-ev { font-size: 9px; }
+.dg-cap.champ .dg-role { font-size: 13px; color: #fff; background: var(--dc); padding: 2px 10px; border: 2px solid #2a1f2e; letter-spacing: 1.5px; margin-top: 4px; }
+.dg-cap.champ .dg-cn { background: #fff3c4; }
+.dg-crown { position: absolute; top: -22px; font-size: 22px; filter: drop-shadow(0 2px 0 #2a1f2e); }
 @keyframes dgShine { to { background-position: 250% 250%; } }
 /* 手機、平板：一欄一欄排 */
-@media (max-width: 900px) {
+@media (max-width: 1180px) {
   .dg-sea { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "F F" "r1 r2" "r3 r4" "r5 r6"; padding: 18px 8px; }
   .dg-ath img { height: 110px; } .dg-ath.champ img { height: 170px; }
-  .dg-cap { max-width: 120px; } .dg-cap b { font-size: 11px; } .dg-cap small { font-size: 8px; }
+  .dg-cap { width: 122px; padding: 6px 6px 13px; } .dg-cap.champ { width: 158px; } .dg-nm { font-size: 12px; } .dg-cap.champ .dg-nm { font-size: 15px; } .dg-role { font-size: 9px; } .dg-cap.champ .dg-role { font-size: 11px; }
   .dg-stand { margin-bottom: -30px; } .final .dg-stand { margin-bottom: -40px; }
 }
 .dg-ysel { white-space: nowrap; }
-@media (max-width: 900px) { .dg-cap small { font-size: 9px; } .dg-cap b { font-size: 12px; } }
+
+/* 字卡跟著島的寬度走，不會蓋到隔壁的島 */
+.dg-stand { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; width: 100%; max-width: 330px; justify-items: center; }
+.final .dg-stand { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); max-width: 500px; }
+.dg-ath { min-width: 0; width: 100%; }
+.dg-ath img { max-width: 100%; object-fit: contain; object-position: bottom; }
+.dg-cap { width: 100%; max-width: 150px; }
+.dg-cap.champ { width: 100%; max-width: 210px; }
+.dg-cn { font-size: 11px; }
+/* 半身照相框（區域冠軍：天空藍；世界冠軍：金色） */
+.dg-frame { display: block; width: 100%; max-width: 150px; aspect-ratio: 4 / 5; overflow: hidden; border: 3px solid #2a1f2e; outline: 3px solid var(--dg); box-shadow: 4px 4px 0 3px #2a1f2e;
+  background: linear-gradient(#cfeaff 0%, #9fd0f7 70%, #7fbdf0 100%); }
+.dg-ath.champ .dg-frame { max-width: 210px; outline-color: var(--dc); background: radial-gradient(circle at 50% 38%, #fffbe6 0%, #ffe58a 35%, #f5c542 65%, #d49b1a 100%); }
+.dg-ath .dg-frame img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 0; filter: none; }
+.dg-ath .dg-cap { margin-top: -12px; z-index: 1; }
+.dg-ath:hover .dg-frame { outline-color: #fff3c4; }
