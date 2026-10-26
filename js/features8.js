@@ -20,8 +20,8 @@ window.Daily = (() => {
   const myStyles = () => { const me = Player.me || {}; return [...new Set([me.style, JOB_STYLE[me.job]].filter(Boolean))]; };
   const err = x => {
     const m = String(x && x.message || x);
-    if (/too many/.test(m)) return t('st_e_many'); if (/spam/.test(m)) return t('fr_spam'); if (/need character/.test(m)) return t('cd_login');
-    if (/not allowed|permission|row-level/.test(m)) return t('cr_e_perm'); if (/no such player/.test(m)) return t('st_e_player'); if (/check constraint/.test(m)) return t('st_e_check');
+    if (/too many/.test(m)) return t('sd_e_many'); if (/spam/.test(m)) return t('fr_spam'); if (/need character/.test(m)) return t('cd_login');
+    if (/not allowed|permission|row-level/.test(m)) return t('cr_e_perm'); if (/no such player/.test(m)) return t('sd_e_player'); if (/check constraint/.test(m)) return t('sd_e_check');
     return m;
   };
   const withTimeout = (p, ms = 10000) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
@@ -32,22 +32,22 @@ window.Daily = (() => {
   I18N.extend({
     zh: {
       hub_studio: '街舞教室', hub_luck: '幸運小卡', hub_daily: '每日一推',
-      st_title: '🏫 街舞教室地圖', st_intro: '找找附近的街舞教室！可以依地區、舞風搜尋，或用現在的位置找最近的教室。你也可以登錄自己的教室，通過審核後就能自己管理公告、課表和師資。',
-      st_near: '附近的教室', st_add: '登錄我的教室', st_all_cc: '全部國家', st_all_city: '全部城市', st_all_style: '全部舞風', st_q: '搜尋教室名稱…',
-      st_none: '這個地區還沒有登錄的教室，成為第一個吧！', st_km: '距離 {n} km', st_pending: '⏳ 審核中', st_rejected: '未通過', st_mine: '我的教室',
-      st_gone: '找不到這間教室', st_owner: '負責人', st_map: '地圖', st_ig: 'IG', st_web: '官網', st_phone: '電話',
-      st_notice: '📢 公告', st_course: '📚 近期課程 / Workshop', st_sched: '🗓 每週課表', st_teachers: '🧑‍🏫 師資', st_special: '✨ 特殊活動', st_battles: '🏆 教室舉辦的比賽',
-      st_past: '過去的課程', st_nothing: '目前沒有資料', st_manage: '管理教室', st_edit: '編輯教室資料', st_post: '新增公告 / 課程 / 活動', st_del: '刪除教室', st_del_q: '確定要刪除「{n}」嗎？所有公告和課程都會一起刪掉。',
-      st_review: '教室審核', st_approve: '通過', st_reject: '不通過', st_set_owner: '綁定負責人', st_owner_ph: '輸入玩家 ID（例：kailyn）', st_owner_ok: '已綁定！',
-      st_f_name: '教室名稱', st_f_place: '國家 / 城市', st_f_addr: '地址', st_f_styles: '教學舞風', st_f_phone: '電話', st_f_ig: 'IG 帳號或網址', st_f_link: '官網 / 報名連結',
-      st_f_intro: '教室介紹', st_f_cover: '封面圖片', st_f_cover_up: '上傳圖片（5MB 內）', st_f_pin: '地圖位置（點地圖可以移動圖釘）', st_f_here: '📍 用我現在的位置',
-      st_f_teachers: '師資', st_f_sched: '每週課表', st_f_battles: '教室舉辦的比賽（勾選網站上的活動）', st_f_battles_q: '搜尋活動…',
-      st_t_name: '老師名字', st_t_styles: '舞風', st_t_ig: 'IG', st_t_handle: '舞島玩家 ID（選填）',
-      st_s_title: '課程名稱', st_s_teacher: '老師', st_s_level: '程度', st_add_row: '新增一列',
-      st_save: '儲存', st_submit: '送出登錄', st_sent: '已送出！管理員審核通過後就會出現在地圖上', st_saved: '已儲存！',
-      st_p_kind: '類型', st_p_notice: '公告', st_p_course: '課程 / Workshop', st_p_special: '特殊活動', st_p_title: '標題', st_p_date: '日期', st_p_time: '時間', st_p_teacher: '老師', st_p_body: '內容', st_p_link: '報名 / 詳情連結', st_p_img: '圖片',
-      st_need_name: '請填教室名稱（至少 2 個字）', st_e_many: '數量超過上限了', st_e_player: '找不到這個玩家 ID', st_e_check: '有欄位太長了，請縮短一點',
-      st_host_tag: '🏫 {n} 主辦', st_geo_fail: '拿不到你的位置，請確認有開啟定位權限', st_login: '登入角色後才能登錄教室',
+      sd_title: '🏫 街舞教室地圖', sd_intro: '找找附近的街舞教室！可以依地區、舞風搜尋，或用現在的位置找最近的教室。你也可以登錄自己的教室，通過審核後就能自己管理公告、課表和師資。',
+      sd_near: '附近的教室', sd_add: '登錄我的教室', sd_all_cc: '全部國家', sd_all_city: '全部城市', sd_all_style: '全部舞風', sd_q: '搜尋教室名稱…',
+      sd_none: '這個地區還沒有登錄的教室，成為第一個吧！', sd_km: '距離 {n} km', sd_pending: '⏳ 審核中', sd_rejected: '未通過', sd_mine: '我的教室',
+      sd_gone: '找不到這間教室', sd_owner: '負責人', sd_map: '地圖', sd_ig: 'IG', sd_web: '官網', sd_phone: '電話',
+      sd_notice: '📢 公告', sd_course: '📚 近期課程 / Workshop', sd_sched: '🗓 每週課表', sd_teachers: '🧑‍🏫 師資', sd_special: '✨ 特殊活動', sd_battles: '🏆 教室舉辦的比賽',
+      sd_past: '過去的課程', sd_nothing: '目前沒有資料', sd_manage: '管理教室', sd_edit: '編輯教室資料', sd_post: '新增公告 / 課程 / 活動', sd_del: '刪除教室', sd_del_q: '確定要刪除「{n}」嗎？所有公告和課程都會一起刪掉。',
+      sd_review: '教室審核', sd_approve: '通過', sd_reject: '不通過', sd_set_owner: '綁定負責人', sd_owner_ph: '輸入玩家 ID（例：kailyn）', sd_owner_ok: '已綁定！',
+      sd_f_name: '教室名稱', sd_f_place: '國家 / 城市', sd_f_addr: '地址', sd_f_styles: '教學舞風', sd_f_phone: '電話', sd_f_ig: 'IG 帳號或網址', sd_f_link: '官網 / 報名連結',
+      sd_f_intro: '教室介紹', sd_f_cover: '封面圖片', sd_f_cover_up: '上傳圖片（5MB 內）', sd_f_pin: '地圖位置（點地圖可以移動圖釘）', sd_f_here: '📍 用我現在的位置',
+      sd_f_teachers: '師資', sd_f_sched: '每週課表', sd_f_battles: '教室舉辦的比賽（勾選網站上的活動）', sd_f_battles_q: '搜尋活動…',
+      sd_t_name: '老師名字', sd_t_styles: '舞風', sd_t_ig: 'IG', sd_t_handle: '舞島玩家 ID（選填）',
+      sd_s_title: '課程名稱', sd_s_teacher: '老師', sd_s_level: '程度', sd_add_row: '新增一列',
+      sd_save: '儲存', sd_submit: '送出登錄', sd_sent: '已送出！管理員審核通過後就會出現在地圖上', sd_saved: '已儲存！',
+      sd_p_kind: '類型', sd_p_notice: '公告', sd_p_course: '課程 / Workshop', sd_p_special: '特殊活動', sd_p_title: '標題', sd_p_date: '日期', sd_p_time: '時間', sd_p_teacher: '老師', sd_p_body: '內容', sd_p_link: '報名 / 詳情連結', sd_p_img: '圖片',
+      sd_need_name: '請填教室名稱（至少 2 個字）', sd_e_many: '數量超過上限了', sd_e_player: '找不到這個玩家 ID', sd_e_check: '有欄位太長了，請縮短一點',
+      sd_host_tag: '🏫 {n} 主辦', sd_geo_fail: '拿不到你的位置，請確認有開啟定位權限', sd_login: '登入角色後才能登錄教室',
       lk_title: '🍀 今日幸運小卡', lk_tap: '點一下翻開今天的小卡', lk_luck: '今日舞運', lk_move: '幸運舞步', lk_color: '幸運色', lk_event: '🎫 推薦你去', lk_ws: '📚 推薦 Workshop', lk_ws_none: '還沒有符合你舞風的 workshop，去教室地圖逛逛吧！',
       lk_ev_none: '最近沒有符合你舞風的活動，看看全部活動吧！', lk_pick: '📰 今日一推', lk_go: '去看看 ▶', lk_why: '因為你跳 {s}',
       dp_title: '📰 每日一推', dp_brand: '街舞品牌', dp_story: '街舞故事', dp_culture: '街舞文化', dp_news: '街舞新聞', dp_more: '看更多', dp_admin: '每日一推',
@@ -55,22 +55,22 @@ window.Daily = (() => {
     },
     en: {
       hub_studio: 'Dance studios', hub_luck: 'Lucky card', hub_daily: 'Daily pick',
-      st_title: '🏫 Dance Studio Map', st_intro: 'Find dance studios near you! Search by region or style, or use your location. You can also list your own studio — once approved you can manage its news, timetable and teachers.',
-      st_near: 'Near me', st_add: 'List my studio', st_all_cc: 'All countries', st_all_city: 'All cities', st_all_style: 'All styles', st_q: 'Search studios…',
-      st_none: 'No studios listed here yet — be the first!', st_km: '{n} km away', st_pending: '⏳ Pending', st_rejected: 'Rejected', st_mine: 'My studio',
-      st_gone: 'Studio not found', st_owner: 'Owner', st_map: 'Map', st_ig: 'IG', st_web: 'Website', st_phone: 'Phone',
-      st_notice: '📢 News', st_course: '📚 Upcoming classes / Workshops', st_sched: '🗓 Weekly timetable', st_teachers: '🧑‍🏫 Teachers', st_special: '✨ Special events', st_battles: '🏆 Battles hosted here',
-      st_past: 'Past classes', st_nothing: 'Nothing here yet', st_manage: 'Manage studio', st_edit: 'Edit studio info', st_post: 'Add news / class / event', st_del: 'Delete studio', st_del_q: 'Delete “{n}”? All its posts will be removed too.',
-      st_review: 'Studio review', st_approve: 'Approve', st_reject: 'Reject', st_set_owner: 'Set owner', st_owner_ph: 'Player ID (e.g. kailyn)', st_owner_ok: 'Owner set!',
-      st_f_name: 'Studio name', st_f_place: 'Country / city', st_f_addr: 'Address', st_f_styles: 'Styles taught', st_f_phone: 'Phone', st_f_ig: 'IG account or URL', st_f_link: 'Website / sign-up link',
-      st_f_intro: 'About the studio', st_f_cover: 'Cover image', st_f_cover_up: 'Upload image (max 5MB)', st_f_pin: 'Map location (click the map to move the pin)', st_f_here: '📍 Use my location',
-      st_f_teachers: 'Teachers', st_f_sched: 'Weekly timetable', st_f_battles: 'Battles hosted by the studio (tick events on this site)', st_f_battles_q: 'Search events…',
-      st_t_name: 'Teacher', st_t_styles: 'Styles', st_t_ig: 'IG', st_t_handle: 'Dance Island ID (optional)',
-      st_s_title: 'Class', st_s_teacher: 'Teacher', st_s_level: 'Level', st_add_row: 'Add row',
-      st_save: 'Save', st_submit: 'Submit', st_sent: 'Sent! It will show on the map once an admin approves it', st_saved: 'Saved!',
-      st_p_kind: 'Type', st_p_notice: 'News', st_p_course: 'Class / Workshop', st_p_special: 'Special event', st_p_title: 'Title', st_p_date: 'Date', st_p_time: 'Time', st_p_teacher: 'Teacher', st_p_body: 'Details', st_p_link: 'Sign-up / info link', st_p_img: 'Image',
-      st_need_name: 'Please enter a studio name (2+ characters)', st_e_many: 'Limit reached', st_e_player: 'No player with that ID', st_e_check: 'Some fields are too long',
-      st_host_tag: '🏫 Hosted by {n}', st_geo_fail: "Couldn't get your location — please allow location access", st_login: 'Create a character to list a studio',
+      sd_title: '🏫 Dance Studio Map', sd_intro: 'Find dance studios near you! Search by region or style, or use your location. You can also list your own studio — once approved you can manage its news, timetable and teachers.',
+      sd_near: 'Near me', sd_add: 'List my studio', sd_all_cc: 'All countries', sd_all_city: 'All cities', sd_all_style: 'All styles', sd_q: 'Search studios…',
+      sd_none: 'No studios listed here yet — be the first!', sd_km: '{n} km away', sd_pending: '⏳ Pending', sd_rejected: 'Rejected', sd_mine: 'My studio',
+      sd_gone: 'Studio not found', sd_owner: 'Owner', sd_map: 'Map', sd_ig: 'IG', sd_web: 'Website', sd_phone: 'Phone',
+      sd_notice: '📢 News', sd_course: '📚 Upcoming classes / Workshops', sd_sched: '🗓 Weekly timetable', sd_teachers: '🧑‍🏫 Teachers', sd_special: '✨ Special events', sd_battles: '🏆 Battles hosted here',
+      sd_past: 'Past classes', sd_nothing: 'Nothing here yet', sd_manage: 'Manage studio', sd_edit: 'Edit studio info', sd_post: 'Add news / class / event', sd_del: 'Delete studio', sd_del_q: 'Delete “{n}”? All its posts will be removed too.',
+      sd_review: 'Studio review', sd_approve: 'Approve', sd_reject: 'Reject', sd_set_owner: 'Set owner', sd_owner_ph: 'Player ID (e.g. kailyn)', sd_owner_ok: 'Owner set!',
+      sd_f_name: 'Studio name', sd_f_place: 'Country / city', sd_f_addr: 'Address', sd_f_styles: 'Styles taught', sd_f_phone: 'Phone', sd_f_ig: 'IG account or URL', sd_f_link: 'Website / sign-up link',
+      sd_f_intro: 'About the studio', sd_f_cover: 'Cover image', sd_f_cover_up: 'Upload image (max 5MB)', sd_f_pin: 'Map location (click the map to move the pin)', sd_f_here: '📍 Use my location',
+      sd_f_teachers: 'Teachers', sd_f_sched: 'Weekly timetable', sd_f_battles: 'Battles hosted by the studio (tick events on this site)', sd_f_battles_q: 'Search events…',
+      sd_t_name: 'Teacher', sd_t_styles: 'Styles', sd_t_ig: 'IG', sd_t_handle: 'Dance Island ID (optional)',
+      sd_s_title: 'Class', sd_s_teacher: 'Teacher', sd_s_level: 'Level', sd_add_row: 'Add row',
+      sd_save: 'Save', sd_submit: 'Submit', sd_sent: 'Sent! It will show on the map once an admin approves it', sd_saved: 'Saved!',
+      sd_p_kind: 'Type', sd_p_notice: 'News', sd_p_course: 'Class / Workshop', sd_p_special: 'Special event', sd_p_title: 'Title', sd_p_date: 'Date', sd_p_time: 'Time', sd_p_teacher: 'Teacher', sd_p_body: 'Details', sd_p_link: 'Sign-up / info link', sd_p_img: 'Image',
+      sd_need_name: 'Please enter a studio name (2+ characters)', sd_e_many: 'Limit reached', sd_e_player: 'No player with that ID', sd_e_check: 'Some fields are too long',
+      sd_host_tag: '🏫 Hosted by {n}', sd_geo_fail: "Couldn't get your location — please allow location access", sd_login: 'Create a character to list a studio',
       lk_title: '🍀 Today’s Lucky Card', lk_tap: 'Tap to flip today’s card', lk_luck: 'Dance luck', lk_move: 'Lucky move', lk_color: 'Lucky color', lk_event: '🎫 You should check out', lk_ws: '📚 Workshop for you', lk_ws_none: 'No workshops for your style yet — explore the studio map!',
       lk_ev_none: 'No events for your style soon — browse all events!', lk_pick: '📰 Daily pick', lk_go: 'Go ▶', lk_why: 'Because you dance {s}',
       dp_title: '📰 Daily Pick', dp_brand: 'Brand', dp_story: 'Story', dp_culture: 'Culture', dp_news: 'News', dp_more: 'Read more', dp_admin: 'Daily pick',
@@ -78,22 +78,22 @@ window.Daily = (() => {
     },
     ja: {
       hub_studio: 'ダンススタジオ', hub_luck: 'ラッキーカード', hub_daily: '今日のピック',
-      st_title: '🏫 ダンススタジオマップ', st_intro: '近くのダンススタジオを探そう！地域やジャンルで検索、現在地から近い順にも並べられます。自分のスタジオを登録して、審査後はお知らせ・時間割・講師を自分で管理できます。',
-      st_near: '近くのスタジオ', st_add: 'スタジオを登録', st_all_cc: 'すべての国', st_all_city: 'すべての都市', st_all_style: 'すべてのジャンル', st_q: 'スタジオ名で検索…',
-      st_none: 'この地域にはまだ登録がありません。最初の登録者になろう！', st_km: '{n} km', st_pending: '⏳ 審査中', st_rejected: '非承認', st_mine: '自分のスタジオ',
-      st_gone: 'スタジオが見つかりません', st_owner: '担当者', st_map: '地図', st_ig: 'IG', st_web: '公式サイト', st_phone: '電話',
-      st_notice: '📢 お知らせ', st_course: '📚 近日のクラス / WS', st_sched: '🗓 週間時間割', st_teachers: '🧑‍🏫 講師', st_special: '✨ 特別イベント', st_battles: '🏆 主催バトル',
-      st_past: '過去のクラス', st_nothing: 'まだありません', st_manage: 'スタジオ管理', st_edit: 'スタジオ情報を編集', st_post: 'お知らせ / クラス / イベントを追加', st_del: 'スタジオを削除', st_del_q: '「{n}」を削除しますか？投稿もすべて消えます。',
-      st_review: 'スタジオ審査', st_approve: '承認', st_reject: '非承認', st_set_owner: '担当者を設定', st_owner_ph: 'プレイヤー ID（例：kailyn）', st_owner_ok: '設定しました！',
-      st_f_name: 'スタジオ名', st_f_place: '国 / 都市', st_f_addr: '住所', st_f_styles: '教えているジャンル', st_f_phone: '電話', st_f_ig: 'IG アカウントか URL', st_f_link: '公式サイト / 申込リンク',
-      st_f_intro: 'スタジオ紹介', st_f_cover: 'カバー画像', st_f_cover_up: '画像をアップロード（5MB まで）', st_f_pin: '地図の位置（地図をクリックでピン移動）', st_f_here: '📍 現在地を使う',
-      st_f_teachers: '講師', st_f_sched: '週間時間割', st_f_battles: 'スタジオ主催のバトル（サイト上のイベントにチェック）', st_f_battles_q: 'イベントを検索…',
-      st_t_name: '講師名', st_t_styles: 'ジャンル', st_t_ig: 'IG', st_t_handle: 'ダンスアイランド ID（任意）',
-      st_s_title: 'クラス名', st_s_teacher: '講師', st_s_level: 'レベル', st_add_row: '行を追加',
-      st_save: '保存', st_submit: '登録する', st_sent: '送信しました！管理者が承認すると地図に表示されます', st_saved: '保存しました！',
-      st_p_kind: '種類', st_p_notice: 'お知らせ', st_p_course: 'クラス / WS', st_p_special: '特別イベント', st_p_title: 'タイトル', st_p_date: '日付', st_p_time: '時間', st_p_teacher: '講師', st_p_body: '内容', st_p_link: '申込 / 詳細リンク', st_p_img: '画像',
-      st_need_name: 'スタジオ名を入力してください（2 文字以上）', st_e_many: '上限に達しました', st_e_player: 'その ID のプレイヤーはいません', st_e_check: '長すぎる項目があります',
-      st_host_tag: '🏫 {n} 主催', st_geo_fail: '位置情報を取得できません。許可を確認してください', st_login: 'キャラを作るとスタジオを登録できます',
+      sd_title: '🏫 ダンススタジオマップ', sd_intro: '近くのダンススタジオを探そう！地域やジャンルで検索、現在地から近い順にも並べられます。自分のスタジオを登録して、審査後はお知らせ・時間割・講師を自分で管理できます。',
+      sd_near: '近くのスタジオ', sd_add: 'スタジオを登録', sd_all_cc: 'すべての国', sd_all_city: 'すべての都市', sd_all_style: 'すべてのジャンル', sd_q: 'スタジオ名で検索…',
+      sd_none: 'この地域にはまだ登録がありません。最初の登録者になろう！', sd_km: '{n} km', sd_pending: '⏳ 審査中', sd_rejected: '非承認', sd_mine: '自分のスタジオ',
+      sd_gone: 'スタジオが見つかりません', sd_owner: '担当者', sd_map: '地図', sd_ig: 'IG', sd_web: '公式サイト', sd_phone: '電話',
+      sd_notice: '📢 お知らせ', sd_course: '📚 近日のクラス / WS', sd_sched: '🗓 週間時間割', sd_teachers: '🧑‍🏫 講師', sd_special: '✨ 特別イベント', sd_battles: '🏆 主催バトル',
+      sd_past: '過去のクラス', sd_nothing: 'まだありません', sd_manage: 'スタジオ管理', sd_edit: 'スタジオ情報を編集', sd_post: 'お知らせ / クラス / イベントを追加', sd_del: 'スタジオを削除', sd_del_q: '「{n}」を削除しますか？投稿もすべて消えます。',
+      sd_review: 'スタジオ審査', sd_approve: '承認', sd_reject: '非承認', sd_set_owner: '担当者を設定', sd_owner_ph: 'プレイヤー ID（例：kailyn）', sd_owner_ok: '設定しました！',
+      sd_f_name: 'スタジオ名', sd_f_place: '国 / 都市', sd_f_addr: '住所', sd_f_styles: '教えているジャンル', sd_f_phone: '電話', sd_f_ig: 'IG アカウントか URL', sd_f_link: '公式サイト / 申込リンク',
+      sd_f_intro: 'スタジオ紹介', sd_f_cover: 'カバー画像', sd_f_cover_up: '画像をアップロード（5MB まで）', sd_f_pin: '地図の位置（地図をクリックでピン移動）', sd_f_here: '📍 現在地を使う',
+      sd_f_teachers: '講師', sd_f_sched: '週間時間割', sd_f_battles: 'スタジオ主催のバトル（サイト上のイベントにチェック）', sd_f_battles_q: 'イベントを検索…',
+      sd_t_name: '講師名', sd_t_styles: 'ジャンル', sd_t_ig: 'IG', sd_t_handle: 'ダンスアイランド ID（任意）',
+      sd_s_title: 'クラス名', sd_s_teacher: '講師', sd_s_level: 'レベル', sd_add_row: '行を追加',
+      sd_save: '保存', sd_submit: '登録する', sd_sent: '送信しました！管理者が承認すると地図に表示されます', sd_saved: '保存しました！',
+      sd_p_kind: '種類', sd_p_notice: 'お知らせ', sd_p_course: 'クラス / WS', sd_p_special: '特別イベント', sd_p_title: 'タイトル', sd_p_date: '日付', sd_p_time: '時間', sd_p_teacher: '講師', sd_p_body: '内容', sd_p_link: '申込 / 詳細リンク', sd_p_img: '画像',
+      sd_need_name: 'スタジオ名を入力してください（2 文字以上）', sd_e_many: '上限に達しました', sd_e_player: 'その ID のプレイヤーはいません', sd_e_check: '長すぎる項目があります',
+      sd_host_tag: '🏫 {n} 主催', sd_geo_fail: '位置情報を取得できません。許可を確認してください', sd_login: 'キャラを作るとスタジオを登録できます',
       lk_title: '🍀 今日のラッキーカード', lk_tap: 'タップしてカードをめくろう', lk_luck: '今日のダンス運', lk_move: 'ラッキームーブ', lk_color: 'ラッキーカラー', lk_event: '🎫 おすすめイベント', lk_ws: '📚 おすすめ WS', lk_ws_none: 'まだあなたのジャンルの WS はありません。スタジオマップを見てみよう！',
       lk_ev_none: '近日あなたのジャンルのイベントはありません。すべてのイベントを見よう！', lk_pick: '📰 今日のピック', lk_go: '見る ▶', lk_why: '{s} を踊るあなたに',
       dp_title: '📰 今日のピック', dp_brand: 'ブランド', dp_story: 'ストーリー', dp_culture: 'カルチャー', dp_news: 'ニュース', dp_more: 'もっと見る', dp_admin: '今日のピック',
@@ -101,22 +101,22 @@ window.Daily = (() => {
     },
     ko: {
       hub_studio: '댄스 학원', hub_luck: '행운 카드', hub_daily: '오늘의 픽',
-      st_title: '🏫 댄스 학원 지도', st_intro: '가까운 댄스 학원을 찾아보세요! 지역·장르로 검색하거나 현재 위치로 가까운 곳을 찾을 수 있어요. 내 학원을 등록하면 승인 후 공지·시간표·강사를 직접 관리할 수 있어요.',
-      st_near: '내 주변 학원', st_add: '내 학원 등록', st_all_cc: '모든 나라', st_all_city: '모든 도시', st_all_style: '모든 장르', st_q: '학원 이름 검색…',
-      st_none: '이 지역에는 아직 등록된 학원이 없어요. 첫 번째가 되어 보세요!', st_km: '{n} km', st_pending: '⏳ 심사 중', st_rejected: '반려', st_mine: '내 학원',
-      st_gone: '학원을 찾을 수 없어요', st_owner: '담당자', st_map: '지도', st_ig: 'IG', st_web: '홈페이지', st_phone: '전화',
-      st_notice: '📢 공지', st_course: '📚 예정 수업 / 워크숍', st_sched: '🗓 주간 시간표', st_teachers: '🧑‍🏫 강사', st_special: '✨ 특별 이벤트', st_battles: '🏆 주최 배틀',
-      st_past: '지난 수업', st_nothing: '아직 없어요', st_manage: '학원 관리', st_edit: '학원 정보 수정', st_post: '공지 / 수업 / 이벤트 추가', st_del: '학원 삭제', st_del_q: '「{n}」을(를) 삭제할까요? 모든 글도 함께 삭제돼요.',
-      st_review: '학원 심사', st_approve: '승인', st_reject: '반려', st_set_owner: '담당자 지정', st_owner_ph: '플레이어 ID (예: kailyn)', st_owner_ok: '지정했어요!',
-      st_f_name: '학원 이름', st_f_place: '나라 / 도시', st_f_addr: '주소', st_f_styles: '수업 장르', st_f_phone: '전화', st_f_ig: 'IG 계정 또는 URL', st_f_link: '홈페이지 / 신청 링크',
-      st_f_intro: '학원 소개', st_f_cover: '커버 이미지', st_f_cover_up: '이미지 업로드 (5MB 이하)', st_f_pin: '지도 위치 (지도를 클릭해 핀 이동)', st_f_here: '📍 현재 위치 사용',
-      st_f_teachers: '강사', st_f_sched: '주간 시간표', st_f_battles: '학원 주최 배틀 (사이트의 이벤트 선택)', st_f_battles_q: '이벤트 검색…',
-      st_t_name: '강사 이름', st_t_styles: '장르', st_t_ig: 'IG', st_t_handle: '댄스 아일랜드 ID (선택)',
-      st_s_title: '수업 이름', st_s_teacher: '강사', st_s_level: '레벨', st_add_row: '행 추가',
-      st_save: '저장', st_submit: '등록하기', st_sent: '보냈어요! 관리자가 승인하면 지도에 표시돼요', st_saved: '저장했어요!',
-      st_p_kind: '종류', st_p_notice: '공지', st_p_course: '수업 / 워크숍', st_p_special: '특별 이벤트', st_p_title: '제목', st_p_date: '날짜', st_p_time: '시간', st_p_teacher: '강사', st_p_body: '내용', st_p_link: '신청 / 상세 링크', st_p_img: '이미지',
-      st_need_name: '학원 이름을 입력해 주세요 (2자 이상)', st_e_many: '한도에 도달했어요', st_e_player: '그 ID의 플레이어가 없어요', st_e_check: '너무 긴 항목이 있어요',
-      st_host_tag: '🏫 {n} 주최', st_geo_fail: '위치를 가져올 수 없어요. 위치 권한을 확인해 주세요', st_login: '캐릭터를 만들면 학원을 등록할 수 있어요',
+      sd_title: '🏫 댄스 학원 지도', sd_intro: '가까운 댄스 학원을 찾아보세요! 지역·장르로 검색하거나 현재 위치로 가까운 곳을 찾을 수 있어요. 내 학원을 등록하면 승인 후 공지·시간표·강사를 직접 관리할 수 있어요.',
+      sd_near: '내 주변 학원', sd_add: '내 학원 등록', sd_all_cc: '모든 나라', sd_all_city: '모든 도시', sd_all_style: '모든 장르', sd_q: '학원 이름 검색…',
+      sd_none: '이 지역에는 아직 등록된 학원이 없어요. 첫 번째가 되어 보세요!', sd_km: '{n} km', sd_pending: '⏳ 심사 중', sd_rejected: '반려', sd_mine: '내 학원',
+      sd_gone: '학원을 찾을 수 없어요', sd_owner: '담당자', sd_map: '지도', sd_ig: 'IG', sd_web: '홈페이지', sd_phone: '전화',
+      sd_notice: '📢 공지', sd_course: '📚 예정 수업 / 워크숍', sd_sched: '🗓 주간 시간표', sd_teachers: '🧑‍🏫 강사', sd_special: '✨ 특별 이벤트', sd_battles: '🏆 주최 배틀',
+      sd_past: '지난 수업', sd_nothing: '아직 없어요', sd_manage: '학원 관리', sd_edit: '학원 정보 수정', sd_post: '공지 / 수업 / 이벤트 추가', sd_del: '학원 삭제', sd_del_q: '「{n}」을(를) 삭제할까요? 모든 글도 함께 삭제돼요.',
+      sd_review: '학원 심사', sd_approve: '승인', sd_reject: '반려', sd_set_owner: '담당자 지정', sd_owner_ph: '플레이어 ID (예: kailyn)', sd_owner_ok: '지정했어요!',
+      sd_f_name: '학원 이름', sd_f_place: '나라 / 도시', sd_f_addr: '주소', sd_f_styles: '수업 장르', sd_f_phone: '전화', sd_f_ig: 'IG 계정 또는 URL', sd_f_link: '홈페이지 / 신청 링크',
+      sd_f_intro: '학원 소개', sd_f_cover: '커버 이미지', sd_f_cover_up: '이미지 업로드 (5MB 이하)', sd_f_pin: '지도 위치 (지도를 클릭해 핀 이동)', sd_f_here: '📍 현재 위치 사용',
+      sd_f_teachers: '강사', sd_f_sched: '주간 시간표', sd_f_battles: '학원 주최 배틀 (사이트의 이벤트 선택)', sd_f_battles_q: '이벤트 검색…',
+      sd_t_name: '강사 이름', sd_t_styles: '장르', sd_t_ig: 'IG', sd_t_handle: '댄스 아일랜드 ID (선택)',
+      sd_s_title: '수업 이름', sd_s_teacher: '강사', sd_s_level: '레벨', sd_add_row: '행 추가',
+      sd_save: '저장', sd_submit: '등록하기', sd_sent: '보냈어요! 관리자가 승인하면 지도에 표시돼요', sd_saved: '저장했어요!',
+      sd_p_kind: '종류', sd_p_notice: '공지', sd_p_course: '수업 / 워크숍', sd_p_special: '특별 이벤트', sd_p_title: '제목', sd_p_date: '날짜', sd_p_time: '시간', sd_p_teacher: '강사', sd_p_body: '내용', sd_p_link: '신청 / 상세 링크', sd_p_img: '이미지',
+      sd_need_name: '학원 이름을 입력해 주세요 (2자 이상)', sd_e_many: '한도에 도달했어요', sd_e_player: '그 ID의 플레이어가 없어요', sd_e_check: '너무 긴 항목이 있어요',
+      sd_host_tag: '🏫 {n} 주최', sd_geo_fail: '위치를 가져올 수 없어요. 위치 권한을 확인해 주세요', sd_login: '캐릭터를 만들면 학원을 등록할 수 있어요',
       lk_title: '🍀 오늘의 행운 카드', lk_tap: '눌러서 오늘의 카드를 뒤집어 보세요', lk_luck: '오늘의 댄스 운', lk_move: '행운의 무브', lk_color: '행운의 색', lk_event: '🎫 추천 이벤트', lk_ws: '📚 추천 워크숍', lk_ws_none: '아직 내 장르의 워크숍이 없어요. 학원 지도를 둘러보세요!',
       lk_ev_none: '곧 열리는 내 장르 이벤트가 없어요. 전체 이벤트를 보세요!', lk_pick: '📰 오늘의 픽', lk_go: '보러 가기 ▶', lk_why: '{s}를 추는 당신에게',
       dp_title: '📰 오늘의 픽', dp_brand: '브랜드', dp_story: '스토리', dp_culture: '문화', dp_news: '뉴스', dp_more: '더 보기', dp_admin: '오늘의 픽',
@@ -163,14 +163,14 @@ window.Daily = (() => {
   let hostOf = {};
   const hostIndex = () => { hostOf = {}; studios.filter(s => s.status === 'approved').forEach(s => (s.events || []).forEach(id => { if (!hostOf[id]) hostOf[id] = s; })); };
   const prevViewTag = A.viewTag;
-  A.viewTag = e => (hostOf[e.id] ? `<a class="tag sd-host" href="#/studios/${hostOf[e.id].id}">${esc(t('st_host_tag', { n: hostOf[e.id].name }))}</a>` : '') + (prevViewTag ? prevViewTag(e) : '');
+  A.viewTag = e => (hostOf[e.id] ? `<a class="tag sd-host" href="#/studios/${hostOf[e.id].id}">${esc(t('sd_host_tag', { n: hostOf[e.id].name }))}</a>` : '') + (prevViewTag ? prevViewTag(e) : '');
   if (Backend.enabled) Backend.ready.then(() => loadStudios().catch(() => {}));
 
   const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('');
   const placeName = s => [nm(A.byCode[s.country]), s.city ? nm(A.cityOf(s.country, s.city)) : ''].filter(Boolean).join('・');
   const coverHTML = (s, cls = '') => (safeUrl(s.cover) ? `<img class="sd-cover ${cls}" src="${esc(s.cover)}" alt="" loading="lazy">` : `<span class="sd-cover ${cls} sd-cover-none">🏫</span>`);
-  const countryOpts = (sel, any) => (any ? `<option value="">${t('st_all_cc')}</option>` : '') + GEO.countries.slice().sort((a, b) => (b.home - a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
-  const cityOpts = (cc, sel, any) => (any ? `<option value="">${t('st_all_city')}</option>` : '') + ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
+  const countryOpts = (sel, any) => (any ? `<option value="">${t('sd_all_cc')}</option>` : '') + GEO.countries.slice().sort((a, b) => (b.home - a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
+  const cityOpts = (cc, sel, any) => (any ? `<option value="">${t('sd_all_city')}</option>` : '') + ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
   const locate = () => new Promise((res, rej) => {
     if (!navigator.geolocation) return rej(new Error('geo'));
     navigator.geolocation.getCurrentPosition(p => res([p.coords.latitude, p.coords.longitude]), rej, { timeout: 10000, maximumAge: 6e5 });
@@ -196,19 +196,19 @@ window.Daily = (() => {
   };
 
   function directory(inner) {
-    inner.innerHTML = `<div class="win">${UI.winHTML(t('st_title'), 'teal', false)}<div class="win-body"><p>${t('st_intro')}</p>
+    inner.innerHTML = `<div class="win">${UI.winHTML(t('sd_title'), 'teal', false)}<div class="win-body"><p>${t('sd_intro')}</p>
         <div class="sd-bar">
           <select class="input sm sd-cc">${countryOpts(FS.cc, true)}</select><select class="input sm sd-city"></select>
-          <select class="input sm sd-style"><option value="">${t('st_all_style')}</option>${Store.STYLES.map(s => `<option ${s === FS.style ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
-          <input class="input sm sd-q" placeholder="${esc(t('st_q'))}" value="${esc(FS.q)}">
+          <select class="input sm sd-style"><option value="">${t('sd_all_style')}</option>${Store.STYLES.map(s => `<option ${s === FS.style ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
+          <input class="input sm sd-q" placeholder="${esc(t('sd_q'))}" value="${esc(FS.q)}">
         </div>
-        <div class="btn-row"><button class="btn sm teal sd-near ${FS.me ? 'on' : ''}">${PXI.img('menu/near', '📍')} ${t('st_near')}</button>
-          <button class="btn sm pink sd-addb">＋ ${t('st_add')}</button></div>
+        <div class="btn-row"><button class="btn sm teal sd-near ${FS.me ? 'on' : ''}">${PXI.img('menu/near', '📍')} ${t('sd_near')}</button>
+          <button class="btn sm pink sd-addb">＋ ${t('sd_add')}</button></div>
         <div class="sd-map"></div>
       </div></div>
       <div class="sd-mine"></div><div class="sd-grid"></div>`;
     const cc = inner.querySelector('.sd-cc'), city = inner.querySelector('.sd-city'), sty = inner.querySelector('.sd-style'), q = inner.querySelector('.sd-q');
-    city.innerHTML = FS.cc ? cityOpts(FS.cc, FS.city, true) : `<option value="">${t('st_all_city')}</option>`; city.disabled = !FS.cc;
+    city.innerHTML = FS.cc ? cityOpts(FS.cc, FS.city, true) : `<option value="">${t('sd_all_city')}</option>`; city.disabled = !FS.cc;
     let mapObj = null, layer = null;
     const list = () => {
       let out = studios.filter(s => s.status === 'approved')
@@ -220,14 +220,14 @@ window.Daily = (() => {
       return out;
     };
     const card = s => `<a class="sd-card" href="#/studios/${s.id}">${coverHTML(s)}<span class="sd-main"><b>${esc(s.name)}</b>
-        <small>${PXI.img('event/pin', '📍')} ${esc(placeName(s))}${s._d != null ? `　${t('st_km', { n: s._d < 10 ? s._d.toFixed(1) : Math.round(s._d) })}` : ''}</small>
+        <small>${PXI.img('event/pin', '📍')} ${esc(placeName(s))}${s._d != null ? `　${t('sd_km', { n: s._d < 10 ? s._d.toFixed(1) : Math.round(s._d) })}` : ''}</small>
         <span class="sd-tags">${styleTags(s.styles)}</span>
-        ${s.status !== 'approved' ? `<span class="tag">${t(s.status === 'pending' ? 'st_pending' : 'st_rejected')}</span>` : ''}</span></a>`;
+        ${s.status !== 'approved' ? `<span class="tag">${t(s.status === 'pending' ? 'sd_pending' : 'sd_rejected')}</span>` : ''}</span></a>`;
     const draw = () => {
       const rows = list();
-      inner.querySelector('.sd-grid').innerHTML = rows.map(card).join('') || `<p class="note">${t('st_none')}</p>`;
+      inner.querySelector('.sd-grid').innerHTML = rows.map(card).join('') || `<p class="note">${t('sd_none')}</p>`;
       const mine = studios.filter(s => s.owner === Backend.uid);
-      inner.querySelector('.sd-mine').innerHTML = mine.length ? `<div class="win">${UI.winHTML('🏫 ' + t('st_mine'), 'yellow', false)}<div class="win-body"><div class="sd-grid">${mine.map(card).join('')}</div></div></div>` : '';
+      inner.querySelector('.sd-mine').innerHTML = mine.length ? `<div class="win">${UI.winHTML('🏫 ' + t('sd_mine'), 'yellow', false)}<div class="win-body"><div class="sd-grid">${mine.map(card).join('')}</div></div></div>` : '';
       if (mapObj) {
         const { L, map } = mapObj;
         if (layer) layer.remove();
@@ -241,17 +241,17 @@ window.Daily = (() => {
         else map.setView(FS.cc ? cityCenter(FS.cc, FS.city) : [23.7, 121], FS.city ? 12 : FS.cc ? 7 : 3);
       }
     };
-    cc.onchange = () => { FS.cc = cc.value; FS.city = ''; FS.me = null; city.innerHTML = FS.cc ? cityOpts(FS.cc, '', true) : `<option value="">${t('st_all_city')}</option>`; city.disabled = !FS.cc; inner.querySelector('.sd-near').classList.remove('on'); draw(); };
+    cc.onchange = () => { FS.cc = cc.value; FS.city = ''; FS.me = null; city.innerHTML = FS.cc ? cityOpts(FS.cc, '', true) : `<option value="">${t('sd_all_city')}</option>`; city.disabled = !FS.cc; inner.querySelector('.sd-near').classList.remove('on'); draw(); };
     city.onchange = () => { FS.city = city.value; draw(); };
     sty.onchange = () => { FS.style = sty.value; draw(); };
     q.oninput = () => { FS.q = q.value.trim().toLowerCase(); draw(); };
     inner.querySelector('.sd-near').onclick = async ev => {
       const b = ev.currentTarget; SFX.play('select');
       if (FS.me) { FS.me = null; b.classList.remove('on'); return draw(); }
-      try { FS.me = await locate(); FS.cc = ''; FS.city = ''; cc.value = ''; city.innerHTML = `<option value="">${t('st_all_city')}</option>`; city.disabled = true; b.classList.add('on'); draw(); }
-      catch (x) { toast(t('st_geo_fail'), '📍'); }
+      try { FS.me = await locate(); FS.cc = ''; FS.city = ''; cc.value = ''; city.innerHTML = `<option value="">${t('sd_all_city')}</option>`; city.disabled = true; b.classList.add('on'); draw(); }
+      catch (x) { toast(t('sd_geo_fail'), '📍'); }
     };
-    inner.querySelector('.sd-addb').onclick = () => { if (!logged()) { toast(t('st_login'), '🏫'); return Player.prompt(); } openEditor(null); };
+    inner.querySelector('.sd-addb').onclick = () => { if (!logged()) { toast(t('sd_login'), '🏫'); return Player.prompt(); } openEditor(null); };
     draw();
     makeMap(inner.querySelector('.sd-map'), FS.cc ? cityCenter(FS.cc, FS.city) : [23.7, 121], 7).then(m => { mapObj = m; draw(); }).catch(() => { inner.querySelector('.sd-map').remove(); });
   }
@@ -262,7 +262,7 @@ window.Daily = (() => {
   async function studioPage(inner, id) {
     let s = studios.find(x => x.id === id);
     if (!s) { try { s = await Backend.studio(id); } catch (x) {} }
-    if (!s) { inner.innerHTML = `<div class="win"><div class="win-body"><p>${t('st_gone')}</p><a class="btn" href="#/studios">◀ ${t('hub_studio')}</a></div></div>`; return; }
+    if (!s) { inner.innerHTML = `<div class="win"><div class="win-body"><p>${t('sd_gone')}</p><a class="btn" href="#/studios">◀ ${t('hub_studio')}</a></div></div>`; return; }
     const [posts, owners] = await Promise.all([Backend.studioPosts(id).catch(() => []), s.owner ? Backend.playersByIds([s.owner]).catch(() => []) : []]);
     const owner = owners[0];
     const today = A.todayStr();
@@ -276,7 +276,7 @@ window.Daily = (() => {
         ${(p.styles || []).length ? `<span class="sd-tags">${styleTags(p.styles)}</span>` : ''}
         ${p.body ? `<p data-utr>${esc(p.body)}</p>` : ''}${safeUrl(p.link) ? `<a class="btn sm orange" href="${esc(p.link)}" target="_blank" rel="noopener">${PXI.img('event/link', '🔗')} ${t('lk_go')}</a>` : ''}
         ${mg ? `<button class="btn sm sd-pdel">✕</button>` : ''}</div></article>`;
-    const sec = (title, html, color) => `<div class="win">${UI.winHTML(title, color, false)}<div class="win-body">${html || `<p class="note">${t('st_nothing')}</p>`}</div></div>`;
+    const sec = (title, html, color) => `<div class="win">${UI.winHTML(title, color, false)}<div class="win-body">${html || `<p class="note">${t('sd_nothing')}</p>`}</div></div>`;
     const sched = (s.schedule || []).slice().sort((a, b) => (a.d - b.d) || String(a.s || '').localeCompare(String(b.s || '')));
     const schedHTML = sched.length ? `<div class="sd-week">${[1, 2, 3, 4, 5, 6, 0].map(d => { const rows = sched.filter(x => +x.d === d); return rows.length ? `<div class="sd-day"><b>${esc(weekName(d))}</b>${rows.map(x => `<div class="sd-slot"><span class="tm">${esc([x.s, x.e].filter(Boolean).join('–'))}</span><span>${esc(x.title || '')}</span><small>${esc([x.teacher, x.level].filter(Boolean).join('・'))}</small></div>`).join('')}</div>` : ''; }).join('')}</div>` : '';
     const teachHTML = (s.teachers || []).length ? `<div class="sd-teachers">${s.teachers.map((x, i) => `<div class="sd-teacher"><b>${esc(x.name || '')}</b>${x.styles ? `<small>${esc(x.styles)}</small>` : ''}${x.bio ? `<p data-utr>${esc(x.bio)}</p>` : ''}
@@ -286,34 +286,34 @@ window.Daily = (() => {
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address || s.name)}`;
     inner.innerHTML = `<div class="win sd-head">${UI.winHTML('🏫 ' + esc(s.name), 'teal', false)}<div class="win-body">
         ${safeUrl(s.cover) ? `<img class="sd-banner" src="${esc(s.cover)}" alt="">` : ''}
-        <div class="sd-tags">${styleTags(s.styles)}${s.status !== 'approved' ? `<span class="tag">${t(s.status === 'pending' ? 'st_pending' : 'st_rejected')}</span>` : ''}</div>
+        <div class="sd-tags">${styleTags(s.styles)}${s.status !== 'approved' ? `<span class="tag">${t(s.status === 'pending' ? 'sd_pending' : 'sd_rejected')}</span>` : ''}</div>
         <dl class="info">
           <dt>${PXI.img('event/pin', '📍')}</dt><dd>${esc(placeName(s))}${s.address ? '・' + esc(s.address) : ''}</dd>
           ${s.phone ? `<dt>☎</dt><dd><a href="tel:${esc(s.phone.replace(/[^\d+]/g, ''))}">${esc(s.phone)}</a></dd>` : ''}
-          ${owner ? `<dt>${t('st_owner')}</dt><dd><button class="linkish sd-owner" data-h="${esc(owner.handle)}">${esc(owner.name)} @${esc(owner.handle)}</button></dd>` : ''}
+          ${owner ? `<dt>${t('sd_owner')}</dt><dd><button class="linkish sd-owner" data-h="${esc(owner.handle)}">${esc(owner.name)} @${esc(owner.handle)}</button></dd>` : ''}
         </dl>
         ${s.intro ? `<p class="sd-intro" data-utr>${esc(s.intro)}</p>` : ''}
-        <div class="btn-row"><a class="btn sm teal" href="${esc(mapUrl)}" target="_blank" rel="noopener">${PXI.img('event/pin', '📍')} ${t('st_map')}</a>
+        <div class="btn-row"><a class="btn sm teal" href="${esc(mapUrl)}" target="_blank" rel="noopener">${PXI.img('event/pin', '📍')} ${t('sd_map')}</a>
           ${ig(s.ig) ? `<a class="btn sm pink" href="${esc(ig(s.ig))}" target="_blank" rel="noopener">IG</a>` : ''}
-          ${safeUrl(s.link) ? `<a class="btn sm orange" href="${esc(s.link)}" target="_blank" rel="noopener">${PXI.img('event/link', '🔗')} ${t('st_web')}</a>` : ''}
+          ${safeUrl(s.link) ? `<a class="btn sm orange" href="${esc(s.link)}" target="_blank" rel="noopener">${PXI.img('event/link', '🔗')} ${t('sd_web')}</a>` : ''}
           <a class="btn sm" href="#/studios">◀ ${t('hub_studio')}</a></div>
-        ${mg ? `<div class="sd-manage"><b>🔧 ${t('st_manage')}</b><div class="btn-row"><button class="btn sm yellow sd-edit">✎ ${t('st_edit')}</button><button class="btn sm pink sd-newp">＋ ${t('st_post')}</button><button class="btn sm red sd-del">🗑 ${t('st_del')}</button></div>
-          ${Backend.isAdmin ? `<div class="btn-row">${s.status !== 'approved' ? `<button class="btn sm green sd-ok">✓ ${t('st_approve')}</button>` : ''}${s.status !== 'rejected' ? `<button class="btn sm sd-no">${t('st_reject')}</button>` : ''}
-            <form class="chat-input sd-ownf"><input class="input sm" placeholder="${esc(t('st_owner_ph'))}"><button class="btn sm">${t('st_set_owner')}</button></form></div>` : ''}</div>` : ''}
+        ${mg ? `<div class="sd-manage"><b>🔧 ${t('sd_manage')}</b><div class="btn-row"><button class="btn sm yellow sd-edit">✎ ${t('sd_edit')}</button><button class="btn sm pink sd-newp">＋ ${t('sd_post')}</button><button class="btn sm red sd-del">🗑 ${t('sd_del')}</button></div>
+          ${Backend.isAdmin ? `<div class="btn-row">${s.status !== 'approved' ? `<button class="btn sm green sd-ok">✓ ${t('sd_approve')}</button>` : ''}${s.status !== 'rejected' ? `<button class="btn sm sd-no">${t('sd_reject')}</button>` : ''}
+            <form class="chat-input sd-ownf"><input class="input sm" placeholder="${esc(t('sd_owner_ph'))}"><button class="btn sm">${t('sd_set_owner')}</button></form></div>` : ''}</div>` : ''}
       </div></div>
-      ${by('notice').length || mg ? sec(t('st_notice'), by('notice').map(postHTML).join(''), 'yellow') : ''}
-      ${sec(t('st_course'), upcoming.map(postHTML).join('') + (past.length ? `<details class="sd-past"><summary>${t('st_past')}（${past.length}）</summary>${past.map(postHTML).join('')}</details>` : ''), 'pink')}
-      ${sec(t('st_sched'), schedHTML, 'blue')}
-      ${sec(t('st_teachers'), teachHTML, 'orange')}
-      ${specials.length || mg ? sec(t('st_special'), specials.map(postHTML).join(''), 'yellow') : ''}
-      ${evs.length || mg ? sec(t('st_battles'), evHTML, 'red') : ''}`;
+      ${by('notice').length || mg ? sec(t('sd_notice'), by('notice').map(postHTML).join(''), 'yellow') : ''}
+      ${sec(t('sd_course'), upcoming.map(postHTML).join('') + (past.length ? `<details class="sd-past"><summary>${t('sd_past')}（${past.length}）</summary>${past.map(postHTML).join('')}</details>` : ''), 'pink')}
+      ${sec(t('sd_sched'), schedHTML, 'blue')}
+      ${sec(t('sd_teachers'), teachHTML, 'orange')}
+      ${specials.length || mg ? sec(t('sd_special'), specials.map(postHTML).join(''), 'yellow') : ''}
+      ${evs.length || mg ? sec(t('sd_battles'), evHTML, 'red') : ''}`;
     const reload = async () => { await loadStudios(true); A.render(true); };
     inner.querySelectorAll('.sd-tcard, .sd-owner').forEach(b => (b.onclick = () => window.Friends && Friends.openCard(b.dataset.h)));
     if (!mg) return;
     inner.querySelector('.sd-edit').onclick = () => openEditor(s, reload);
     inner.querySelector('.sd-newp').onclick = () => openPostEditor(s, reload);
     inner.querySelector('.sd-del').onclick = () => {
-      const m = modal({ title: '🗑 ' + t('st_del'), color: 'red', body: `<p>${esc(t('st_del_q', { n: s.name }))}</p><div class="form-foot"><button class="btn no">${t('no')}</button><button class="btn red yes">${t('yes_del')}</button></div>` });
+      const m = modal({ title: '🗑 ' + t('sd_del'), color: 'red', body: `<p>${esc(t('sd_del_q', { n: s.name }))}</p><div class="form-foot"><button class="btn no">${t('no')}</button><button class="btn red yes">${t('yes_del')}</button></div>` });
       m.el.querySelector('.no').onclick = m.close;
       m.el.querySelector('.yes').onclick = async () => { try { await Backend.deleteStudio(s.id); m.close(); toast(t('deleted'), '✕'); await loadStudios(true); A.nav('#/studios'); } catch (x) { toast(err(x), '✕'); } };
     };
@@ -324,7 +324,7 @@ window.Daily = (() => {
     const ok = inner.querySelector('.sd-ok'), no = inner.querySelector('.sd-no'), of = inner.querySelector('.sd-ownf');
     if (ok) ok.onclick = async () => { try { await Backend.rpc('studio_review', { sid: s.id, ok: true }); SFX.play('fanfare'); toast(t('adm_done'), '✔'); reload(); } catch (x) { toast(err(x), '✕'); } };
     if (no) no.onclick = async () => { try { await Backend.rpc('studio_review', { sid: s.id, ok: false }); toast(t('adm_done'), '✔'); reload(); } catch (x) { toast(err(x), '✕'); } };
-    if (of) of.onsubmit = async ev => { ev.preventDefault(); const v = of.querySelector('input').value.trim().replace(/^@/, ''); if (!v) return; try { await Backend.rpc('studio_set_owner', { sid: s.id, p_handle: v }); toast(t('st_owner_ok'), '✔'); reload(); } catch (x) { toast(err(x), '✕'); } };
+    if (of) of.onsubmit = async ev => { ev.preventDefault(); const v = of.querySelector('input').value.trim().replace(/^@/, ''); if (!v) return; try { await Backend.rpc('studio_set_owner', { sid: s.id, p_handle: v }); toast(t('sd_owner_ok'), '✔'); reload(); } catch (x) { toast(err(x), '✕'); } };
   }
 
   /* ---------- 一列一列的編輯器（師資 / 課表） ---------- */
@@ -333,7 +333,7 @@ window.Daily = (() => {
       wrap.innerHTML = rows.map((r, i) => `<div class="re-row" data-i="${i}">${fields.map(f => f.type === 'day'
         ? `<select class="input sm" data-k="${f.k}">${[1, 2, 3, 4, 5, 6, 0].map(d => `<option value="${d}" ${+r[f.k] === d ? 'selected' : ''}>${esc(weekName(d))}</option>`).join('')}</select>`
         : `<input class="input sm" data-k="${f.k}" type="${f.type || 'text'}" maxlength="${f.max || 60}" placeholder="${esc(f.ph || '')}" value="${esc(r[f.k] || '')}" style="flex:${f.w || 1}">`).join('')}<button type="button" class="btn sm re-x" aria-label="remove">✕</button></div>`).join('')
-        + `<button type="button" class="btn sm re-add">＋ ${t('st_add_row')}</button>`;
+        + `<button type="button" class="btn sm re-add">＋ ${t('sd_add_row')}</button>`;
     };
     const upd = ev => { const row = ev.target.closest('.re-row'); if (!row || !ev.target.dataset.k) return; const k = ev.target.dataset.k; rows[+row.dataset.i][k] = ev.target.tagName === 'SELECT' ? +ev.target.value : ev.target.value; };
     wrap.addEventListener('input', upd); wrap.addEventListener('change', upd);
@@ -352,27 +352,27 @@ window.Daily = (() => {
     const linked = new Set(s.events || []);
     let cover = s.cover || '', pos = typeof s.lat === 'number' ? [s.lat, s.lon] : null;
     const body = h(`<form class="form sd-form" novalidate>
-      <label class="field full"><span>${t('st_f_name')} <b>*</b></span><input class="input" name="name" maxlength="60" value="${esc(s.name || '')}"></label>
-      <div class="field"><span>${t('st_f_place')} <b>*</b></span><div class="row2"><select class="input" name="country">${countryOpts(s.country)}</select><select class="input" name="city"></select></div></div>
-      <label class="field"><span>${t('st_f_addr')}</span><input class="input" name="address" maxlength="200" value="${esc(s.address || '')}"></label>
-      <fieldset class="fieldset full"><legend>${t('st_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip ${(s.styles || []).includes(x) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" ${(s.styles || []).includes(x) ? 'checked' : ''} hidden><span class="dot"></span>${esc(x)}</label>`).join('')}</div></fieldset>
-      <div class="row3 full"><label class="field"><span>${t('st_f_phone')}</span><input class="input" name="phone" maxlength="40" value="${esc(s.phone || '')}"></label>
-        <label class="field"><span>${t('st_f_ig')}</span><input class="input" name="ig" maxlength="200" value="${esc(s.ig || '')}" placeholder="@studio"></label>
-        <label class="field"><span>${t('st_f_link')}</span><input class="input" name="link" type="url" maxlength="300" value="${esc(s.link || '')}" placeholder="https://"></label></div>
-      <label class="field full"><span>${t('st_f_intro')}</span><textarea class="input" name="intro" rows="4" maxlength="2000">${esc(s.intro || '')}</textarea></label>
-      <fieldset class="fieldset full"><legend>${t('st_f_cover')}</legend><label class="btn sm">${t('st_f_cover_up')}<input type="file" accept="image/png,image/jpeg,image/webp" hidden class="sd-cov"></label>
+      <label class="field full"><span>${t('sd_f_name')} <b>*</b></span><input class="input" name="name" maxlength="60" value="${esc(s.name || '')}"></label>
+      <div class="field"><span>${t('sd_f_place')} <b>*</b></span><div class="row2"><select class="input" name="country">${countryOpts(s.country)}</select><select class="input" name="city"></select></div></div>
+      <label class="field"><span>${t('sd_f_addr')}</span><input class="input" name="address" maxlength="200" value="${esc(s.address || '')}"></label>
+      <fieldset class="fieldset full"><legend>${t('sd_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip ${(s.styles || []).includes(x) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" ${(s.styles || []).includes(x) ? 'checked' : ''} hidden><span class="dot"></span>${esc(x)}</label>`).join('')}</div></fieldset>
+      <div class="row3 full"><label class="field"><span>${t('sd_f_phone')}</span><input class="input" name="phone" maxlength="40" value="${esc(s.phone || '')}"></label>
+        <label class="field"><span>${t('sd_f_ig')}</span><input class="input" name="ig" maxlength="200" value="${esc(s.ig || '')}" placeholder="@studio"></label>
+        <label class="field"><span>${t('sd_f_link')}</span><input class="input" name="link" type="url" maxlength="300" value="${esc(s.link || '')}" placeholder="https://"></label></div>
+      <label class="field full"><span>${t('sd_f_intro')}</span><textarea class="input" name="intro" rows="4" maxlength="2000">${esc(s.intro || '')}</textarea></label>
+      <fieldset class="fieldset full"><legend>${t('sd_f_cover')}</legend><label class="btn sm">${t('sd_f_cover_up')}<input type="file" accept="image/png,image/jpeg,image/webp" hidden class="sd-cov"></label>
         <img class="poster-prev sd-cov-prev ${cover ? '' : 'hidden'}" src="${esc(cover)}" alt=""></fieldset>
-      <fieldset class="fieldset full"><legend>${t('st_f_pin')}</legend><button type="button" class="btn sm teal sd-here">${t('st_f_here')}</button><div class="sd-map sd-map-sm"></div></fieldset>
-      <fieldset class="fieldset full"><legend>${t('st_f_teachers')}</legend><div class="re sd-te"></div></fieldset>
-      <fieldset class="fieldset full"><legend>${t('st_f_sched')}</legend><div class="re sd-sc"></div></fieldset>
-      ${editing ? `<fieldset class="fieldset full"><legend>${t('st_f_battles')}</legend><input class="input sm sd-evq" placeholder="${esc(t('st_f_battles_q'))}"><div class="sd-evpick"></div></fieldset>` : ''}
-      <div class="full"><div class="err"></div><div class="form-foot"><button type="button" class="btn cancel">${t('cancel')}</button><button class="btn pink">${editing ? t('st_save') : t('st_submit')}</button></div></div>
+      <fieldset class="fieldset full"><legend>${t('sd_f_pin')}</legend><button type="button" class="btn sm teal sd-here">${t('sd_f_here')}</button><div class="sd-map sd-map-sm"></div></fieldset>
+      <fieldset class="fieldset full"><legend>${t('sd_f_teachers')}</legend><div class="re sd-te"></div></fieldset>
+      <fieldset class="fieldset full"><legend>${t('sd_f_sched')}</legend><div class="re sd-sc"></div></fieldset>
+      ${editing ? `<fieldset class="fieldset full"><legend>${t('sd_f_battles')}</legend><input class="input sm sd-evq" placeholder="${esc(t('sd_f_battles_q'))}"><div class="sd-evpick"></div></fieldset>` : ''}
+      <div class="full"><div class="err"></div><div class="form-foot"><button type="button" class="btn cancel">${t('cancel')}</button><button class="btn pink">${editing ? t('sd_save') : t('sd_submit')}</button></div></div>
     </form>`);
-    const m = modal({ title: '🏫 ' + (editing ? t('st_edit') : t('st_add')), color: 'teal', body, wide: true });
+    const m = modal({ title: '🏫 ' + (editing ? t('sd_edit') : t('sd_add')), color: 'teal', body, wide: true });
     const f = body, cc = f.elements.country, city = f.elements.city;
     city.innerHTML = cityOpts(cc.value, s.city);
-    rowsEditor(f.querySelector('.sd-te'), [{ k: 'name', ph: t('st_t_name'), w: 1.2 }, { k: 'styles', ph: t('st_t_styles') }, { k: 'ig', ph: t('st_t_ig') }, { k: 'handle', ph: t('st_t_handle'), max: 20 }], teachers);
-    rowsEditor(f.querySelector('.sd-sc'), [{ k: 'd', type: 'day' }, { k: 's', type: 'time' }, { k: 'e', type: 'time' }, { k: 'title', ph: t('st_s_title'), w: 1.4 }, { k: 'teacher', ph: t('st_s_teacher') }, { k: 'level', ph: t('st_s_level'), max: 20 }], schedule);
+    rowsEditor(f.querySelector('.sd-te'), [{ k: 'name', ph: t('sd_t_name'), w: 1.2 }, { k: 'styles', ph: t('sd_t_styles') }, { k: 'ig', ph: t('sd_t_ig') }, { k: 'handle', ph: t('sd_t_handle'), max: 20 }], teachers);
+    rowsEditor(f.querySelector('.sd-sc'), [{ k: 'd', type: 'day' }, { k: 's', type: 'time' }, { k: 'e', type: 'time' }, { k: 'title', ph: t('sd_s_title'), w: 1.4 }, { k: 'teacher', ph: t('sd_s_teacher') }, { k: 'level', ph: t('sd_s_level'), max: 20 }], schedule);
     f.querySelectorAll('.chips label.chip').forEach(l => l.addEventListener('click', ev => { ev.preventDefault(); const cb = l.querySelector('input'); cb.checked = !cb.checked; l.classList.toggle('on', cb.checked); SFX.play('select'); }));
     // 地圖圖釘
     let mapObj = null, marker = null;
@@ -380,7 +380,7 @@ window.Daily = (() => {
     makeMap(f.querySelector('.sd-map'), pos || cityCenter(cc.value, city.value), pos ? 16 : 12).then(o => { mapObj = o; if (pos) setPin(pos); o.map.on('click', e => setPin([e.latlng.lat, e.latlng.lng])); }).catch(() => f.querySelector('.sd-map').remove());
     cc.onchange = () => { city.innerHTML = cityOpts(cc.value); if (!pos && mapObj) mapObj.map.setView(cityCenter(cc.value, city.value), 12); };
     city.onchange = () => { if (mapObj && !marker) mapObj.map.setView(cityCenter(cc.value, city.value), 12); };
-    f.querySelector('.sd-here').onclick = async () => { try { setPin(await locate(), true); SFX.play('coin'); } catch (x) { toast(t('st_geo_fail'), '📍'); } };
+    f.querySelector('.sd-here').onclick = async () => { try { setPin(await locate(), true); SFX.play('coin'); } catch (x) { toast(t('sd_geo_fail'), '📍'); } };
     // 封面
     f.querySelector('.sd-cov').onchange = async ev => {
       const file = ev.target.files[0]; if (!file) return;
@@ -392,7 +392,7 @@ window.Daily = (() => {
     if (pick) {
       const drawPick = q => {
         const all = Store.all().filter(e => linked.has(e.id) || ((!q || e.name.toLowerCase().includes(q)) && e.country === cc.value)).sort((a, b) => (linked.has(b.id) - linked.has(a.id)) || b.date.localeCompare(a.date)).slice(0, 60);
-        pick.innerHTML = all.map(e => `<label class="chk"><input type="checkbox" value="${esc(e.id)}" ${linked.has(e.id) ? 'checked' : ''}> <span class="tm">${esc(e.date.replace(/-/g, '/'))}</span> ${esc(e.name)}</label>`).join('') || `<p class="note">${t('st_nothing')}</p>`;
+        pick.innerHTML = all.map(e => `<label class="chk"><input type="checkbox" value="${esc(e.id)}" ${linked.has(e.id) ? 'checked' : ''}> <span class="tm">${esc(e.date.replace(/-/g, '/'))}</span> ${esc(e.name)}</label>`).join('') || `<p class="note">${t('sd_nothing')}</p>`;
       };
       pick.onchange = ev => { const v = ev.target.value; if (ev.target.checked) linked.add(v); else linked.delete(v); };
       const q = f.querySelector('.sd-evq'); q.oninput = () => drawPick(q.value.trim().toLowerCase());
@@ -403,7 +403,7 @@ window.Daily = (() => {
       ev.preventDefault();
       const fd = new FormData(f), g = k => String(fd.get(k) || '').trim();
       const errEl = f.querySelector('.err');
-      if (g('name').length < 2) { errEl.textContent = '✕ ' + t('st_need_name'); f.elements.name.classList.add('bad'); return; }
+      if (g('name').length < 2) { errEl.textContent = '✕ ' + t('sd_need_name'); f.elements.name.classList.add('bad'); return; }
       const row = {
         ...(editing ? { id: s.id } : {}),
         name: g('name'), country: g('country'), city: g('city') || null, address: g('address') || null, styles: fd.getAll('styles'),
@@ -417,7 +417,7 @@ window.Daily = (() => {
       try {
         const saved = await Backend.saveStudio(row);
         m.close(); SFX.play('fanfare');
-        toast(editing ? t('st_saved') : t('st_sent'), '🏫');
+        toast(editing ? t('sd_saved') : t('sd_sent'), '🏫');
         await loadStudios(true);
         if (after) after(); else A.nav('#/studios/' + saved.id);
       } catch (x) { SFX.play('error'); errEl.textContent = '✕ ' + err(x); btn.disabled = false; }
@@ -428,18 +428,18 @@ window.Daily = (() => {
   function openPostEditor(s, after) {
     let image = '';
     const body = h(`<form class="form" novalidate>
-      <div class="field full"><span>${t('st_p_kind')}</span><div class="seg sd-kind">${['notice', 'course', 'special'].map((k, i) => `<button type="button" data-k="${k}" class="${i === 1 ? 'on' : ''}">${t('st_p_' + k)}</button>`).join('')}</div></div>
-      <label class="field full"><span>${t('st_p_title')} <b>*</b></span><input class="input" name="title" maxlength="80"></label>
-      <div class="row3 full"><label class="field"><span>${t('st_p_date')}</span><input class="input" type="date" name="date"></label>
-        <label class="field"><span>${t('st_p_time')}</span><input class="input" name="time" maxlength="20" placeholder="19:00–21:00"></label>
-        <label class="field"><span>${t('st_p_teacher')}</span><input class="input" name="teacher" maxlength="60"></label></div>
-      <fieldset class="fieldset full"><legend>${t('st_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" hidden><span class="dot"></span>${esc(x)}</label>`).join('')}</div></fieldset>
-      <label class="field full"><span>${t('st_p_body')}</span><textarea class="input" name="body" rows="4" maxlength="2000"></textarea></label>
-      <label class="field full"><span>${t('st_p_link')}</span><input class="input" name="link" type="url" maxlength="300" placeholder="https://"></label>
-      <fieldset class="fieldset full"><legend>${t('st_p_img')}</legend><label class="btn sm">${t('st_f_cover_up')}<input type="file" accept="image/png,image/jpeg,image/webp" hidden class="sd-pimg"></label><img class="poster-prev hidden" alt=""></fieldset>
-      <div class="full"><div class="err"></div><div class="form-foot"><button type="button" class="btn cancel">${t('cancel')}</button><button class="btn pink">${t('st_save')}</button></div></div>
+      <div class="field full"><span>${t('sd_p_kind')}</span><div class="seg sd-kind">${['notice', 'course', 'special'].map((k, i) => `<button type="button" data-k="${k}" class="${i === 1 ? 'on' : ''}">${t('sd_p_' + k)}</button>`).join('')}</div></div>
+      <label class="field full"><span>${t('sd_p_title')} <b>*</b></span><input class="input" name="title" maxlength="80"></label>
+      <div class="row3 full"><label class="field"><span>${t('sd_p_date')}</span><input class="input" type="date" name="date"></label>
+        <label class="field"><span>${t('sd_p_time')}</span><input class="input" name="time" maxlength="20" placeholder="19:00–21:00"></label>
+        <label class="field"><span>${t('sd_p_teacher')}</span><input class="input" name="teacher" maxlength="60"></label></div>
+      <fieldset class="fieldset full"><legend>${t('sd_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" hidden><span class="dot"></span>${esc(x)}</label>`).join('')}</div></fieldset>
+      <label class="field full"><span>${t('sd_p_body')}</span><textarea class="input" name="body" rows="4" maxlength="2000"></textarea></label>
+      <label class="field full"><span>${t('sd_p_link')}</span><input class="input" name="link" type="url" maxlength="300" placeholder="https://"></label>
+      <fieldset class="fieldset full"><legend>${t('sd_p_img')}</legend><label class="btn sm">${t('sd_f_cover_up')}<input type="file" accept="image/png,image/jpeg,image/webp" hidden class="sd-pimg"></label><img class="poster-prev hidden" alt=""></fieldset>
+      <div class="full"><div class="err"></div><div class="form-foot"><button type="button" class="btn cancel">${t('cancel')}</button><button class="btn pink">${t('sd_save')}</button></div></div>
     </form>`);
-    const m = modal({ title: '＋ ' + t('st_post'), color: 'pink', body, wide: true });
+    const m = modal({ title: '＋ ' + t('sd_post'), color: 'pink', body, wide: true });
     const f = body; let kind = 'course';
     f.querySelector('.sd-kind').onclick = ev => { const b = ev.target.closest('[data-k]'); if (!b) return; kind = b.dataset.k; f.querySelectorAll('.sd-kind button').forEach(x => x.classList.toggle('on', x === b)); SFX.play('select'); };
     f.querySelectorAll('.chips label.chip').forEach(l => l.addEventListener('click', ev => { ev.preventDefault(); const cb = l.querySelector('input'); cb.checked = !cb.checked; l.classList.toggle('on', cb.checked); }));
@@ -451,10 +451,10 @@ window.Daily = (() => {
     f.onsubmit = async ev => {
       ev.preventDefault();
       const fd = new FormData(f), g = k => String(fd.get(k) || '').trim();
-      if (!g('title')) { f.querySelector('.err').textContent = '✕ ' + t('st_p_title'); return; }
+      if (!g('title')) { f.querySelector('.err').textContent = '✕ ' + t('sd_p_title'); return; }
       try {
         await Backend.saveStudioPost({ studio_id: s.id, kind, title: g('title'), date: g('date') || null, time: g('time') || null, teacher: g('teacher') || null, styles: fd.getAll('styles'), body: g('body') || null, link: safeUrl(g('link')) || null, image: image || null });
-        m.close(); SFX.play('coin'); toast(t('st_saved'), '🏫'); after && after();
+        m.close(); SFX.play('coin'); toast(t('sd_saved'), '🏫'); after && after();
       } catch (x) { f.querySelector('.err').textContent = '✕ ' + err(x); }
     };
   }
@@ -462,12 +462,12 @@ window.Daily = (() => {
   /* ---------- 管理後台：教室審核、每日一推排程 ---------- */
   A.adminTabs = A.adminTabs || [];
   A.adminTabs.push({
-    key: 'studio', label: () => '🏫 ' + t('st_review'),
+    key: 'studio', label: () => '🏫 ' + t('sd_review'),
     draw: async (pane, fail) => {
       try { await loadStudios(true); } catch (x) { return fail(x); }
       const rows = studios.filter(s => s.status === 'pending');
       pane.innerHTML = rows.length ? rows.map(s => `<div class="fo-review"><div class="fo-meta"><b>${esc(s.name)}</b><span class="tm">${esc(placeName(s))}</span></div>${s.intro ? `<p>${esc(s.intro.slice(0, 200))}</p>` : ''}
-        <div class="btn-row"><a class="btn sm" href="#/studios/${s.id}">▶ ${t('lk_go')}</a><button class="btn sm green" data-ok="${s.id}">✓ ${t('st_approve')}</button><button class="btn sm" data-no="${s.id}">${t('st_reject')}</button></div></div>`).join('') : `<p class="note">${t('adm_none')}</p>`;
+        <div class="btn-row"><a class="btn sm" href="#/studios/${s.id}">▶ ${t('lk_go')}</a><button class="btn sm green" data-ok="${s.id}">✓ ${t('sd_approve')}</button><button class="btn sm" data-no="${s.id}">${t('sd_reject')}</button></div></div>`).join('') : `<p class="note">${t('adm_none')}</p>`;
       pane.onclick = async ev => {
         const b = ev.target.closest('[data-ok],[data-no]'); if (!b) return;
         try { await Backend.rpc('studio_review', { sid: +(b.dataset.ok || b.dataset.no), ok: !!b.dataset.ok }); b.closest('.fo-review').remove(); toast(t('adm_done'), '✔'); loadStudios(true).catch(() => {}); } catch (x) { fail(x); }

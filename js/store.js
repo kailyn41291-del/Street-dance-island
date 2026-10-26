@@ -49,7 +49,16 @@ window.Store = (() => {
     /** 能不能新增 / 編輯：雲端模式只有管理員；本機模式大家都行（只影響自己的瀏覽器） */
     canEdit: () => (cloud() ? Backend.isAdmin : true),
     async load() {
-      if (cloud()) { try { remote = await Backend.listEvents(); } catch (e) { console.warn('[Store] load failed', e); } }
+      if (cloud()) {
+        try {
+          remote = await Backend.listEvents();
+          try { localStorage.setItem('danceIsland.eventsCache', JSON.stringify({ at: Date.now(), rows: remote })); } catch (x) {}
+        } catch (e) {
+          console.warn('[Store] load failed', e);
+          // 沒網路：用上次存在手機裡的活動
+          try { const c = JSON.parse(localStorage.getItem('danceIsland.eventsCache') || 'null'); if (c && c.rows) { remote = c.rows; this.offlineAt = c.at; } } catch (x) {}
+        }
+      }
       loaded = true;
     },
     all,

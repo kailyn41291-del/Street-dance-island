@@ -604,11 +604,39 @@
     if (a === 'edit') openForm(ev);
     else if (a === 'del') confirmDelete(ev, redraw);
     else if (a === 'poster') openPoster(ev);
-    else if (a === 'map' || a === 'link') SFX.play('confirm');
+    else if (a === 'map') openNav(ev);
+    else if (a === 'link') SFX.play('confirm');
     else if (a === 'cmt') toggleComments(tg.closest('.card'), tg.dataset.ev);
     else return App.onCardAct(a, ev, tg, redraw);
     return true;
   }
+  /* 地圖 / 導航（大眾運輸）/ 附近的捷運站 */
+  function openNav(e) {
+    if (!e) return;
+    SFX.play('select');
+    const place = [e.address || e.venue, !e.address && e.venue ? nm(cityOf(e.country, e.city)) : ''].filter(Boolean).join(' ') || e.venue || '';
+    const clean = place.replace(/\s*[（(][^）)]*[）)]\s*/g, ' ').trim() || place;   // 括號裡的補充（例：永樂市場9樓）拿掉，地圖比較搜得到
+    const q = encodeURIComponent(clean);
+    const st = { TW: '附近 捷運站', JP: ' 駅', KR: ' 지하철역', HK: ' 港鐵站', CN: ' 地铁站' }[e.country] || ' metro station';
+    const mapUrl = /^https?:\/\//i.test(e.mapUrl || '') ? e.mapUrl : `https://www.google.com/maps/search/?api=1&query=${q}`;
+    const go = `https://www.google.com/maps/dir/?api=1&destination=${q}&travelmode=transit`;
+    const near = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(clean + ' ' + st.trim())}`;
+    const m = modal({ title: PXI.img('event/pin', '📍') + ' ' + esc(e.venue || e.name), color: 'teal', body: `<div class="nav-pop">
+      ${place ? `<p class="nav-addr">${esc(place)}</p>` : ''}
+      <a class="btn teal" href="${esc(mapUrl)}" target="_blank" rel="noopener">${PXI.img('event/pin', '📍')} ${t('navx_map')}</a>
+      <a class="btn pink" href="${esc(go)}" target="_blank" rel="noopener">🧭 ${t('navx_go')}</a>
+      <a class="btn yellow" href="${esc(near)}" target="_blank" rel="noopener">🚇 ${t(e.country === 'TW' ? 'navx_mrt' : 'navx_station')}</a>
+      ${place ? `<button class="btn sm nav-copy">${t('navx_copy')}</button>` : ''}</div>` });
+    m.el.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { SFX.play('confirm'); setTimeout(m.close, 200); }));
+    const cp = m.el.querySelector('.nav-copy');
+    if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText(place); toast(t('share_copied'), '📋'); } catch (x) { window.prompt('', place); } };
+  }
+  I18N.extend({
+    zh: { navx_map: '在地圖上看', navx_go: '導航過去（大眾運輸）', navx_mrt: '附近的捷運站', navx_station: '附近的車站', navx_copy: '複製地址' },
+    en: { navx_map: 'View on map', navx_go: 'Directions (public transport)', navx_mrt: 'Nearby MRT stations', navx_station: 'Nearby stations', navx_copy: 'Copy address' },
+    ja: { navx_map: '地図で見る', navx_go: '経路案内（公共交通）', navx_mrt: '近くの MRT 駅', navx_station: '近くの駅', navx_copy: '住所をコピー' },
+    ko: { navx_map: '지도에서 보기', navx_go: '길찾기 (대중교통)', navx_mrt: '근처 MRT 역', navx_station: '근처 역', navx_copy: '주소 복사' }
+  });
   const loadCommentCounts = root => Social.commentCounts().then(n => { cmtCounts = n || {}; root.querySelectorAll('[data-cc]').forEach(x => (x.textContent = cmtCounts[x.dataset.cc] || 0)); });
 
   /* ---------- 活動留言板 ---------- */
@@ -719,11 +747,11 @@
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}${App.viewTag ? App.viewTag(e) : ''}</div>
         <h3 data-trn>${esc(e.name)}</h3>
         ${opt.place ? `<div class="place-tag">${PXI.img('event/pin', '📍')} ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
-        <dl class="info">${e.organizer ? `<dt>${PXI.lead(t('r_org'))}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${PXI.lead(k)}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}${lineup.map(([k, v]) => `<dt>${PXI.lead(t(k))}</dt><dd class="lineup">${v.map(n => `<span class="lu">${esc(n)}</span>`).join('')}</dd>`).join('')}</dl>
+        <dl class="info">${e.organizer ? `<dt>${PXI.lead(t('r_org'))}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => { const keep = k === t('r_when') || k === t('r_venue') ? ' class="ik"' : ''; return `<dt${keep}>${PXI.lead(k)}</dt><dd${keep} ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`; }).join('')}${lineup.map(([k, v]) => `<dt>${PXI.lead(t(k))}</dt><dd class="lineup">${v.map(n => `<span class="lu">${esc(n)}</span>`).join('')}</dd>`).join('')}</dl>
         ${App.cardResults(e)}
       </div>
       <div class="acts">
-        ${(e.address || e.venue || e.mapUrl) && safeMap ? `<a class="btn sm teal" data-act="map" href="${esc(safeMap)}" target="_blank" rel="noopener">${PXI.img('event/pin', I.pin)} ${t('b_map')}</a>` : ''}
+        ${(e.address || e.venue || e.mapUrl) && safeMap ? `<button class="btn sm teal" data-act="map" data-ev="${esc(e.id)}">${PXI.img('event/pin', I.pin)} ${t('b_map')}</button>` : ''}
         ${safeLink ? `<a class="btn sm orange" data-act="link" href="${esc(safeLink)}" target="_blank" rel="noopener">${PXI.img('event/link', I.link)} ${t('b_link')}</a>` : ''}
         <button class="btn sm yellow" data-act="cmt" data-ev="${esc(e.id)}">💬 ${t('cmt')} <span class="cc" data-cc="${esc(e.id)}">${cmtCounts[e.id] || 0}</span></button>
         ${App.cardExtras(e, past)}

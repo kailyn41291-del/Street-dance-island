@@ -351,6 +351,20 @@ window.App = {
 
   /* ---------- 活動總覽 ---------- */
   const fs = { q: '', when: 'upcoming', region: '', styles: new Set(), open: false };
+  // 記住上次的搜尋條件：不自動套用，下次進來問一下要不要用
+  const FKEY = 'danceIsland.evFilter';
+  const fsDefault = () => !fs.q.trim() && fs.when === 'upcoming' && !fs.region && !fs.styles.size && !fs.open;
+  const saveFs = () => { if (fsDefault()) return; try { localStorage.setItem(FKEY, JSON.stringify({ q: fs.q.trim(), when: fs.when, region: fs.region, styles: [...fs.styles], open: fs.open })); } catch (x) {} };
+  const savedFs = () => { try { return JSON.parse(localStorage.getItem(FKEY) || 'null'); } catch (x) { return null; } };
+  let askedFs = false;
+  const regionLabel = r => (r === 'near' ? t('ev_near') : r === 'TW' ? nm(A.byCode.TW) : r ? A.contName(r) : '');
+  const fsSummary = o => [o.q && `「${o.q}」`, o.when !== 'upcoming' && t('ev_w_' + o.when), regionLabel(o.region), ...(o.styles || []), o.open && t('ev_open')].filter(Boolean).join('・');
+  I18N.extend({
+    zh: { ev_last_q: '要使用上次的搜尋條件嗎？', ev_last_yes: '套用', ev_last_no: '不用' },
+    en: { ev_last_q: 'Use your last search?', ev_last_yes: 'Apply', ev_last_no: 'No thanks' },
+    ja: { ev_last_q: '前回の検索条件を使いますか？', ev_last_yes: '使う', ev_last_no: '使わない' },
+    ko: { ev_last_q: '지난번 검색 조건을 쓸까요?', ev_last_yes: '적용', ev_last_no: '괜찮아요' }
+  });
   A.crumbs.events = r => (r.arg[0] === 'near' ? PXI.img('menu/near', '📍') + ' ' + t('ev_near') : PXI.img('menu/events', '📋') + ' ' + t('ev_all'));
   A.views.events = (r, stage) => {
     if (r.arg[0] === 'near') fs.region = 'near';
@@ -368,7 +382,24 @@ window.App = {
         </div>
         <div class="chips">${Store.STYLES.map(s => `<button class="chip ${fs.styles.has(s) ? 'on' : ''}" data-style="${esc(s)}" style="--c:${Store.STYLE_COLOR[s]}"><span class="dot"></span>${esc(s)}</button>`).join('')}</div>
       </div></div>
-      <div class="list-head"><span class="ev-count"></span></div><div class="cards ev-list"></div>`;
+      <div class="list-head"><span class="ev-count"></span><span class="grow"></span><button class="btn sm ev-dens"></button></div><div class="fs-ask-slot"></div><div class="cards ev-list"></div>`;
+    // 精簡 / 詳細切換
+    const dens = inner.querySelector('.ev-dens');
+    const paintDens = () => { dens.textContent = t('ev_view') + (Prefs.get('compact') ? t('ds_compact') : t('ds_full')); };
+    dens.onclick = () => { Prefs.set('compact', !Prefs.get('compact')); SFX.play('select'); paintDens(); };
+    paintDens(); Prefs.onChange(() => dens.isConnected && paintDens());
+    // 上次的搜尋條件
+    const last = savedFs();
+    if (!askedFs && fsDefault() && r.arg[0] !== 'near' && last && fsSummary(last)) {
+      askedFs = true;
+      const slot = inner.querySelector('.fs-ask-slot');
+      slot.innerHTML = `<div class="fs-ask">🔎 ${t('ev_last_q')} <b>${esc(fsSummary(last))}</b><span class="grow"></span><button class="btn sm pink yes">${t('ev_last_yes')}</button><button class="btn sm no">${t('ev_last_no')}</button></div>`;
+      slot.querySelector('.no').onclick = () => { slot.innerHTML = ''; SFX.play('cancel'); };
+      slot.querySelector('.yes').onclick = () => {
+        Object.assign(fs, { q: last.q || '', when: last.when || 'upcoming', region: last.region || '', styles: new Set(last.styles || []), open: !!last.open });
+        SFX.play('confirm'); A.render(true);
+      };
+    }
     const listEl = inner.querySelector('.ev-list'), countEl = inner.querySelector('.ev-count');
     const draw = async () => {
       const today = A.todayStr(), wk = A.ymd(new Date(Date.now() + 7 * DAY)), mo = A.ymd(new Date(Date.now() + 31 * DAY));
@@ -408,14 +439,14 @@ window.App = {
       A.translateCards(listEl);
     };
     let tmr;
-    inner.querySelector('.q').oninput = ev => { fs.q = ev.target.value; clearTimeout(tmr); tmr = setTimeout(draw, 200); };
-    inner.querySelector('.when').onchange = ev => { fs.when = ev.target.value; SFX.play('select'); draw(); };
-    inner.querySelector('.region').onchange = ev => { fs.region = ev.target.value; SFX.play('select'); draw(); };
-    inner.querySelector('.open').onchange = ev => { fs.open = ev.target.checked; SFX.play('select'); draw(); };
+    inner.querySelector('.q').oninput = ev => { fs.q = ev.target.value; clearTimeout(tmr); tmr = setTimeout(() => { draw(); saveFs(); }, 300); };
+    inner.querySelector('.when').onchange = ev => { fs.when = ev.target.value; SFX.play('select'); draw(); saveFs(); };
+    inner.querySelector('.region').onchange = ev => { fs.region = ev.target.value; SFX.play('select'); draw(); saveFs(); };
+    inner.querySelector('.open').onchange = ev => { fs.open = ev.target.checked; SFX.play('select'); draw(); saveFs(); };
     inner.addEventListener('click', ev => {
       const tg = ev.target.closest('button, a'); if (!tg) return;
       if (tg.dataset.style !== undefined && tg.classList.contains('chip')) {
-        const s = tg.dataset.style; fs.styles.has(s) ? fs.styles.delete(s) : fs.styles.add(s); tg.classList.toggle('on'); SFX.play('select'); return draw();
+        const s = tg.dataset.style; fs.styles.has(s) ? fs.styles.delete(s) : fs.styles.add(s); tg.classList.toggle('on'); SFX.play('select'); saveFs(); return draw();
       }
       A.cardAct(tg, draw);
     });

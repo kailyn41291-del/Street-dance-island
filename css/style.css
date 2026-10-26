@@ -1925,3 +1925,47 @@ img.pxi { width: 1.5em; height: 1.5em; object-fit: contain; vertical-align: midd
 .pt-msg b { margin-right: 6px; } .pt-msg .tm { font-size: 11px; color: var(--ink-soft); }
 .party-link { display: inline-block; margin-left: 4px; border: 2px solid var(--ink); background: var(--red, #e35d5d); color: #fff; padding: 0 6px; text-decoration: none; font-size: 12px; }
 .pt-tabs { flex-wrap: wrap; }
+
+/* ===== 手機 / 平板：避免不小心放大 ===== */
+html { touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (pointer: coarse) { input, select, textarea, .input { font-size: max(16px, 1em) !important; } }
+
+/* ===== 活動卡片：精簡模式（只留日期、地點） ===== */
+.cards-compact .card .info > :not(.ik), .cards-compact .card .lineup, .cards-compact .card .results, .cards-compact .card .res-list { display: none; }
+.cards-compact .card.has-poster .poster { max-width: 90px; }
+.cards-compact .card .main { padding-bottom: 6px; }
+.list-head { display: flex; align-items: center; gap: 8px; }
+.fs-ask { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background: var(--paper); border: var(--px) solid var(--ink); box-shadow: var(--shadow); padding: 8px 10px; font-size: 13px; }
+.fs-ask b { color: var(--pink); }
+
+/* ===== 導航選單 ===== */
+.nav-pop { display: grid; gap: 10px; }
+.nav-pop .btn { justify-content: flex-start; white-space: normal; text-align: left; }
+.nav-addr { margin: 0; color: var(--ink-soft); }
+
+/* ===== 顯示設定 ===== */
+.ds { display: grid; gap: 12px; }
+.ds-row { display: grid; gap: 6px; }
+.ds-seg { flex-wrap: wrap; justify-self: start; }
+.ds-seg button { padding: 8px 14px; font-size: 14px; }
+.ds-sample { margin: 0; padding: 8px; border: 2px dashed var(--ink); background: var(--paper); }
+
+/* ===== 夜間模式 ===== */
+html[data-theme="night"] {
+  --ink: #efe3d0; --ink-soft: #b8a996; --cream: #3a3350; --cream-2: #463e60; --paper: #262036; --sky: #12142a; --sky-2: #181b36; --grid: #1c2040;
+  --shadow: 4px 4px 0 #000; color-scheme: dark;
+}
+html[data-theme="night"] body { color: var(--ink); }
+/* 有底色的按鈕、標題、標籤：字維持深色才看得清楚 */
+html[data-theme="night"] :is(.btn.teal, .btn.orange, .btn.pink, .btn.yellow, .btn.blue, .btn.green, .btn.red, .win-title, .tag[style*="--c"], .chip.on, .seg button.on, .party-link) { color: #2a1f2e; }
+html[data-theme="night"] .btn { box-shadow: inset -3px -4px 0 rgba(0,0,0,.25), inset 3px 3px 0 rgba(255,255,255,.12), 0 4px 0 #000; }
+html[data-theme="night"] .btn:hover { box-shadow: inset -3px -4px 0 rgba(0,0,0,.25), inset 3px 3px 0 rgba(255,255,255,.12), 0 6px 0 #000; }
+html[data-theme="night"] .input { background: #1d1a2b; color: var(--ink); }
+html[data-theme="night"] .input::placeholder { color: #8a7f95; }
+html[data-theme="night"] a { color: #9fc0ff; }
+html[data-theme="night"] .btn, html[data-theme="night"] a.btn, html[data-theme="night"] .sd-card, html[data-theme="night"] .pt-card, html[data-theme="night"] .lk-rec { color: var(--ink); }
+html[data-theme="night"] :is(a.btn.teal, a.btn.orange, a.btn.pink, a.btn.yellow, a.btn.blue, a.btn.green, a.btn.red) { color: #2a1f2e; }
+html[data-theme="night"] img.pxi, html[data-theme="night"] .pxemo { filter: none; }
+
+/* ===== 離線提示 ===== */
+.offline-bar { position: fixed; left: 50%; top: 8px; transform: translateX(-50%); z-index: 96; background: var(--yellow); color: #2a1f2e; border: var(--px) solid #2a1f2e; padding: 4px 12px; font-size: 13px; box-shadow: 3px 3px 0 #2a1f2e; }

@@ -2,7 +2,7 @@
 <html lang="zh-Hant-TW">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
   <title>舞島 Dance Island</title>
   <meta name="description" content="台灣與世界街舞活動行事曆 — 像素 RPG 風格的街舞活動島">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#f07ca3">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="css/style.css?v=202610261327">
+  <link rel="stylesheet" href="css/style.css?v=202610261410">
+  <script src="js/prefs.js?v=202610261410"></script>
 </head>
 <body>
   <!-- 開機畫面 -->
@@ -50,45 +51,46 @@
   <main id="stage"></main>
   <div id="wipe"></div>
 
-  <script src="data/config.js?v=202610261327"></script>
-  <script src="data/geo.js?v=202610261327"></script>
-  <script src="data/events.js?v=202610261327"></script>
-  <script src="js/i18n.js?v=202610261327"></script>
-  <script src="js/i18n-more.js?v=202610261327"></script>
-  <script src="js/pixel.js?v=202610261327"></script>
-  <script src="js/avatar.js?v=202610261327"></script>
-  <script src="js/themes.js?v=202610261327"></script>
-  <script src="js/sfx.js?v=202610261327"></script>
-  <script src="js/backend.js?v=202610261327"></script>
-  <script src="js/store.js?v=202610261327"></script>
-  <script src="js/ui.js?v=202610261327"></script>
-  <script src="js/icon-manifest.js?v=202610261327"></script>
-  <script src="js/icons.js?v=202610261327"></script>
-  <script src="js/titles.js?v=202610261327"></script>
-  <script src="js/emoji.js?v=202610261327"></script>
-  <script src="js/player.js?v=202610261327"></script>
-  <script src="js/social.js?v=202610261327"></script>
-  <script src="js/chat.js?v=202610261327"></script>
-  <script src="js/tutorial.js?v=202610261327"></script>
-  <script src="js/games.js?v=202610261327"></script>
-  <script src="js/i18n-features.js?v=202610261327"></script>
-  <script src="js/features.js?v=202610261327"></script>
-  <script src="js/features2.js?v=202610261327"></script>
-  <script src="js/admin-stats.js?v=202610261327"></script>
-  <script src="js/i18n-features3.js?v=202610261327"></script>
-  <script src="js/i18n-cast.js?v=202610261327"></script>
-  <script src="js/features3.js?v=202610261327"></script>
-  <script src="js/i18n-features4.js?v=202610261327"></script>
-  <script src="js/features4.js?v=202610261327"></script>
-  <script src="js/i18n-features5.js?v=202610261327"></script>
-  <script src="js/features5.js?v=202610261327"></script>
-  <script src="js/features6.js?v=202610261327"></script>
-  <script src="js/features7.js?v=202610261327"></script>
-  <script src="js/xp.js?v=202610261327"></script>
-  <script src="js/party.js?v=202610261327"></script>
-  <script src="js/features8.js?v=202610261327"></script>
-  <script src="js/hub.js?v=202610261327"></script>
-  <script src="js/app.js?v=202610261327"></script>
+  <script src="data/config.js?v=202610261410"></script>
+  <script src="data/geo.js?v=202610261410"></script>
+  <script src="data/events.js?v=202610261410"></script>
+  <script src="js/i18n.js?v=202610261410"></script>
+  <script src="js/i18n-more.js?v=202610261410"></script>
+  <script src="js/pixel.js?v=202610261410"></script>
+  <script src="js/avatar.js?v=202610261410"></script>
+  <script src="js/themes.js?v=202610261410"></script>
+  <script src="js/sfx.js?v=202610261410"></script>
+  <script src="js/backend.js?v=202610261410"></script>
+  <script src="js/store.js?v=202610261410"></script>
+  <script src="js/ui.js?v=202610261410"></script>
+  <script src="js/icon-manifest.js?v=202610261410"></script>
+  <script src="js/icons.js?v=202610261410"></script>
+  <script src="js/titles.js?v=202610261410"></script>
+  <script src="js/emoji.js?v=202610261410"></script>
+  <script src="js/player.js?v=202610261410"></script>
+  <script src="js/social.js?v=202610261410"></script>
+  <script src="js/chat.js?v=202610261410"></script>
+  <script src="js/tutorial.js?v=202610261410"></script>
+  <script src="js/games.js?v=202610261410"></script>
+  <script src="js/i18n-features.js?v=202610261410"></script>
+  <script src="js/features.js?v=202610261410"></script>
+  <script src="js/features2.js?v=202610261410"></script>
+  <script src="js/admin-stats.js?v=202610261410"></script>
+  <script src="js/i18n-features3.js?v=202610261410"></script>
+  <script src="js/i18n-cast.js?v=202610261410"></script>
+  <script src="js/features3.js?v=202610261410"></script>
+  <script src="js/i18n-features4.js?v=202610261410"></script>
+  <script src="js/features4.js?v=202610261410"></script>
+  <script src="js/i18n-features5.js?v=202610261410"></script>
+  <script src="js/features5.js?v=202610261410"></script>
+  <script src="js/features6.js?v=202610261410"></script>
+  <script src="js/features7.js?v=202610261410"></script>
+  <script src="js/xp.js?v=202610261410"></script>
+  <script src="js/party.js?v=202610261410"></script>
+  <script src="js/features8.js?v=202610261410"></script>
+  <script src="js/settings.js?v=202610261410"></script>
+  <script src="js/hub.js?v=202610261410"></script>
+  <script src="js/app.js?v=202610261410"></script>
   <script>
     // 自動更新：瀏覽器暫存了舊的頁面時，偷偷檢查一次有沒有新版，有就重新載入（每次開啟最多一次）
     (function () {

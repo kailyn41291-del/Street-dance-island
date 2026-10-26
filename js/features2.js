@@ -246,6 +246,12 @@
   });
 
   /* ---------- 提醒：收藏的活動快到了、報名快截止、追蹤的主辦方有新活動 ---------- */
+  I18N.extend({
+    zh: { rm_reg3: '你收藏的「{n}」報名再 3 天就截止囉！', rm_reg1: '你收藏的「{n}」報名明天截止，別錯過！', rm_reg0: '你收藏的「{n}」今天報名截止！' },
+    en: { rm_reg3: 'Sign-up for "{n}" (saved) closes in 3 days!', rm_reg1: 'Sign-up for "{n}" (saved) closes tomorrow — don’t miss it!', rm_reg0: 'Sign-up for "{n}" (saved) closes today!' },
+    ja: { rm_reg3: 'お気に入りの「{n}」エントリー締切まであと 3 日！', rm_reg1: 'お気に入りの「{n}」エントリーは明日締切！', rm_reg0: 'お気に入りの「{n}」エントリーは今日締切！' },
+    ko: { rm_reg3: '저장한 「{n}」 신청 마감까지 3일 남았어요!', rm_reg1: '저장한 「{n}」 신청이 내일 마감돼요!', rm_reg0: '저장한 「{n}」 신청이 오늘 마감돼요!' }
+  });
   function reminders() {
     if (!S.loaded) return;
     const today = A.todayStr(), tomorrow = A.ymd(new Date(Date.now() + 864e5)), in2 = A.ymd(new Date(Date.now() + 2 * 864e5)), in14 = A.ymd(new Date(Date.now() + 14 * 864e5));
@@ -254,13 +260,18 @@
       if (S.favs.has(e.id)) {
         if (e.date === today) out.push(t('rm_today', { n: e.name }));
         else if (e.date === tomorrow) out.push(t('rm_tomorrow', { n: e.name }));
-        if (e.regEnd && e.regEnd >= today && e.regEnd <= in2) out.push(t('rm_reg', { n: e.name, d: e.regEnd.slice(5).replace('-', '/') }));
+        if (e.regEnd && (!e.regType || e.regType === 'open')) {
+          const in3 = A.ymd(new Date(Date.now() + 3 * 864e5));
+          if (e.regEnd === in3) out.push(t('rm_reg3', { n: e.name }));
+          else if (e.regEnd === tomorrow) out.push(t('rm_reg1', { n: e.name }));
+          else if (e.regEnd === today) out.push(t('rm_reg0', { n: e.name }));
+        }
       } else if (e.date >= today && e.date <= in14 && splitOrg(e.organizer).some(o => [...S.follows].some(f => f.toLowerCase() === o.toLowerCase()))) {
         out.push(t('rm_follow', { n: e.name }));
       }
     });
-    const key = 'rm.' + today;
-    try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, 1); } catch (x) {}
+    const key = 'danceIsland.rm', val = (Backend.uid || 'local') + '|' + today;   // 每個帳號一天只提醒一次
+    try { if (localStorage.getItem(key) === val) return; if (out.length) localStorage.setItem(key, val); } catch (x) {}
     out.slice(0, 4).forEach((m, i) => setTimeout(() => toast(m, '⏰'), 3500 + i * 1200));
   }
 
