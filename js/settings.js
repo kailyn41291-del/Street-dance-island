@@ -30,6 +30,8 @@ window.Settings = (() => {
       b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
     };
   }
+  // 改字體大小：上方按鈕列重新排
+  Prefs.onChange(() => setTimeout(() => window.Hub && Hub.fitHud && Hub.fitHud(), 80));
   return { open };
 })();
 

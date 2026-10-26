@@ -2115,3 +2115,71 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .rl-yt span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 48px; color: #fff; text-shadow: 0 2px 8px #000; }
 .rl-b { padding: 8px; display: grid; gap: 4px; }
 .rl-b small { color: var(--pink); }
+/* 上方按鈕列：字體調大時還是放不下 → 5 縮小按鈕、6 排成兩排 */
+#hud:is([data-fit="5"], [data-fit="6"]) .hud-btns > .btn .label { display: none; }
+#hud:is([data-fit="5"], [data-fit="6"]) .hud-admin { font-size: 0; }
+#hud:is([data-fit="5"], [data-fit="6"]) .hud-btns { gap: 5px; }
+#hud:is([data-fit="5"], [data-fit="6"]) .hud-btns > .btn { padding-left: 7px; padding-right: 7px; }
+#hud[data-fit="6"] .hud-btns { flex: 1 1 0; min-width: 0; flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; }
+#hud[data-fit="6"] .hud-spacer { display: none; }
+
+/* ===== 副本島 ===== */
+/* 世界地圖上的入口 */
+.dg-portal { position: absolute; width: 150px; height: 120px; transform: translate(-50%, -50%) scale(var(--inv, 1)); cursor: pointer; z-index: 5; }
+.dg-p-isle { position: absolute; left: 10px; right: 10px; bottom: 10px; height: 54px; background: #f3d9a0; border: 4px solid #3b2b2b; border-radius: 50% / 45%; box-shadow: 0 8px 0 #c79a5a, 0 12px 0 #3b2b2b; }
+.dg-p-isle i { position: absolute; bottom: 30px; width: 14px; height: 34px; background: #8a5a2e; border: 3px solid #3b2b2b; }
+.dg-p-isle i::before { content: ''; position: absolute; left: -16px; top: -14px; width: 40px; height: 18px; background: #5fb85a; border: 3px solid #3b2b2b; border-radius: 50% 50% 20% 20%; }
+.dg-p-isle i:nth-child(1) { left: 18px; } .dg-p-isle i:nth-child(2) { left: 56px; bottom: 34px; } .dg-p-isle i:nth-child(3) { right: 18px; }
+.dg-p-flag { position: absolute; left: 50%; top: 0; transform: translateX(-50%); white-space: nowrap; background: var(--dc); color: #fff; border: 3px solid #3b2b2b; padding: 2px 10px; font-family: var(--font-en); font-size: 12px; box-shadow: 3px 3px 0 #3b2b2b; }
+.dg-p-lock { position: absolute; right: 2px; top: 30px; font-size: 22px; display: none; }
+.dg-portal.locked { filter: grayscale(.85) brightness(.9); }
+.dg-portal.locked .dg-p-lock { display: block; }
+.dg-portal.open::after { content: ''; position: absolute; inset: 20px -6px -6px; border: 4px dashed var(--dg); border-radius: 50%; animation: dgSpin 6s linear infinite; pointer-events: none; }
+@keyframes dgSpin { to { transform: rotate(360deg); } }
+.dg-portal:hover .dg-p-flag { background: var(--dg); color: #3b2b2b; }
+
+/* 群島 */
+.dg-view .city-inner { max-width: 1240px; }
+.dg-preview { background: var(--yellow); color: #2a1f2e; border: 2px solid var(--ink); padding: 6px 10px; margin: 0; }
+.dg-ysel { display: inline-flex; gap: 6px; align-items: center; }
+.dg-sea { display: grid; gap: 18px 14px; padding: 24px 14px 30px; border: var(--px) solid var(--ink); box-shadow: var(--shadow);
+  background-color: #4f8fd6; background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,.18) 0 3px, transparent 4px), radial-gradient(circle at 70% 80%, rgba(255,255,255,.14) 0 2px, transparent 3px);
+  background-size: 60px 50px, 80px 70px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-areas: ". r1 r2 ." "r6 F F r3" ". r5 r4 .";
+}
+.dg-sea > .final { grid-area: F; }
+.dg-sea > .dg-isle:nth-child(2) { grid-area: r1; } .dg-sea > .dg-isle:nth-child(3) { grid-area: r2; } .dg-sea > .dg-isle:nth-child(4) { grid-area: r3; }
+.dg-sea > .dg-isle:nth-child(5) { grid-area: r4; } .dg-sea > .dg-isle:nth-child(6) { grid-area: r5; } .dg-sea > .dg-isle:nth-child(7) { grid-area: r6; }
+.dg-isle { position: relative; display: grid; justify-items: center; align-content: end; min-width: 0; }
+.dg-isle-name { background: var(--paper); border: 3px solid var(--ink); padding: 2px 10px; font-size: 14px; font-weight: bold; box-shadow: 3px 3px 0 var(--ink); margin-bottom: 4px; z-index: 2; }
+.final .dg-isle-name { background: var(--dg); color: #2a1f2e; font-size: 16px; }
+.dg-stand { display: flex; align-items: flex-end; justify-content: center; gap: 4px; position: relative; z-index: 2; margin-bottom: -46px; }
+.final .dg-stand { margin-bottom: -60px; gap: 10px; }
+.dg-ground { width: 100%; max-width: 260px; image-rendering: pixelated; position: relative; z-index: 1; }
+.final .dg-ground { max-width: 420px; }
+.dg-ath { background: none; border: 0; padding: 0; cursor: pointer; display: grid; justify-items: center; font: inherit; color: inherit; transition: transform .12s; }
+.dg-ath:hover { transform: translateY(-6px); }
+.dg-ath img { height: 150px; width: auto; filter: drop-shadow(0 6px 0 rgba(0,0,0,.25)); pointer-events: none; }
+.dg-ath.champ img { height: 220px; }
+.dg-trophy { background: none; border: 0; font-size: 44px; cursor: pointer; align-self: center; filter: drop-shadow(0 3px 0 rgba(0,0,0,.3)); }
+.dg-trophy.bump { animation: dgBump .3s; } @keyframes dgBump { 50% { transform: scale(1.3) rotate(-8deg); } }
+/* 選手字卡 */
+.dg-cap { display: grid; justify-items: center; text-align: center; gap: 1px; margin-top: -8px; position: relative; padding: 5px 8px 4px; max-width: 150px; }
+.dg-cap b { font-size: 13px; line-height: 1.2; } .dg-cap small { font-size: 9px; line-height: 1.25; } .dg-cap em { font-style: normal; font-size: 10px; }
+.dg-cap.reg { background: #fff6e8; border: 3px solid var(--dg); outline: 2px solid #3b2b2b; box-shadow: 3px 3px 0 #3b2b2b; color: #2a1f2e; }
+.dg-cap.reg::before { content: ''; position: absolute; left: -3px; right: -3px; top: -3px; height: 5px; background: var(--dc); }
+.dg-cap.champ { max-width: 200px; padding: 8px 12px 6px; color: #5a1a00; border: 3px solid #3b2b2b; box-shadow: 0 0 0 3px #fff3c4, 0 0 0 6px var(--dc), 5px 7px 0 6px #3b2b2b;
+  background: linear-gradient(135deg, #fff3c4 0%, #f5c542 35%, #ffe58a 50%, #d49b1a 75%, #f5c542 100%); background-size: 250% 250%; animation: dgShine 3s linear infinite; }
+.dg-cap.champ b { font-size: 16px; text-shadow: 1px 1px 0 #fff3c4; } .dg-cap.champ small { font-size: 10px; font-weight: bold; color: var(--dc); }
+.dg-crown { position: absolute; top: -22px; font-size: 22px; filter: drop-shadow(0 2px 0 #3b2b2b); }
+@keyframes dgShine { to { background-position: 250% 250%; } }
+/* 手機、平板：一欄一欄排 */
+@media (max-width: 900px) {
+  .dg-sea { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "F F" "r1 r2" "r3 r4" "r5 r6"; padding: 18px 8px; }
+  .dg-ath img { height: 110px; } .dg-ath.champ img { height: 170px; }
+  .dg-cap { max-width: 120px; } .dg-cap b { font-size: 11px; } .dg-cap small { font-size: 8px; }
+  .dg-stand { margin-bottom: -30px; } .final .dg-stand { margin-bottom: -40px; }
+}
+.dg-ysel { white-space: nowrap; }
+@media (max-width: 900px) { .dg-cap small { font-size: 9px; } .dg-cap b { font-size: 12px; } }

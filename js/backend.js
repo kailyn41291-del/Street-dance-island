@@ -327,6 +327,17 @@ window.Backend = (() => {
     /* 經驗值系統（全部在伺服器端計算） */
     async rpc(fn, args) { return must(await sb.rpc(fn, args || {})); },
     async logAct(k, r) { must(await sb.rpc('log_act', { k, r: String(r) })); },
+    /* 副本島 */
+    async dungeons() { return must(await sb.from('dungeons').select('*')); },
+    async saveDungeon(row) { must(await sb.from('dungeons').upsert(row)); },
+    async dungeonLinks() { return must(await sb.from('dungeon_links').select('*')); },
+    async saveDungeonLink(row) { must(await sb.from('dungeon_links').upsert(row)); },
+    async deleteDungeonLink(did, athlete) { must(await sb.from('dungeon_links').delete().eq('dungeon_id', did).eq('athlete', athlete)); },
+    async myDungeonCheers(did, year) { return must(await sb.from('dungeon_cheers').select('division,athlete').eq('dungeon_id', did).eq('year', year).eq('user_id', user.id)); },
+    async dungeonCheer(did, year, division, athlete) { must(await sb.from('dungeon_cheers').upsert({ dungeon_id: did, year, division, athlete, user_id: user.id }, { onConflict: 'dungeon_id,year,division,user_id' })); },
+    async myDungeonPredictions(did, year) { return must(await sb.from('dungeon_predictions').select('division,athlete').eq('dungeon_id', did).eq('year', year).eq('user_id', user.id)); },
+    async dungeonPredict(did, year, division, athlete) { must(await sb.from('dungeon_predictions').upsert({ dungeon_id: did, year, division, athlete, user_id: user.id }, { onConflict: 'dungeon_id,year,division,user_id' })); },
+
     /* 每週動作接力 */
     async moveChallenge(week) { return must(await sb.from('move_challenges').select('*').eq('week', week).maybeSingle()); },
     async setMoveChallenge(row) { must(await sb.from('move_challenges').upsert(row)); },

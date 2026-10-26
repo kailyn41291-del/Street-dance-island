@@ -339,7 +339,8 @@ window.Hub = (() => {
     fitting = true;
     const crumbs = hud.querySelector('.crumbs');
     const fits = () => { const b = btns.getBoundingClientRect(); const c = crumbs && crumbs.offsetParent ? crumbs.getBoundingClientRect() : { right: 0 }; return b.right <= innerWidth - 8 && c.right <= b.left + 1; };
-    for (let lv = 0; lv <= 4; lv++) { hud.dataset.fit = lv; if (fits()) break; }
+    // 0～4：一組一組藏文字；5：按鈕縮小；6：還是放不下就排成兩排（字體調大時）
+    for (let lv = 0; lv <= 6; lv++) { hud.dataset.fit = lv; if (lv === 6 || fits()) break; }
     fitting = false;
   }
   let fitT = null;

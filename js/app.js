@@ -290,6 +290,9 @@
       }
     }
 
+    // 副本島入口
+    if (App.dungeonWorld) App.dungeonWorld(world, L, C);
+
     // 平移 / 縮放
     const zoomLevel = s => (s >= 1.1 ? 3 : s >= 0.6 ? 2 : 1);
     const apply = () => {
@@ -355,6 +358,8 @@
       pan.pts.delete(e.pointerId);
       if (!pan.pts.size) { pan.on = false; vp.classList.remove('dragging'); }
       if (wasClick && e.type === 'pointerup') {
+        const dg = e.target.closest && e.target.closest('[data-dungeon]');
+        if (dg && window.Dungeon) { sparkle(e.clientX, e.clientY); Dungeon.open(dg.dataset.dungeon); return; }
         const ti = tagAt(e), i = ti >= 0 ? ti : idAt(e.clientX, e.clientY);
         if (i >= 0) { SFX.play('select'); sparkle(e.clientX, e.clientY); nav('#/c/' + G.countries[i].code); }
       }
