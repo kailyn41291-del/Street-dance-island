@@ -23,17 +23,30 @@ window.PXI = (() => {
     '🎮': 'game/gamepad', '😵': 'game/lose', '💤': 'game/sleep', '🧊': 'game/freeze', '🌀': 'game/power', '👟': 'game/footwork', '🥇': 'game/trophy',
     '👍': 'social/like', '🙋': 'social/going', '📸': 'social/photo', '🤝': 'social/rate', '🧭': 'event/nav', '🚇': 'event/mrt', '🥚': 'xp/egg', '🌱': 'xp/newbie',
     '🍀': 'menu/luck', '📰': 'menu/daily', '🎨': 'menu/display', '🔍': 'menu/search', '🔔': 'menu/bell', '🏫': 'menu/studio', '🚩': 'menu/party', '🗺': 'menu/spots',
-    '🛍': 'menu/market', '🥋': 'menu/mentor', '🎬': 'menu/relay', '🎪': 'fest/party', '📊': 'menu/bracket'
+    '🛍': 'menu/market', '🥋': 'menu/mentor', '🎬': 'menu/relay', '📊': 'menu/bracket',
+    // 先借用現有的圖示
+    '📅': 'event/calendar', '🎉': 'fest/party', '🪪': 'menu/card', '🏝': 'xp/island', '👥': 'menu/friends', '📋': 'menu/events', '📜': 'menu/quests', '🕺': 'menu/cypher',
+    '🔊': 'menu/sound_on', '🔇': 'menu/sound_off', '⭐': 'event/fav_on', '🏅': 'xp/medal', '👑': 'xp/rank_king', '🥈': 'xp/rank_silver', '🥉': 'xp/rank_bronze', '⬆': 'xp/level_up',
+    '🗓': 'xp/weekly', '🎫': 'event/register', '🎟': 'event/register', '🧑': 'menu/me', '👤': 'menu/me', '🔐': 'social/lock', '🚶': 'menu/walk', '🌍': 'menu/world', '🛠': 'menu/admin',
+    '🗳': 'ach/vote10', '🎌': 'ach/crew', '👫': 'ach/duo1', '💞': 'ach/duo5', '🗣': 'ach/talk50', '🏟': 'ach/comp10', '✈': 'ach/country3', '👹': 'ach/npc30', '🥊': 'ach/npc5',
+    '📷': 'social/photo', '📹': 'social/photo', '🧠': 'ach/qa10', '🎓': 'ach/graduate', '🎵': 'menu/rhythm', '🎶': 'menu/rhythm',
+    // 第三批要畫的圖示（tools/icon_brief_v3.md）：有圖就用新的，還沒有就用後面那個舊的
+    '🎪': ['menu/fest', 'fest/party'], '🎖': ['menu/titles', 'xp/medal'], '📦': ['menu/shoes', 'game/footwork'], '✨': 'ui/sparkle', '🎂': 'social/birthday', '🔮': 'game/predict',
+    '📯': ['social/recruit', 'menu/party'], '🎤': 'event/lineup', '⚖': 'event/judge', '📄': 'event/pdf', '🪞': 'event/mirror', '☔': 'event/roof', '💡': ['event/light', 'ach/qa1'],
+    '📺': 'event/live', '📴': 'ui/offline', '🌙': 'ui/night', '☀': 'ui/day', '📚': 'event/course', '🧑‍🏫': 'event/teacher', '🎃': ['fest/halloween'], '🎄': ['fest/xmas'],
+    '🎆': ['fest/newyear'], '💘': ['fest/valentine'], '🧧': ['fest/lunar'], '🌕': 'fest/moon', '📈': 'xp/stats'
   };
-  const emo = ic => (EMO[ic] && has(EMO[ic]) ? img(EMO[ic]) : ic);
+  // 一個 emoji 可以對應好幾個圖示（第一個有檔案的就用它）
+  const pick = k => [].concat(EMO[k] || []).find(has);
+  const emo = ic => (pick(ic) ? img(pick(ic)) : ic);
   /** '🕒 日期時間' → 像素圖示 + '日期時間'（開頭的 emoji 有對應圖示才換；回傳 HTML，文字要先 escape） */
-  const lead = html => { const m = /^(\S+?)\uFE0F?\s/.exec(html); return m && EMO[m[1]] && has(EMO[m[1]]) ? img(EMO[m[1]]) + html.slice(m[0].length) : html; };
+  const lead = html => { const m = /^(\S+?)\uFE0F?\s/.exec(html); return m && pick(m[1]) ? img(pick(m[1])) + html.slice(m[0].length) : html; };
 
   /* ---- 自動替換：按鈕、標籤、視窗標題、通知……開頭的 emoji 換成像素圖示 ----
    * 只處理介面文字（不碰玩家寫的聊天、論壇內容），有圖示的 emoji 才換 */
   const SEL = '.btn, button, .tag, .win-title, legend, .toast .ic, .nt-list .ic, .crumbs, h4, .chip, .sr-row b, .ph-app, .qb-head, .lk-sec h4';
   const SKIP = '.mt, .fo-body, .thr-t, .pc-bio, .dp-body, .sd-intro, input, textarea, [contenteditable], .pt-msg, .dm-msg, .msn-log';
-  const keys = Object.keys(EMO).filter(k => has(EMO[k]));
+  const keys = Object.keys(EMO).filter(k => pick(k));
   const RE = new RegExp('^(\\s*)(' + keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\uFE0F?\\s?');
   function swapIn(root) {
     if (!keys.length || !root || root.nodeType !== 1) return;
@@ -43,7 +56,7 @@ window.PXI = (() => {
       for (const n of [...el.childNodes]) {
         if (n.nodeType !== 3) continue;
         const m = RE.exec(n.nodeValue); if (!m) continue;
-        const i = document.createElement('img'); i.className = 'pxi'; i.src = src(EMO[m[2]]); i.alt = ''; i.draggable = false;
+        const i = document.createElement('img'); i.className = 'pxi'; i.src = src(pick(m[2])); i.alt = ''; i.draggable = false;
         n.nodeValue = n.nodeValue.slice(m[0].length);
         n.before(i); if (n.nodeValue) n.before(document.createTextNode(' '));
         if (!n.nodeValue) n.remove();

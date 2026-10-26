@@ -17,7 +17,8 @@ window.Festivals = (() => {
   const LUNAR = { 2027: ['2027-01-24', '2027-02-06'], 2028: ['2028-01-13', '2028-01-26'] };
   const MOON = { 2027: ['2027-09-02', '2027-09-15'], 2028: ['2028-09-20', '2028-10-03'] };
   const ORDER = ['newyear', 'lunar', 'valentine', 'danceday', 'summer100', 'hiphop', 'moon', 'halloween', 'xmas'];
-  const ICON = { newyear: 'fest/newyear', lunar: 'fest/lunar', valentine: 'fest/valentine', danceday: 'xp/island', summer100: 'xp/streak', hiphop: 'fest/party', moon: 'fest/party', halloween: 'fest/halloween', xmas: 'fest/xmas' };
+  // 有專屬圖示就用，沒有就用後面那個（第三批圖示到了會自動換上）
+  const ICON = { newyear: ['fest/newyear'], lunar: ['fest/lunar'], valentine: ['fest/valentine'], danceday: ['fest/danceday', 'xp/island'], summer100: ['fest/summer', 'xp/streak'], hiphop: ['fest/hiphop', 'fest/party'], moon: ['fest/moon', 'fest/party'], halloween: ['fest/halloween'], xmas: ['fest/xmas'] };
   const FALLBACK = { newyear: '★', lunar: '☆', valentine: '♡', danceday: '♪', summer100: '★', hiphop: '♪', moon: '☾', halloween: '☆', xmas: '★' };
   const ymd = d => A.ymd(d);
   const addDays = (s, n) => ymd(new Date(new Date(s + 'T00:00:00').getTime() + n * 864e5));
@@ -39,7 +40,7 @@ window.Festivals = (() => {
     [y, y + 1].forEach(yy => ORDER.forEach(f => { const w = windowOf(f, yy); if (w && w[0] > today) out.push({ f, w }); }));
     return out.sort((a, b) => a.w[0].localeCompare(b.w[0])).slice(0, 6);
   };
-  const icon = f => PXI.img(ICON[f], FALLBACK[f]);
+  const icon = f => PXI.img(ICON[f].find(PXI.has) || '', FALLBACK[f]);
 
   I18N.extend({
     zh: {

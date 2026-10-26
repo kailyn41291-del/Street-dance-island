@@ -64,6 +64,12 @@ window.Together = (() => {
     const z = d < ZOD[mo - 1][1] ? ZOD[mo - 1][2] : ZOD[mo][2];
     const n = ZN[z]; return `${n[4]} ${n[{ zh: 0, en: 1, ja: 2, ko: 3 }[I18N.lang] || 0]}`;
   };
+  // 星座圖示：assets/icons/zodiac/<ari…>.png（沒有圖就用原本的符號）
+  const zodiacHTML = bday => {
+    const m = /^(\d{2})-(\d{2})$/.exec(bday || ''); if (!m) return '';
+    const mo = +m[1], d = +m[2], z = d < ZOD[mo - 1][1] ? ZOD[mo - 1][2] : ZOD[mo][2], n = ZN[z];
+    return `${PXI.img('zodiac/' + z, esc(n[4]))} ${esc(n[{ zh: 0, en: 1, ja: 2, ko: 3 }[I18N.lang] || 0])}`;
+  };
   const mmdd = () => { const d = new Date(); return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
   /* =========================================================
@@ -167,7 +173,7 @@ window.Together = (() => {
       const [mo, d] = c.bday.split('-');
       let age = '';
       if (isMine && c.byear) { const now = new Date(); let a = now.getFullYear() - +c.byear; if (mmdd() < c.bday) a--; age = `（${t('bd_age', { n: a })}）`; }
-      dl.insertAdjacentHTML('beforeend', `<dt>${t('bd_label')}</dt><dd>🎂 ${+mo}/${+d}${age}</dd><dt>${t('bd_zodiac')}</dt><dd>${esc(zodiacOf(c.bday))}</dd>${c.blood ? `<dt>${t('bd_blood')}</dt><dd>${esc(c.blood)}</dd>` : ''}`);
+      dl.insertAdjacentHTML('beforeend', `<dt>${t('bd_label')}</dt><dd>${PXI.emo('🎂')} ${+mo}/${+d}${age}</dd><dt>${t('bd_zodiac')}</dt><dd>${zodiacHTML(c.bday)}</dd>${c.blood ? `<dt>${t('bd_blood')}</dt><dd>${esc(c.blood)}</dd>` : ''}`);
     }
     if (!Backend.enabled || !p.user_id) return;
     const slot = h(`<div class="pc-social"><span class="tag pc-likes">${t('lk_n', { n: '…' })}</span><span class="tag pc-rel" hidden></span>${!isMine && logged() ? `<button class="btn sm pink pc-like">👍 ${t('lk_btn')}</button>` : ''}</div>`);
