@@ -2316,3 +2316,11 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .me-name .ttl.ttl-fx { --fh: 34px; --fw: 6.4; --fzb: 13px; }
 .pc-title .ttl.ttl-fx { --fh: 30px; --fw: 6.6; --fzb: 12px; margin: 0; }
 @media (max-width: 480px) { .pc-title .ttl.ttl-fx, .me-name .ttl.ttl-fx { --fh: 26px; --fzb: 11px; } }
+
+/* 後台帳號列表 */
+.ac-bar { gap: 6px; }
+.ac-bar .ac-q { flex: 1 1 200px; min-width: 0; }
+.ac-list li { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+.ac-list .ac-acts { display: flex; gap: 4px; flex-wrap: wrap; }
+.ac-list .tag.ac-ban { background: #f4a3a3; }
+.ac-stats { margin: 0 0 8px; }

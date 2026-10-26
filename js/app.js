@@ -961,9 +961,10 @@
   /* ================= 管理員面板：官方快訊 ================= */
   async function openAdmin() {
     const owner = !Store.cloud || Backend.role === 'owner';
+    const xtabs = (App.adminTabs || []).filter(tb => !tb.owner || owner);   // owner: true 的分頁只有網站架設者看得到
     const body = h(`<div class="admin">
-      ${Store.cloud ? `<div class="tabs"><button class="btn sm on" data-at="ann">${t('ann_title')}</button>${owner ? `<button class="btn sm" data-at="ver">${t('adm_ver')}</button>` : ''}<button class="btn sm" data-at="rep">${t('adm_rep')}</button>${(App.adminTabs || []).map(tb => `<button class="btn sm" data-at="${tb.key}">${tb.label()}</button>`).join('')}</div>
-      ${(App.adminTabs || []).map(tb => `<div class="adm-pane" data-p="${tb.key}" hidden></div>`).join('')}
+      ${Store.cloud ? `<div class="tabs"><button class="btn sm on" data-at="ann">${t('ann_title')}</button>${owner ? `<button class="btn sm" data-at="ver">${t('adm_ver')}</button>` : ''}<button class="btn sm" data-at="rep">${t('adm_rep')}</button>${xtabs.map(tb => `<button class="btn sm" data-at="${tb.key}">${tb.label()}</button>`).join('')}</div>
+      ${xtabs.map(tb => `<div class="adm-pane" data-p="${tb.key}" hidden></div>`).join('')}
       <div class="adm-pane" data-p="ver" hidden><ul class="adm-list ver-list"></ul></div>
       <div class="adm-pane" data-p="rep" hidden><ul class="adm-list rep-list"></ul></div>` : ''}
       <div class="adm-pane" data-p="ann">
@@ -981,7 +982,7 @@
       body.querySelectorAll('[data-at]').forEach(x => x.classList.toggle('on', x === b));
       body.querySelectorAll('.adm-pane').forEach(p => (p.hidden = p.dataset.p !== b.dataset.at));
       if (b.dataset.at === 'ver') drawVer(); if (b.dataset.at === 'rep') drawRep();
-      const xt = (App.adminTabs || []).find(tb => tb.key === b.dataset.at);
+      const xt = xtabs.find(tb => tb.key === b.dataset.at);
       if (xt) xt.draw(body.querySelector(`.adm-pane[data-p="${xt.key}"]`), fail);
     });
     const drawVer = async () => {
