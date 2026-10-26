@@ -289,6 +289,28 @@ window.Backend = (() => {
     },
 
     /* 舞團 */
+    /* 街舞教室 */
+    async studios() { return must(await sb.from('studios').select('*').order('created_at')); },
+    async studio(id) { return must(await sb.from('studios').select('*').eq('id', id).maybeSingle()); },
+    async saveStudio(row) { const { id, ...d } = row; return id ? must(await sb.from('studios').update(d).eq('id', id).select().single()) : must(await sb.from('studios').insert(d).select().single()); },
+    async deleteStudio(id) { must(await sb.from('studios').delete().eq('id', id)); },
+    async studioPosts(id) { return must(await sb.from('studio_posts').select('*').eq('studio_id', id).order('created_at', { ascending: false }).limit(200)); },
+    async upcomingCourses() { return must(await sb.from('studio_posts').select('*').in('kind', ['course', 'special']).gte('date', new Date(Date.now() - 864e5).toISOString().slice(0, 10)).order('date').limit(200)); },
+    async saveStudioPost(row) { const { id, ...d } = row; return id ? must(await sb.from('studio_posts').update(d).eq('id', id).select().single()) : must(await sb.from('studio_posts').insert(d).select().single()); },
+    async deleteStudioPost(id) { must(await sb.from('studio_posts').delete().eq('id', id)); },
+    /* 揪練舞組隊 */
+    async parties() { return must(await sb.from('parties').select('*').gte('meet_at', new Date(Date.now() - 3 * 3600e3).toISOString()).order('meet_at').limit(300)); },
+    async party(id) { return must(await sb.from('parties').select('*').eq('id', id).maybeSingle()); },
+    async partyMembers(ids) { return ids.length ? must(await sb.from('party_members').select('*').in('party_id', ids)) : []; },
+    async myPartyIds() { return user ? must(await sb.from('party_members').select('party_id').eq('user_id', user.id)).map(r => r.party_id) : []; },
+    async saveParty(row) { const { id, ...d } = row; return id ? must(await sb.from('parties').update(d).eq('id', id).select().single()) : must(await sb.from('parties').insert(d).select().single()); },
+    async deleteParty(id) { must(await sb.from('parties').delete().eq('id', id)); },
+    /* 每日一推 */
+    async dailyPick(day) { return must(await sb.from('daily_picks').select('*').eq('day', day).maybeSingle()); },
+    async dailyPicks() { return must(await sb.from('daily_picks').select('*').order('day', { ascending: false }).limit(60)); },
+    async saveDailyPick(row) { must(await sb.from('daily_picks').upsert(row)); },
+    async deleteDailyPick(day) { must(await sb.from('daily_picks').delete().eq('day', day)); },
+
     async crews() { return must(await sb.from('crews').select('*').order('created_at')); },
     async crew(id) { return must(await sb.from('crews').select('*').eq('id', id).maybeSingle()); },
     async crewMembers(id) { return must(await sb.from('crew_members').select('*').eq('crew_id', id)); },

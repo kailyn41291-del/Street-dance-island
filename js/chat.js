@@ -5,7 +5,7 @@
  * ========================================================= */
 window.Chat = (() => {
   const { h, esc, toast } = UI;
-  const CHANNELS = [['world', PXI.img('menu/world', '🌏')], ['tw', '🇹🇼']];
+  const CHANNELS = [['world', PXI.img('menu/world', '🌏')], ['tw', '🇹🇼'], ['party', '🚩']];
   let el, list, form, input, cur = 'world', open = false, autoTr = true, ann = [], annIdx = 0, annTimer = null;
   const cache = { world: [], tw: [] };
   const unread = { world: 0, tw: 0 };
@@ -41,7 +41,7 @@ window.Chat = (() => {
       <div class="mh">${role}<b class="nm">${Player.nameHTML(a)}</b>${crewTag(a)}${a.title ? Titles.html(a.title) : ''}<span class="tm">${timeStr(m.created_at)}</span>
         ${Social.cloud && Player.me && a.handle && a.handle !== Player.me.id ? `<button class="rp" aria-label="${t('rp_title')}" title="${t('rp_title')}">⚑</button>` : ''}
         ${Social.canDelete(m) ? `<button class="del" aria-label="${t('b_del')}">×</button>` : ''}</div>
-      <div class="mt">${tagHTML(Emoji.toHTML(m.text))}</div></div></div>`);
+      <div class="mt">${window.Party ? Party.linkify(tagHTML(Emoji.toHTML(m.text))) : tagHTML(Emoji.toHTML(m.text))}</div></div></div>`);
     row.prepend(headIcon(a.look));
     if (autoTr) {
       Social.translate(m.text).then(tr => { if (tr && row.isConnected) row.querySelector('.mb').insertAdjacentHTML('beforeend', `<div class="tr">🌐 ${esc(tr)}</div>`); });
