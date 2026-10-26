@@ -14,7 +14,7 @@ window.Tutorial = (() => {
   const markSeen = () => { try { localStorage.setItem(KEY, 1); } catch (e) {} };
 
   function run(done) {
-    const lines = t('tut');
+    const lines = t('tut').map(UI.kao);
     let i = 0, timer = null, typing = false;
     const ov = h(`<div class="tut"><div class="tut-spot"></div>
       <div class="tut-box"><div class="face"></div><div class="tut-main"><div class="who"></div><div class="txt"></div>

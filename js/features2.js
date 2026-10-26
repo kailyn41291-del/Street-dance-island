@@ -31,6 +31,7 @@
   function levelUp(lv) {
     SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 30);
     toast(t('lv_up', { n: lv }), PXI.img('xp/level_up', '⬆'));
+    window.RPG && RPG.levelUp(lv);
   }
   const needLogin = () => { if (!Backend.enabled) { toast(t('need_cloud'), '☁'); return true; } if (!Player.me) { Player.prompt(); return true; } return false; };
 

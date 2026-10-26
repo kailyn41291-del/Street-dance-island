@@ -249,7 +249,7 @@
     const compEls = [];
     L.comps.forEach(cp => {
       let art = L.art.get(cp.k);
-      if (!art) { art = PX.drawIsland(cp.grid, C, { depth: cp.n > 40 ? 4 : 3, seed: cp.k + 1 }); L.art.set(cp.k, art); }
+      if (!art) { art = PX.drawIsland(cp.grid, C, { depth: cp.n > 40 ? 4 : 3, seed: cp.k + 1, pal: window.Festivals && Festivals.islandPal() }); L.art.set(cp.k, art); }
       const el = h(`<div class="isle" style="left:${cp.x0 * C}px;top:${cp.y0 * C}px;width:${art.w}px;height:${art.h}px">
         <div class="float" style="--d:${(-(cp.k % 9) * 0.37).toFixed(2)}s"></div></div>`);
       art.base.className = 'base'; art.base.style.left = -art.pad + 'px'; art.base.style.top = -art.pad + 'px';
@@ -435,7 +435,7 @@
     const availH = mobile ? innerHeight * 0.62 : innerHeight - 170;
     const cell = Math.max(2, Math.min(12, Math.floor(Math.min(availW / grid.w, availH / (grid.h + depth)))));
     const theme = Themes.of(c);
-    const art = PX.drawIsland(grid, cell, { depth, seed: 99, pal: theme && theme.isle });
+    const art = PX.drawIsland(grid, cell, { depth, seed: 99, pal: { ...((theme && theme.isle) || {}), ...((window.Festivals && Festivals.islandPal()) || {}) } });
     const wrap = view.querySelector('.map-wrap');
     const fxl = Themes.fx(c); if (fxl) view.prepend(fxl);
     const big = h(`<div class="big-isle" style="width:${art.w}px;height:${art.h}px"><div class="float"><div class="pins"></div></div></div>`);

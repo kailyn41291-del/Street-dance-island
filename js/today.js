@@ -254,6 +254,7 @@
     inner.innerHTML = `
       <div class="win td-head">${UI.winHTML('🏠 ' + t('nav_today'), 'pink', false)}<div class="win-body">
         <h2 class="td-hi">${esc(t('td_hi', { g, n: me ? me.name : t('td_guest') }))}</h2><p class="td-date">${esc(t('td_date', { d: dateStr }))}</p>
+        ${window.Festivals ? Festivals.bannerHTML() : ''}
         <button class="input td-search">🔍 ${esc(t('td_search_ph'))}</button>
         <div class="btn-row">${logged() ? `<button class="btn yellow td-bell">${t('td_bell')} <span class="bell-badge td-badge" hidden></span></button><button class="btn green td-luck">${t('td_luck')}</button>` : ''}<button class="btn blue td-pick">${t('td_pick')}</button></div>
         ${logged() ? '' : `<p class="note">${t('td_login')}</p><button class="btn pink td-login">🔑 ${t('login')}</button>`}

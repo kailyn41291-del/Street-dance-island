@@ -2272,3 +2272,26 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .xp-board img.pxi { width: 20px; height: 20px; }
 .stamp .st-ico img.pxi { width: 28px; height: 28px; } .stamp-fx .stamp.big .st-ico img.pxi { width: 60px; height: 60px; }
 .toast .ic img.pxi { width: 24px; height: 24px; }
+
+/* ---------- 節慶活動 ---------- */
+.fs-banner { display: block; margin: 8px 0; padding: 10px 12px; border: 3px solid var(--ink, #2a1f2e); border-radius: 10px; background: linear-gradient(90deg, #ffe08a, #f9a8c5); color: #2a1f2e; font-weight: 700; text-decoration: none; animation: fsPulse 2.4s ease-in-out infinite; }
+.fs-banner .pxi { width: 24px; height: 24px; vertical-align: -6px; }
+@keyframes fsPulse { 50% { transform: scale(1.02); } }
+.fs-card .win-body > .note:first-child { margin-top: 0; }
+.fs-q { border-top: 2px dashed rgba(0,0,0,.15); padding: 10px 0; }
+.fs-q p { margin: 0 0 6px; }
+.fs-next { list-style: none; margin: 0; padding: 0; }
+.fs-next li { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px dashed rgba(0,0,0,.12); flex-wrap: wrap; }
+.fs-next li span { margin-left: auto; font-size: .9em; }
+.fs-next li small { opacity: .7; }
+.fs-next .pxi, .fs-card .win-title .pxi { width: 22px; height: 22px; vertical-align: -5px; }
+.fs-ms { display: flex; gap: 6px; margin: 6px 0; }
+.fs-ms .tag.on { background: #ffe08a; }
+.fs-ms .pxi { width: 18px; height: 18px; vertical-align: -4px; }
+.fs-ddmap { height: 320px; margin-top: 8px; }
+.fs-rp { position: fixed; z-index: 9000; width: 56px; height: 56px; padding: 0; border: 0; background: none; cursor: pointer; animation: fsRp 1.2s ease-in-out infinite; }
+.fs-rp .pxi { width: 56px; height: 56px; }
+.fs-rp-box { display: block; width: 40px; height: 52px; margin: auto; background: #e0503c; border: 3px solid #2a1f2e; border-radius: 6px; box-shadow: inset 0 14px 0 #c43a28; }
+@keyframes fsRp { 0%,100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(6deg); } }
+.npc-walker.rare { filter: drop-shadow(0 0 6px #ffe08a) drop-shadow(0 0 12px #c9a0ff); }
+.npc-walker.rare .npc-bubble { background: #2a1f2e; color: #ffe08a; }

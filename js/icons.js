@@ -23,7 +23,7 @@ window.PXI = (() => {
     '🎮': 'game/gamepad', '😵': 'game/lose', '💤': 'game/sleep', '🧊': 'game/freeze', '🌀': 'game/power', '👟': 'game/footwork', '🥇': 'game/trophy',
     '👍': 'social/like', '🙋': 'social/going', '📸': 'social/photo', '🤝': 'social/rate', '🧭': 'event/nav', '🚇': 'event/mrt', '🥚': 'xp/egg', '🌱': 'xp/newbie',
     '🍀': 'menu/luck', '📰': 'menu/daily', '🎨': 'menu/display', '🔍': 'menu/search', '🔔': 'menu/bell', '🏫': 'menu/studio', '🚩': 'menu/party', '🗺': 'menu/spots',
-    '🛍': 'menu/market', '🥋': 'menu/mentor', '🎬': 'menu/relay', '📊': 'menu/bracket'
+    '🛍': 'menu/market', '🥋': 'menu/mentor', '🎬': 'menu/relay', '🎪': 'fest/party', '📊': 'menu/bracket'
   };
   const emo = ic => (EMO[ic] && has(EMO[ic]) ? img(EMO[ic]) : ic);
   /** '🕒 日期時間' → 像素圖示 + '日期時間'（開頭的 emoji 有對應圖示才換；回傳 HTML，文字要先 escape） */

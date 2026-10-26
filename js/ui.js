@@ -100,10 +100,23 @@ window.UI = (() => {
   const CAST = { kailyn: Kailyn, choco: Choco };
   const whoName = w => (w === 'choco' ? t('guide_choco') : t('guide'));
   // 一句台詞：文字，或 { text, mood, who }；who 是 'kailyn'（預設）或 'choco'
+  // NPC 台詞不用 Apple emoji：常見的換成顏文字，其他的直接拿掉
+  const KAO = {
+    '🎉': '＼(≧▽≦)／', '🥳': '＼(≧▽≦)／', '🎊': '＼(≧▽≦)／', '✨': '☆', '🌟': '☆', '⭐': '★', '❤': '♡', '💕': '♡♡', '💖': '♡', '😍': '(♡˙︶˙♡)', '🥰': '(♡˙︶˙♡)',
+    '😊': '(＾▽＾)', '😄': '(＾▽＾)', '😆': '(≧▽≦)', '😂': '(≧▽≦)', '🤣': '(≧▽≦)', '🙂': '(・ω・)', '😉': '(・ω<)', '😜': '(・ω<)', '😋': '(๑´ڡ`๑)',
+    '👍': '(•̀ᴗ•́)و', '💪': '(๑•̀ㅂ•́)و✧', '🔥': '(ง •̀_•́)ง', '🙏': '(人´∀`)', '👋': '(｀・ω・´)ノ', '🙌': '＼(^o^)／', '👏': '(ノ´∀`)ノ',
+    '🎵': '♪', '🎶': '♪♪', '🎤': '♪', '😢': '(；へ；)', '😭': '(╥﹏╥)', '🥺': '(´；ω；`)', '😱': 'Σ(°ロ°)', '😮': '(ﾟoﾟ)', '😲': 'Σ(ﾟДﾟ)', '🤔': '(・・?)', '❓': '?', '❗': '!', '‼': '!!',
+    '😎': '(⌐■_■)', '😏': '( ͡° ͜ʖ ͡°)', '😤': '(｀へ´)', '😡': '(╬ Ò﹏Ó)', '😅': '(^_^;)', '😳': '(⊙_⊙)', '😴': 'zzZ', '💤': 'zzZ', '🍀': '☘', '✔': '✓', '✅': '✓', '❌': '✕', '⚠': '!',
+    '💃': '♪(´ε｀ )', '🕺': '♪(´ε｀ )', '👀': '(・_・)', '🤫': '(・x・)', '🤩': '(☆▽☆)', '😁': '(＾▽＾)', '😀': '(＾▽＾)', '🤗': '(っ´▽`)っ', '💯': '100!', '🆗': 'OK'
+  };
+  const kao = s => String(s == null ? '' : s)
+    .replace(/[\u{1F1E6}-\u{1F1FF}]{2}/gu, '')
+    .replace(/(\p{Extended_Pictographic})(?:️|[\u{1F3FB}-\u{1F3FF}]|‍\p{Extended_Pictographic}️?)*️?/gu, (m, b) => KAO[b] || '')
+    .replace(/[️⃣]/g, '').replace(/ {2,}/g, ' ').replace(/^ | $/gm, '');
   const lineOf = (item, who) => {
     const o = typeof item === 'string' ? { text: item } : item;
     const w = o.who || who || 'kailyn', C = CAST[w];
-    return { text: o.text, who: w, img: C.url(o.mood || C.guess(o.text)) };
+    return { text: kao(o.text), who: w, img: C.url(o.mood || C.guess(o.text)) };
   };
 
   /* NPC 嚮導對話框：逐字打字效果；lines 可以是文字，或 { text, mood, who }
@@ -141,7 +154,7 @@ window.UI = (() => {
     // 最後一句講完 → 顯示選項（RPG 的「是 / 否」）
     const showChoices = () => {
       if (!choices || queue.length || typing) return;
-      chEl.innerHTML = choices.map((c, i) => `<button class="npc-ch" data-ch="${i}">▶ ${esc(c.label)}</button>`).join('');
+      chEl.innerHTML = choices.map((c, i) => `<button class="npc-ch" data-ch="${i}">▶ ${esc(kao(c.label))}</button>`).join('');
       chEl.hidden = false; box.classList.add('asking');
     };
     function advance() {
@@ -227,5 +240,5 @@ window.UI = (() => {
   }
 
   Kailyn.preload(); Choco.preload();
-  return { h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn, Choco, lineOf, whoName };
+  return { kao, h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn, Choco, lineOf, whoName };
 })();

@@ -124,6 +124,7 @@ window.XP = (() => {
     try {
       const got = await Backend.checkAch();
       (got || []).forEach((a, i) => setTimeout(() => { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 3, 20); toast(t('ach_got', { n: achName(a.id), x: a.xp }), '🏅'); mine.ach.add(a.id); }, i * 1400));
+      if (got && got.length && window.RPG) RPG.ach(achName(got[got.length - 1].id));
       if (got && got.length) A.refreshStats && A.refreshStats();
     } catch (x) {}
   }

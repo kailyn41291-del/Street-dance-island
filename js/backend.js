@@ -335,6 +335,11 @@ window.Backend = (() => {
     async deleteDungeonLink(did, athlete) { must(await sb.from('dungeon_links').delete().eq('dungeon_id', did).eq('athlete', athlete)); },
     async myDungeonCheers(did, year) { return must(await sb.from('dungeon_cheers').select('division,athlete').eq('dungeon_id', did).eq('year', year).eq('user_id', user.id)); },
     async dungeonCheer(did, year, division, athlete) { must(await sb.from('dungeon_cheers').upsert({ dungeon_id: did, year, division, athlete, user_id: user.id }, { onConflict: 'dungeon_id,year,division,user_id' })); },
+    /* 節慶活動 */
+    async myPractice(year) { return must(await sb.from('fest_practice').select('day').eq('user_id', user.id).gte('day', year + '-01-01').lte('day', year + '-12-31')); },
+    async logPractice() { must(await sb.from('fest_practice').insert({})); },
+    async dancedayPins(year) { return must(await sb.from('danceday_pins').select('user_id,author,country,city,lat,lon').eq('year', year).limit(5000)); },
+    async dancedayPin(row) { must(await sb.from('danceday_pins').insert(row)); },
     async myDungeonPredictions(did, year) { return must(await sb.from('dungeon_predictions').select('division,athlete').eq('dungeon_id', did).eq('year', year).eq('user_id', user.id)); },
     async dungeonPredict(did, year, division, athlete) { must(await sb.from('dungeon_predictions').upsert({ dungeon_id: did, year, division, athlete, user_id: user.id }, { onConflict: 'dungeon_id,year,division,user_id' })); },
 

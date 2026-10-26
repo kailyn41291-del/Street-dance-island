@@ -209,14 +209,15 @@ window.Emotes = (() => {
   function spawnNpc(view) {
     if (!view.isConnected || document.querySelector('.npc-walker')) return;
     const look = Avatar.random(), name = pick(NPC_NAMES), fromLeft = Math.random() < 0.5;
-    const el = h(`<button class="npc-walker ${fromLeft ? 'l' : 'r'}" aria-label="${esc(name)}"><span class="npc-bubble">${esc(pick(t('npc_lines')))}</span></button>`);
+    const rare = !!window.RPG && Math.random() < 0.18;   // 偶爾出現神秘路人（可以聊天拿小彩蛋）
+    const el = h(`<button class="npc-walker ${fromLeft ? 'l' : 'r'} ${rare ? 'rare' : ''}" aria-label="${esc(name)}"><span class="npc-bubble">${esc(rare ? '？？？' : UI.kao(pick(t('npc_lines'))))}</span></button>`);
     const d = Avatar.dancer(3, look);
     if (!fromLeft) d.el.style.transform = 'scaleX(-1)';
     el.prepend(d.el);
     el.style.top = (30 + Math.random() * 40) + 'vh';
     view.appendChild(el);
     A.beatLoop(d, 260);
-    el.onclick = e => { e.stopPropagation(); SFX.play('select'); el.classList.add('stop'); npcBattle(look, name); setTimeout(() => el.remove(), 400); };
+    el.onclick = e => { e.stopPropagation(); SFX.play('select'); el.classList.add('stop'); if (rare) RPG.walker(name, () => npcBattle(look, name)); else npcBattle(look, name); setTimeout(() => el.remove(), 400); };
     setTimeout(() => el.remove(), 16000);
   }
 
