@@ -20,7 +20,7 @@ I18N.extend({
     tab_body: '角色', tab_hair: '髮型', tab_hat: '帽子', tab_outfit: '服裝', tab_acc: '配件', tab_job: '職業', tab_title: '稱號', tab_special: '專屬',
     o_gender: '性別', o_face: '臉型', o_skin: '膚色', o_eye: '眼睛顏色', o_hair: '髮型', o_hairColor: '髮色', o_hat: '帽子', o_hatColor: '帽子顏色',
     o_top: '上衣', o_topColor: '上衣顏色', o_bottom: '褲子', o_bottomColor: '褲子顏色', o_shoes: '鞋子', o_shoesColor: '鞋子顏色',
-    o_faceAcc: '臉部配件', o_acc: '配件', o_accColor: '配件顏色', o_special: '管理員專屬造型', job_apply: '✨ 套用職業造型', title_pick: '選一個稱號掛在名字旁邊', title_none: '不使用稱號',
+    o_faceAcc: '臉部配件', o_acc: '配件', o_accColor: '配件顏色', o_special: '管理員專屬造型', job_apply: '✨ 套用職業造型', title_pick: '選一個稱號掛在名字旁邊', title_none: '不使用稱號', title_earned: '★ 我獲得的特別稱號', title_basic: '一般稱號', title_earned_none: '還沒有特別稱號～完成成就、節慶活動、副本島任務就能拿到！',
     p_job: '職業', p_title: '稱號',
     opts: {
       m: '男', f: '女', round: '圓臉', oval: '鵝蛋臉', sharp: '尖下巴',
@@ -51,7 +51,7 @@ I18N.extend({
     tab_body: 'Body', tab_hair: 'Hair', tab_hat: 'Hat', tab_outfit: 'Outfit', tab_acc: 'Accessories', tab_job: 'Role', tab_title: 'Title', tab_special: 'Staff',
     o_gender: 'Gender', o_face: 'Face', o_skin: 'Skin', o_eye: 'Eyes', o_hair: 'Hairstyle', o_hairColor: 'Hair color', o_hat: 'Hat', o_hatColor: 'Hat color',
     o_top: 'Top', o_topColor: 'Top color', o_bottom: 'Bottoms', o_bottomColor: 'Bottoms color', o_shoes: 'Shoes', o_shoesColor: 'Shoes color',
-    o_faceAcc: 'Face', o_acc: 'Accessory', o_accColor: 'Accessory color', o_special: 'Staff-only skin', job_apply: '✨ Use role outfit', title_pick: 'Pick a title to show next to your name', title_none: 'No title',
+    o_faceAcc: 'Face', o_acc: 'Accessory', o_accColor: 'Accessory color', o_special: 'Staff-only skin', job_apply: '✨ Use role outfit', title_pick: 'Pick a title to show next to your name', title_none: 'No title', title_earned: '★ Special titles I earned', title_basic: 'Basic titles', title_earned_none: 'No special titles yet — clear achievements, festival or dungeon quests to earn them!',
     p_job: 'Role', p_title: 'Title',
     opts: {
       m: 'Male', f: 'Female', round: 'Round', oval: 'Oval', sharp: 'Sharp chin',
@@ -82,7 +82,7 @@ I18N.extend({
     tab_body: 'キャラ', tab_hair: '髪型', tab_hat: '帽子', tab_outfit: '服', tab_acc: 'アクセ', tab_job: '職業', tab_title: '称号', tab_special: '専用',
     o_gender: '性別', o_face: '輪郭', o_skin: '肌の色', o_eye: '目の色', o_hair: '髪型', o_hairColor: '髪の色', o_hat: '帽子', o_hatColor: '帽子の色',
     o_top: 'トップス', o_topColor: 'トップスの色', o_bottom: 'ボトムス', o_bottomColor: 'ボトムスの色', o_shoes: 'シューズ', o_shoesColor: 'シューズの色',
-    o_faceAcc: '顔アクセ', o_acc: 'アクセサリー', o_accColor: 'アクセの色', o_special: '管理者専用スキン', job_apply: '✨ 職業コーデを適用', title_pick: '名前の横に表示する称号を選ぼう', title_none: '称号なし',
+    o_faceAcc: '顔アクセ', o_acc: 'アクセサリー', o_accColor: 'アクセの色', o_special: '管理者専用スキン', job_apply: '✨ 職業コーデを適用', title_pick: '名前の横に表示する称号を選ぼう', title_none: '称号なし', title_earned: '★ 獲得した特別な称号', title_basic: '基本の称号', title_earned_none: 'まだ特別な称号はないよ～実績やイベント、ダンジョンのクエストで手に入るよ！',
     p_job: '職業', p_title: '称号',
     opts: {
       m: '男子', f: '女子', round: '丸顔', oval: '卵型', sharp: 'シャープ',
@@ -113,7 +113,7 @@ I18N.extend({
     tab_body: '캐릭터', tab_hair: '헤어', tab_hat: '모자', tab_outfit: '의상', tab_acc: '액세서리', tab_job: '직업', tab_title: '칭호', tab_special: '전용',
     o_gender: '성별', o_face: '얼굴형', o_skin: '피부', o_eye: '눈 색', o_hair: '헤어스타일', o_hairColor: '머리 색', o_hat: '모자', o_hatColor: '모자 색',
     o_top: '상의', o_topColor: '상의 색', o_bottom: '하의', o_bottomColor: '하의 색', o_shoes: '신발', o_shoesColor: '신발 색',
-    o_faceAcc: '얼굴 액세서리', o_acc: '액세서리', o_accColor: '액세서리 색', o_special: '관리자 전용 스킨', job_apply: '✨ 직업 코디 적용', title_pick: '이름 옆에 표시할 칭호를 골라 봐', title_none: '칭호 없음',
+    o_faceAcc: '얼굴 액세서리', o_acc: '액세서리', o_accColor: '액세서리 색', o_special: '관리자 전용 스킨', job_apply: '✨ 직업 코디 적용', title_pick: '이름 옆에 표시할 칭호를 골라 봐', title_none: '칭호 없음', title_earned: '★ 획득한 특별 칭호', title_basic: '기본 칭호', title_earned_none: '아직 특별 칭호가 없어요~ 업적, 이벤트, 던전 퀘스트로 얻을 수 있어요!',
     p_job: '직업', p_title: '칭호',
     opts: {
       m: '남자', f: '여자', round: '둥근 얼굴', oval: '계란형', sharp: '갸름한 턱',

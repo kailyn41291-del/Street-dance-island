@@ -81,6 +81,9 @@ window.Titles = (() => {
     if (!x.only) return true;
     return (x.only === 'admin' && role) || (x.only === 'owner' && role === 'owner') || (x.only === 'verified' && verified) || (x.only === 'unlock' && unlocks && unlocks.has(x.id));
   });
-  const html = id => { const x = byId[id]; if (!x) return ''; return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''}">${label(id).replace(/[&<>]/g, '')}</span>`; };
-  return { LIST, label, allowed, html, byId };
+  // 後來拿到的稱號（成就、節慶、等級、認證…）跟一般稱號分開，用顏色和 ★ 標出來
+  const earned = id => { const x = byId[id]; return !!x && !!(x.only === 'unlock' || x.only === 'verified' || x.minLv); };
+  const color = id => (byId[id] && byId[id].color) || '#ffe08a';
+  const html = id => { const x = byId[id]; if (!x) return ''; const e = earned(id); return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''} ${e ? 'ttl-earned' : ''}"${e ? ` style="--tc:${color(id)}"` : ''}>${e ? '★ ' : ''}${label(id).replace(/[&<>]/g, '')}</span>`; };
+  return { LIST, label, allowed, html, byId, earned, color };
 })();

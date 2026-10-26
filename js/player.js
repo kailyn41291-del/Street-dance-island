@@ -42,7 +42,7 @@ window.Player = (() => {
 
   /* ---------- 捏角色編輯器 ---------- */
   // state = { look, job, title }，role = 'owner' | 'admin' | null（決定能不能選專屬造型 / 稱號）
-  function lookEditor(state, role) {
+  function lookEditor(state, role, startTab) {
     state.look = Avatar.normalize(state.look);
     const L = state.look;
     const tabs = ['body', 'hair', 'hat', 'outfit', 'acc', 'job', 'title'].concat(role ? ['special'] : []);
@@ -59,7 +59,7 @@ window.Player = (() => {
     const row = (label, html) => `<div class="opt-row"><span class="opt-l">${label}</span><div class="opt-v">${html}</div></div>`;
     const sw = (key, list) => list.map(c => `<button type="button" class="sw" data-k="${key}" data-v="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('');
     const sel = (key, list) => list.map(v => `<button type="button" class="opt-b" data-k="${key}" data-v="${v}">${esc(O[v] || v)}</button>`).join('');
-    let tab = 'body';
+    let tab = startTab || 'body';
     const refreshTags = () => {
       tagsEl.innerHTML = `<span class="tag job">${esc(J[state.job] || '')}</span>${state.title ? Titles.html(state.title) : ''}`;
     };
@@ -75,7 +75,16 @@ window.Player = (() => {
         acc: row(t('o_faceAcc'), sel('faceAcc', A.faceAcc)) + row(t('o_acc'), sel('acc', A.acc)) + row(t('o_accColor'), sw('accColor', C.cloth)),
         job: `<div class="job-grid">${Object.keys(Avatar.JOBS).map(k => `<button type="button" class="opt-b job-b" data-job="${k}">${esc(J[k])}</button>`).join('')}</div>
           <button type="button" class="btn sm pink job-apply">${t('job_apply')}</button>`,
-        title: `<p class="note">${t('title_pick')}</p><div class="title-grid"><button type="button" class="opt-b" data-title="">${t('title_none')}</button>${Titles.allowed(role, !!(me && me.verified), me && me.unlocks, (me && me.level) || 1).map(x => `<button type="button" class="opt-b" data-title="${x.id}">${Titles.html(x.id)}</button>`).join('')}</div>`,
+        title: (() => {
+          const all = Titles.allowed(role, !!(me && me.verified), me && me.unlocks, (me && me.level) || 1);
+          const btn = x => `<button type="button" class="opt-b ${Titles.earned(x.id) ? 'earned' : ''}" data-title="${x.id}"${Titles.earned(x.id) ? ` style="--tc:${Titles.color(x.id)}"` : ''}>${Titles.html(x.id)}</button>`;
+          const got = all.filter(x => Titles.earned(x.id) || x.only === 'owner' || x.only === 'admin'), basic = all.filter(x => !got.includes(x));
+          return `<p class="note">${t('title_pick')}</p>
+            ${me ? `<h4 class="title-h">${t('title_earned')} <small>${got.length}</small></h4>
+            <div class="title-grid">${got.map(btn).join('') || `<p class="note">${t('title_earned_none')}</p>`}</div>
+            <h4 class="title-h">${t('title_basic')}</h4>` : ''}
+            <div class="title-grid"><button type="button" class="opt-b" data-title="">${t('title_none')}</button>${basic.map(btn).join('')}</div>`;
+        })(),
         special: row(t('o_special'), sel('special', ['none', 'admin'].concat(role === 'owner' ? ['owner'] : [], Avatar.skinsFor(role, me && me.id))))
       };
       opts.innerHTML = panels[tab];
@@ -85,7 +94,12 @@ window.Player = (() => {
       refreshTags();
     };
     const apply = () => { d.setLook(L); refreshTags(); };
-    wrap.querySelector('.ctabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) { tab = b.dataset.tab; SFX.play('select'); draw(); } };
+    let fresh = false;   // 打開稱號頁時重新抓一次已解鎖的稱號（剛領到的才會出現）
+    const reloadUnlocks = async () => {
+      if (fresh || !me || !Backend.enabled || !Backend.myUnlocks) return; fresh = true;
+      try { const u = new Set(await Backend.myUnlocks()); me.unlocks = u; if (tab === 'title' && wrap.isConnected) draw(); } catch (e) {}
+    };
+    wrap.querySelector('.ctabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) { tab = b.dataset.tab; SFX.play('select'); draw(); if (tab === 'title') reloadUnlocks(); } };
     opts.addEventListener('click', e => {
       const k = e.target.closest('[data-k]'), j = e.target.closest('[data-job]'), ti = e.target.closest('[data-title]');
       if (k) { L[k.dataset.k] = k.dataset.v; SFX.play('select'); opts.querySelectorAll(`[data-k="${k.dataset.k}"]`).forEach(x => x.classList.toggle('on', x === k)); apply(); }
@@ -96,7 +110,7 @@ window.Player = (() => {
     wrap.querySelector('.rnd').onclick = () => { Object.assign(L, Avatar.random({ job: state.job, special: L.special })); SFX.play('card'); apply(); draw(); };
     wrap.querySelector('.g-m').onclick = () => { L.gender = 'm'; SFX.play('select'); apply(); draw(); };
     wrap.querySelector('.g-f').onclick = () => { L.gender = 'f'; if (['short', 'buzz', 'spiky'].includes(L.hair)) L.hair = 'long'; SFX.play('select'); apply(); draw(); };
-    draw();
+    draw(); if (tab === 'title') reloadUnlocks();
     return wrap;
   }
 
@@ -211,7 +225,7 @@ window.Player = (() => {
   }
 
   /* ---------- 角色選單（編輯外觀 / 登出） ---------- */
-  function openMenu() {
+  function openMenu(startTab) {
     if (!me) return prompt();
     const state = { look: { ...me.look }, job: me.job || me.look.job || 'bboy', title: me.title || null };
     const nat = GEO.countries.find(c => c.code === me.nat);
@@ -220,7 +234,7 @@ window.Player = (() => {
       ${me.role ? `<span class="tag role-tag role-${me.role}">${me.role === 'owner' ? '★ ' + Titles.label('owner') : '✦ ' + Titles.label('admin')}</span>` : ''}</div>
       <div class="ed"></div>
       <div class="form-foot"><button class="btn red lo">${t('p_logout')}</button>${cloud() && !me.verified ? `<button class="btn blue vf">${t('v_apply')}</button>` : ''}<span class="grow"></span><button class="btn pink sv">${t('p_save')}</button></div></div>`);
-    body.querySelector('.ed').appendChild(lookEditor(state, me.role));
+    body.querySelector('.ed').appendChild(lookEditor(state, me.role, typeof startTab === 'string' ? startTab : null));
     const vf = body.querySelector('.vf'); if (vf) vf.onclick = () => { m.close(); setTimeout(openVerify, 220); };
     const m = modal({ title: t('p_edit'), color: 'pink', body, wide: true });
     body.querySelector('.sv').onclick = async () => {
