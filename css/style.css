@@ -2313,4 +2313,6 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .title-grid .opt-b.fx { background: none; border-color: transparent; box-shadow: none; padding: 2px; }
 .title-grid .opt-b.fx.on { background: var(--yellow); border-color: var(--ink); }
 .stage-tags .ttl.ttl-fx { --fh: 24px; --fw: 6.9; --fzb: 10.5px; }
-.me-name .ttl.ttl-fx, .pc-title .ttl.ttl-fx { --fh: 40px; --fw: 6.4; --fzb: 15px; }
+.me-name .ttl.ttl-fx { --fh: 34px; --fw: 6.4; --fzb: 13px; }
+.pc-title .ttl.ttl-fx { --fh: 30px; --fw: 6.6; --fzb: 12px; margin: 0; }
+@media (max-width: 480px) { .pc-title .ttl.ttl-fx, .me-name .ttl.ttl-fx { --fh: 26px; --fzb: 11px; } }
