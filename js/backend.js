@@ -335,6 +335,10 @@ window.Backend = (() => {
     async deleteDungeonLink(did, athlete) { must(await sb.from('dungeon_links').delete().eq('dungeon_id', did).eq('athlete', athlete)); },
     async myDungeonCheers(did, year) { return must(await sb.from('dungeon_cheers').select('division,athlete').eq('dungeon_id', did).eq('year', year).eq('user_id', user.id)); },
     async dungeonCheer(did, year, division, athlete) { must(await sb.from('dungeon_cheers').upsert({ dungeon_id: did, year, division, athlete, user_id: user.id }, { onConflict: 'dungeon_id,year,division,user_id' })); },
+    /* 稱號收集：球鞋、身分申請 */
+    async mySneakers() { return must(await sb.from('sneakers').select('sid,n').eq('user_id', user.id)); },
+    async myRoleApps() { return must(await sb.from('role_apps').select('role,status,created_at').eq('user_id', user.id)); },
+    async roleApply(role, note) { must(await sb.from('role_apps').insert({ role, note })); },
     /* 節慶活動 */
     async myPractice(year) { return must(await sb.from('fest_practice').select('day').eq('user_id', user.id).gte('day', year + '-01-01').lte('day', year + '-12-31')); },
     async logPractice() { must(await sb.from('fest_practice').insert({})); },

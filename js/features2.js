@@ -64,7 +64,7 @@
       const done = S.checks.has(ev.id);
       try {
         if (done) { await Backend.uncheckin(ev.id); S.checks.delete(ev.id); toast(t('checkin_undo'), '↺'); }
-        else { await Backend.checkin(ev); S.checks.set(ev.id, { event_id: ev.id, country: ev.country, city: ev.city, created_at: new Date().toISOString() }); stampFx(ev); }
+        else { await Backend.checkin(ev); S.checks.set(ev.id, { event_id: ev.id, country: ev.country, city: ev.city, created_at: new Date().toISOString() }); stampFx(ev); window.Collect && setTimeout(() => Collect.onCheckin(ev.id), 1800); }
       } catch (x) { toast(/too many/.test(x.message) ? t('err_toomany') : x.message, '✕'); return true; }
       redraw && redraw(); refreshStats();
       return true;

@@ -48,7 +48,7 @@
     key: 'accounts', owner: true, label: () => '👤 ' + t('ac_tab'),
     draw: async (pane, fail) => {
       const S = { q: '', sort: 'new', off: 0, rows: [] };
-      pane.innerHTML = `<div class="ac-stats note"></div>
+      pane.innerHTML = `<div class="ac-apps"></div><div class="ac-stats note"></div>
         <div class="btn-row ac-bar"><input class="input sm ac-q" type="search" placeholder="${esc(t('ac_search'))}">
           <select class="input sm ac-sort"><option value="new">${t('ac_sort_new')}</option><option value="seen">${t('ac_sort_seen')}</option><option value="xp">${t('ac_sort_xp')}</option></select></div>
         <p class="note ac-found"></p><ul class="adm-list ac-list"></ul><div class="btn-row"><button class="btn sm ac-more" hidden>${t('ac_more')}</button></div>`;
@@ -60,7 +60,7 @@
           <b>${esc(p.name)}</b> <span class="note">@${esc(p.handle)}</span> <span class="tag">Lv.${lv(p.xp)}</span>${tags.map(x => ` <span class="tag ${x === t('adm_banned') ? 'ac-ban' : ''}">${esc(x)}</span>`).join('')}<br>
           <span class="note">${esc(nat ? nm(nat) : p.nat || '—')} · ${esc(p.style || '—')}${p.ig ? ` · IG @${esc(p.ig)}` : ''}</span><br>
           <span class="note">${t('ac_joined')} ${day(p.created_at)} · ${t('ac_seen')} ${esc(ago(p.last_seen))}</span></div>
-          <div class="ac-acts"><button class="btn sm ac-card">${t('ac_card')}</button>${p.role === 'owner' ? '' : `<button class="btn sm ac-rn">${t('adm_rename')}</button><button class="btn sm red ac-bn">${p.banned ? t('adm_unban') : t('adm_ban')}</button>`}</div></li>`;
+          <div class="ac-acts"><button class="btn sm ac-card">${t('ac_card')}</button><button class="btn sm yellow ac-ttl">${t('ag_btn')}</button>${p.role === 'owner' ? '' : `<button class="btn sm ac-rn">${t('adm_rename')}</button><button class="btn sm red ac-bn">${p.banned ? t('adm_unban') : t('adm_ban')}</button>`}</div></li>`;
       };
       const load = async (reset) => {
         if (reset) { S.off = 0; S.rows = []; }
@@ -80,6 +80,7 @@
         const li = e.target.closest('li[data-h]'); if (!li) return;
         const hd = li.dataset.h, p = S.rows.find(x => x.handle === hd); if (!p) return;
         if (e.target.closest('.ac-card')) return Friends.openCard(hd);
+        if (e.target.closest('.ac-ttl')) return Collect.openGrant(hd, p.name);
         try {
           if (e.target.closest('.ac-rn')) { const n = prompt(t('adm_rename_ph'), p.name); if (!n) return; p.name = n.trim().slice(0, 20); await Backend.setPlayer(hd, { name: p.name }); }
           else if (e.target.closest('.ac-bn')) { if (!p.banned && !confirm(t('ac_ban_q', { h: hd }))) return; p.banned = !p.banned; await Backend.setPlayer(hd, { banned: p.banned }); }
@@ -88,6 +89,7 @@
         } catch (x) { fail(x); }
       };
       load(true);
+      if (window.Collect) Collect.drawRoleApps(pane.querySelector('.ac-apps'), fail);
     }
   });
 })();

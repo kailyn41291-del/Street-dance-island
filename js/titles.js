@@ -33,6 +33,46 @@ window.Titles = (() => {
     { id: 'r_f_moon',      only: 'unlock', color: '#f6c96b', zh: '中秋烤肉 Cypher', en: 'Moon BBQ Cypher', ja: '中秋 BBQ サイファー', ko: '추석 바비큐 사이퍼' },
     { id: 'r_f_halloween', only: 'unlock', color: '#a070d0', zh: '萬聖節搗蛋鬼', en: 'Halloween Trickster', ja: 'ハロウィンのいたずらっ子', ko: '할로윈 장난꾸러기' },
     { id: 'r_f_xmas',      only: 'unlock', color: '#5bb5a6', zh: '聖誕舞者', en: 'Christmas Dancer', ja: 'クリスマスダンサー', ko: '크리스마스 댄서' },
+    { id: 't_pvp_1', only: 'unlock', tier: 1, zh: 'Battle 之王・銅', en: 'Battle King · Bronze', ja: 'バトルキング・銅', ko: '배틀 킹 · 브론즈' },
+    { id: 't_pvp_2', only: 'unlock', tier: 2, zh: 'Battle 之王・銀', en: 'Battle King · Silver', ja: 'バトルキング・銀', ko: '배틀 킹 · 실버' },
+    { id: 't_pvp_3', only: 'unlock', tier: 3, zh: 'Battle 之王・金', en: 'Battle King · Gold', ja: 'バトルキング・金', ko: '배틀 킹 · 골드' },
+    { id: 't_vet_1', only: 'unlock', tier: 1, zh: 'Battle 狂熱者・銅', en: 'Battle Addict · Bronze', ja: 'バトル狂・銅', ko: '배틀 매니아 · 브론즈' },
+    { id: 't_vet_2', only: 'unlock', tier: 2, zh: 'Battle 狂熱者・銀', en: 'Battle Addict · Silver', ja: 'バトル狂・銀', ko: '배틀 매니아 · 실버' },
+    { id: 't_vet_3', only: 'unlock', tier: 3, zh: 'Battle 狂熱者・金', en: 'Battle Addict · Gold', ja: 'バトル狂・金', ko: '배틀 매니아 · 골드' },
+    { id: 't_hall_1', only: 'unlock', tier: 1, zh: '殿堂舞者・銅', en: 'Hall of Famer · Bronze', ja: '殿堂入りダンサー・銅', ko: '명예의 전당 · 브론즈' },
+    { id: 't_hall_2', only: 'unlock', tier: 2, zh: '殿堂舞者・銀', en: 'Hall of Famer · Silver', ja: '殿堂入りダンサー・銀', ko: '명예의 전당 · 실버' },
+    { id: 't_hall_3', only: 'unlock', tier: 3, zh: '殿堂舞者・金', en: 'Hall of Famer · Gold', ja: '殿堂入りダンサー・金', ko: '명예의 전당 · 골드' },
+    { id: 't_crew_1', only: 'unlock', tier: 1, zh: '傳奇舞團・銅', en: 'Legendary Crew · Bronze', ja: '伝説のクルー・銅', ko: '전설의 크루 · 브론즈' },
+    { id: 't_crew_2', only: 'unlock', tier: 2, zh: '傳奇舞團・銀', en: 'Legendary Crew · Silver', ja: '伝説のクルー・銀', ko: '전설의 크루 · 실버' },
+    { id: 't_crew_3', only: 'unlock', tier: 3, zh: '傳奇舞團・金', en: 'Legendary Crew · Gold', ja: '伝説のクルー・金', ko: '전설의 크루 · 골드' },
+    { id: 't_graf_1', only: 'unlock', tier: 1, zh: '塗鴉之王・銅', en: 'Graffiti King · Bronze', ja: 'グラフィティキング・銅', ko: '그래피티 킹 · 브론즈' },
+    { id: 't_graf_2', only: 'unlock', tier: 2, zh: '塗鴉之王・銀', en: 'Graffiti King · Silver', ja: 'グラフィティキング・銀', ko: '그래피티 킹 · 실버' },
+    { id: 't_graf_3', only: 'unlock', tier: 3, zh: '塗鴉之王・金', en: 'Graffiti King · Gold', ja: 'グラフィティキング・金', ko: '그래피티 킹 · 골드' },
+    { id: 't_drip_1', only: 'unlock', tier: 1, zh: 'Drip King・銅', en: 'Drip King · Bronze', ja: 'Drip King・銅', ko: 'Drip King · 브론즈' },
+    { id: 't_drip_2', only: 'unlock', tier: 2, zh: 'Drip King・銀', en: 'Drip King · Silver', ja: 'Drip King・銀', ko: 'Drip King · 실버' },
+    { id: 't_drip_3', only: 'unlock', tier: 3, zh: 'Drip King・金', en: 'Drip King · Gold', ja: 'Drip King・金', ko: 'Drip King · 골드' },
+    { id: 't_stk_1', only: 'unlock', tier: 1, zh: '貼圖轟炸機・銅', en: 'Sticker Bomber · Bronze', ja: 'スタンプ爆撃機・銅', ko: '스티커 폭격기 · 브론즈' },
+    { id: 't_stk_2', only: 'unlock', tier: 2, zh: '貼圖轟炸機・銀', en: 'Sticker Bomber · Silver', ja: 'スタンプ爆撃機・銀', ko: '스티커 폭격기 · 실버' },
+    { id: 't_stk_3', only: 'unlock', tier: 3, zh: '貼圖轟炸機・金', en: 'Sticker Bomber · Gold', ja: 'スタンプ爆撃機・金', ko: '스티커 폭격기 · 골드' },
+    { id: 't_relay_1', only: 'unlock', tier: 1, zh: '接力常客・銅', en: 'Relay Regular · Bronze', ja: 'リレー常連・銅', ko: '릴레이 단골 · 브론즈' },
+    { id: 't_relay_2', only: 'unlock', tier: 2, zh: '接力常客・銀', en: 'Relay Regular · Silver', ja: 'リレー常連・銀', ko: '릴레이 단골 · 실버' },
+    { id: 't_relay_3', only: 'unlock', tier: 3, zh: '接力常客・金', en: 'Relay Regular · Gold', ja: 'リレー常連・金', ko: '릴레이 단골 · 골드' },
+    { id: 't_skate_1', only: 'unlock', tier: 1, zh: '街頭遊俠・銅', en: 'Street Ranger · Bronze', ja: 'ストリートレンジャー・銅', ko: '스트리트 레인저 · 브론즈' },
+    { id: 't_skate_2', only: 'unlock', tier: 2, zh: '街頭遊俠・銀', en: 'Street Ranger · Silver', ja: 'ストリートレンジャー・銀', ko: '스트리트 레인저 · 실버' },
+    { id: 't_skate_3', only: 'unlock', tier: 3, zh: '街頭遊俠・金', en: 'Street Ranger · Gold', ja: 'ストリートレンジャー・金', ko: '스트리트 레인저 · 골드' },
+    { id: 't_shoe_1', only: 'unlock', tier: 1, zh: '球鞋收藏家・銅', en: 'Sneaker Collector · Bronze', ja: 'スニーカーコレクター・銅', ko: '스니커 컬렉터 · 브론즈' },
+    { id: 't_shoe_2', only: 'unlock', tier: 2, zh: '球鞋收藏家・銀', en: 'Sneaker Collector · Silver', ja: 'スニーカーコレクター・銀', ko: '스니커 컬렉터 · 실버' },
+    { id: 't_shoe_3', only: 'unlock', tier: 3, zh: '球鞋收藏家・金', en: 'Sneaker Collector · Gold', ja: 'スニーカーコレクター・金', ko: '스니커 컬렉터 · 골드' },
+    { id: 't_champ', only: 'unlock', zh: '冠軍', en: 'Champion', ja: 'チャンピオン', ko: '챔피언' },
+    { id: 't_podium', only: 'unlock', zh: '頒獎台', en: 'Podium', ja: '表彰台', ko: '시상대' },
+    { id: 't_world', only: 'unlock', zh: '世界冠軍', en: 'World Champion', ja: '世界王者', ko: '월드 챔피언' },
+    { id: 't_belt', only: 'unlock', zh: '本季腰帶', en: 'Season Belt', ja: 'シーズンベルト', ko: '시즌 벨트' },
+    { id: 't_id_dj', only: 'unlock', zh: '認證 DJ', en: 'Certified DJ', ja: '認定 DJ', ko: '인증 DJ' },
+    { id: 't_id_mc', only: 'unlock', zh: '認證 MC', en: 'Certified MC', ja: '認定 MC', ko: '인증 MC' },
+    { id: 't_id_judge', only: 'unlock', zh: '認證評審', en: 'Certified Judge', ja: '認定ジャッジ', ko: '인증 저지' },
+    { id: 't_id_host', only: 'unlock', zh: '認證主辦', en: 'Certified Organizer', ja: '認定オーガナイザー', ko: '인증 주최자' },
+    { id: 't_dj_pop', only: 'unlock', zh: '人氣 DJ', en: 'Popular DJ', ja: '人気 DJ', ko: '인기 DJ' },
+    { id: 't_mc_pop', only: 'unlock', zh: '派對主持人', en: 'Party MC', ja: 'パーティー MC', ko: '파티 MC' },
     { id: 'r_islander',  only: 'unlock', color: '#8fd3c7', zh: '定居島民',     en: 'Island Resident',       ja: '島に住んでます',          ko: '섬에 정착한 주민' },
     { id: 'r_comp1',     only: 'unlock', zh: '我有比過賽',   en: "I've Battled Before!",  ja: 'バトル出たことあるもん！', ko: '나 배틀 나가봤어!' },
     { id: 'r_comp5',     only: 'unlock', zh: '我真的有比過', en: 'No, Really, I Battled', ja: 'ほんとに出たってば〜',     ko: '진짜 나가봤다니까~' },
@@ -84,10 +124,10 @@ window.Titles = (() => {
   // 後來拿到的稱號（成就、節慶、等級、認證…）跟一般稱號分開，用顏色和 ★ 標出來
   // 特別稱號的華麗框（assets/title_frames/NN.webp）：[寬, 高, 中間那一條的位置, 上邊框, 下邊框]
   // 左右兩端的裝飾固定，中間的框條會跟著稱號長短拉長
-  const FR = {"01":[447,120,223,35,28],"02":[409,120,204,38,27],"03":[415,120,208,34,32],"04":[413,120,207,38,31],"05":[425,120,212,36,33],"06":[404,120,202,36,33],"07":[425,120,212,27,39],"08":[407,120,204,34,39],"09":[433,120,216,33,38],"10":[436,120,218,34,29],"11":[495,120,248,43,17],"12":[493,120,247,43,15],"13":[471,120,236,40,25],"14":[464,120,232,28,34],"15":[455,120,228,35,23],"16":[458,120,229,30,30],"17":[459,120,229,27,32],"18":[474,120,237,33,26],"19":[460,120,230,32,27],"20":[459,120,229,36,30],"21":[445,120,222,45,24],"22":[450,120,225,47,23],"23":[469,120,234,42,19],"24":[461,120,231,35,20],"25":[439,120,220,33,30],"26":[441,120,221,39,24],"27":[456,120,228,30,30],"28":[475,120,237,32,31],"29":[477,120,238,36,33],"30":[475,120,237,30,32]};
-  const FRAME = {"owner":"22","admin":"03","verified":"26","r_lucky":"09","r_spinner":"16","r_goldfeet":"17","r_cypherking":"21","r_vinyl":"24","r_rainbow":"27","r_moonwalk":"01","r_sushi":"07","r_week7":"05","r_npcslayer":"30","r_npcboss":"29","r_moveking":"23","r_master":"13","r_graduate":"10","r_reliable":"02","r_duo":"11","r_f_newyear":"18","r_f_lunar":"04","r_f_valentine":"06","r_f_danceday":"28","r_f_summer100":"15","r_f_hiphop":"25","r_f_moon":"12","r_f_halloween":"08","r_f_xmas":"19","r_islander":"20","r_comp1":"14","r_comp5":"21","r_comp10":"23","r_challenger":"30","lv5":"20","lv10":"17","lv20":"01"};
+  const FR = {"01":[447,120,223,35,28],"02":[409,120,204,38,27],"03":[415,120,208,34,32],"04":[413,120,207,38,31],"05":[425,120,212,36,33],"06":[404,120,202,36,33],"07":[425,120,212,27,39],"08":[407,120,204,34,39],"09":[433,120,216,33,38],"10":[436,120,218,34,29],"11":[495,120,248,43,17],"12":[493,120,247,43,15],"13":[471,120,236,40,25],"14":[464,120,232,28,34],"15":[455,120,228,35,23],"16":[458,120,229,30,30],"17":[459,120,229,27,32],"18":[474,120,237,33,26],"19":[460,120,230,32,27],"20":[459,120,229,36,30],"21":[445,120,222,45,24],"22":[450,120,225,47,23],"23":[469,120,234,42,19],"24":[461,120,231,35,20],"25":[439,120,220,33,30],"26":[441,120,221,39,24],"27":[456,120,228,30,30],"28":[475,120,237,32,31],"29":[477,120,238,36,33],"30":[475,120,237,30,32],"31":[300,120,164,38,37],"32":[300,120,180,29,46],"33":[304,120,109,45,30],"34":[300,120,159,24,51],"35":[301,120,155,53,22],"36":[300,120,174,29,46],"37":[300,120,184,55,20],"38":[302,120,144,45,30],"39":[300,120,153,44,31],"40":[300,120,200,25,50],"41":[302,120,201,32,43],"42":[308,120,163,27,47],"43":[300,120,150,31,44],"44":[308,120,177,37,38],"45":[300,120,182,26,49],"46":[300,120,148,48,27],"47":[300,120,129,38,37],"48":[300,120,152,41,34],"49":[300,120,150,33,42],"50":[303,120,92,40,34]};
+  const FRAME = {"owner":"22","admin":"03","verified":"26","r_lucky":"09","r_spinner":"16","r_goldfeet":"17","r_cypherking":"21","r_vinyl":"24","r_rainbow":"27","r_moonwalk":"01","r_sushi":"07","r_week7":"05","r_npcslayer":"30","r_npcboss":"29","r_moveking":"23","r_master":"13","r_graduate":"10","r_reliable":"02","r_duo":"11","r_f_newyear":"18","r_f_lunar":"04","r_f_valentine":"06","r_f_danceday":"28","r_f_summer100":"15","r_f_hiphop":"25","r_f_moon":"12","r_f_halloween":"08","r_f_xmas":"19","r_islander":"20","r_comp1":"14","r_comp5":"21","r_comp10":"23","r_challenger":"30","lv5":"20","lv10":"17","lv20":"01","t_pvp_1":"37_1","t_pvp_2":"37_2","t_pvp_3":"37_3","t_vet_1":"32_1","t_vet_2":"32_2","t_vet_3":"32_3","t_hall_1":"40_1","t_hall_2":"40_2","t_hall_3":"40_3","t_crew_1":"35_1","t_crew_2":"35_2","t_crew_3":"35_3","t_graf_1":"41_1","t_graf_2":"41_2","t_graf_3":"41_3","t_drip_1":"46_1","t_drip_2":"46_2","t_drip_3":"46_3","t_stk_1":"48_1","t_stk_2":"48_2","t_stk_3":"48_3","t_relay_1":"49_1","t_relay_2":"49_2","t_relay_3":"49_3","t_skate_1":"45_1","t_skate_2":"45_2","t_skate_3":"45_3","t_shoe_1":"44_1","t_shoe_2":"44_2","t_shoe_3":"44_3","t_champ":"31","t_podium":"33","t_world":"38","t_belt":"34","t_id_dj":"43","t_id_mc":"47","t_id_judge":"36","t_id_host":"39","t_dj_pop":"42","t_mc_pop":"50"};
   const frameStyle = id => {
-    const n = FRAME[id], m = n && FR[n]; if (!m) return '';
+    const n = FRAME[id], m = n && FR[n.slice(0, 2)]; if (!m) return '';
     const [w, hh, c, tp, bt] = m, r = v => +(v / hh).toFixed(4);
     return `border-image-source:url(assets/title_frames/${n}.webp?v=1);border-image-slice:${tp} ${w - c - 2} ${bt} ${c} fill;--ft:${r(tp)};--fr:${r(w - c - 2)};--fb:${r(bt)};--fl:${r(c)};--fin:${r(hh - tp - bt)}`;
   };

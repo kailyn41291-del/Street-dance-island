@@ -79,7 +79,7 @@ window.Player = (() => {
           const all = Titles.allowed(role, !!(me && me.verified), me && me.unlocks, (me && me.level) || 1);
           const btn = x => `<button type="button" class="opt-b ${Titles.FRAME[x.id] ? 'fx' : Titles.earned(x.id) ? 'earned' : ''}" data-title="${x.id}"${Titles.earned(x.id) ? ` style="--tc:${Titles.color(x.id)}"` : ''}>${Titles.html(x.id)}</button>`;
           const got = all.filter(x => Titles.earned(x.id) || x.only === 'owner' || x.only === 'admin'), basic = all.filter(x => !got.includes(x));
-          return `<p class="note">${t('title_pick')}</p>
+          return `<p class="note">${t('title_pick')}</p>${me && window.Collect ? `<div class="btn-row"><button type="button" class="btn sm yellow tg-open">${t('tg_btn')}</button></div>` : ''}
             ${me ? `<h4 class="title-h">${t('title_earned')} <small>${got.length}</small></h4>
             <div class="title-grid">${got.map(btn).join('') || `<p class="note">${t('title_earned_none')}</p>`}</div>
             <h4 class="title-h">${t('title_basic')}</h4>` : ''}
@@ -105,6 +105,7 @@ window.Player = (() => {
       if (k) { L[k.dataset.k] = k.dataset.v; SFX.play('select'); opts.querySelectorAll(`[data-k="${k.dataset.k}"]`).forEach(x => x.classList.toggle('on', x === k)); apply(); }
       if (j) { state.job = j.dataset.job; L.job = state.job; SFX.play('select'); opts.querySelectorAll('[data-job]').forEach(x => x.classList.toggle('on', x === j)); apply(); }
       if (ti) { state.title = ti.dataset.title || null; SFX.play('select'); opts.querySelectorAll('[data-title]').forEach(x => x.classList.toggle('on', x === ti)); refreshTags(); }
+      if (e.target.closest('.tg-open')) { Collect.openGuide(); return; }
       if (e.target.closest('.job-apply')) { Object.assign(L, Avatar.JOBS[state.job] || {}); L.job = state.job; SFX.play('coin'); sparkle(e.clientX, e.clientY, 10); apply(); }
     });
     wrap.querySelector('.rnd').onclick = () => { Object.assign(L, Avatar.random({ job: state.job, special: L.special })); SFX.play('card'); apply(); draw(); };
