@@ -2028,3 +2028,43 @@ html[data-theme="night"] img.pxi, html[data-theme="night"] .pxemo { filter: none
 .tag.qa-ok { --c: var(--green); }
 .tag.cat-qa { --c: #fff0a8; }
 .qa-hint { margin: 0; }
+
+/* ===== 第四批・便民 ===== */
+.sp-list { display: grid; gap: 10px; }
+.sp-card { display: flex; gap: 10px; background: var(--paper); border: var(--px) solid var(--ink); box-shadow: var(--shadow); padding: 10px; }
+.sp-ph { width: 120px; height: 120px; object-fit: cover; border: 2px solid var(--ink); flex: none; }
+.sp-main { display: grid; gap: 5px; min-width: 0; flex: 1; align-content: start; }
+.sp-top { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sp-main small { color: var(--ink-soft); }
+.sp-feat { display: flex; flex-wrap: wrap; gap: 4px; }
+.sp-note { margin: 0; white-space: pre-wrap; font-size: 13px; }
+.sp-rep { font-size: 13px; padding: 4px 8px; border: 2px dashed var(--ink-soft); }
+.sp-rep.ok { border-color: var(--green); background: rgba(127, 207, 115, .15); }
+.sp-rep.bad { border-color: var(--red); background: rgba(227, 93, 93, .12); }
+.sp-pin.ok img.pxi { filter: hue-rotate(110deg); } .sp-pin.bad img.pxi { filter: grayscale(1); }
+.sp-near.on { background: var(--pink); }
+@media (max-width: 600px) { .sp-card { flex-direction: column; } .sp-ph { width: 100%; height: 180px; } }
+.mk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.mk-card { position: relative; display: grid; text-align: left; padding: 0; background: var(--paper); border: var(--px) solid var(--ink); box-shadow: var(--shadow); color: var(--ink); font: inherit; cursor: pointer; overflow: hidden; }
+.mk-card:hover { transform: translateY(-2px); }
+.mk-card img, .mk-noph { width: 100%; aspect-ratio: 1; object-fit: cover; display: grid; place-items: center; font-size: 40px; background: var(--cream-2); }
+.mk-card.sold img { filter: grayscale(1); opacity: .6; }
+.mk-sold { position: absolute; top: 10px; left: -4px; background: var(--red); color: #fff; padding: 2px 10px; border: 2px solid var(--ink); font-size: 12px; }
+.mk-b { display: grid; gap: 3px; padding: 8px; }
+.mk-b small { color: var(--ink-soft); font-size: 11px; }
+.mk-price { color: var(--pink); font-weight: bold; } .mk-price.big { font-size: 22px; margin: 6px 0; }
+.mk-photos { display: flex; gap: 6px; overflow-x: auto; }
+.mk-photos img { height: 200px; border: 2px solid var(--ink); cursor: zoom-in; }
+.mk-prev { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.mk-pv { position: relative; } .mk-pv img { width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--ink); }
+.mk-pv button { position: absolute; top: -6px; right: -6px; border: 2px solid var(--ink); background: var(--red); color: #fff; width: 22px; height: 22px; padding: 0; cursor: pointer; }
+.mk-rv { display: flex; gap: 4px; } .mk-rv img, .fo-rv-img { width: 90px; height: 90px; object-fit: cover; border: 2px solid var(--ink); }
+.mk-safe { color: var(--red); }
+.id-banner { border: 2px dashed var(--orange); padding: 6px 8px; }
+.id-q { width: 100%; margin: 8px 0; }
+.id-prof h3 { margin: 8px 0 4px; } .id-prof h4 { margin: 10px 0 4px; font-size: 14px; }
+.id-sample { border: 3px dashed var(--ink-soft); padding: 10px; opacity: .85; }
+.id-stats { display: flex; gap: 12px; font-size: 16px; }
+/* 自動換上的像素圖示大小 */
+button img.pxi, .btn img.pxi, .tag img.pxi, legend img.pxi, h4 img.pxi, .chip img.pxi, .win-title img.pxi { width: 1.4em; height: 1.4em; vertical-align: -0.35em; margin-right: 2px; }
+.crumbs img.pxi { width: 18px; height: 18px; }

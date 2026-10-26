@@ -644,5 +644,5 @@ window.Daily = (() => {
   if (Backend.enabled) Backend.ready.then(() => setTimeout(maybeLuck, 1200));
   Player.onChange(() => setTimeout(maybeLuck, 1500));
 
-  return { openLuck: () => openLuck(false), openPick, loadStudios };
+  return { openLuck: () => openLuck(false), openPick, loadStudios, map: { makeMap, pinIcon, cityCenter, locate, km, countryOpts, cityOpts, styleTags } };
 })();

@@ -327,6 +327,17 @@ window.Backend = (() => {
     /* 經驗值系統（全部在伺服器端計算） */
     async rpc(fn, args) { return must(await sb.rpc(fn, args || {})); },
     async logAct(k, r) { must(await sb.rpc('log_act', { k, r: String(r) })); },
+    /* 第四批・便民 */
+    async spots() { return must(await sb.from('practice_spots').select('*').order('created_at', { ascending: false }).limit(500)); },
+    async saveSpot(row) { const { id, ...d } = row; return id ? must(await sb.from('practice_spots').update(d).eq('id', id).select().single()) : must(await sb.from('practice_spots').insert(d).select().single()); },
+    async deleteSpot(id) { must(await sb.from('practice_spots').delete().eq('id', id)); },
+    async reviewSpot(id, status) { must(await sb.from('practice_spots').update({ status }).eq('id', id)); },
+    async spotReports(ids) { return ids.length ? must(await sb.from('spot_reports').select('*').in('spot_id', ids).gte('created_at', new Date(Date.now() - 60 * 864e5).toISOString()).order('created_at', { ascending: false }).limit(1000)) : []; },
+    async reportSpot(spot_id, ok, note) { must(await sb.from('spot_reports').insert({ spot_id, ok, note: note || null })); },
+    async marketItems() { return must(await sb.from('market_items').select('*').order('created_at', { ascending: false }).limit(300)); },
+    async saveMarket(row) { const { id, ...d } = row; return id ? must(await sb.from('market_items').update(d).eq('id', id).select().single()) : must(await sb.from('market_items').insert(d).select().single()); },
+    async deleteMarket(id) { must(await sb.from('market_items').delete().eq('id', id)); },
+
     /* 第三批・互動 */
     async goingCounts() { return must(await sb.rpc('going_counts')); },
     async friendsGoing() { return must(await sb.rpc('my_friends_going')); },
