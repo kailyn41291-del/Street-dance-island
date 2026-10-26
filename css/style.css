@@ -2402,3 +2402,5 @@ html[data-theme="night"] .ft { background: #3a2440; }
 /* 跟按鈕排在同一列的標籤（例：Like 數、已領取 ✔、已獲得）也一樣高 */
 .btn-row > .tag, .pc-social > .tag, .dx-act > .tag, .ac-acts > .tag, .fs-q .btn-row > .tag { min-height: var(--bh); display: inline-flex; align-items: center; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
 .pc-social { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+/* 一列按鈕不要被同一列最高的東西撐高 */
+.btn-row { align-items: center; }
