@@ -1819,3 +1819,10 @@ img.pxi { width: 1.5em; height: 1.5em; object-fit: contain; vertical-align: midd
   .tut-foot .grow { display: none; }
   .tut-foot .btn { flex: 1; }
 }
+
+/* 活動：陣容（參賽團隊 / Judge / Showcase） */
+.row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+@media (max-width: 700px) { .row3 { grid-template-columns: 1fr; } }
+.rt-seg { flex-wrap: wrap; justify-self: start; }
+.info dd.lineup { display: flex; flex-wrap: wrap; gap: 4px; }
+.info dd.lineup .lu { border: 2px solid var(--ink); background: var(--cream, #fff6e8); padding: 0 6px; font-size: 12px; line-height: 1.6; white-space: nowrap; }

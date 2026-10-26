@@ -663,7 +663,26 @@
     setTimeout(() => input.focus({ preventScroll: true }), 50);
   }
 
+  /* 報名方式（公開 / 邀請制 / 海選結束 / 免報名）＋ 陣容（參賽團隊 / Judge / Showcase） */
+  I18N.extend({
+    zh: { f_rt: '報名方式', rt_open: '公開報名', rt_invite: '邀請制', rt_closed: '海選已結束', rt_none: '免報名・直接觀賽',
+      f_fee_ph2: '例：觀眾 NT$300｜免費入場（選填）', f_lineup: '🎤 陣容（選填）', f_teams: '參賽團隊 / 選手', f_judges: 'Judge 名單', f_show: 'Showcase',
+      f_line_ph: '一行一個，例：\nIPLockers\nFunkdation', r_teams: '👥 參賽', r_judges: '⚖ Judge', r_show: '✨ Showcase' },
+    en: { f_rt: 'Entry type', rt_open: 'Open registration', rt_invite: 'Invite only', rt_closed: 'Prelims finished', rt_none: 'No sign-up · just watch',
+      f_fee_ph2: 'e.g. Audience $10 | Free entry (optional)', f_lineup: '🎤 Line-up (optional)', f_teams: 'Teams / dancers', f_judges: 'Judges', f_show: 'Showcase',
+      f_line_ph: 'One per line, e.g.\nIPLockers\nFunkdation', r_teams: '👥 Line-up', r_judges: '⚖ Judges', r_show: '✨ Showcase' },
+    ja: { f_rt: 'エントリー形式', rt_open: '一般エントリー', rt_invite: '招待制', rt_closed: '予選終了', rt_none: 'エントリー不要・観覧のみ',
+      f_fee_ph2: '例：観覧 ¥2000｜入場無料（任意）', f_lineup: '🎤 出演者（任意）', f_teams: '出場チーム / ダンサー', f_judges: 'ジャッジ', f_show: 'ショーケース',
+      f_line_ph: '1 行に 1 つ。例：\nIPLockers\nFunkdation', r_teams: '👥 出場', r_judges: '⚖ ジャッジ', r_show: '✨ ショーケース' },
+    ko: { f_rt: '참가 방식', rt_open: '공개 신청', rt_invite: '초청제', rt_closed: '예선 종료', rt_none: '신청 불필요 · 관람만',
+      f_fee_ph2: '예: 관람 ₩20,000 | 무료 입장 (선택)', f_lineup: '🎤 라인업 (선택)', f_teams: '참가 팀 / 댄서', f_judges: '저지', f_show: '쇼케이스',
+      f_line_ph: '한 줄에 하나씩, 예:\nIPLockers\nFunkdation', r_teams: '👥 참가', r_judges: '⚖ 저지', r_show: '✨ 쇼케이스' }
+  });
+  const RT = ['open', 'invite', 'closed', 'none'];
+  const lines = v => (Array.isArray(v) ? v : String(v || '').split('\n')).map(x => String(x).trim()).filter(Boolean);
+
   function regStatus(e, today) {
+    if (e.regType && e.regType !== 'open') return `<span class="tag" style="--c:${e.regType === 'invite' ? 'var(--purple, #b9a3e3)' : e.regType === 'closed' ? '#c9bfb5' : 'var(--teal)'}">${t('rt_' + e.regType)}</span>`;
     if (!e.regStart && !e.regEnd) return '';
     if (e.regStart && today < e.regStart) return `<span class="tag" style="--c:var(--blue)">${t('reg_soon')}</span>`;
     if (e.regEnd && today > e.regEnd) return `<span class="tag" style="--c:#c9bfb5">${t('reg_closed')}</span>`;
@@ -677,14 +696,16 @@
     const past = (e.endDate || e.date) < today;
     const timeStr = [e.startTime, e.endTime].filter(Boolean).join(' – ');
     const dateStr = e.endDate && e.endDate !== e.date ? `${(e.date || '').replace(/-/g, '/')} – ${e.endDate.slice(5).replace('-', '/')}` : (e.date || '').replace(/-/g, '/');
-    const reg = (e.regStart || e.regEnd) ? `${(e.regStart || '?').replace(/-/g, '/')} ～ ${(e.regEnd || '?').replace(/-/g, '/')}` : '';
+    const reg = (!e.regType || e.regType === 'open') && (e.regStart || e.regEnd) ? `${(e.regStart || '?').replace(/-/g, '/')} ～ ${(e.regEnd || '?').replace(/-/g, '/')}` : '';
     const safeLink = /^https?:\/\//i.test(e.link || '') ? e.link : '';
     const safeMap = /^https?:\/\//i.test(mapUrl) ? mapUrl : '';
     const rows = [
       [t('r_when'), `${dateStr}${timeStr ? '　' + timeStr : ''}`],
       [t('r_venue'), [e.venue, e.address].filter(Boolean).join('｜')], [t('r_reg'), reg],
-      [t('r_method'), e.regMethod, 1], [t('r_fee'), e.fee, 1], [t('r_note'), e.note, 1]
+      [t('r_method'), (!e.regType || e.regType === 'open') ? e.regMethod : '', 1], [t('r_fee'), e.fee, 1], [t('r_note'), e.note, 1]
     ].filter(r => r[1]);
+    // 陣容：參賽團隊 / Judge / Showcase（名字不翻譯，用小標籤列出來）
+    const lineup = [['r_teams', e.teams], ['r_judges', e.judges], ['r_show', e.showcase]].map(([k, v]) => [k, lines(v)]).filter(r => r[1].length);
     return `<article class="card ${e.poster ? 'has-poster' : ''} ${past ? 'past' : ''}" data-id="${esc(e.id)}" style="--i:${i};--c:${color}">
       ${e.poster ? `<button class="poster" data-act="poster" data-ev="${esc(e.id)}" aria-label="${t('poster_zoom')}"><img src="${esc(e.poster)}" alt="${esc(e.name)} ${t('poster')}" loading="lazy"></button>` : ''}
       <div class="date">
@@ -698,7 +719,7 @@
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}${App.viewTag ? App.viewTag(e) : ''}</div>
         <h3 data-trn>${esc(e.name)}</h3>
         ${opt.place ? `<div class="place-tag">${PXI.img('event/pin', '📍')} ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
-        <dl class="info">${e.organizer ? `<dt>${PXI.lead(t('r_org'))}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${PXI.lead(k)}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}</dl>
+        <dl class="info">${e.organizer ? `<dt>${PXI.lead(t('r_org'))}</dt><dd>${App.orgLinks ? App.orgLinks(e.organizer) : esc(e.organizer)}</dd>` : ''}${rows.map(([k, v, tr]) => `<dt>${PXI.lead(k)}</dt><dd ${tr ? 'data-tr' : ''}>${esc(v)}</dd>`).join('')}${lineup.map(([k, v]) => `<dt>${PXI.lead(t(k))}</dt><dd class="lineup">${v.map(n => `<span class="lu">${esc(n)}</span>`).join('')}</dd>`).join('')}</dl>
         ${App.cardResults(e)}
       </div>
       <div class="acts">
@@ -761,10 +782,16 @@
           <label class="field"><span>${t('f_endt')}</span><input class="input" type="time" name="endTime" value="${esc(e.endTime)}"></label></div>
       </fieldset>
       <fieldset class="fieldset full"><legend>${t('f_reg')}</legend>
-        <div class="row2"><label class="field"><span>${t('f_regs')}</span><input class="input" type="date" name="regStart" value="${esc(e.regStart)}"></label>
+        <div class="field"><span>${t('f_rt')}</span><div class="seg rt-seg">${RT.map(k => `<button type="button" data-rt="${k}" class="${(e.regType || 'open') === k ? 'on' : ''}">${t('rt_' + k)}</button>`).join('')}</div><input type="hidden" name="regType" value="${esc(e.regType || 'open')}"></div>
+        <div class="row2 rt-open"><label class="field"><span>${t('f_regs')}</span><input class="input" type="date" name="regStart" value="${esc(e.regStart)}"></label>
           <label class="field"><span>${t('f_rege')}</span><input class="input" type="date" name="regEnd" value="${esc(e.regEnd)}"></label></div>
-        <div class="row2"><label class="field"><span>${t('f_method')}</span><input class="input" name="regMethod" value="${esc(e.regMethod)}" placeholder="${esc(t('f_method_ph'))}"></label>
+        <div class="row2"><label class="field rt-open"><span>${t('f_method')}</span><input class="input" name="regMethod" value="${esc(e.regMethod)}" placeholder="${esc(t('f_method_ph'))}"></label>
           <label class="field"><span>${t('f_fee')}</span><input class="input" name="fee" value="${esc(e.fee)}" placeholder="${esc(t('f_fee_ph'))}"></label></div>
+      </fieldset>
+      <fieldset class="fieldset full"><legend>${t('f_lineup')}</legend>
+        <div class="row3"><label class="field"><span>${t('f_teams')}</span><textarea class="input" name="teams" rows="4" placeholder="${esc(t('f_line_ph'))}">${esc(lines(e.teams).join('\n'))}</textarea></label>
+          <label class="field"><span>${t('f_judges')}</span><textarea class="input" name="judges" rows="4" placeholder="${esc(t('f_line_ph'))}">${esc(lines(e.judges).join('\n'))}</textarea></label>
+          <label class="field"><span>${t('f_show')}</span><textarea class="input" name="showcase" rows="4" placeholder="${esc(t('f_line_ph'))}">${esc(lines(e.showcase).join('\n'))}</textarea></label></div>
       </fieldset>
       <label class="field full"><span>${I.link} ${t('f_link')}</span><input class="input" name="link" type="url" value="${esc(e.link)}" placeholder="https://www.instagram.com/..."></label>
       <label class="field full"><span>${I.pin} ${t('f_map')}</span><input class="input" name="mapUrl" type="url" value="${esc(e.mapUrl)}" placeholder="https://maps.app.goo.gl/..."></label>
@@ -823,6 +850,15 @@
     };
 
     f.querySelector('.cancel').onclick = m.close;
+    // 報名方式：不是公開報名時，藏起報名日期 / 報名方式，費用改成觀賽票價提示
+    const setRT = k => {
+      f.elements.regType.value = k;
+      f.querySelectorAll('[data-rt]').forEach(b => b.classList.toggle('on', b.dataset.rt === k));
+      f.querySelectorAll('.rt-open').forEach(x => x.classList.toggle('hidden', k !== 'open'));
+      f.elements.fee.placeholder = t(k === 'open' ? 'f_fee_ph' : 'f_fee_ph2');
+    };
+    f.querySelector('.rt-seg').onclick = ev => { const b = ev.target.closest('[data-rt]'); if (b) { SFX.play('select'); setRT(b.dataset.rt); } };
+    setRT(e.regType || 'open');
     f.onsubmit = async ev => {
       ev.preventDefault();
       const fd = new FormData(f);
@@ -832,7 +868,9 @@
         name: get('name'), organizer: get('organizer'), country: get('country'), city: get('city'),
         venue: get('venue'), address: get('address'), styles: fd.getAll('styles'),
         date: get('date'), endDate: get('endDate'), startTime: get('startTime'), endTime: get('endTime'),
-        regStart: get('regStart'), regEnd: get('regEnd'), regMethod: get('regMethod'), fee: get('fee'),
+        regType: get('regType') === 'open' ? '' : get('regType'),
+        regStart: get('regType') === 'open' ? get('regStart') : '', regEnd: get('regType') === 'open' ? get('regEnd') : '', regMethod: get('regType') === 'open' ? get('regMethod') : '', fee: get('fee'),
+        teams: lines(get('teams')).length ? lines(get('teams')) : undefined, judges: lines(get('judges')).length ? lines(get('judges')) : undefined, showcase: lines(get('showcase')).length ? lines(get('showcase')) : undefined,
         link: get('link'), mapUrl: get('mapUrl'), note: get('note'), video: get('video'),
         results: get('results') ? get('results').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const m = l.match(/^(.+?)[：:]\s*(.+)$/); return m ? { place: m[1].trim(), name: m[2].trim() } : { place: '', name: l }; }) : undefined,
         poster: pm === 'none' ? '' : pm === 'url' ? get('posterUrl') : (poster.startsWith('data:') ? poster : '')
