@@ -141,6 +141,7 @@ window.Friends = (() => {
         ${window.CardBirthdayHTML ? window.CardBirthdayHTML(c) : ''}
         <fieldset class="full cd-priv"><legend>🔍 ${t('fd_priv')}</legend>
           <label class="chk"><input type="checkbox" name="find" ${c.find !== false ? 'checked' : ''}> ${t('fd_find_me')}</label>
+          <label class="chk"><input type="checkbox" name="hideon" ${c.hideOn ? 'checked' : ''}> ${t('on_hide_me')}</label>
           <label class="chk"><input type="checkbox" name="rpub" ${c.rpub ? 'checked' : ''}> ${t('fd_rpub')}</label>
           <div class="cd-reg" ${c.rpub ? '' : 'hidden'}><select class="input sm" name="rc">${countryOpts(c.rc || (Backend.profile && Backend.profile.nat) || 'TW')}</select>
             <select class="input sm" name="rcity"></select><button type="button" class="btn sm teal here">${PXI.img('event/pin', '📍')} ${t('fd_here')}</button></div>
@@ -157,7 +158,8 @@ window.Friends = (() => {
       try { const r = await locate(); E.rc.value = r.rc; fillCity(r.rcity); SFX.play('coin'); paint(); } catch (x) { toast(t('fd_geo_fail'), '📍'); }
     };
     const read = () => {
-      const o = { ...c, crew: E.crew.value.trim(), move: E.move.value.trim(), bio: E.bio.value.trim(), ig: E.ig.value.trim().replace(/^@/, ''), find: E.find.checked, rpub: E.rpub.checked };
+      const o = { ...c, crew: E.crew.value.trim(), move: E.move.value.trim(), bio: E.bio.value.trim(), ig: E.ig.value.trim().replace(/^@/, ''), find: E.find.checked, rpub: E.rpub.checked, hideOn: !!(E.hideon && E.hideon.checked) };
+      setTimeout(() => window.Online && Online.retrack && Online.retrack(), 800);
       // 沒有勾選公開地區：地區不存
       if (o.rpub) { o.rc = E.rc.value; o.rcity = E.rcity.value; } else { delete o.rc; delete o.rcity; }
       if (window.CardBirthdayRead && E.bmo) window.CardBirthdayRead(E, o);
@@ -196,6 +198,11 @@ window.Friends = (() => {
     let p = null;
     try { p = await Backend.playerByHandle(handle); } catch (x) {}
     if (!p) { toast(t('cd_notfound'), '✕'); return; }
+    if (window.Guest && Guest.is()) {   // 訪客：只看得到名字和頭像
+      const body = h(`<div class="gu-card"><div class="gu-card-h"><span class="gu-card-ic"></span><b>${Player.nameHTML({ ...p, handle: null })}</b><small>@${esc(p.handle)}</small></div>${Guest.lockBox('gu_why_card')}</div>`);
+      body.querySelector('.gu-card-ic').appendChild(headIcon(p.look)); Guest.bindLock(body);
+      modal({ title: t('cd_title'), color: 'blue', body }); return;
+    }
     people[p.user_id] = p;
     const mine = p.user_id === me();
     if (!mine) diAct('card', 1, p.handle);

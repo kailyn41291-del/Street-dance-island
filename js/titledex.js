@@ -42,6 +42,7 @@
   const T = (k, a, b, c) => ({ tier: k, th: [a, b, c] });
   const CATS = [
     ['id', [
+      { id: 'r_welcome', c: C('創角就送（註冊見面禮）', 'Free when you create a character', 'キャラを作るともらえる', '캐릭터를 만들면 받아요'), n: 1, go: 'today' },
       { id: 'verified', c: C('完成實名認證（IG 認證）', 'Get verified (IG)', '本人認証（IG）を完了', '실명 인증 (IG) 완료'), p: 'verified', n: 1, go: 'verify' },
       { id: 'lv5', c: C('等級到 Lv.5', 'Reach Lv.5', 'Lv.5 になる', 'Lv.5 달성'), p: 'lv', n: 5, go: 'today' },
       { id: 'lv10', c: C('等級到 Lv.10', 'Reach Lv.10', 'Lv.10 になる', 'Lv.10 달성'), p: 'lv', n: 10, go: 'today' },

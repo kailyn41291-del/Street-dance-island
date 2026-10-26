@@ -239,6 +239,7 @@
   }
 
   async function postView(inner, id) {
+    if (window.Guest && !Guest.forumRead(id)) { inner.innerHTML = `<a class="btn sm" href="#/forum">◀ ${t('fo_back')}</a>` + Guest.lockBox('gu_why_forum'); Guest.bindLock(inner); return; }
     let p = null, likes = [], votes = [];
     try { [p, likes, votes] = await Promise.all([Backend.forumPost(id), Backend.likesFor(['p:' + id]), Backend.pollVotes(id).catch(() => [])]); } catch (x) {}
     if (!p) { inner.innerHTML = `<p class="note">${t('fo_gone')}</p><a class="btn" href="#/forum">◀ ${t('fo_back')}</a>`; return; }
@@ -253,7 +254,8 @@
         </div></div>
         ${p.status === 'approved' ? `<div class="win">${UI.winHTML('💬 ' + t('fo_replies'), 'blue', false)}<div class="win-body thr-box"></div></div>` : `<p class="note">${t('fo_wait_note')}</p>`}`;
       inner.querySelector('.fo-ic').appendChild(headIcon((p.author || {}).look));
-      const box = inner.querySelector('.thr-box'); if (box) { if (p.category === 'qa') box.insertAdjacentHTML('beforebegin', `<p class="note qa-hint">${t('qa_hint')}</p>`); mountThread(box, 'p:' + id, p.category === 'qa' ? p : null); }
+      const box = inner.querySelector('.thr-box');
+      if (box && window.Guest && Guest.is()) { box.innerHTML = Guest.lockBox('gu_why_reply'); Guest.bindLock(box); } else if (box) { if (p.category === 'qa') box.insertAdjacentHTML('beforebegin', `<p class="note qa-hint">${t('qa_hint')}</p>`); mountThread(box, 'p:' + id, p.category === 'qa' ? p : null); }
       inner.querySelectorAll('.fo-poll .vote').forEach(b => b.onclick = async () => {
         if (!logged()) return Player.prompt();
         try { await Backend.pollVote(id, +b.dataset.c); SFX.play('coin'); votes = await Backend.pollVotes(id); draw(); } catch (x) { toast(errMsg(x), '✕'); }

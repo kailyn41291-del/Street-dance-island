@@ -35,6 +35,7 @@
     if (r.view === 'world') WorldView();
     else if (r.view === 'country') CountryView(byCode[r.cc]);
     else if (r.view === 'city') CityView(byCode[r.cc], cityOf(r.cc, r.city));
+    else if (window.Guest && Guest.blocked(r)) Guest.lockView(stage);   // 訪客不能進的頁面
     else App.views[r.view](r, stage);
     updateHUD();
   };

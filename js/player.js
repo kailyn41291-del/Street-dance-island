@@ -207,10 +207,10 @@ window.Player = (() => {
   }
 
   /* ---------- 選擇：創角 / 登入 / 先逛逛 ---------- */
-  function prompt() {
+  function prompt(reason) {
     const body = h(`<div class="choose">
       <div class="choose-art"></div>
-      <p>${t('p_choose_text')}</p>
+      <p>${typeof reason === 'string' && reason ? esc(reason) : t('p_choose_text')}</p>${t('gu_gift') !== 'gu_gift' ? `<p class="gu-gift">${esc(t('gu_gift'))}</p>` : ''}
       <div class="choose-btns">
         <button class="btn pink c-new">${t('p_create')}</button>
         <button class="btn teal c-login">${t('p_login')}</button>

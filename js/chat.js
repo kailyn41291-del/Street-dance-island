@@ -47,7 +47,7 @@ window.Chat = (() => {
       Social.translate(m.text).then(tr => { if (tr && row.isConnected) row.querySelector('.mb').insertAdjacentHTML('beforeend', `<div class="tr">🌐 ${esc(tr)}</div>`); });
     }
     const del = row.querySelector('.del');
-    if (del) del.onclick = async () => { try { await Social.removeMessage(m.id); } catch (e) { toast(e.message, '✕'); } };
+    if (del) del.onclick = async () => { try { await Social.removeMessage(m.id); dropMsg(m.id); } catch (e) { toast(e.message, '✕'); } };
     const rp = row.querySelector('.rp');
     if (rp) rp.onclick = () => Player.openReport(a.handle, a.name);
     return row;
@@ -77,6 +77,13 @@ window.Chat = (() => {
     updateBar(m);
   }
 
+  // 刪掉一則訊息：清單和下方「聊天室」那條的預覽都要更新（預覽改成剩下的最新一則）
+  function dropMsg(id) {
+    CHANNELS.forEach(([c]) => (cache[c] = (cache[c] || []).filter(m => m.id !== id)));
+    if (list) list.querySelector(`[data-id="${id}"]`)?.remove();
+    const last = [...(cache.world || []), ...(cache.tw || [])].sort((a, b) => (a.created_at < b.created_at ? -1 : 1)).pop();
+    if (last) updateBar(last); else if (el) el.querySelector('.ticker').innerHTML = '';
+  }
   function updateBar(last) {
     if (!el) return;
     const n = Object.values(unread).reduce((a, b) => a + b, 0);
@@ -234,7 +241,7 @@ window.Chat = (() => {
     updateBar(last);
     Social.on('messages', ({ type, row }) => {
       if (type === 'INSERT' && row.channel) push(row.channel, row);
-      if (type === 'DELETE') { CHANNELS.forEach(([c]) => (cache[c] = cache[c].filter(m => m.id !== row.id))); list.querySelector(`[data-id="${row.id}"]`)?.remove(); }
+      if (type === 'DELETE') { dropMsg(row.id); }
     });
     Social.on('announcements', () => startAnnouncements());
     Player.onChange(() => { drawForm(); renderList(); });

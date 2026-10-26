@@ -582,6 +582,7 @@ window.Daily = (() => {
   }
 
   async function openLuck(auto) {
+    if (!auto && window.Guest && !Guest.once('luck', 'gu_why_luck')) return;
     const today = A.todayStr(), uid = Backend.uid || 'guest';
     const R = rng(uid + today);
     const quote = window.Lines ? Lines.quoteOf(uid, today) : QUOTES[Math.floor(R() * QUOTES.length)]; R(); const move = MOVES[Math.floor(R() * MOVES.length)];

@@ -177,6 +177,7 @@ window.Emotes = (() => {
   const RPS = { freeze: { icon: '🧊', beats: 'power' }, power: { icon: '🌀', beats: 'foot' }, foot: { icon: '👟', beats: 'freeze' } };
   const NPC_MOVE = { freeze: 'freeze', power: 'windmill', foot: 'toprock' };
   function npcBattle(look, name) {
+    if (window.Guest && !Guest.once('npc', 'gu_why_npc')) return;
     let you = 0, them = 0, round = 0;
     const body = h(`<div class="npc-battle">
       <div class="nb-stage"><div class="nb-side me"></div><div class="nb-vs">VS</div><div class="nb-side npc"></div></div>
