@@ -187,7 +187,9 @@ window.Collect = (() => {
   }
 
   /* ---------- 特別稱號怎麼拿 ---------- */
-  async function openGuide() {
+  // 「特別稱號怎麼拿」改成完整的稱號圖鑑頁
+  function openGuide() { document.querySelectorAll('.modal-back .x').forEach(x => x.click()); setTimeout(() => A.nav('#/titles'), 250); }
+  async function openGuideOld() {
     let prog = {}, mine = (Player.me && Player.me.unlocks instanceof Set) ? Player.me.unlocks : new Set();
     if (logged()) {
       try { prog = (await Backend.rpc('title_progress')) || {}; } catch (e) {}

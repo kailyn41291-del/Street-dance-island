@@ -2347,3 +2347,18 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .tg-row .tg-c { flex: 1 1 200px; font-size: 13px; }
 .ag-apps { margin-bottom: 10px; }
 .lu-at { color: inherit; font-weight: 700; text-decoration: underline; }
+
+/* 稱號圖鑑 */
+.dx-filter { margin-top: 8px; }
+.dx-list { list-style: none; margin: 0; padding: 0; }
+.dx-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 2px; border-bottom: 1px dashed rgba(0,0,0,.15); }
+.dx-row .dx-fr .ttl.ttl-fx { --fh: 34px; --fw: 6.4; --fzb: 12.5px; margin: 0; }
+.dx-row:not(.got) .dx-fr { filter: grayscale(1); opacity: .5; }
+.dx-info { flex: 1 1 220px; min-width: 0; font-size: 13px; }
+.dx-prog { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.dx-prog .xpbar { flex: 1; max-width: 220px; }
+.dx-prog b { font-size: 12px; white-space: nowrap; }
+.dx-act { display: flex; gap: 4px; align-items: center; }
+.dx-stars i { font-style: normal; color: #c9bfb5; }
+.dx-stars i.on { color: #eac45a; text-shadow: 0 1px 0 #2a1f2e; }
+@media (max-width: 560px) { .dx-act { width: 100%; justify-content: flex-end; } }
