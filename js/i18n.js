@@ -72,7 +72,7 @@ window.I18N = (() => {
       g_tip: '點卡片翻面 ✦ 抽到 SSR 會發光（3% 機率）', g_free: '自由發揮',
       g_ch: ['只能用上半身', '8 拍內完成', '用 Freeze 收尾', '全程低 Level', '跟著 snare 打點', '反方向做一次', '加一個停格', '慢動作一個八拍', '連做三次不停', '對著鏡子以外的方向', '加入一個轉圈', '配合歌詞做 Concept'],
       g_tap: 'TAP！', g_tap_sub: '跟著音樂節奏點我', g_start: '▶ 開始節拍器', g_stop: '■ 停止', g_names: '輸入舞者名字（用換行或逗號分隔）', g_names_ph: '例：小明, Bboy A, Popper B, Mina',
-      g_names_def: '小明, 阿凱, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 排出場順序', g_vs: '⚔ 1 on 1 對戰表', g_first: '第一位：{n}！', g_bye: '（輪空晉級）', g_need2: '至少要兩個名字喔',
+      g_names_def: '小明, 阿凱, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 排出場順序', g_vs: '🆚 1 on 1 對戰表', g_first: '第一位：{n}！', g_bye: '（輪空晉級）', g_need2: '至少要兩個名字喔',
       admin_btn: '管理員', admin_title: '🔑 管理員 ADMIN', admin_email: '管理員 Email', admin_login: '登入', admin_fail: 'Email 或密碼錯誤，或這個帳號不是管理員', admin_ok: '管理員模式開啟！現在可以新增 / 編輯 / 刪除活動',
       admin_on: '你目前是管理員：新增、編輯、刪除的活動會馬上對所有人生效。', admin_upload: '把 events.js 的活動上傳到雲端', admin_uploaded: '上傳了 {n} 筆活動', admin_logout: '登出管理員', cloud_err: '雲端儲存失敗：'
     },
@@ -142,7 +142,7 @@ window.I18N = (() => {
       g_tip: 'Tap a card to flip ✦ SSR cards glow (3% chance)', g_free: 'Freestyle',
       g_ch: ['Upper body only', 'Finish within one 8-count', 'End with a freeze', 'Stay low the whole time', 'Hit the snares', 'Do it mirrored', 'Add a hard stop', 'One 8-count in slow motion', 'Three times non-stop', 'Face away from the mirror', 'Add a spin', 'Act out the lyrics'],
       g_tap: 'TAP!', g_tap_sub: 'Tap along to the beat', g_start: '▶ Start metronome', g_stop: '■ Stop', g_names: 'Dancer names (comma or new line)', g_names_ph: 'e.g. Ming, Bboy A, Popper B, Mina',
-      g_names_def: 'Ming, Kai, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 Running order', g_vs: '⚔ 1 on 1 bracket', g_first: 'First up: {n}!', g_bye: '(bye)', g_need2: 'Need at least two names',
+      g_names_def: 'Ming, Kai, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 Running order', g_vs: '🆚 1 on 1 bracket', g_first: 'First up: {n}!', g_bye: '(bye)', g_need2: 'Need at least two names',
       admin_btn: 'Admin', admin_title: '🔑 ADMIN', admin_email: 'Admin email', admin_login: 'Log in', admin_fail: 'Wrong email or password, or this account is not an admin', admin_ok: 'Admin mode on! You can now add / edit / delete events',
       admin_on: 'You are an admin: events you add, edit or delete go live for everyone immediately.', admin_upload: 'Upload events.js events to the cloud', admin_uploaded: 'Uploaded {n} events', admin_logout: 'Log out admin', cloud_err: 'Cloud save failed: '
     },
@@ -212,7 +212,7 @@ window.I18N = (() => {
       g_tip: 'カードをタップでめくる ✦ SSR は光るよ（3%）', g_free: 'フリースタイル',
       g_ch: ['上半身だけ', '8 カウント以内', 'フリーズで締める', 'ずっとローレベル', 'スネアに合わせてヒット', '逆向きでもう一回', 'ストップを入れる', '8 カウントをスローモーション', '3 回連続ノンストップ', '鏡と反対を向いて', 'ターンを入れる', '歌詞に合わせてコンセプト'],
       g_tap: 'TAP！', g_tap_sub: 'リズムに合わせてタップ', g_start: '▶ メトロノーム開始', g_stop: '■ ストップ', g_names: 'ダンサー名（改行かカンマ区切り）', g_names_ph: '例：タロウ, Bboy A, Popper B, Mina',
-      g_names_def: 'タロウ, ケン, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 出順を決める', g_vs: '⚔ 1 on 1 トーナメント', g_first: 'トップバッター：{n}！', g_bye: '（不戦勝）', g_need2: '2 人以上入力してね',
+      g_names_def: 'タロウ, ケン, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 出順を決める', g_vs: '🆚 1 on 1 トーナメント', g_first: 'トップバッター：{n}！', g_bye: '（不戦勝）', g_need2: '2 人以上入力してね',
       admin_btn: '管理者', admin_title: '🔑 管理者 ADMIN', admin_email: '管理者メール', admin_login: 'ログイン', admin_fail: 'メールかパスワードが違うか、管理者ではありません', admin_ok: '管理者モード ON！イベントの追加・編集・削除ができます',
       admin_on: '管理者としてログイン中：追加・編集・削除はすぐに全員に反映されます。', admin_upload: 'events.js のイベントをクラウドにアップ', admin_uploaded: '{n} 件アップしました', admin_logout: '管理者ログアウト', cloud_err: 'クラウド保存に失敗：'
     },
@@ -282,7 +282,7 @@ window.I18N = (() => {
       g_tip: '카드를 눌러 뒤집기 ✦ SSR은 반짝여요 (3%)', g_free: '프리스타일',
       g_ch: ['상체만 사용', '8카운트 안에 끝내기', '프리즈로 마무리', '계속 로우 레벨', '스네어에 맞춰 히트', '반대 방향으로 한 번 더', '스톱 넣기', '8카운트 슬로모션', '세 번 연속 논스톱', '거울 반대 방향 보기', '턴 넣기', '가사에 맞춰 콘셉트'],
       g_tap: 'TAP!', g_tap_sub: '음악에 맞춰 눌러 봐', g_start: '▶ 메트로놈 시작', g_stop: '■ 정지', g_names: '댄서 이름 (쉼표나 줄바꿈)', g_names_ph: '예: 민수, Bboy A, Popper B, Mina',
-      g_names_def: '민수, 지훈, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 순서 정하기', g_vs: '⚔ 1 on 1 대진표', g_first: '첫 번째: {n}!', g_bye: '(부전승)', g_need2: '이름을 두 개 이상 입력해 줘',
+      g_names_def: '민수, 지훈, Bgirl Yu, Popper Leo, Mina, Kiki', g_order: '🎲 순서 정하기', g_vs: '🆚 1 on 1 대진표', g_first: '첫 번째: {n}!', g_bye: '(부전승)', g_need2: '이름을 두 개 이상 입력해 줘',
       admin_btn: '관리자', admin_title: '🔑 관리자 ADMIN', admin_email: '관리자 이메일', admin_login: '로그인', admin_fail: '이메일 또는 비밀번호가 틀렸거나 관리자가 아니에요', admin_ok: '관리자 모드 ON! 이벤트를 추가/수정/삭제할 수 있어요',
       admin_on: '관리자로 로그인 중: 추가·수정·삭제한 이벤트는 바로 모두에게 반영돼요.', admin_upload: 'events.js 이벤트를 클라우드에 업로드', admin_uploaded: '{n}개 업로드했어요', admin_logout: '관리자 로그아웃', cloud_err: '클라우드 저장 실패: '
     }

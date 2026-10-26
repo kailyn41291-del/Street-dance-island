@@ -33,7 +33,7 @@ window.Party = (() => {
       pt_e_full: '隊伍已經滿員了', pt_e_closed: '這支隊伍已經結束招募了', pt_e_code: '這是不公開的隊伍，需要邀請碼', pt_e_gone: '找不到這支隊伍（邀請碼可能打錯了）', pt_e_many: '你參加的隊伍太多了，先完成幾場冒險吧', pt_e_time: '集合時間要在 90 天內',
       pt_ad: '📯【組隊招募】「{n}」{w}・{p}（{c}/{m} 人）快來入隊！',
       pt_push: '🚩 冒險者注意！\n在你附近的【{city}】出現了一支正在招募的小隊——「{n}」！\n📅 {w}　📍 {p}\n隊長正在尋找並肩作戰的夥伴，一起去打倒今天的練舞大魔王吧！',
-      pt_push_yes: '🚩 接下委託，入隊！', pt_push_no: '💤 先在村莊休息'
+      pt_push_yes: '🚩 接下委託，入隊！', pt_push_no: '💤 先在村莊休息', pt_rate: '可靠', pt_rated: '已評為可靠隊友！', pt_rate_note: '冒險結束了！給一起練舞的隊友按「🤝 可靠」吧（被 5 位隊友評可靠會拿到「可靠隊友」稱號）'
     },
     en: {
       hub_party: 'Practice party', ch_party: 'Party', pt_view: '🚩 View party',
@@ -50,7 +50,7 @@ window.Party = (() => {
       pt_e_full: 'The party is full', pt_e_closed: 'This party has stopped recruiting', pt_e_code: 'Private party — you need an invite code', pt_e_gone: 'Party not found (check the invite code)', pt_e_many: "You're in too many parties — finish a few adventures first", pt_e_time: 'Meeting time must be within 90 days',
       pt_ad: '📯 [Party] “{n}” {w} · {p} ({c}/{m}) — join us!',
       pt_push: '🚩 Attention, adventurer!\nA party is recruiting near you in [{city}] — “{n}”!\n📅 {w}   📍 {p}\nThe leader seeks brave companions. Join up and defeat today’s practice boss together!',
-      pt_push_yes: '🚩 Accept the quest!', pt_push_no: '💤 Rest at the inn'
+      pt_push_yes: '🚩 Accept the quest!', pt_push_no: '💤 Rest at the inn', pt_rate: 'Reliable', pt_rated: 'Rated as a reliable teammate!', pt_rate_note: 'Adventure complete! Tap “🤝 Reliable” for teammates you practiced with (5 ratings unlock the “Reliable Teammate” title)'
     },
     ja: {
       hub_party: '練習パーティー', ch_party: 'パーティー', pt_view: '🚩 パーティーを見る',
@@ -67,7 +67,7 @@ window.Party = (() => {
       pt_e_full: '満員です', pt_e_closed: '募集は終了しました', pt_e_code: '非公開パーティーです。招待コードが必要です', pt_e_gone: '見つかりません（招待コードを確認してください）', pt_e_many: '参加中のパーティーが多すぎます', pt_e_time: '集合時間は 90 日以内にしてください',
       pt_ad: '📯【募集】「{n}」{w}・{p}（{c}/{m} 人）仲間募集中！',
       pt_push: '🚩 冒険者よ、聞け！\n近くの【{city}】で仲間を募集中のパーティー「{n}」が現れた！\n📅 {w}　📍 {p}\nリーダーは共に戦う仲間を探している。一緒に今日の練習ボスを倒そう！',
-      pt_push_yes: '🚩 依頼を受ける！', pt_push_no: '💤 宿屋で休む'
+      pt_push_yes: '🚩 依頼を受ける！', pt_push_no: '💤 宿屋で休む', pt_rate: '頼れる', pt_rated: '「頼れる仲間」と評価しました！', pt_rate_note: '冒険完了！一緒に練習した仲間に「🤝 頼れる」を押そう（5 人から評価で称号「頼れる仲間」）'
     },
     ko: {
       hub_party: '연습 파티', ch_party: '파티 채널', pt_view: '🚩 파티 보기',
@@ -84,7 +84,7 @@ window.Party = (() => {
       pt_e_full: '파티 정원이 찼어요', pt_e_closed: '모집이 마감된 파티예요', pt_e_code: '비공개 파티라 초대 코드가 필요해요', pt_e_gone: '파티를 찾을 수 없어요 (초대 코드를 확인하세요)', pt_e_many: '참가 중인 파티가 너무 많아요', pt_e_time: '집합 시간은 90일 이내여야 해요',
       pt_ad: '📯【파티 모집】「{n}」{w}・{p} ({c}/{m}명) 함께해요!',
       pt_push: '🚩 모험가여, 주목!\n근처 【{city}】에서 동료를 모집하는 파티 「{n}」이(가) 나타났다!\n📅 {w}　📍 {p}\n리더가 함께 싸울 동료를 찾고 있어요. 오늘의 연습 보스를 함께 쓰러뜨리자!',
-      pt_push_yes: '🚩 의뢰 수락, 파티 참가!', pt_push_no: '💤 마을에서 쉬기'
+      pt_push_yes: '🚩 의뢰 수락, 파티 참가!', pt_push_no: '💤 마을에서 쉬기', pt_rate: '믿음직', pt_rated: '믿음직한 팀원으로 평가했어요!', pt_rate_note: '모험 완료! 함께 연습한 팀원에게 「🤝 믿음직」을 눌러 주세요 (5명에게 받으면 「믿음직한 팀원」 칭호)'
     }
   });
 
@@ -166,6 +166,9 @@ window.Party = (() => {
     const mem = members[x.id] || [];
     const ps = {}; try { (await Backend.playersByIds(mem.map(m => m.user_id))).forEach(p => (ps[p.user_id] = p)); } catch (e) {}
     const amIn = mine.has(x.id) || mem.some(m => m.user_id === Backend.uid), lead = x.leader === Backend.uid || Backend.isAdmin, st = stateOf(x);
+    // 集合時間過後 14 天內：隊員可以互相評「可靠」
+    const canRate = amIn && Date.now() > new Date(x.meet_at).getTime() && Date.now() - new Date(x.meet_at).getTime() < 14 * 864e5;
+    let rated = new Set(); if (canRate) { try { rated = new Set(await Backend.myRatings(x.id)); } catch (e) {} }
     const link = location.origin + location.pathname + '#/party/join/' + (x.code || '');
     inner.innerHTML = `<div class="win">${UI.winHTML('🚩 ' + esc(x.name), 'red', false)}<div class="win-body">
         <div class="sd-tags">${styleTags(x.styles)}${!x.public ? `<span class="tag">${t('pt_private_tag')}</span>` : ''}${st !== 'open' ? `<span class="tag">${t('pt_' + st)}</span>` : ''}</div>
@@ -173,7 +176,8 @@ window.Party = (() => {
           <dt>${PXI.img('event/pin', '📍')} ${t('pt_place_f')}</dt><dd>${esc(placeOf(x))}</dd></dl>
         ${x.intro ? `<p class="sd-intro" data-utr>${esc(x.intro)}</p>` : ''}
         <span class="pt-hp big"><i style="width:${Math.round(mem.length / x.max_members * 100)}%"></i><em>${esc(t('pt_members', { n: mem.length, m: x.max_members }))}</em></span>
-        <ul class="pt-mem">${mem.map(m => { const p = ps[m.user_id] || {}; return `<li><button class="linkish pt-who" data-h="${esc(p.handle || '')}">${m.user_id === x.leader ? '👑 ' : ''}${esc(p.name || '?')}</button>${m.user_id === x.leader ? `<small>${t('pt_leader')}</small>` : ''}${lead && m.user_id !== x.leader ? `<button class="btn sm pt-kick" data-u="${m.user_id}">${t('pt_kick')}</button>` : ''}</li>`; }).join('')}</ul>
+        <ul class="pt-mem">${mem.map(m => { const p = ps[m.user_id] || {}; return `<li><button class="linkish pt-who" data-h="${esc(p.handle || '')}">${m.user_id === x.leader ? '👑 ' : ''}${esc(p.name || '?')}</button>${m.user_id === x.leader ? `<small>${t('pt_leader')}</small>` : ''}${lead && m.user_id !== x.leader && st !== 'past' ? `<button class="btn sm pt-kick" data-u="${m.user_id}">${t('pt_kick')}</button>` : ''}${canRate && m.user_id !== Backend.uid ? (rated.has(m.user_id) ? `<small class="pt-rated">🤝 ✔</small>` : `<button class="btn sm green pt-rate" data-u="${m.user_id}">🤝 ${t('pt_rate')}</button>`) : ''}</li>`; }).join('')}</ul>
+        ${canRate ? `<p class="note">${t('pt_rate_note')}</p>` : ''}
         <div class="btn-row">
           ${!amIn && st === 'open' ? `<button class="btn pink pt-join">${t('pt_join')}</button>` : ''}
           ${amIn ? `<button class="btn sm pt-leave">${t('pt_leave')}</button>` : ''}
@@ -195,6 +199,9 @@ window.Party = (() => {
     on('.pt-edit', () => openEditor(x, re));
     on('.pt-close', async () => { try { await Backend.saveParty({ id: x.id, status: x.status === 'open' ? 'closed' : 'open' }); re(); } catch (e) { toast(err(e), '✕'); } });
     on('.pt-del', () => confirmBox(t('pt_del_q', { n: x.name }), async () => { await Backend.deleteParty(x.id); toast(t('deleted'), '✕'); loadedAt = 0; A.nav('#/party'); }));
+    inner.querySelectorAll('.pt-rate').forEach(b => (b.onclick = async () => {
+      try { await Backend.rateTeammate(x.id, b.dataset.u); SFX.play('coin'); b.outerHTML = '<small class="pt-rated">🤝 ✔</small>'; toast(t('pt_rated'), '🤝'); window.XP && XP.checkAch && XP.checkAch(); } catch (e) { toast(err(e), '✕'); }
+    }));
     inner.querySelectorAll('.pt-kick').forEach(b => (b.onclick = async () => { try { await Backend.rpc('party_kick', { pid: x.id, uid: b.dataset.u }); re(); } catch (e) { toast(err(e), '✕'); } }));
     if (amIn) miniChat(inner, x);
   }

@@ -25,7 +25,7 @@
    * 討論串：回覆可以再被回覆（像社群留言），可以按讚
    * mount(el, 'p:12' 或 'b:3')
    * ========================================================= */
-  function mountThread(el, thread) {
+  function mountThread(el, thread, qa) {
     el.innerHTML = `<div class="thr"><form class="thr-new"></form><ul class="thr-list"><li class="note">…</li></ul></div>`;
     const list = el.querySelector('.thr-list'), form = el.querySelector('.thr-new');
     let rows = [], likes = [];
@@ -53,7 +53,8 @@
       return `<li class="thr-item ${child ? 'child' : ''}" data-id="${r.id}"><span class="thr-ic"></span><div class="thr-b">
         <div class="thr-h">${byline(r.author)}<span class="tm">${ago(r.created_at)}</span></div>
         <div class="thr-t">${par && par.parent_id ? `<span class="thr-at">@${esc((par.author || {}).name || '')}</span> ` : ''}${Emoji.toHTML(r.text)}</div><div class="utr-slot" data-utr-src="${esc(r.text)}"></div>
-        <div class="thr-a"><button class="lk ${mine ? 'on' : ''}" data-t="${tgt}">❤ ${lk.length || ''}</button><button class="rp-b">↩ ${t('fo_reply')}</button>${canDel ? `<button class="dl">${t('b_del')}</button>` : ''}</div>
+        ${qa && qa.best_reply === r.id ? `<div class="qa-best">${t('qa_best')}</div>` : ''}
+        <div class="thr-a"><button class="lk ${mine ? 'on' : ''}" data-t="${tgt}">❤ ${lk.length || ''}</button>${qa && !qa.best_reply && qa.user_id === Backend.uid && r.user_id !== Backend.uid && !child ? `<button class="qa-pick">✔ ${t('qa_pick')}</button>` : ''}<button class="rp-b">↩ ${t('fo_reply')}</button>${canDel ? `<button class="dl">${t('b_del')}</button>` : ''}</div>
         <form class="thr-sub"></form></div></li>`;
     };
     const draw = () => {
@@ -80,6 +81,8 @@
         const f = li.querySelector('.thr-sub'); const r = rows.find(x => x.id === id);
         composer(f, id, t('fo_reply_to', { n: (r.author || {}).name || '' }));
         const inp = f.querySelector('input'); if (inp) inp.focus();
+      } else if (e.target.closest('.qa-pick') && qa) {
+        try { await Backend.qaAccept(qa.id, id); qa.best_reply = id; SFX.play('fanfare'); sparkle(e.clientX, e.clientY, 16); toast(t('qa_picked'), '💡'); draw(); } catch (x) { toast(errMsg(x), '✕'); }
       } else if (e.target.closest('.dl')) {
         if (!confirm(t('del_title'))) return;
         try { await Backend.deleteReply(id); await load(); } catch (x) { toast(errMsg(x), '✕'); }
@@ -105,8 +108,14 @@
   /* =========================================================
    * 論壇（#/forum、#/forum/<id>）
    * ========================================================= */
-  const CATS = ['chat', 'crew', 'skill', 'event', 'music', 'other'];
-  const CAT_IC = { chat: '💬', crew: '👯', skill: '🧠', event: '📅', music: '🎧', other: '📦' };
+  const CATS = ['chat', 'qa', 'crew', 'skill', 'event', 'music', 'other'];
+  const CAT_IC = { qa: '💡', chat: '💬', crew: '👯', skill: '🧠', event: '📅', music: '🎧', other: '📦' };
+  I18N.extend({
+    zh: { fo_cat_qa: '舞島知識+', qa_best: '✔ 最佳解答', qa_pick: '選為最佳解答', qa_solved: '✔ 已解決', qa_picked: '已選出最佳解答！回答的人拿到 +30 XP', qa_hint: '💡 這是知識+ 問題：發問的人可以從回答裡選一個「最佳解答」，被選中的人會拿到經驗值。' },
+    en: { fo_cat_qa: 'Q&A', qa_best: '✔ Best answer', qa_pick: 'Pick as best answer', qa_solved: '✔ Solved', qa_picked: 'Best answer picked! The answerer got +30 XP', qa_hint: '💡 Q&A question: the asker can pick one reply as the best answer, which earns that person XP.' },
+    ja: { fo_cat_qa: '知恵袋', qa_best: '✔ ベストアンサー', qa_pick: 'ベストアンサーに選ぶ', qa_solved: '✔ 解決済み', qa_picked: 'ベストアンサーを選びました！回答者に +30 XP', qa_hint: '💡 知恵袋の質問：質問者は回答から 1 つベストアンサーを選べます。選ばれた人は経験値をもらえます。' },
+    ko: { fo_cat_qa: '지식인', qa_best: '✔ 베스트 답변', qa_pick: '베스트 답변으로 선택', qa_solved: '✔ 해결됨', qa_picked: '베스트 답변을 골랐어요! 답변자에게 +30 XP', qa_hint: '💡 지식인 질문: 질문한 사람이 답변 중 하나를 베스트 답변으로 고를 수 있고, 뽑힌 사람은 경험치를 받아요.' }
+  });
   const catTag = c => `<span class="tag fo-cat cat-${esc(c)}">${CAT_IC[c] || ''} ${esc(t('fo_cat_' + c))}</span>`;
   const st = { cat: '', sort: 'new' };
   A.crumbs.forum = () => '🗂 ' + t('fo_title');
@@ -126,7 +135,7 @@
       if (st.sort === 'hot') list = list.slice().sort((a, b) => (b.pinned - a.pinned) || (lc(b.id) * 2 + rc(b.id)) - (lc(a.id) * 2 + rc(a.id)));
       const row = p => `<a class="fo-row ${p.pinned ? 'pinned' : ''}" href="#/forum/${p.id}">
         <span class="fo-ic"></span>
-        <span class="fo-main"><span class="fo-top">${p.pinned ? `<span class="tag pin">📌 ${t('fo_pinned')}</span>` : ''}${catTag(p.category)}${p.status === 'pending' ? `<span class="tag wait">⏳ ${t('fo_pending')}</span>` : p.status === 'rejected' ? `<span class="tag rej">${t('fo_rejected')}</span>` : ''}</span>
+        <span class="fo-main"><span class="fo-top">${p.pinned ? `<span class="tag pin">📌 ${t('fo_pinned')}</span>` : ''}${catTag(p.category)}${p.category === 'qa' && p.best_reply ? `<span class="tag qa-ok">${t('qa_solved')}</span>` : ''}${p.status === 'pending' ? `<span class="tag wait">⏳ ${t('fo_pending')}</span>` : p.status === 'rejected' ? `<span class="tag rej">${t('fo_rejected')}</span>` : ''}</span>
           <b class="fo-tt">${esc(p.title)}</b><span class="fo-flags">${(p.media || []).some(x => x.type === 'image') ? '🖼' : ''}${(p.media || []).some(x => x.type !== 'image') ? '🎬' : ''}${p.poll ? '📊' : ''}</span><small>${esc((p.author || {}).name || '')} · ${ago(p.created_at)}</small></span>
         <span class="fo-n"><span>💬 ${rc(p.id)}</span><span>❤ ${lc(p.id)}</span></span></a>`;
       inner.innerHTML = `<div class="win">${UI.winHTML('🗂 ' + t('fo_title'), 'teal', false)}<div class="win-body">
@@ -244,7 +253,7 @@
         </div></div>
         ${p.status === 'approved' ? `<div class="win">${UI.winHTML('💬 ' + t('fo_replies'), 'blue', false)}<div class="win-body thr-box"></div></div>` : `<p class="note">${t('fo_wait_note')}</p>`}`;
       inner.querySelector('.fo-ic').appendChild(headIcon((p.author || {}).look));
-      const box = inner.querySelector('.thr-box'); if (box) mountThread(box, 'p:' + id);
+      const box = inner.querySelector('.thr-box'); if (box) { if (p.category === 'qa') box.insertAdjacentHTML('beforebegin', `<p class="note qa-hint">${t('qa_hint')}</p>`); mountThread(box, 'p:' + id, p.category === 'qa' ? p : null); }
       inner.querySelectorAll('.fo-poll .vote').forEach(b => b.onclick = async () => {
         if (!logged()) return Player.prompt();
         try { await Backend.pollVote(id, +b.dataset.c); SFX.play('coin'); votes = await Backend.pollVotes(id); draw(); } catch (x) { toast(errMsg(x), '✕'); }

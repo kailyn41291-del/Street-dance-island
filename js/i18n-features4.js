@@ -19,9 +19,9 @@ I18N.extend({
     cd_crew: '舞團 Crew', cd_move: '招牌動作', cd_move_ph: '例：Airflare、Wave', cd_bio: '自我介紹', cd_bio_ph: '最多 80 字，不能放連結', cd_ig: 'Instagram 帳號',
     cd_save: '儲存名片', cd_saved: '名片已更新！', cd_none_bio: '這個人還沒寫自我介紹', cd_login: '登入角色就能加好友、私訊和 Battle', cd_notfound: '找不到這位玩家', cd_nolink: '名片上不能放連結',
     dm_title: '私訊', dm_open: '私訊', dm_ph: '輸入訊息…', dm_send: '送出', dm_new: '{n} 傳了私訊給你', dm_none: '還沒有訊息，打聲招呼吧 👋', dm_only: '只有好友可以私訊',
-    pvp_invite: '⚔ 邀請 Battle', pvp_offline: '對方現在不在線上，等他上線再邀請吧', pvp_sent: '已送出 Battle 邀請，等待 {n} 回應…', pvp_got: '{n} 向你發起 Battle！',
+    pvp_invite: '🆚 邀請 Battle', pvp_offline: '對方現在不在線上，等他上線再邀請吧', pvp_sent: '已送出 Battle 邀請，等待 {n} 回應…', pvp_got: '{n} 向你發起 Battle！',
     pvp_accept: '接受挑戰', pvp_decline: '下次吧', pvp_declined: '{n} 婉拒了這次 Battle', pvp_timeout: '對方沒有回應', pvp_busy: '對方正在 Battle 中',
-    pvp_title: '⚔ {a} VS {b}', pvp_pick: '選擇招式（{s} 秒）', pvp_wait: '等待對手出招…', pvp_round: '第 {n} 回合', pvp_connecting: '連線中…',
+    pvp_title: '🆚 {a} VS {b}', pvp_pick: '選擇招式（{s} 秒）', pvp_wait: '等待對手出招…', pvp_round: '第 {n} 回合', pvp_connecting: '連線中…',
     pvp_win: '🏆 你贏了！', pvp_lose: '😵 你輸了…再接再厲！', pvp_left: '對手離開了 Battle', pvp_cheat: '對手的招式驗證失敗，判你獲勝', pvp_add: 'GG！要加 {n} 好友嗎？'
   },
   en: {
@@ -43,9 +43,9 @@ I18N.extend({
     cd_crew: 'Crew', cd_move: 'Signature move', cd_move_ph: 'e.g. Airflare, Wave', cd_bio: 'About me', cd_bio_ph: 'Up to 80 characters, no links', cd_ig: 'Instagram',
     cd_save: 'Save card', cd_saved: 'Card updated!', cd_none_bio: 'No intro yet', cd_login: 'Log in to add friends, message and battle', cd_notfound: 'Player not found', cd_nolink: 'Links are not allowed on cards',
     dm_title: 'Messages', dm_open: 'Message', dm_ph: 'Type a message…', dm_send: 'Send', dm_new: '{n} sent you a message', dm_none: 'No messages yet — say hi 👋', dm_only: 'Only friends can message each other',
-    pvp_invite: '⚔ Battle invite', pvp_offline: "They're offline right now — invite them when they're back", pvp_sent: 'Battle invite sent. Waiting for {n}…', pvp_got: '{n} challenges you to a battle!',
+    pvp_invite: '🆚 Battle invite', pvp_offline: "They're offline right now — invite them when they're back", pvp_sent: 'Battle invite sent. Waiting for {n}…', pvp_got: '{n} challenges you to a battle!',
     pvp_accept: 'Accept', pvp_decline: 'Not now', pvp_declined: '{n} declined the battle', pvp_timeout: 'No response', pvp_busy: "They're already in a battle",
-    pvp_title: '⚔ {a} VS {b}', pvp_pick: 'Pick your move ({s}s)', pvp_wait: 'Waiting for your opponent…', pvp_round: 'Round {n}', pvp_connecting: 'Connecting…',
+    pvp_title: '🆚 {a} VS {b}', pvp_pick: 'Pick your move ({s}s)', pvp_wait: 'Waiting for your opponent…', pvp_round: 'Round {n}', pvp_connecting: 'Connecting…',
     pvp_win: '🏆 You win!', pvp_lose: '😵 You lost… run it back!', pvp_left: 'Your opponent left the battle', pvp_cheat: "Your opponent's move failed verification — you win", pvp_add: 'GG! Add {n} as a friend?'
   },
   ja: {
@@ -67,9 +67,9 @@ I18N.extend({
     cd_crew: 'クルー', cd_move: '得意技', cd_move_ph: '例：エアフレア、ウェーブ', cd_bio: '自己紹介', cd_bio_ph: '80 文字まで、リンク不可', cd_ig: 'Instagram',
     cd_save: '名刺を保存', cd_saved: '名刺を更新しました！', cd_none_bio: 'まだ自己紹介がありません', cd_login: 'ログインするとフレンド・メッセージ・バトルができるよ', cd_notfound: 'プレイヤーが見つかりません', cd_nolink: '名刺にリンクは載せられません',
     dm_title: 'メッセージ', dm_open: 'メッセージ', dm_ph: 'メッセージを入力…', dm_send: '送信', dm_new: '{n} からメッセージが届きました', dm_none: 'まだメッセージはありません。あいさつしよう 👋', dm_only: 'メッセージはフレンド同士のみ',
-    pvp_invite: '⚔ バトルに誘う', pvp_offline: '今はオフラインです。オンラインのときに誘おう', pvp_sent: 'バトル招待を送りました。{n} の返事を待っています…', pvp_got: '{n} からバトルの挑戦状！',
+    pvp_invite: '🆚 バトルに誘う', pvp_offline: '今はオフラインです。オンラインのときに誘おう', pvp_sent: 'バトル招待を送りました。{n} の返事を待っています…', pvp_got: '{n} からバトルの挑戦状！',
     pvp_accept: '受けて立つ', pvp_decline: 'また今度', pvp_declined: '{n} はバトルを断りました', pvp_timeout: '返事がありませんでした', pvp_busy: '相手はバトル中です',
-    pvp_title: '⚔ {a} VS {b}', pvp_pick: '技を選ぼう（{s} 秒）', pvp_wait: '相手の技を待っています…', pvp_round: '第 {n} ラウンド', pvp_connecting: '接続中…',
+    pvp_title: '🆚 {a} VS {b}', pvp_pick: '技を選ぼう（{s} 秒）', pvp_wait: '相手の技を待っています…', pvp_round: '第 {n} ラウンド', pvp_connecting: '接続中…',
     pvp_win: '🏆 勝利！', pvp_lose: '😵 負けちゃった…もう一回！', pvp_left: '相手がバトルから抜けました', pvp_cheat: '相手の技の確認に失敗したため、あなたの勝ちです', pvp_add: 'GG！{n} にフレンド申請する？'
   },
   ko: {
@@ -91,9 +91,9 @@ I18N.extend({
     cd_crew: '크루', cd_move: '시그니처 무브', cd_move_ph: '예: 에어플레어, 웨이브', cd_bio: '자기소개', cd_bio_ph: '80자까지, 링크 불가', cd_ig: '인스타그램',
     cd_save: '명함 저장', cd_saved: '명함을 업데이트했어요!', cd_none_bio: '아직 자기소개가 없어요', cd_login: '로그인하면 친구, 메시지, 배틀을 할 수 있어요', cd_notfound: '플레이어를 찾을 수 없어요', cd_nolink: '명함에는 링크를 넣을 수 없어요',
     dm_title: '메시지', dm_open: '메시지', dm_ph: '메시지 입력…', dm_send: '보내기', dm_new: '{n}님이 메시지를 보냈어요', dm_none: '아직 메시지가 없어요. 인사해 보세요 👋', dm_only: '메시지는 친구끼리만 보낼 수 있어요',
-    pvp_invite: '⚔ 배틀 신청', pvp_offline: '지금은 오프라인이에요. 접속했을 때 신청해 보세요', pvp_sent: '배틀 신청을 보냈어요. {n}님의 답을 기다리는 중…', pvp_got: '{n}님이 배틀을 신청했어요!',
+    pvp_invite: '🆚 배틀 신청', pvp_offline: '지금은 오프라인이에요. 접속했을 때 신청해 보세요', pvp_sent: '배틀 신청을 보냈어요. {n}님의 답을 기다리는 중…', pvp_got: '{n}님이 배틀을 신청했어요!',
     pvp_accept: '도전 수락', pvp_decline: '다음에', pvp_declined: '{n}님이 배틀을 거절했어요', pvp_timeout: '응답이 없어요', pvp_busy: '상대가 배틀 중이에요',
-    pvp_title: '⚔ {a} VS {b}', pvp_pick: '기술을 고르세요({s}초)', pvp_wait: '상대를 기다리는 중…', pvp_round: '{n}라운드', pvp_connecting: '연결 중…',
+    pvp_title: '🆚 {a} VS {b}', pvp_pick: '기술을 고르세요({s}초)', pvp_wait: '상대를 기다리는 중…', pvp_round: '{n}라운드', pvp_connecting: '연결 중…',
     pvp_win: '🏆 승리!', pvp_lose: '😵 졌어요… 다시 한 판!', pvp_left: '상대가 배틀을 떠났어요', pvp_cheat: '상대 기술 확인에 실패해서 당신의 승리예요', pvp_add: 'GG! {n}님에게 친구 신청할까요?'
   }
 });

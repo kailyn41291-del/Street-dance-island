@@ -85,7 +85,7 @@
       loadItems();
       const key = n.key || n.text;
       if (items.some(x => x.key === key)) return;
-      items.unshift({ key, ic: n.ic || '🔔', text: n.text, href: n.href || '', at: Date.now() });
+      items.unshift({ key, ic: n.ic || '🔔', text: n.text, href: n.href || '', act: n.act || '', handle: n.handle || '', at: Date.now() });
       saveItems(); paintBadge();
     },
     all() { loadItems(); return [...dyn, ...items]; },

@@ -2007,3 +2007,24 @@ html[data-theme="night"] img.pxi, html[data-theme="night"] .pxemo { filter: none
 .info dd.lineup .lu { white-space: normal; overflow-wrap: anywhere; }
 .card .main, .card .info dd, .card .tags, .card h3 { min-width: 0; overflow-wrap: anywhere; }
 .card .tags { flex-wrap: wrap; }
+
+/* ===== 第三批・互動 ===== */
+.go-n { background: rgba(0,0,0,.12); padding: 0 5px; margin-left: 2px; }
+.tag.go-fr { --c: #ffe3ef; }
+.pc-social { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; margin: 8px 0; }
+.pc-social .tag { font-size: 13px; padding: 2px 8px; }
+.ph-top { margin-bottom: 10px; }
+.ph-form .input { flex: 1; min-width: 0; }
+.ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.ph-it { margin: 0; border: var(--px) solid var(--ink); background: var(--paper); box-shadow: var(--shadow); display: grid; }
+.ph-it img { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: zoom-in; display: block; }
+.ph-it figcaption { padding: 6px; display: grid; gap: 4px; font-size: 13px; }
+.ph-it figcaption small { color: var(--ink-soft); font-size: 11px; }
+.ph-it .btn { justify-self: start; }
+.cd-bday .row3 { margin-bottom: 6px; }
+.pt-rated { color: var(--green); font-weight: bold; }
+.qa-best { display: inline-block; background: var(--green); color: #2a1f2e; border: 2px solid var(--ink); padding: 0 8px; font-size: 12px; margin: 4px 0; }
+.qa-pick { border: 2px solid var(--ink); background: var(--yellow); color: #2a1f2e; font: inherit; font-size: 12px; padding: 1px 6px; cursor: pointer; }
+.tag.qa-ok { --c: var(--green); }
+.tag.cat-qa { --c: #fff0a8; }
+.qa-hint { margin: 0; }

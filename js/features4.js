@@ -135,6 +135,7 @@ window.Friends = (() => {
         <label class="field"><span>${t('cd_move')}</span><input class="input" name="move" maxlength="24" value="${esc(c.move)}" placeholder="${esc(t('cd_move_ph'))}"></label>
         <label class="field full"><span>${t('cd_bio')}</span><textarea class="input" name="bio" maxlength="80" placeholder="${esc(t('cd_bio_ph'))}">${esc(c.bio)}</textarea></label>
         <label class="field full"><span>${t('cd_ig')}</span><input class="input" name="ig" maxlength="31" value="${esc(c.ig)}" placeholder="yourname" autocapitalize="off" spellcheck="false"></label>
+        ${window.CardBirthdayHTML ? window.CardBirthdayHTML(c) : ''}
         <fieldset class="full cd-priv"><legend>🔍 ${t('fd_priv')}</legend>
           <label class="chk"><input type="checkbox" name="find" ${c.find !== false ? 'checked' : ''}> ${t('fd_find_me')}</label>
           <label class="chk"><input type="checkbox" name="rpub" ${c.rpub ? 'checked' : ''}> ${t('fd_rpub')}</label>
@@ -156,6 +157,7 @@ window.Friends = (() => {
       const o = { ...c, crew: E.crew.value.trim(), move: E.move.value.trim(), bio: E.bio.value.trim(), ig: E.ig.value.trim().replace(/^@/, ''), find: E.find.checked, rpub: E.rpub.checked };
       // 沒有勾選公開地區：地區不存
       if (o.rpub) { o.rc = E.rc.value; o.rcity = E.rcity.value; } else { delete o.rc; delete o.rcity; }
+      if (window.CardBirthdayRead && E.bmo) window.CardBirthdayRead(E, o);
       return o;
     };
     const paint = () => {
@@ -198,6 +200,7 @@ window.Friends = (() => {
     mountCard(body, p);
     Backend.crewRpc && Backend.crewRpc('crew_tag', { uid: p.user_id }).then(cw => { if (cw && cw.name && Chat.crewTagHTML) { const tg = body.querySelector('.pc-name'); tg && tg.insertAdjacentHTML('afterend', `<div class="pc-crew">${Chat.crewTagHTML({ crew: cw })}</div>`); } }).catch(() => {});
     const m = modal({ title: mine ? t('cd_me') : t('cd_title'), color: opt.request ? 'yellow' : 'blue', body });
+    if (window.CardExtras) window.CardExtras(body, p, mine);   // Like、可靠隊友、生日 / 星座 / 血型
     const acts = body.querySelector('.pc-acts');
     const draw = () => {
       if (mine) { acts.innerHTML = `<button class="btn pink ed">✎ ${t('cd_edit')}</button>`; acts.querySelector('.ed').onclick = () => { m.close(); setTimeout(openCardEditor, 220); }; return; }
@@ -433,7 +436,7 @@ window.Friends = (() => {
     if (Date.now() - lastInvite < 15000) { toast(t('fr_fast'), '⏳'); return; }
     lastInvite = Date.now();
     const room = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-    const body = h(`<div class="pvp-wait"><p>${esc(t('pvp_sent', { n: p.name }))}</p><div class="pvp-dots">⚔</div><button class="btn sm cx">${t('fr_cancel')}</button></div>`);
+    const body = h(`<div class="pvp-wait"><p>${esc(t('pvp_sent', { n: p.name }))}</p><div class="pvp-dots">🆚</div><button class="btn sm cx">${t('fr_cancel')}</button></div>`);
     const m = modal({ title: t('pvp_invite'), color: 'orange', body });
     let settled = false;
     pending[room] = ans => {
@@ -452,7 +455,7 @@ window.Friends = (() => {
       if (battling) { sendTo(pl.from.uid, { type: 'busy', room: pl.room, from: myInfo() }); return; }
       SFX.play('fanfare');
       const body = h(`<div class="pvp-inv"><div class="pvp-av"></div><p>${esc(t('pvp_got', { n: pl.from.name }))}</p>
-        <div class="btn-row"><button class="btn orange ok">⚔ ${t('pvp_accept')}</button><button class="btn no">${t('pvp_decline')}</button><button class="btn sm cd">🪪</button></div></div>`);
+        <div class="btn-row"><button class="btn orange ok">🆚 ${t('pvp_accept')}</button><button class="btn no">${t('pvp_decline')}</button><button class="btn sm cd">🪪</button></div></div>`);
       try { const d = Avatar.dancer(3, pl.from.look || Avatar.DEFAULT); body.querySelector('.pvp-av').appendChild(d.el); } catch (x) {}
       const m = modal({ title: t('pvp_invite'), color: 'orange', body });
       invites[pl.room] = m;

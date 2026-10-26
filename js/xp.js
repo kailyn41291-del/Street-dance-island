@@ -15,9 +15,10 @@ window.XP = (() => {
     ['rhythm_a', '🎵', 100], ['rhythm_s', '🎶', 250], ['npc5', '🥊', 50], ['npc30', '👹', 200],
     ['friend1', '🤝', 30], ['friend10', '👯', 150], ['friend30', '🎉', 300], ['chat100', '💬', 100],
     ['forum1', '📝', 50], ['talk50', '🗣', 150], ['vote10', '🗳', 100], ['streak7', '🔥', 100], ['streak30', '🏝', 400],
-    ['pvp1', '⚔', 50], ['pvp10', '🏅', 200], ['gold', '🥇', 300], ['king', '👑', 600],
+    ['pvp1', '🆚', 50], ['pvp10', '🏅', 200], ['gold', '🥇', 300], ['king', '👑', 600],
     ['crew', '🎌', 50], ['crewlead', '🚩', 200], ['verified', '✔', 100], ['spin30', '🎰', 200], ['fav10', '⭐', 50],
-    ['submit1', '📮', 100], ['liked10', '❤', 100]
+    ['submit1', '📮', 100], ['liked10', '❤', 100],
+    ['duo1', '👫', 80], ['duo5', '💞', 300], ['reliable', '🤝', 200], ['plike30', '👍', 150], ['qa1', '💡', 50], ['qa10', '🧠', 300]
   ];
   const TIERS = [[1000, 'king', '👑'], [500, 'gold', '🥇'], [200, 'silver', '🥈'], [0, 'bronze', '🥉']];
   const tierOf = pts => TIERS.find(([p]) => pts >= p);
@@ -104,6 +105,12 @@ window.XP = (() => {
     spin30: ['簽到達人', '每日簽到 30 次', 'Check-in Pro', 'Spin the daily check-in 30 times', 'ログイン名人', 'デイリー 30 回', '출석 달인', '출석 룰렛 30번'],
     fav10: ['收藏家', '收藏 10 個活動', 'Collector', 'Save 10 events', 'コレクター', 'イベントを 10 件お気に入り', '수집가', '이벤트 10개 즐겨찾기'],
     submit1: ['情報員', '投稿的活動被通過', 'Event Scout', 'Get an event submission approved', '情報屋', '投稿イベントが承認', '정보원', '제보한 이벤트 승인'],
+    duo1: ['雙人同行', '和好友一起在同一場活動打卡', 'Together', 'Check in at the same event as a friend', '二人で参戦', 'フレンドと同じイベントでチェックイン', '함께 출동', '친구와 같은 이벤트에서 체크인'],
+    duo5: ['最佳拍檔', '和 5 位不同的好友一起打卡過', 'Best Duo', 'Check in together with 5 different friends', '最高の相棒', '5 人のフレンドと一緒にチェックイン', '최고의 짝꿍', '서로 다른 친구 5명과 함께 체크인'],
+    reliable: ['可靠隊友', '被 5 位不同的隊友評為可靠', 'Reliable Teammate', 'Rated reliable by 5 different teammates', '頼れる仲間', '5 人の仲間から「頼れる」評価', '믿음직한 팀원', '팀원 5명에게 믿음직하다는 평가'],
+    plike30: ['人氣舞者', '收到 30 個 Like', 'Crowd Favorite', 'Receive 30 likes', '人気ダンサー', 'いいねを 30 個もらう', '인기 댄서', '좋아요 30개 받기'],
+    qa1: ['熱心解答', '回答被選為最佳解答', 'Helpful Answer', 'Get a best answer in Q&A', '頼れる回答', 'ベストアンサーに選ばれる', '친절한 답변', '베스트 답변으로 선정'],
+    qa10: ['舞島達人', '10 次被選為最佳解答', 'Island Sage', '10 best answers in Q&A', 'ダンス島の達人', 'ベストアンサー 10 回', '댄스섬 달인', '베스트 답변 10번'],
     liked10: ['人氣作者', '論壇主題被按讚 10 次', 'Popular Author', 'A forum topic gets 10 likes', '人気作家', 'トピックに 10 いいね', '인기 작성자', '게시글 좋아요 10개']
   };
   const L = { zh: 0, en: 2, ja: 4, ko: 6 };
@@ -159,7 +166,7 @@ window.XP = (() => {
         <div class="xp-days">${Array.from({ length: 30 }, (_, i) => `<i class="${i < s ? 'on' : ''} ${[2, 6, 13, 29].includes(i) ? 'mk' : ''}"></i>`).join('')}</div><small class="note">${t('xp_islander')}</small></section>
       <section class="xp-card"><h4>🗓 ${t('wk_title')}</h4>${w ? `<p>${esc(t('wk_' + w.id))} <b>(${w.prog}/${w.n})</b></p><div class="xpbar"><i style="width:${Math.round((w.prog / w.n) * 100)}%"></i></div>
         ${w.claimed ? `<p class="note">${t('wk_claimed')}</p>` : `<button class="btn sm ${w.prog >= w.n ? 'pink' : ''} xp-wk" ${w.prog >= w.n ? '' : 'disabled'}>${t('wk_claim')}</button>`}` : '<p class="note">…</p>'}</section>
-      <section class="xp-card"><h4>⚔ ${t('pvp_title')} <small class="note">${t('pvp_season', { s: mine.season || '' })}</small></h4>
+      <section class="xp-card"><h4>🆚 ${t('pvp_title')} <small class="note">${t('pvp_season', { s: mine.season || '' })}</small></h4>
         <div class="xp-tier tier-${tr[1]}">${tr[2]} ${t('pvp_tier_' + tr[1])}</div><p class="note">${t('pvp_pts', { p: p ? p.points : 0, w: p ? p.wins : 0, l: p ? p.losses : 0 })}</p>
         <details><summary>${t('pvp_board')}</summary><ol class="xp-board">${(mine.top || []).length ? mine.top.map(r => { const pp = people[r.user_id] || {}; const tt = tierOf(r.points); return `<li><span>${tt[2]} ${esc(pp.name || '…')}</span><b>${r.points}</b></li>`; }).join('') : `<li class="note">${t('pvp_none')}</li>`}</ol><p class="note">${t('pvp_rule')}</p></details></section>
       <section class="xp-card full"><h4>🏅 ${t('ach_title')} <small class="note">${t('ach_n', { a: mine.ach.size, b: ACH.length })}</small></h4>

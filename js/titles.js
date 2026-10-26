@@ -19,6 +19,8 @@ window.Titles = (() => {
     { id: 'r_week7',     only: 'unlock', zh: '七日不間斷',   en: '7-Day Streak',       ja: '7日連続',           ko: '7일 연속' },
     { id: 'r_npcslayer', only: 'unlock', zh: 'NPC 終結者', en: 'NPC Slayer', ja: 'NPC キラー', ko: 'NPC 사냥꾼' },
     { id: 'r_npcboss',   only: 'unlock', zh: '街頭魔王',   en: 'Street Boss', ja: 'ストリートの魔王', ko: '스트릿 마왕' },
+    { id: 'r_reliable',  only: 'unlock', color: '#5bb5a6', zh: '可靠隊友',     en: 'Reliable Teammate',     ja: '頼れる仲間',              ko: '믿음직한 팀원' },
+    { id: 'r_duo',       only: 'unlock', color: '#f07ca3', zh: '最佳拍檔',     en: 'Best Duo',              ja: '最高の相棒',              ko: '최고의 짝꿍' },
     { id: 'r_islander',  only: 'unlock', color: '#8fd3c7', zh: '定居島民',     en: 'Island Resident',       ja: '島に住んでます',          ko: '섬에 정착한 주민' },
     { id: 'r_comp1',     only: 'unlock', zh: '我有比過賽',   en: "I've Battled Before!",  ja: 'バトル出たことあるもん！', ko: '나 배틀 나가봤어!' },
     { id: 'r_comp5',     only: 'unlock', zh: '我真的有比過', en: 'No, Really, I Battled', ja: 'ほんとに出たってば〜',     ko: '진짜 나가봤다니까~' },

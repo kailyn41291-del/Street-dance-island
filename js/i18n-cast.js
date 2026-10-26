@@ -26,7 +26,7 @@ I18N.extend({
       { who: 'kailyn', mood: 'cheer', text: '完成任務（去活動打卡）可以拿經驗值和護照印章喔！' }
     ],
     invite: [
-      '【📜 任務委託】\n冒險者，舞島傳來新的挑戰！\n⚔️ {name}\n📅 {date}\n📍 {place}\n接下任務 ▶ {url}',
+      '【📜 任務委託】\n冒險者，舞島傳來新的挑戰！\n🆚 {name}\n📅 {date}\n📍 {place}\n接下任務 ▶ {url}',
       '【💬 NPC 對話】\nKailyn：「聽說 {place} 有一場超熱的活動！」\nChoco：「是 {name}！{date}，一起去吧 😎」\n▶ {url}',
       '【✨ 野生的街舞活動出現了！】\n{name}\n{date}・{place}\n要怎麼做？\n▶ 前往冒險　{url}'
     ]
@@ -57,7 +57,7 @@ I18N.extend({
       { who: 'kailyn', mood: 'cheer', text: 'Complete a quest (check in at an event) to earn XP and passport stamps!' }
     ],
     invite: [
-      '[📜 QUEST REQUEST]\nAdventurer, a new challenge has arrived on Dance Island!\n⚔️ {name}\n📅 {date}\n📍 {place}\nAccept quest ▶ {url}',
+      '[📜 QUEST REQUEST]\nAdventurer, a new challenge has arrived on Dance Island!\n🆚 {name}\n📅 {date}\n📍 {place}\nAccept quest ▶ {url}',
       '[💬 NPC TALK]\nKailyn: "I heard there\'s a hot event in {place}!"\nChoco: "It\'s {name}! {date} — let\'s go 😎"\n▶ {url}',
       '[✨ A wild dance event appeared!]\n{name}\n{date} · {place}\nWhat will you do?\n▶ GO ON ADVENTURE  {url}'
     ]
@@ -88,7 +88,7 @@ I18N.extend({
       { who: 'kailyn', mood: 'cheer', text: 'クエスト達成（イベントでチェックイン）で経験値とパスポートのスタンプがもらえるよ！' }
     ],
     invite: [
-      '【📜 クエスト依頼】\n冒険者よ、ダンスアイランドに新たな挑戦が届いた！\n⚔️ {name}\n📅 {date}\n📍 {place}\n依頼を受ける ▶ {url}',
+      '【📜 クエスト依頼】\n冒険者よ、ダンスアイランドに新たな挑戦が届いた！\n🆚 {name}\n📅 {date}\n📍 {place}\n依頼を受ける ▶ {url}',
       '【💬 NPC の会話】\nKailyn「{place} ですごいイベントがあるって！」\nChoco「{name} だよ！{date}、一緒に行こう 😎」\n▶ {url}',
       '【✨ やせいの ダンスイベントが あらわれた！】\n{name}\n{date}・{place}\nどうする？\n▶ ぼうけんに でる　{url}'
     ]
@@ -119,7 +119,7 @@ I18N.extend({
       { who: 'kailyn', mood: 'cheer', text: '퀘스트 완료(이벤트 체크인)하면 경험치랑 여권 도장을 받을 수 있어!' }
     ],
     invite: [
-      '【📜 퀘스트 의뢰】\n모험가여, 댄스 아일랜드에 새로운 도전이 도착했다!\n⚔️ {name}\n📅 {date}\n📍 {place}\n의뢰 수락 ▶ {url}',
+      '【📜 퀘스트 의뢰】\n모험가여, 댄스 아일랜드에 새로운 도전이 도착했다!\n🆚 {name}\n📅 {date}\n📍 {place}\n의뢰 수락 ▶ {url}',
       '【💬 NPC 대화】\nKailyn: "{place}에서 엄청난 이벤트가 열린대!"\nChoco: "{name}이야! {date}, 같이 가자 😎"\n▶ {url}',
       '【✨ 야생의 댄스 이벤트가 나타났다!】\n{name}\n{date}・{place}\n어떻게 할까?\n▶ 모험을 떠난다　{url}'
     ]

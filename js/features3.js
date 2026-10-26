@@ -186,7 +186,7 @@ window.Emotes = (() => {
     const dMe = Avatar.dancer(3, Player.me ? Player.me.look : Avatar.DEFAULT), dNpc = Avatar.dancer(3, look);
     body.querySelector('.me').appendChild(dMe.el); body.querySelector('.npc').appendChild(dNpc.el);
     dNpc.el.style.transform = 'scaleX(-1)';
-    const m = modal({ title: '⚔ ' + t('npc_title', { n: esc(name) }), color: 'orange', body });
+    const m = modal({ title: '🆚 ' + t('npc_title', { n: esc(name) }), color: 'orange', body });
     const msg = body.querySelector('.nb-msg');
     body.querySelector('.nb-btns').onclick = async e => {
       const b = e.target.closest('[data-m]'); if (!b || you >= 2 || them >= 2) return;
@@ -286,7 +286,7 @@ window.Emotes = (() => {
     return y ? `https://www.youtube.com/embed/${y[1]}` : null;
   };
   const isMp4 = url => /\.mp4(\?|$)/i.test(url || '') && /^https:\/\//.test(url || '');
-  A.crumbs.battle = () => '⚔ ' + t('arc_battle');
+  A.crumbs.battle = () => '🆚 ' + t('arc_battle');
   const battleData = async () => { const battles = await Backend.listBattles(); return { battles, votes: await Backend.listVotes(battles.map(b => b.id)) }; };
   A.prefetch = A.prefetch || {};
   A.prefetch.battle = () => { if (Backend.enabled && A.prefetchKeep) A.prefetchKeep('battle', battleData); };
@@ -313,13 +313,13 @@ window.Emotes = (() => {
             ${show ? `<div class="bt-pct">${p}% <small>(${n})</small></div>` : ''}</div>`;
         };
         const left = Math.max(0, Math.round((new Date(b.ends_at) - Date.now()) / 36e5));
-        return `<div class="win battle">${UI.winHTML('⚔ ' + esc(b.title), ended ? 'yellow' : 'pink', false)}<div class="win-body">
+        return `<div class="win battle">${UI.winHTML('🆚 ' + esc(b.title), ended ? 'yellow' : 'pink', false)}<div class="win-body">
           <div class="bt-row">${side('a', b.a_name, b.a_url, a, pa)}<div class="bt-vs">VS</div>${side('b', b.b_name, b.b_url, bb, 100 - pa)}</div>
           ${show ? `<div class="bt-bar"><i style="width:${pa}%"></i></div>` : ''}
           <p class="note">${ended ? t('bt_ended', { n: vs.length }) : t('bt_left', { h: left, n: vs.length })}${Backend.isAdmin ? ` <button class="btn sm red del-b" data-b="${b.id}">${t('b_del')}</button>` : ''}</p>
           ${A.battleExtras ? A.battleExtras(b) : ''}</div></div>`;
       };
-      inner.innerHTML = `<div class="win">${UI.winHTML('⚔ ' + t('arc_battle'), 'blue', false)}<div class="win-body"><p>${t('bt_intro')}</p>
+      inner.innerHTML = `<div class="win">${UI.winHTML('🆚 ' + t('arc_battle'), 'blue', false)}<div class="win-body"><p>${t('bt_intro')}</p>
           ${Backend.isAdmin ? `<details class="bt-new"><summary>＋ ${t('bt_new')}</summary><form class="form" novalidate>
             <label class="field full"><span>${t('bt_t')}</span><input class="input" name="title" maxlength="80"></label>
             <label class="field"><span>A</span><input class="input" name="a_name" maxlength="40"></label><label class="field"><span>A ${t('res_video')}</span><input class="input" name="a_url" type="url" placeholder="https://youtu.be/..."><small class="note">${t('bt_or_mp4')}</small><input class="input" name="a_file" type="file" accept="video/mp4"></label>
@@ -342,7 +342,7 @@ window.Emotes = (() => {
           const urls = [];
           for (let i = 0; i < 2; i++) { if (files[i]) { btn.textContent = t('bt_uploading', { n: i + 1 }); urls[i] = await Backend.uploadVideo(files[i]); } }
           await Backend.addBattle({ title: v('title'), a_name: v('a_name'), a_url: urls[0] || v('a_url') || null, b_name: v('b_name'), b_url: urls[1] || v('b_url') || null, pinned_q: v('pinned_q') || null, ends_at: new Date(Date.now() + (+v('days') || 7) * 864e5).toISOString() });
-          await load(); draw(); toast(t('adm_done'), '⚔');
+          await load(); draw(); toast(t('adm_done'), '🆚');
         } catch (x) { toast(x.message, '✕'); btn.disabled = false; btn.textContent = t('bt_create'); }
       };
     };
