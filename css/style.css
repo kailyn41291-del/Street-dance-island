@@ -2409,3 +2409,23 @@ html[data-theme="night"] .ft { background: #3a2440; }
   .cd-ticker { top: calc(var(--hud-b, 56px) + 8px); }
   .qbox, .hub-phone { top: calc(var(--hud-b, 56px) + 44px); }
 }
+
+/* 即時在線人數＋列表 */
+.hud-online { gap: 6px; }
+.on-dot { width: 10px; height: 10px; border-radius: 50%; background: #3ccf6e; box-shadow: 0 0 0 2px var(--ink); animation: onPulse 2s ease-in-out infinite; flex: none; }
+@keyframes onPulse { 50% { box-shadow: 0 0 0 2px var(--ink), 0 0 0 5px rgba(60,207,110,.35); } }
+.on-sum { margin: 0 0 8px; }
+.on-cc { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.on-cc .tag b { margin-left: 4px; }
+.on-list { list-style: none; margin: 0; padding: 0; max-height: 60vh; overflow: auto; }
+.on-row { display: flex; align-items: center; gap: 10px; padding: 6px 4px; border-bottom: 1px dashed rgba(0,0,0,.15); cursor: pointer; }
+.on-row:hover { background: rgba(255,255,255,.5); }
+.on-ic { width: 32px; height: 32px; flex: none; display: grid; place-items: center; }
+.on-ic canvas, .on-ic img { width: 32px; height: 32px; image-rendering: pixelated; }
+.on-nm { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.on-nm small { opacity: .7; font-size: 11px; }
+.on-c { white-space: nowrap; font-size: 13px; }
+/* 手機 / 平板也要看得到「在線 N」（數字一直顯示） */
+#hud .hud-btns > .hud-online { display: inline-flex !important; }
+#hud .hud-online .label { display: inline !important; }
+@media (max-width: 1024px), (pointer: coarse) and (max-width: 1400px) { #hud .hud-online { padding: 0 8px; gap: 5px; font-size: 12px; } }
