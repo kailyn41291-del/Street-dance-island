@@ -13,7 +13,7 @@ window.Hub = (() => {
       hub_menu: '功能選單', hub_title: '📱 功能選單', hub_sec_ev: '找活動', hub_sec_me: '我的冒險', hub_sec_so: '交朋友', hub_sec_play: '玩一下', hub_sec_etc: '其他',
       hub_events: '活動總覽', hub_near: '附近活動', hub_add: '投稿活動', hub_me: '我的頁面', hub_me_d: '護照・簽到・收藏', hub_char: '編輯角色', hub_card: '我的名片',
       hub_friends: '好友', hub_find: '找好友', hub_chat: '聊天室', hub_forum: '舞者論壇', hub_battle: '人氣 Battle', hub_cypher: 'Cypher 舞池', hub_rhythm: '節奏挑戰',
-      hub_games: '小遊戲', hub_walk: '地圖散步', hub_quests: '每日任務', hub_tut: '新手教學', hub_lang: '切換語言', hub_admin: '管理後台',
+      snd_now_on: '音效已開啟 ♪', snd_now_off: '音效已關閉', hub_games: '小遊戲', hub_walk: '地圖散步', hub_quests: '每日任務', hub_tut: '新手教學', hub_lang: '切換語言', hub_admin: '管理後台',
       hub_warn: [
         { who: 'kailyn', mood: 'surprised', text: '誒誒誒？！你確定要直接打開功能總表嗎？' },
         { who: 'choco', mood: 'think', text: '建議你先慢慢探索這座島，最後再來翻這本攻略本喔。' },
@@ -35,7 +35,7 @@ window.Hub = (() => {
       hub_menu: 'Menu', hub_title: '📱 Menu', hub_sec_ev: 'Events', hub_sec_me: 'My adventure', hub_sec_so: 'Social', hub_sec_play: 'Play', hub_sec_etc: 'More',
       hub_events: 'All events', hub_near: 'Nearby', hub_add: 'Submit event', hub_me: 'My page', hub_me_d: 'Passport · check-in · saved', hub_char: 'Edit character', hub_card: 'My card',
       hub_friends: 'Friends', hub_find: 'Find friends', hub_chat: 'Chat', hub_forum: 'Forum', hub_battle: 'Battle vote', hub_cypher: 'Cypher floor', hub_rhythm: 'Rhythm',
-      hub_games: 'Mini games', hub_walk: 'Map walk', hub_quests: 'Daily quests', hub_tut: 'Tutorial', hub_lang: 'Language', hub_admin: 'Admin',
+      snd_now_on: 'Sound on ♪', snd_now_off: 'Sound off', hub_games: 'Mini games', hub_walk: 'Map walk', hub_quests: 'Daily quests', hub_tut: 'Tutorial', hub_lang: 'Language', hub_admin: 'Admin',
       hub_warn: [
         { who: 'kailyn', mood: 'surprised', text: 'Whoa whoa whoa?! You want to open the full menu right away?' },
         { who: 'choco', mood: 'think', text: 'Maybe explore the island first, and save this strategy guide for last.' },
@@ -57,7 +57,7 @@ window.Hub = (() => {
       hub_menu: 'メニュー', hub_title: '📱 メニュー', hub_sec_ev: 'イベント', hub_sec_me: 'わたしの冒険', hub_sec_so: 'ソーシャル', hub_sec_play: 'あそぶ', hub_sec_etc: 'その他',
       hub_events: 'イベント一覧', hub_near: '近くのイベント', hub_add: 'イベント投稿', hub_me: 'マイページ', hub_me_d: 'パスポート・チェックイン・お気に入り', hub_char: 'キャラ編集', hub_card: '自分の名刺',
       hub_friends: 'フレンド', hub_find: 'フレンド検索', hub_chat: 'チャット', hub_forum: '掲示板', hub_battle: '人気バトル', hub_cypher: 'サイファー', hub_rhythm: 'リズム',
-      hub_games: 'ミニゲーム', hub_walk: 'マップ散歩', hub_quests: 'デイリークエスト', hub_tut: 'チュートリアル', hub_lang: '言語', hub_admin: '管理画面',
+      snd_now_on: 'サウンド ON ♪', snd_now_off: 'サウンド OFF', hub_games: 'ミニゲーム', hub_walk: 'マップ散歩', hub_quests: 'デイリークエスト', hub_tut: 'チュートリアル', hub_lang: '言語', hub_admin: '管理画面',
       hub_warn: [
         { who: 'kailyn', mood: 'surprised', text: 'えええっ？！いきなり機能一覧を開いちゃうの？' },
         { who: 'choco', mood: 'think', text: 'まずは島をゆっくり探検して、この攻略本は最後に読むのがおすすめだよ。' },
@@ -79,7 +79,7 @@ window.Hub = (() => {
       hub_menu: '메뉴', hub_title: '📱 메뉴', hub_sec_ev: '이벤트', hub_sec_me: '나의 모험', hub_sec_so: '소셜', hub_sec_play: '놀기', hub_sec_etc: '기타',
       hub_events: '이벤트 전체', hub_near: '내 주변', hub_add: '이벤트 제보', hub_me: '마이 페이지', hub_me_d: '여권·출석·즐겨찾기', hub_char: '캐릭터 편집', hub_card: '내 명함',
       hub_friends: '친구', hub_find: '친구 찾기', hub_chat: '채팅', hub_forum: '게시판', hub_battle: '인기 배틀', hub_cypher: '사이퍼', hub_rhythm: '리듬',
-      hub_games: '미니게임', hub_walk: '지도 산책', hub_quests: '일일 퀘스트', hub_tut: '튜토리얼', hub_lang: '언어', hub_admin: '관리자',
+      snd_now_on: '효과음 켜짐 ♪', snd_now_off: '효과음 꺼짐', hub_games: '미니게임', hub_walk: '지도 산책', hub_quests: '일일 퀘스트', hub_tut: '튜토리얼', hub_lang: '언어', hub_admin: '관리자',
       hub_warn: [
         { who: 'kailyn', mood: 'surprised', text: '어어어?! 바로 기능 전체 목록을 열겠다고?' },
         { who: 'choco', mood: 'think', text: '먼저 섬을 천천히 탐험하고, 이 공략집은 마지막에 보는 걸 추천해.' },
@@ -270,7 +270,7 @@ window.Hub = (() => {
       ['hub_sec_me', [['🛂', 'hub_me', () => (logged() ? A.nav('#/me') : Player.prompt())], ['🧢', 'hub_char', () => Player.openMenu()], ['🪪', 'hub_card', () => Friends.openCardEditor()], ['📜', 'hub_quests', () => { box && box.classList.add('open'); }]]],
       ['hub_sec_so', [['👥', 'hub_friends', () => Friends.openPanel()], ['🔍', 'hub_find', () => Friends.openPanel('find')], ['💬', 'hub_chat', () => Chat.toggle(true)], ['🗂', 'hub_forum', nav('#/forum')], ['👯', 'hub_crew', nav('#/crew')]]],
       ['hub_sec_play', [['⚔', 'hub_battle', nav('#/battle')], ['🕺', 'hub_cypher', nav('#/cypher')], ['🎵', 'hub_rhythm', () => Games.open('rhythm')], ['🃏', 'hub_games', () => Games.open()], ['🚶', 'hub_walk', () => { A.nav('#/'); setTimeout(() => A.startWalk && A.startWalk(), 900); }]]],
-      ['hub_sec_etc', [['📢', 'hub_notice', () => Notices.open()], ['❓', 'hub_tut', () => Tutorial.run()], ['🌐', 'hub_lang', click('.hud-lang')], ['🔊', 'hub_sound', click('.hud-sound')]].concat(Backend.isAdmin ? [['🛠', 'hub_admin', click('.hud-admin')]] : [])]
+      ['hub_sec_etc', [['📢', 'hub_notice', () => Notices.open()], ['❓', 'hub_tut', () => Tutorial.run()], ['🌐', 'hub_lang', click('.hud-lang')], ['🔊', 'hub_sound', () => { click('.hud-sound')(); UI.toast(t(SFX.on ? 'snd_now_on' : 'snd_now_off'), PXI.img(SFX.on ? 'menu/sound_on' : 'menu/sound_off', SFX.on ? '🔊' : '🔇')); }]].concat(Backend.isAdmin ? [['🛠', 'hub_admin', click('.hud-admin')]] : [])]
     ];
     const items = [];
     const body = h(`<div class="phone-ui"><div class="ph-bar"><span>DANCE ISLAND</span><span class="ph-clock"></span></div>
@@ -313,12 +313,15 @@ window.Hub = (() => {
     el.onclick = e => {
       const b = e.target.closest('[data-k]'); if (!b) return; SFX.play('select');
       const k = b.dataset.k;
+      if (k !== 'chat' && document.getElementById('chat')?.classList.contains('open')) Chat.toggle(false);   // 點其他按鈕就收起聊天室
       if (k === 'map') A.nav('#/'); else if (k === 'events') A.nav('#/events'); else if (k === 'menu') openMenu();
       else if (k === 'chat') Chat.toggle(!document.getElementById('chat')?.classList.contains('open'));
       else if (k === 'me') (logged() ? A.nav('#/me') : Player.prompt());
     };
     document.body.appendChild(el); draw();
     window.addEventListener('hashchange', draw);
+    // 手機 / 平板：換頁時收起聊天室（不然會一直蓋在畫面上）
+    window.addEventListener('hashchange', () => { if (!desktopHud() && document.getElementById('chat')?.classList.contains('open')) Chat.toggle(false); });
     if (I18N.onChange) I18N.onChange(draw);
     // 手機上任務框預設收起來
     if (matchMedia('(max-width: 1024px), (pointer: coarse) and (max-width: 1400px)').matches) { try { if (localStorage.getItem(OPEN) === null) localStorage.setItem(OPEN, '0'); } catch (x) {} }

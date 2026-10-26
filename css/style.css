@@ -1805,3 +1805,17 @@ img.pxi { width: 1.5em; height: 1.5em; object-fit: contain; vertical-align: midd
 .toast .ic img.pxi { width: 22px; height: 22px; }
 .crumbs img.pxi { width: 20px; height: 20px; margin: -4px 0; }
 .hud-sound img.pxi { width: 26px; height: 26px; }
+
+/* 語言選單：上方按鈕藏起來時（手機 / 平板）改在畫面中間 */
+.lang-pop.center { left: 0; right: 0; top: 28vh; margin: 0 auto; width: max-content; min-width: 200px; z-index: 95; box-shadow: 0 0 0 200vmax rgba(30, 20, 40, .35), var(--shadow); }
+.lang-pop.center button { padding: 12px 24px; font-size: 17px; text-align: center; }
+/* 新手教學：窄螢幕按鈕不要超出畫面 */
+@media (max-width: 600px) {
+  .tut-box { gap: 8px; padding: 10px; bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .tut .face { width: 58px; height: 58px; }
+  .tut .txt { font-size: 14px; }
+  .tut-foot { flex-wrap: wrap; gap: 6px; }
+  .tut-foot .dots { flex-basis: 100%; }
+  .tut-foot .grow { display: none; }
+  .tut-foot .btn { flex: 1; }
+}

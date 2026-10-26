@@ -1009,7 +1009,8 @@
   function openLang(btn) {
     document.querySelector('.lang-pop')?.remove();
     const r = btn.getBoundingClientRect();
-    const pop = h(`<div class="lang-pop win" style="top:${r.bottom + 8}px;right:${Math.max(8, innerWidth - r.right)}px">
+    const hiddenBtn = !r.width || !r.height;     // 手機 / 平板上方的語言按鈕是藏起來的 → 改在畫面中間跳出
+    const pop = h(`<div class="lang-pop win ${hiddenBtn ? 'center' : ''}" style="${hiddenBtn ? '' : `top:${r.bottom + 8}px;right:${Math.max(8, innerWidth - r.right)}px`}">
       ${I18N.LANGS.map(([k, n]) => `<button data-l="${k}" class="${k === I18N.lang ? 'on' : ''}">${n}</button>`).join('')}</div>`);
     document.body.appendChild(pop);
     SFX.play('open');
