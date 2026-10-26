@@ -327,6 +327,8 @@ window.Backend = (() => {
     /* 經驗值系統（全部在伺服器端計算） */
     async rpc(fn, args) { return must(await sb.rpc(fn, args || {})); },
     async logAct(k, r) { must(await sb.rpc('log_act', { k, r: String(r) })); },
+    async newbieStatus() { return must(await sb.rpc('newbie_status')); },
+    async newbieClaim(s) { return must(await sb.rpc('newbie_claim', { s })); },
     async myQuests() { return must(await sb.rpc('my_quests')); },
     async claimQuest(q) { return must(await sb.rpc('claim_quest', { q })); },
     async myWeekly() { return must(await sb.rpc('my_weekly')); },

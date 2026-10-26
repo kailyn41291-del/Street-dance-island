@@ -173,6 +173,7 @@ window.UI = (() => {
 
   /* 道具獲得提示 */
   function toast(msg, ic = '★') {
+    try { window.__toastHook && window.__toastHook(msg, ic); } catch (e) {}   // 通知中心會存一份
     let wrap = document.getElementById('toasts');
     if (!wrap) { wrap = h('<div id="toasts"></div>'); document.body.appendChild(wrap); }
     const t = h(`<div class="toast"><span class="ic">${window.PXI ? PXI.emo(ic) : ic}</span><span>${esc(msg)}</span></div>`);

@@ -1969,3 +1969,41 @@ html[data-theme="night"] img.pxi, html[data-theme="night"] .pxemo { filter: none
 
 /* ===== 離線提示 ===== */
 .offline-bar { position: fixed; left: 50%; top: 8px; transform: translateX(-50%); z-index: 96; background: var(--yellow); color: #2a1f2e; border: var(--px) solid #2a1f2e; padding: 4px 12px; font-size: 13px; box-shadow: 3px 3px 0 #2a1f2e; }
+
+/* ===== 今天首頁 ===== */
+.td-hi { margin: 0; font-size: 22px; }
+.td-date { margin: 2px 0 10px; color: var(--ink-soft); }
+.td-search { width: 100%; text-align: left; color: var(--ink-soft); cursor: pointer; margin-bottom: 10px; }
+.td-more { display: inline-block; margin-top: 6px; font-size: 13px; }
+.td-fr { display: flex; flex-wrap: wrap; gap: 6px; }
+.sr-row { display: grid; gap: 2px; width: 100%; text-align: left; padding: 8px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); text-decoration: none; margin-bottom: 6px; font: inherit; cursor: pointer; }
+.sr-row:hover { background: var(--cream-2); }
+.sr-row small { color: var(--ink-soft); font-size: 12px; }
+.sr-sec h4 { margin: 12px 0 6px; } .sr-sec h4 small { color: var(--ink-soft); font-weight: normal; }
+.sr-q { width: 100%; }
+.sr-out { margin-top: 8px; max-height: 60vh; overflow-y: auto; }
+/* 新手任務 */
+.nb-box { border: 2px dashed var(--green); padding: 6px 8px; margin-bottom: 8px; background: rgba(127, 207, 115, .12); }
+.nb-h { font-size: 13px; margin-bottom: 4px; } .nb-h b { float: right; }
+.nb-box ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.nb-box li { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.nb-box li.ok { opacity: .55; text-decoration: line-through; }
+.nb-box .qb-l { flex: 1; }
+/* 通知 */
+.bell-badge { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--red); color: #fff; font-size: 11px; line-height: 18px; text-align: center; border: 2px solid var(--ink); font-family: var(--font-en); }
+.bell-badge[hidden] { display: none; }
+.hud-bell, .mn-b, .td-bell { position: relative; }
+.td-badge { position: static; display: inline-block; margin-left: 4px; }
+.nt-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; max-height: 60vh; overflow-y: auto; }
+.nt-list li { display: flex; gap: 8px; align-items: center; padding: 8px; border: 2px solid var(--ink); background: var(--paper); cursor: pointer; }
+.nt-list li.new { background: var(--cream-2); font-weight: bold; }
+.nt-list li .tx { flex: 1; min-width: 0; }
+.nt-list li .tm { font-size: 11px; color: var(--ink-soft); }
+.nt-list li .ic img.pxi { width: 22px; height: 22px; }
+/* 手機上方：搜尋 / 通知按鈕放在「今天」頁就好 */
+@media (max-width: 1024px), (pointer: coarse) and (max-width: 1400px) { .hud-search, .hud-bell { display: none !important; } }
+.mn-b .bell-badge { top: 2px; right: auto; left: calc(50% + 8px); }
+/* 活動卡片：長的團名、標籤可以換行，不要把卡片撐寬（手機會左右晃） */
+.info dd.lineup .lu { white-space: normal; overflow-wrap: anywhere; }
+.card .main, .card .info dd, .card .tags, .card h3 { min-width: 0; overflow-wrap: anywhere; }
+.card .tags { flex-wrap: wrap; }

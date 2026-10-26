@@ -237,6 +237,7 @@ window.Hub = (() => {
     }
     const n = state.ids.filter(done).length, all = n === state.ids.length;
     box.classList.toggle('all', all);
+    queueMicrotask(() => window.Newbie && Newbie.inject(box.querySelector('.qb-body')));
     box.querySelector('.qb-t').textContent = '📜 ' + t('q_title');
     box.querySelector('.qb-n').textContent = `${n}/${state.ids.length}`;
     box.querySelector('.qb-body').innerHTML = `${state.server ? `<div class="qb-streak">🔥 ${t('q_streak', { n: state.streak || 0 })}${state.mult > 1 ? ` <b>×${state.mult}</b>` : ''}</div>` : ''}<ul>${state.ids.map(id => { const q = POOL.find(x => x.id === id), p = state.prog[id] || 0, d = p >= q.n;
@@ -266,7 +267,7 @@ window.Hub = (() => {
   const click = sel => () => { const b = document.querySelector(sel); b && b.click(); };
   function showMenu() {
     const S = [
-      ['hub_sec_ev', [['📋', 'hub_events', nav('#/events')], ['📍', 'hub_near', nav('#/events/near')], ['➕', 'hub_add', click('.hud-add')], ['🏫', 'hub_studio', nav('#/studios')]]],
+      ['hub_sec_ev', [['🏠', 'hub_today', nav('#/today')], ['🔍', 'hub_search', () => Search.open()], ['🔔', 'hub_bell', () => Notify.open()], ['📋', 'hub_events', nav('#/events')], ['📍', 'hub_near', nav('#/events/near')], ['➕', 'hub_add', click('.hud-add')], ['🏫', 'hub_studio', nav('#/studios')]]],
       ['hub_sec_me', [['🛂', 'hub_me', () => (logged() ? A.nav('#/me') : Player.prompt())], ['🧢', 'hub_char', () => Player.openMenu()], ['🪪', 'hub_card', () => Friends.openCardEditor()], ['📜', 'hub_quests', () => { box && box.classList.add('open'); }], ['🍀', 'hub_luck', () => (logged() ? Daily.openLuck() : Player.prompt())]]],
       ['hub_sec_so', [['👥', 'hub_friends', () => Friends.openPanel()], ['🔍', 'hub_find', () => Friends.openPanel('find')], ['💬', 'hub_chat', () => Chat.toggle(true)], ['🗂', 'hub_forum', nav('#/forum')], ['👯', 'hub_crew', nav('#/crew')], ['🚩', 'hub_party', nav('#/party')]]],
       ['hub_sec_play', [['🚩', 'hub_battle', nav('#/battle')], ['🕺', 'hub_cypher', nav('#/cypher')], ['🎵', 'hub_rhythm', () => Games.open('rhythm')], ['🃏', 'hub_games', () => Games.open()], ['🚶', 'hub_walk', () => { A.nav('#/'); setTimeout(() => A.startWalk && A.startWalk(), 900); }]]],
@@ -307,14 +308,15 @@ window.Hub = (() => {
     const el = h(`<nav class="mnav" aria-label="menu"></nav>`);
     const draw = () => {
       const r = location.hash.replace(/^#\/?/, '').split('/')[0] || '';
-      const items = [['map', PXI.img('menu/world', '🌏'), t('nav_map'), r === '' || r === 'c'], ['events', PXI.img('menu/events', '📋'), t('nav_events'), r === 'events' || r === 'e'], ['menu', '📱', t('hub_menu'), false], ['chat', PXI.img('menu/chat', '💬'), t('nav_chat'), false], ['me', PXI.img('menu/me', '🧑'), t('nav_me'), r === 'me']];
-      el.innerHTML = items.map(([k, ic, lb, on]) => `<button class="mn-b ${on ? 'on' : ''}" data-k="${k}"><span class="mn-i">${k === 'menu' ? '<img src="assets/menu_phone.webp?v=1" alt="">' : ic}</span><span class="mn-l">${esc(lb)}</span>${k === 'menu' ? '<i class="mn-dot"></i>' : ''}</button>`).join('');
+      const items = [['today', PXI.img('menu/today', '🏠'), t('nav_today'), r === 'today'], ['map', PXI.img('menu/world', '🌏'), t('nav_map'), r === '' || r === 'c'], ['events', PXI.img('menu/events', '📋'), t('nav_events'), r === 'events' || r === 'e'], ['menu', '📱', t('hub_menu'), false], ['chat', PXI.img('menu/chat', '💬'), t('nav_chat'), false], ['me', PXI.img('menu/me', '🧑'), t('nav_me'), r === 'me']];
+      el.innerHTML = items.map(([k, ic, lb, on]) => `<button class="mn-b ${on ? 'on' : ''}" data-k="${k}"><span class="mn-i">${k === 'menu' ? '<img src="assets/menu_phone.webp?v=1" alt="">' : ic}</span><span class="mn-l">${esc(lb)}</span>${k === 'menu' ? '<i class="mn-dot"></i>' : ''}${k === 'today' ? '<span class="bell-badge" hidden></span>' : ''}</button>`).join('');
+      window.Notify && setTimeout(() => window.Notify.unread && document.querySelectorAll('.bell-badge').forEach(b => { const n = Notify.unread(); b.textContent = n > 9 ? '9+' : n; b.hidden = !n; }), 0);
     };
     el.onclick = e => {
       const b = e.target.closest('[data-k]'); if (!b) return; SFX.play('select');
       const k = b.dataset.k;
       if (k !== 'chat' && document.getElementById('chat')?.classList.contains('open')) Chat.toggle(false);   // 點其他按鈕就收起聊天室
-      if (k === 'map') A.nav('#/'); else if (k === 'events') A.nav('#/events'); else if (k === 'menu') openMenu();
+      if (k === 'today') A.nav('#/today'); else if (k === 'map') A.nav('#/'); else if (k === 'events') A.nav('#/events'); else if (k === 'menu') openMenu();
       else if (k === 'chat') Chat.toggle(!document.getElementById('chat')?.classList.contains('open'));
       else if (k === 'me') (logged() ? A.nav('#/me') : Player.prompt());
     };

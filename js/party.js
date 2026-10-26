@@ -279,6 +279,7 @@ window.Party = (() => {
   function pushOne(x) {
     if (pushing) return; pushing = true; markSeen(x.id);
     const city = x.city ? nm(A.cityOf(x.country, x.city)) : nm(A.byCode[x.country]);
+    window.Notify && Notify.add({ key: 'party:' + x.id, ic: '🚩', text: `「${x.name}」${whenStr(x.meet_at)}・${x.place || city}`, href: '#/party/' + x.id });
     const text = t('pt_push', { city, n: x.name, w: whenStr(x.meet_at), p: x.place || city });
     npc.ask([{ who: 'choco', mood: 'cool', text }], [{ label: t('pt_push_yes'), value: 'yes' }, { label: t('pt_push_no'), value: 'no' }]).then(v => {
       pushing = false; if (v === 'yes') A.nav('#/party/' + x.id);
@@ -309,5 +310,7 @@ window.Party = (() => {
 
   /** 聊天訊息裡的 #/party/123 換成按鈕 */
   const linkify = html => String(html).replace(/#\/party\/(\d+)/g, (m, id) => `<a class="party-link" href="#/party/${id}">${esc(t('pt_view'))}</a>`);
-  return { linkify, open: () => A.nav('#/party') };
+  /** 附近招募中的公開隊伍（今天首頁用） */
+  const nearby = async () => { if (!Backend.enabled) return []; await load(); return parties.filter(x => x.public && stateOf(x) === 'open' && isNear(x) && !mine.has(x.id)); };
+  return { linkify, open: () => A.nav('#/party'), nearby, whenStr };
 })();
