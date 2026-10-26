@@ -2211,3 +2211,41 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .dg-ath .dg-frame img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 0; filter: none; }
 .dg-ath .dg-cap { margin-top: -12px; z-index: 1; }
 .dg-ath:hover .dg-frame { outline-color: #fff3c4; }
+
+/* ===== 副本島：用插畫的島 ===== */
+.dg-portal { width: 320px; }
+.dg-p-art { width: 320px; height: auto; display: block; filter: drop-shadow(0 8px 0 rgba(42, 31, 46, .25)); pointer-events: none; }
+.dg-portal.open .dg-p-art { animation: dgFloat 3s ease-in-out infinite; }
+@keyframes dgFloat { 50% { transform: translateY(-6px); } }
+.dg-portal:hover .dg-p-art { filter: drop-shadow(0 8px 0 rgba(42, 31, 46, .25)) brightness(1.08); }
+.dg-portal.locked .dg-p-art { filter: grayscale(.55) brightness(1.02); }
+.dg-p-fog { inset: 8% 6% 14%; border-radius: 45%; background: rgba(226, 232, 245, .35); }
+.dg-p-lock { bottom: 10%; font-size: 14px; }
+/* 群島裡每座小島 */
+.dg-ground { width: 100%; max-width: 300px; height: auto; image-rendering: auto; display: block; }
+.final .dg-ground { max-width: 460px; }
+.dg-stand { margin-bottom: -26%; }
+.final .dg-stand { margin-bottom: -30%; }
+.dg-isle { padding-bottom: 6px; }
+@media (max-width: 1180px) { .dg-stand { margin-bottom: -22%; } .final .dg-stand { margin-bottom: -26%; } }
+/* 島是背景，兩位選手站在左右兩邊，中間露出島上的 BC One 招牌 */
+.dg-sea .dg-isle { display: block; position: relative; width: 100%; max-width: 400px; justify-self: center; padding: 0; }
+.dg-sea .dg-isle.final { max-width: 640px; }
+.dg-isle-name { display: table; margin: 0 auto 6px; position: relative; z-index: 3; }
+.dg-sea .dg-ground { width: 100%; max-width: none; position: relative; z-index: 1; }
+.dg-sea .dg-stand { position: absolute; left: 0; right: 0; top: 40px; z-index: 2; display: flex; justify-content: space-between; align-items: flex-start; margin: 0; max-width: none; padding: 0 1%; gap: 0; }
+.dg-sea .dg-ath { width: 30%; }
+.dg-sea .final .dg-ath { width: 31%; }
+.dg-sea .dg-frame, .dg-sea .dg-ath.champ .dg-frame { max-width: none; }
+.dg-sea .dg-cap, .dg-sea .dg-cap.champ { max-width: none; width: 104%; }
+.dg-sea .dg-trophy { position: absolute; left: 50%; bottom: -46%; transform: translateX(-50%); font-size: 30px; z-index: 3; }
+.dg-sea .dg-cap, .dg-sea .dg-cap.champ { width: 100%; }
+/* 手機：一排一座島；選手在上面、島在下面（不要疊在島上，會擠） */
+@media (max-width: 700px) {
+  .dg-sea { grid-template-columns: minmax(0, 1fr); grid-template-areas: "F" "r1" "r2" "r3" "r4" "r5" "r6"; gap: 26px; }
+  .dg-sea .dg-isle, .dg-sea .dg-isle.final { max-width: 360px; }
+  .dg-sea .dg-stand { position: relative; top: 0; padding: 0 4%; }
+  .dg-sea .dg-ath, .dg-sea .final .dg-ath { width: 42%; }
+  .dg-sea .dg-ground { margin-top: -22%; }
+  .dg-sea .dg-trophy { bottom: auto; top: 30%; }
+}

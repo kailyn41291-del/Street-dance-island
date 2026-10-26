@@ -88,12 +88,8 @@ window.Dungeon = (() => {
       const [x, y] = L.toWorld(d.lon, d.lat);
       const yrs = Object.keys(d.editions).sort(), ed = d.editions[yrs[yrs.length - 1]], yr = yrs[yrs.length - 1];
       const el = h(`<div class="dg-portal ${isOpen(id) ? 'open' : 'locked'}" data-dungeon="${esc(id)}" style="left:${x}px;top:${y}px;--dc:${d.color};--dg:${d.gold}">
-        <div class="dg-p-sign"><b>${esc(d.name)}</b></div>
-        <div class="dg-p-stage"><canvas class="dg-p-ground"></canvas>
-          <div class="dg-p-champs">${ed && ed.final ? ['bboy', 'bgirl'].map(k => `<img src="${img(id, yr, ed.final[k].img)}" alt="" draggable="false">`).join('') : ''}</div>
-          <div class="dg-p-fog"></div></div>
+        <div class="dg-p-stage"><img class="dg-p-art" src="assets/dungeons/${esc(id)}/portal.webp" alt="${esc(d.name)}" draggable="false"><div class="dg-p-fog"></div></div>
         <div class="dg-p-lock">🔒 ${esc(t('dg_soon'))}</div></div>`);
-      drawGround(el.querySelector('.dg-p-ground'), 5, true);
       world.appendChild(el);
     });
     load().then(() => world.querySelectorAll('.dg-portal').forEach(el => { const o = isOpen(el.dataset.dungeon); el.classList.toggle('open', o); el.classList.toggle('locked', !o); }));
@@ -132,7 +128,7 @@ window.Dungeon = (() => {
         <em class="dg-cn" title="📣">${t('dg_cheer_n', { n: cn[a.name.toLowerCase()] || 0 })}</em></div>`; };
     const athlete = (a, div, region, champ) => `<button class="dg-ath ${champ ? 'champ' : ''}" data-n="${esc(a.name)}" data-div="${div}" data-region="${esc(region || '')}"><span class="dg-frame"><img src="${img(id, year, a.img + '-bust')}" alt="${esc(a.name)}" loading="lazy" draggable="false"></span>${capCard(a, champ)}</button>`;
     const isle = (r2, cls) => `<section class="dg-isle ${cls || ''}" data-region="${esc(r2.id)}"><div class="dg-isle-name">${esc(regionName(r2))}</div>
-        <div class="dg-stand">${athlete(r2.bboy, 'bboy', r2.id)}${athlete(r2.bgirl, 'bgirl', r2.id)}</div><canvas class="dg-ground"></canvas></section>`;
+        <div class="dg-stand">${athlete(r2.bboy, 'bboy', r2.id)}${athlete(r2.bgirl, 'bgirl', r2.id)}</div><img class="dg-ground" src="assets/dungeons/${id}/island.webp" alt="" draggable="false"></section>`;
     inner.innerHTML = `${!isOpen(id) ? `<p class="dg-preview">${t('dg_preview')}</p>` : ''}
       <div class="win dg-head">${UI.winHTML('🏝 ' + esc(d.name) + ' ' + t('dg_islands'), 'red', false)}<div class="win-body">
         <div class="btn-row"><label class="dg-ysel">${t('dg_year')} <select class="input sm">${years.map(y => `<option ${y === year ? 'selected' : ''}>${y}</option>`).join('')}</select></label>
@@ -142,11 +138,10 @@ window.Dungeon = (() => {
         ${c.live_note ? `<p class="note">${esc(c.live_note)}</p>` : ''}</div></div>
       <div class="dg-sea">
         <section class="dg-isle final"><div class="dg-isle-name">🏆 ${t('dg_final')} ${esc(year)}</div>
-          <div class="dg-stand">${athlete(ed.final.bboy, 'bboy', 'final', true)}<button class="dg-trophy" aria-label="trophy">🏆</button>${athlete(ed.final.bgirl, 'bgirl', 'final', true)}</div><canvas class="dg-ground"></canvas></section>
+          <div class="dg-stand">${athlete(ed.final.bboy, 'bboy', 'final', true)}<button class="dg-trophy" aria-label="trophy">🏆</button>${athlete(ed.final.bgirl, 'bgirl', 'final', true)}</div><img class="dg-ground" src="assets/dungeons/${id}/island.webp" alt="" draggable="false"></section>
         ${ed.regions.map(r2 => isle(r2)).join('')}
       </div>`;
     // 每座島的像素地面
-    inner.querySelectorAll('.dg-ground').forEach((cv, i) => drawGround(cv, i, cv.closest('.final')));
     inner.querySelector('.dg-ysel select').onchange = ev => A.nav(`#/d/${id}/${ev.target.value}`);
     const pb = inner.querySelector('.dg-pred'); if (pb) pb.onclick = () => openPredict(id, +year, ed, c);
     // 第一次進來：嚮導介紹
