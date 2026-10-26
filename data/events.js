@@ -38,5 +38,41 @@ window.DANCE_EVENTS = [
     "note": "09:30 開放入場，10:30 開幕儀式。\n決賽：Breaking（10 vs 10 Crew、2 vs 2 B-Girl、2 vs 2 Kids、2 vs 2 Masters）、Street Styles（1 vs 1 Hip Hop、Popping、Locking、Waacking）。\n報名：早鳥至 2026/09/30 23:59（JST），一般預售 2026/10/01 00:00（JST）起。",
     "link": "https://www.city.chiba.jp/shimin/seikatsubunka/sports/chiba_urban_sports_session.html",
     "poster": "posters/fss-2026-world-finals-japan.webp"
+  },
+  {
+    "id": "funkdation-vol4-2026",
+    "name": "Funkdation 肆屆《全台最大鎖舞盛會》",
+    "organizer": "IP LOCKERS TRAINING SKOOL",
+    "country": "TW",
+    "city": "taipei",
+    "venue": "大稻埕戲苑",
+    "address": "臺北市大同區永樂里迪化街一段21號（永樂市場9樓）",
+    "styles": [
+      "Locking"
+    ],
+    "date": "2026-11-08",
+    "startTime": "17:00",
+    "regType": "closed",
+    "fee": "身障票 $600｜預售學生票 $800｜預售票 $1000｜現場票 $1200｜三人套票 $2700（限量 20 組）",
+    "teams": [
+      "IP LOCKERS",
+      "FREEDOM SOUL",
+      "FRESUKI",
+      "LONELY LOCKERS+",
+      "GAYのFUNK",
+      "FLOCHEE",
+      "DA PHANTOM（種子・台北）",
+      "CU LOCKERS（種子・基隆）",
+      "LOCK’N’LOL CREW（種子・首爾）"
+    ],
+    "judges": [
+      "CHRISSY（台灣）",
+      "YIN（台灣）",
+      "LIL’ ELMO（台灣）",
+      "KABU（台灣）",
+      "REBEL（韓國）"
+    ],
+    "note": "16:30 入場，17:00 開始。LOCKING CREW BY CREW BATTLE SHOW。\nDJ：DJ MIT｜MC：屁王 P-WANG｜攝影：白爛 ELSEWHITE\n贊助：SPLUS 巔峰舞者、ELSEWHITE、過癮",
+    "poster": "posters/funkdation-vol4-2026.webp"
   }
 ];
