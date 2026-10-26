@@ -162,15 +162,15 @@ window.XP = (() => {
     const w = mine.weekly, p = mine.pvp, tr = tierOf(p ? p.points : 0);
     const people = mine.topPeople || {};
     return `<div class="win xp-win">${UI.winHTML('✨ ' + t('xp_title'), 'yellow', false)}<div class="win-body xp-grid">
-      <section class="xp-card"><div class="xp-big">${t('xp_streak', { n: s })}</div><div>${m > 1 ? `<span class="tag pin">${t('xp_mult', { m })}</span>` : ''} ${nx ? `<small class="note">${t('xp_next', { d: nx[0] - s, m: nx[1] })}</small>` : ''}</div>
+      <section class="xp-card"><div class="xp-big">${PXI.img('xp/streak', '🔥')} ${esc(t('xp_streak', { n: s }).replace(/^🔥\s*/, ''))}</div><div>${m > 1 ? `<span class="tag pin">${t('xp_mult', { m })}</span>` : ''} ${nx ? `<small class="note">${t('xp_next', { d: nx[0] - s, m: nx[1] })}</small>` : ''}</div>
         <div class="xp-days">${Array.from({ length: 30 }, (_, i) => `<i class="${i < s ? 'on' : ''} ${[2, 6, 13, 29].includes(i) ? 'mk' : ''}"></i>`).join('')}</div><small class="note">${t('xp_islander')}</small></section>
-      <section class="xp-card"><h4>🗓 ${t('wk_title')}</h4>${w ? `<p>${esc(t('wk_' + w.id))} <b>(${w.prog}/${w.n})</b></p><div class="xpbar"><i style="width:${Math.round((w.prog / w.n) * 100)}%"></i></div>
+      <section class="xp-card"><h4>${PXI.img('xp/weekly', '🗓')} ${t('wk_title')}</h4>${w ? `<p>${esc(t('wk_' + w.id))} <b>(${w.prog}/${w.n})</b></p><div class="xpbar"><i style="width:${Math.round((w.prog / w.n) * 100)}%"></i></div>
         ${w.claimed ? `<p class="note">${t('wk_claimed')}</p>` : `<button class="btn sm ${w.prog >= w.n ? 'pink' : ''} xp-wk" ${w.prog >= w.n ? '' : 'disabled'}>${t('wk_claim')}</button>`}` : '<p class="note">…</p>'}</section>
       <section class="xp-card"><h4>🆚 ${t('pvp_title')} <small class="note">${t('pvp_season', { s: mine.season || '' })}</small></h4>
-        <div class="xp-tier tier-${tr[1]}">${tr[2]} ${t('pvp_tier_' + tr[1])}</div><p class="note">${t('pvp_pts', { p: p ? p.points : 0, w: p ? p.wins : 0, l: p ? p.losses : 0 })}</p>
-        <details><summary>${t('pvp_board')}</summary><ol class="xp-board">${(mine.top || []).length ? mine.top.map(r => { const pp = people[r.user_id] || {}; const tt = tierOf(r.points); return `<li><span>${tt[2]} ${esc(pp.name || '…')}</span><b>${r.points}</b></li>`; }).join('') : `<li class="note">${t('pvp_none')}</li>`}</ol><p class="note">${t('pvp_rule')}</p></details></section>
+        <div class="xp-tier tier-${tr[1]}">${PXI.img('xp/rank_' + tr[1], tr[2])} ${t('pvp_tier_' + tr[1])}</div><p class="note">${t('pvp_pts', { p: p ? p.points : 0, w: p ? p.wins : 0, l: p ? p.losses : 0 })}</p>
+        <details><summary>${t('pvp_board')}</summary><ol class="xp-board">${(mine.top || []).length ? mine.top.map(r => { const pp = people[r.user_id] || {}; const tt = tierOf(r.points); return `<li><span>${PXI.img('xp/rank_' + tt[1], tt[2])} ${esc(pp.name || '…')}</span><b>${r.points}</b></li>`; }).join('') : `<li class="note">${t('pvp_none')}</li>`}</ol><p class="note">${t('pvp_rule')}</p></details></section>
       <section class="xp-card full"><h4>🏅 ${t('ach_title')} <small class="note">${t('ach_n', { a: mine.ach.size, b: ACH.length })}</small></h4>
-        <div class="ach-grid">${ACH.map(([id, ic, xp]) => `<div class="ach ${mine.ach.has(id) ? 'on' : ''}" title="${esc(achDesc(id))} (+${xp} XP)"><span class="ach-ic">${ic}</span><b>${esc(achName(id))}</b><small>${esc(achDesc(id))}</small><i>+${xp}</i></div>`).join('')}</div></section>
+        <div class="ach-grid">${ACH.map(([id, ic, xp]) => `<div class="ach ${mine.ach.has(id) ? 'on' : ''}" title="${esc(achDesc(id))} (+${xp} XP)"><span class="ach-ic">${PXI.img('ach/' + id, ic)}</span><b>${esc(achName(id))}</b><small>${esc(achDesc(id))}</small><i>+${xp}</i></div>`).join('')}</div></section>
     </div></div>`;
   };
   A.prefetch = A.prefetch || {};

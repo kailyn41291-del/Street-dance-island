@@ -20,7 +20,10 @@ window.PXI = (() => {
     '💌': 'social/dm_new', '✉': 'social/dm', '🤝': 'social/friend_add', '🚫': 'social/block', '⚑': 'social/report_flag', '📌': 'social/pin_post', '🔒': 'social/lock',
     '🔑': 'social/login', '👋': 'social/logout', '📣': 'social/sponsor',
     '🆚': 'game/vs', '⏳': 'game/timer', '🎲': 'game/dice', '🎁': 'game/gift', '💎': 'game/gem', '🎰': 'game/slot', '🥁': 'game/drum', '🎧': 'game/headphones',
-    '🎮': 'game/gamepad', '😵': 'game/lose', '💤': 'game/sleep', '🧊': 'game/freeze', '🌀': 'game/power', '👟': 'game/footwork', '🥇': 'game/trophy'
+    '🎮': 'game/gamepad', '😵': 'game/lose', '💤': 'game/sleep', '🧊': 'game/freeze', '🌀': 'game/power', '👟': 'game/footwork', '🥇': 'game/trophy',
+    '👍': 'social/like', '🙋': 'social/going', '📸': 'social/photo', '🤝': 'social/rate', '🧭': 'event/nav', '🚇': 'event/mrt', '🥚': 'xp/egg', '🌱': 'xp/newbie',
+    '🍀': 'menu/luck', '📰': 'menu/daily', '🎨': 'menu/display', '🔍': 'menu/search', '🔔': 'menu/bell', '🏫': 'menu/studio', '🚩': 'menu/party', '🗺': 'menu/spots',
+    '🛍': 'menu/market', '🥋': 'menu/mentor', '🎬': 'menu/relay', '📊': 'menu/bracket'
   };
   const emo = ic => (EMO[ic] && has(EMO[ic]) ? img(EMO[ic]) : ic);
   /** '🕒 日期時間' → 像素圖示 + '日期時間'（開頭的 emoji 有對應圖示才換；回傳 HTML，文字要先 escape） */
@@ -56,5 +59,7 @@ window.PXI = (() => {
     swapIn(document.body);
   };
   if (document.body) watch(); else document.addEventListener('DOMContentLoaded', watch);
+  // 國家主題的代表圖案（進入各國頁面時顯示）
+  if (window.Themes && Themes.T) Object.entries(Themes.T).forEach(([k, v]) => { if (has('theme/' + k)) v.icon = img('theme/' + k, v.icon); });
   return { has, src, img, emo, lead, swapIn };
 })();

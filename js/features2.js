@@ -30,7 +30,7 @@
   const refreshStats = async () => { try { S.stats = await Backend.stats(); const lv = levelOf(S.stats.xp); if (lv > S.level) { S.level = lv; if (Player.me) Player.me.level = lv; levelUp(lv); } } catch (e) {} };
   function levelUp(lv) {
     SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 30);
-    toast(t('lv_up', { n: lv }), '⬆');
+    toast(t('lv_up', { n: lv }), PXI.img('xp/level_up', '⬆'));
   }
   const needLogin = () => { if (!Backend.enabled) { toast(t('need_cloud'), '☁'); return true; } if (!Player.me) { Player.prompt(); return true; } return false; };
 
@@ -82,7 +82,7 @@
   A.STAMP_COLORS = STAMP_COLORS; A.stampInner = (...x) => stampInner(...x);
   function stampInner(cc, city, date) {
     const th = Themes.of(A.byCode[cc]);
-    return `<span class="st-ico">${th ? th.icon : '🏝'}</span><span class="st-city">${esc(nm(A.cityOf(cc, city)) || city)}</span><span class="st-cc">${esc(cc)}</span><span class="st-date">${esc((date || '').slice(0, 10).replace(/-/g, '.'))}</span>`;
+    return `<span class="st-ico">${th ? th.icon : PXI.img('xp/island', '🏝')}</span><span class="st-city">${esc(nm(A.cityOf(cc, city)) || city)}</span><span class="st-cc">${esc(cc)}</span><span class="st-date">${esc((date || '').slice(0, 10).replace(/-/g, '.'))}</span>`;
   }
 
   /* ---------- 主辦方：拆成多個（「A / B / C」） ---------- */
@@ -175,9 +175,9 @@
         ${pastFav.length ? `<details><summary>${t('ev_w_past')} (${pastFav.length})</summary><div class="cards">${pastFav.map((e, i) => A.cardHTML(e, i, today, Store.canEdit(), { place: true })).join('')}</div></details>` : ''}
       </div></div>
 
-      <div class="win">${UI.winHTML(PXI.img('event/checkin', '🛂') + ' ' + t('me_passport'), 'blue', false)}<div class="win-body">
+      <div class="win">${UI.winHTML(PXI.img('xp/passport', '🛂') + ' ' + t('me_passport'), 'blue', false)}<div class="win-body">
         <div class="btn-row"><button class="btn blue open-pp">📘 ${t('pp_open')}</button></div>
-        <div class="pass-stats"><span>🇹🇼 ${twDone} / ${twAll}</span><span>${PXI.img('menu/world', '🌏')} ${t('me_countries', { n: countries })}</span><span>${PXI.img('event/checkin', '🛂')} ${stamps.length}</span></div>
+        <div class="pass-stats"><span>${PXI.img('xp/taiwan', '🇹🇼')} ${twDone} / ${twAll}</span><span>${PXI.img('menu/world', '🌏')} ${t('me_countries', { n: countries })}</span><span>${PXI.img('event/checkin', '🛂')} ${stamps.length}</span></div>
         <div class="tw-prog"><i style="width:${Math.round((twDone / twAll) * 100)}%"></i></div>
         <div class="passport">${stamps.length ? stamps.map((s, i) => `<div class="stamp" style="--sc:${STAMP_COLORS[i % STAMP_COLORS.length]};--rot:${((i * 37) % 14) - 7}deg">${stampInner(s.country, s.city, s.created_at)}</div>`).join('') : `<p class="note">${t('me_pass_none')}</p>`}</div>
       </div></div>

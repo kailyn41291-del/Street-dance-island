@@ -510,7 +510,7 @@ window.App = {
     const f = festival(d);
     if (f) {
       const l = Themes.fxLayer(f.fx); if (l) { l.classList.add('fixed'); view.appendChild(l); }
-      if (f.msg && !sessionStorage.getItem('fest.' + f.msg)) { try { sessionStorage.setItem('fest.' + f.msg, 1); } catch (x) {} setTimeout(() => toast(t(f.msg), '🎉'), 2500); }
+      if (f.msg && !sessionStorage.getItem('fest.' + f.msg)) { try { sessionStorage.setItem('fest.' + f.msg, 1); } catch (x) {} setTimeout(() => toast(t(f.msg), PXI.img('fest/' + f.msg.replace('fest_', ''), '🎉')), 2500); }
     }
   };
 })();

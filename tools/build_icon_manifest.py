@@ -5,6 +5,8 @@ root = os.path.join(os.path.dirname(__file__), '..')
 base = os.path.join(root, 'assets', 'icons')
 out = {}
 for d, _, files in os.walk(base):
+    if ' ' in os.path.relpath(d, base):   # 上傳用的暫存資料夾（例如「1026 V2」）不算
+        continue
     for f in sorted(files):
         if f.endswith('.png'):
             rel = os.path.relpath(os.path.join(d, f), base).replace(os.sep, '/')[:-4]

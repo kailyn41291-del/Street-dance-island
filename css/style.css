@@ -2266,3 +2266,9 @@ html[data-theme="night"] .ft { background: #3a2440; }
   .dg-sea .final .dg-ath { width: 42% !important; }
   .dg-sea .dg-trophy { font-size: 28px; }
 }
+/* 成就、段位、護照印章的像素圖示 */
+.ach .ach-ic img.pxi { width: 40px; height: 40px; }
+.xp-tier img.pxi, .xp-big img.pxi { width: 30px; height: 30px; vertical-align: -8px; }
+.xp-board img.pxi { width: 20px; height: 20px; }
+.stamp .st-ico img.pxi { width: 28px; height: 28px; } .stamp-fx .stamp.big .st-ico img.pxi { width: 60px; height: 60px; }
+.toast .ic img.pxi { width: 24px; height: 24px; }
