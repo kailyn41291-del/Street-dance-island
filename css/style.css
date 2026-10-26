@@ -2099,3 +2099,19 @@ html[data-theme="night"] .ft { background: #3a2440; }
 .pk-score span { display: grid; justify-items: center; } .pk-score b { font-family: var(--font-en); font-size: 22px; }
 .pk-score i { font-family: var(--font-en); font-style: normal; color: var(--pink); font-size: 20px; }
 .tag.qb-tag { --c: #cfe9ff; }
+
+/* ===== 每週動作接力 ===== */
+.rl-move { display: grid; gap: 6px; justify-items: start; border: 3px dashed var(--pink); padding: 10px 12px; margin-bottom: 8px; }
+.rl-move b { font-size: 26px; font-family: var(--font-en); }
+.rl-move p { margin: 0; }
+.rl-called { background: var(--yellow); color: #2a1f2e; border: 2px solid var(--ink); padding: 6px 10px; }
+.rl-done { color: var(--green); font-weight: bold; }
+.rl-last { display: flex; flex-wrap: wrap; gap: 16px; font-size: 15px; }
+.rl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.rl-item { border: var(--px) solid var(--ink); background: var(--paper); box-shadow: var(--shadow); display: grid; }
+.rl-item video, .rl-item iframe, .rl-yt { width: 100%; aspect-ratio: 9 / 12; background: #000; border: 0; display: block; }
+.rl-yt { position: relative; padding: 0; cursor: pointer; }
+.rl-yt img { width: 100%; height: 100%; object-fit: cover; }
+.rl-yt span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 48px; color: #fff; text-shadow: 0 2px 8px #000; }
+.rl-b { padding: 8px; display: grid; gap: 4px; }
+.rl-b small { color: var(--pink); }

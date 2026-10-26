@@ -327,6 +327,17 @@ window.Backend = (() => {
     /* 經驗值系統（全部在伺服器端計算） */
     async rpc(fn, args) { return must(await sb.rpc(fn, args || {})); },
     async logAct(k, r) { must(await sb.rpc('log_act', { k, r: String(r) })); },
+    /* 每週動作接力 */
+    async moveChallenge(week) { return must(await sb.from('move_challenges').select('*').eq('week', week).maybeSingle()); },
+    async setMoveChallenge(row) { must(await sb.from('move_challenges').upsert(row)); },
+    async moveEntries(week) { return must(await sb.from('move_entries').select('*').eq('week', week).order('created_at')); },
+    async moveVotes(week) { return must(await sb.from('move_votes').select('entry_id,user_id').eq('week', week)); },
+    async moveLast() { return must(await sb.from('move_results').select('*').order('week', { ascending: false }).limit(1).maybeSingle()); },
+    async addMoveEntry(row) { return must(await sb.from('move_entries').insert(row).select().single()); },
+    async moveVote(entry_id) { must(await sb.from('move_votes').insert({ entry_id })); },
+    async deleteMoveEntry(id) { must(await sb.from('move_entries').delete().eq('id', id)); },
+    async hideMoveEntry(id) { must(await sb.from('move_entries').update({ hidden: true }).eq('id', id)); },
+
     /* 第五批：師徒、舞團 PK */
     async myMentorships() { return user ? must(await sb.from('mentorships').select('*').or(`mentor.eq.${user.id},apprentice.eq.${user.id}`).order('created_at', { ascending: false })) : []; },
     async mentorProfile(uid) { return must(await sb.from('mentor_profiles').select('*').eq('user_id', uid).maybeSingle()); },
