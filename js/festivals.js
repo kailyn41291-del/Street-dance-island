@@ -225,7 +225,7 @@ window.Festivals = (() => {
     const used = [];
     const tagPts = L.info.filter(x => x && x.n).map(x => [x.cx, x.cy]);
     // 地圖小物件（V7 新圖）
-    const PROPS = true;
+    const PROPS = false;   // 地圖小物件跟像素地形不搭，先關掉（等 Codex 的島嶼材質）
     const big = !PROPS ? [] : L.info.map((f2, i) => [f2, i]).filter(([f2]) => f2 && f2.n > 260).sort((a, b) => b[0].n - a[0].n).slice(0, 16);
     let k = 0;
     big.forEach(([fi, i]) => {
