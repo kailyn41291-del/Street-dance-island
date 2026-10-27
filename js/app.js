@@ -259,7 +259,7 @@
       art.base.className = 'base'; art.base.style.left = -art.pad + 'px'; art.base.style.top = -art.pad + 'px';
       el.prepend(art.base);
       el.querySelector('.float').prepend(art.island);
-      compEls[cp.k] = el;
+      el._k = cp.k; compEls[cp.k] = el;
       world.appendChild(el);
     });
     compEls[twInfo.comp].classList.add('home');
@@ -296,6 +296,8 @@
 
     // 副本島入口
     if (App.dungeonWorld) App.dungeonWorld(world, L, C);
+    // 節日裝飾
+    if (window.Festivals && Festivals.decorateWorld) try { Festivals.decorateWorld(world, L, C, view); } catch (e) { console.warn(e); }
 
     // 平移 / 縮放
     const zoomLevel = s => (s >= 1.1 ? 3 : s >= 0.6 ? 2 : 1);

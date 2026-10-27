@@ -134,7 +134,7 @@ window.Festivals = (() => {
         <p class="note">${esc(w[0].slice(5).replace('-', '/'))} ～ ${esc(w[1].slice(5).replace('-', '/'))}</p>${logged() ? quests : `<p class="note">${t('fs_login')}</p><button class="btn pink fs-login">🔑 ${t('login')}</button>`}</div></div>`;
     };
     const quest = (k, text, act, tip) => `<div class="fs-q"><p>${esc(text)}</p>${tip ? `<p class="note">${esc(tip)}</p>` : ''}<div class="btn-row">${act}</div></div>`;
-    inner.innerHTML = `<div class="win">${UI.winHTML(t('fs_title'), 'pink', false)}<div class="win-body"><h4>${t('fs_now')}</h4>${now.length ? '' : `<p class="note">${t('fs_none_now')}</p>`}</div></div>
+    inner.innerHTML = `${look() ? `<div class="fs-hero" style="background-image:url('${art(look(), 'banner.webp')}')"></div>` : ''}<div class="win">${UI.winHTML(t('fs_title'), 'pink', false)}<div class="win-body"><h4>${t('fs_now')}</h4>${now.length ? '' : `<p class="note">${t('fs_none_now')}</p>`}</div></div>
       ${now.map(card).join('')}
       <div class="win">${UI.winHTML(t('fs_next'), 'teal', false)}<div class="win-body"><ul class="fs-next">${next.map(x => `<li>${icon(x.f)} <b>${esc(fname(x.f))}</b><span>${esc(mainDay(x.f, x.w).replace(/-/g, '/'))} <small>(${esc(x.w[0].slice(5).replace('-', '/'))} ~ ${esc(x.w[1].slice(5).replace('-', '/'))})</small></span><small>${t('fs_days', { n: Math.ceil((new Date(x.w[0] + 'T00:00:00') - new Date(today + 'T00:00:00')) / 864e5) })}</small></li>`).join('')}</ul></div></div>`;
     const on = (s, fn) => inner.querySelectorAll(s).forEach(b => (b.onclick = () => fn(b)));
@@ -202,8 +202,69 @@ window.Festivals = (() => {
     }).catch(() => {});
   }
 
+  /* ---------- 節日美術（橫幅、地圖小物件、飄落效果、嚮導節日裝） ---------- */
+  // 有畫好美術的節日；測試用：網址加 ?fest=xmas，或 localStorage danceIsland.festLook = xmas（off 關掉）
+  const ART = ['xmas', 'newyear', 'lunar', 'halloween', 'valentine', 'moon'];
+  const forced = () => {
+    try { const q = new URLSearchParams(location.search).get('fest'); if (q) localStorage.setItem('danceIsland.festLook', q); return localStorage.getItem('danceIsland.festLook') || ''; } catch (e) { return ''; }
+  };
+  const look = () => { const f = forced(); if (f === 'off') return null; if (ART.includes(f)) return f; return active().find(x => ART.includes(x)) || null; };
+  const art = (f, n) => `assets/fest/${f}/${n}?v=1`;
+  // 嚮導：開心 / 慶祝的表情換成節日裝
+  const guideArt = (who, mood) => {
+    const f = look(); if (!f) return null;
+    const ok = who === 'choco' ? ['cheer', 'peace', 'love', 'thumbs', 'celebrate', 'happy'] : ['celebrate', 'cheer', 'happy', 'love'];
+    return ok.includes(mood) ? art(f, who + '_face.webp') : null;
+  };
+  // 世界地圖：大陸上擺節日小物件 + 畫面飄落小東西
+  function decorateWorld(world, L, C, view) {
+    const f = look(); if (!f) return;
+    const H = (i, k) => PX.hash(i, k);
+    const land = (gx, gy) => gx >= 0 && gy >= 0 && gx < L.GW && gy < L.GH && L.ids[gy * L.GW + gx] > 0;
+    const S = 13, HS = 6;   // 物件大小（格）、一半
+    const used = [];
+    const big = L.info.map((f2, i) => [f2, i]).filter(([f2]) => f2 && f2.n > 260).sort((a, b) => b[0].n - a[0].n).slice(0, 16);
+    let k = 0;
+    big.forEach(([fi, i]) => {
+      const cp = L.comps[fi.comp]; if (!cp) return;
+      const el = [...world.querySelectorAll('.isle')].find(e => e._k === fi.comp);
+      for (let tries = 0; tries < 30; tries++) {
+        const gx = Math.floor(fi.x0 + H(i * 31 + tries, 41) * (fi.x1 - fi.x0)), gy = Math.floor(fi.y0 + H(i * 31 + tries, 43) * (fi.y1 - fi.y0));
+        // 腳下和四周都要是陸地，離國名遠一點，不要互相疊到
+        if (!(land(gx, gy) && land(gx - HS, gy) && land(gx + HS, gy) && land(gx, gy - S) && land(gx - HS, gy - S) && land(gx + HS, gy - S))) continue;
+        if (Math.hypot(gx - fi.cx, gy - fi.cy) < 6) continue;
+        if (used.some(([ux, uy]) => Math.hypot(ux - gx, uy - gy) < S * 2.2)) continue;
+        used.push([gx, gy]);
+        const host = el ? el.querySelector('.float') : null; if (!host) break;
+        const im = document.createElement('img');
+        im.className = 'fs-prop'; im.alt = ''; im.decoding = 'async';
+        im.src = art(f, `prop_${(k++ % 5) + 1}.png`);
+        im.style.left = (gx - cp.x0 - S / 2) * C + 'px'; im.style.top = (gy - cp.y0 - S) * C + 'px';
+        im.style.width = im.style.height = S * C + 'px';
+        host.appendChild(im);
+        break;
+      }
+    });
+    // 飄落效果（固定在畫面上，不跟著地圖縮放）
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const lite = matchMedia('(max-width: 1024px), (pointer: coarse)').matches;
+    const fx = document.createElement('div'); fx.className = 'fs-fx'; fx.setAttribute('aria-hidden', 'true');
+    const n = lite ? 10 : 18;
+    for (let i = 0; i < n; i++) {
+      const im = document.createElement('img'); im.alt = ''; im.src = art(f, `fx_${(i % 3) + 1}.png`);
+      const dur = 10 + Math.random() * 9, sz = 24 + Math.round(Math.random() * 12);
+      im.style.cssText = `left:${(Math.random() * 100).toFixed(1)}%;width:${sz}px;height:${sz}px;animation-duration:${dur.toFixed(1)}s,${(2.5 + Math.random() * 2).toFixed(1)}s;animation-delay:${(-Math.random() * dur).toFixed(1)}s,0s`;
+      fx.appendChild(im);
+    }
+    view.appendChild(fx);
+  }
+
   /* ---------- 今天首頁的節日橫幅、第一次遇到節日的對話 ---------- */
-  const bannerHTML = () => { const now = active(); return now.length ? `<a class="fs-banner" href="#/fest">${icon(now[0])} ${esc(t('fs_banner', { f: fname(now[0]) }))}</a>` : ''; };
+  const bannerHTML = () => {
+    const now = active(), f = look();
+    if (f) { const ff = now.includes(f) ? f : (now[0] || f); return `<a class="fs-banner fs-banner-art" href="#/fest" style="background-image:url('${art(f, 'banner.webp')}')"><span>${icon(ff)} ${esc(t('fs_banner', { f: fname(ff) }))}</span></a>`; }
+    return now.length ? `<a class="fs-banner" href="#/fest">${icon(now[0])} ${esc(t('fs_banner', { f: fname(now[0]) }))}</a>` : '';
+  };
   const introOnce = () => {
     const now = active(); if (!now.length) return;
     const k = 'danceIsland.festIntro.' + now[0] + '.' + curWindow(now[0])[1];
@@ -213,7 +274,7 @@ window.Festivals = (() => {
   if (Backend.enabled) Backend.ready.then(() => setTimeout(introOnce, 3000));
 
   /* ---------- 裝飾：十二月島上積雪 ---------- */
-  const islandPal = () => (A.todayStr().slice(5, 7) === '12' ? { grass: '#eef3fb', grass2: '#dde7f5', grassHi: '#ffffff' } : null);
+  const islandPal = () => (A.todayStr().slice(5, 7) === '12' || look() === 'xmas' ? { grass: '#eef3fb', grass2: '#dde7f5', grassHi: '#ffffff' } : null);
 
-  return { active, upcoming, bannerHTML, islandPal, windowOf, mainDay };
+  return { active, upcoming, bannerHTML, islandPal, windowOf, mainDay, look, guideArt, decorateWorld, art };
 })();

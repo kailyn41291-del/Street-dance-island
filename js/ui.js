@@ -116,7 +116,9 @@ window.UI = (() => {
   const lineOf = (item, who) => {
     const o = typeof item === 'string' ? { text: item } : item;
     const w = o.who || who || 'kailyn', C = CAST[w];
-    return { text: kao(o.text), who: w, img: C.url(o.mood || C.guess(o.text)) };
+    const mood = o.mood || C.guess(o.text);
+    const fest = window.Festivals && Festivals.guideArt ? Festivals.guideArt(w, mood) : null;
+    return { text: kao(o.text), who: w, img: fest || C.url(mood) };
   };
 
   /* NPC 嚮導對話框：逐字打字效果；lines 可以是文字，或 { text, mood, who }
