@@ -30,8 +30,8 @@ window.Online = (() => {
 
   /* ---------- 人多模式：每 1～2 分鐘打卡，從資料庫算人數 ----------
    * 平常用即時頻道（馬上更新）；同時在線超過 100 人，或 Supabase 說即時訊息太多，就改用打卡（免費版也撐得住上千人） */
-  const BULK_ON = 100, BULK_OFF = 80;
-  let bulk = false, db = null, pingTm = null, listAt = 0;
+  let BULK_ON = 100, BULK_OFF = 80;
+  let bulk = false, db = null, pingTm = null, listAt = 0, forcedUntil = 0;   // forcedUntil：被 Supabase 擋過後，至少維持人多模式 10 分鐘
   const visible = () => document.visibilityState === 'visible';
   async function ping() {
     clearTimeout(pingTm); pingTm = setTimeout(ping, bulk ? 60000 : 120000);
@@ -39,7 +39,7 @@ window.Online = (() => {
     const watch = window.Friends && Friends.friends ? Friends.friends().map(p => p.user_id).filter(Boolean) : [];
     try { db = await Backend.rpc('online_ping', { pk: myKey().replace(/^[a-z]:/, ''), pwatch: watch }); } catch (e) { return; }
     const n = (db.p || 0) + (db.g || 0);
-    if (!bulk && n > BULK_ON) setBulk(true); else if (bulk && n < BULK_OFF) setBulk(false);
+    if (!bulk && n > BULK_ON) setBulk(true); else if (bulk && n < BULK_OFF && Date.now() > forcedUntil) setBulk(false);
     if (bulk) { guests = db.g || 0; emitOn(db.on || []); update(); }
   }
   function emitOn(uids) { const ps = uids.map(u => ({ u })); subs.forEach(f => { try { f(ps); } catch (e) {} }); }
@@ -69,7 +69,7 @@ window.Online = (() => {
       Object.values(st).forEach(arr => { const m = arr && arr[arr.length - 1]; if (!m) return; if (m.g) gs++; else if (m.h) ps.push(m); });
       players = ps; guests = gs; update(); subs.forEach(f => { try { f(ps); } catch (e) {} });
     }).on('system', {}, p => {   // Supabase：即時訊息太多 → 改用打卡
-      if (p && p.status === 'error' && /presence|too many/i.test(p.message || '') && db) setBulk(true);   // db：打卡功能要先能用
+      if (p && p.status === 'error' && /presence|too many/i.test(p.message || '') && db) { forcedUntil = Date.now() + 600000; setBulk(true); }   // db：打卡功能要先能用
     }).subscribe(async s => { if (s === 'SUBSCRIBED' && ch === c) { try { await c.track(meta()); } catch (e) {} } });
   }
 
@@ -124,5 +124,5 @@ window.Online = (() => {
   (Backend.enabled ? Backend.ready.then(() => Player.ready) : Promise.resolve()).then(boot, boot);
   let last = null;
   if (Player.onChange) Player.onChange(() => { const k = Player.me ? Player.me.id : null; if (k !== last) { last = k; connect(); setTimeout(ping, 1500); } else if (ch) { try { ch.track(meta()); } catch (e) {} } });
-  return { open, reconnect: connect, retrack: () => { if (ch) { try { ch.track(meta()); } catch (e) {} } }, count: total, list: () => players.slice(), onSync: f => { subs.push(f); f(players); }, get bulk() { return bulk; }, _bulk: setBulk, _ping: ping };
+  return { open, reconnect: connect, retrack: () => { if (ch) { try { ch.track(meta()); } catch (e) {} } }, count: total, list: () => players.slice(), onSync: f => { subs.push(f); f(players); }, get bulk() { return bulk; }, _bulk: setBulk, _ping: ping, _th: (a, b) => { BULK_ON = a; BULK_OFF = b; } };
 })();
