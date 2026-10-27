@@ -2530,7 +2530,7 @@ img.pxi { image-rendering: auto; }   /* 縮小顯示用平滑縮放，像素線�
 .fs-banner.fs-banner-art { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 1; min-height: 84px; padding: 0 14%; background-size: cover; background-position: center; image-rendering: pixelated; animation: none; overflow: hidden; }
 .fs-banner.fs-banner-art span { background: rgba(255, 249, 236, .9); border: 2px solid var(--ink, #2a1f2e); border-radius: 8px; padding: 5px 12px; text-align: center; line-height: 1.4; box-shadow: 0 2px 0 rgba(42, 31, 46, .25); animation: fsPulse 2.4s ease-in-out infinite; }
 .fs-hero { aspect-ratio: 4 / 1; border: 3px solid var(--ink, #2a1f2e); border-radius: 10px; background-size: cover; background-position: center; image-rendering: pixelated; margin-bottom: 12px; }
-.isle .fs-prop { position: absolute; z-index: 3; image-rendering: pixelated; pointer-events: none; filter: drop-shadow(0 2px 0 rgba(42, 31, 46, .25)); }
+.isle .fs-prop { position: absolute; z-index: 3; image-rendering: auto; pointer-events: none; filter: drop-shadow(0 2px 0 rgba(42, 31, 46, .25)); }
 .fs-fx { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; }
 .fs-fx img { position: absolute; top: -40px; image-rendering: pixelated; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff); animation-name: fsFall, fsSway; animation-timing-function: linear, ease-in-out; animation-iteration-count: infinite, infinite; animation-direction: normal, alternate; }
 @keyframes fsFall { to { top: calc(100% + 40px); } }

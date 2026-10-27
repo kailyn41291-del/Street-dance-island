@@ -223,8 +223,9 @@ window.Festivals = (() => {
     const land = (gx, gy) => gx >= 0 && gy >= 0 && gx < L.GW && gy < L.GH && L.ids[gy * L.GW + gx] > 0;
     const S = 13, HS = 6;   // 物件大小（格）、一半
     const used = [];
-    // 地圖小物件：目前的圖太陽春，先關掉（新圖到了把 PROPS 改成 true）
-    const PROPS = false;
+    const tagPts = L.info.filter(x => x && x.n).map(x => [x.cx, x.cy]);
+    // 地圖小物件（V7 新圖）
+    const PROPS = true;
     const big = !PROPS ? [] : L.info.map((f2, i) => [f2, i]).filter(([f2]) => f2 && f2.n > 260).sort((a, b) => b[0].n - a[0].n).slice(0, 16);
     let k = 0;
     big.forEach(([fi, i]) => {
@@ -234,13 +235,14 @@ window.Festivals = (() => {
         const gx = Math.floor(fi.x0 + H(i * 31 + tries, 41) * (fi.x1 - fi.x0)), gy = Math.floor(fi.y0 + H(i * 31 + tries, 43) * (fi.y1 - fi.y0));
         // 腳下和四周都要是陸地，離國名遠一點，不要互相疊到
         if (!(land(gx, gy) && land(gx - HS, gy) && land(gx + HS, gy) && land(gx, gy - S) && land(gx - HS, gy - S) && land(gx + HS, gy - S))) continue;
-        if (Math.hypot(gx - fi.cx, gy - fi.cy) < 6) continue;
+        // 不要蓋到任何國名標籤（標籤在每個國家的中心，往右延伸）
+        if (tagPts.some(([tx, ty]) => gx > tx - 15 && gx < tx + 15 && gy > ty - 3 && gy < ty + S + 4)) continue;
         if (used.some(([ux, uy]) => Math.hypot(ux - gx, uy - gy) < S * 2.2)) continue;
         used.push([gx, gy]);
         const host = el ? el.querySelector('.float') : null; if (!host) break;
         const im = document.createElement('img');
         im.className = 'fs-prop'; im.alt = ''; im.decoding = 'async';
-        im.src = art(f, `prop_${(k++ % 5) + 1}.png`);
+        im.src = art(f, `prop_${(k++ % 5) + 1}.webp`);
         im.style.left = (gx - cp.x0 - S / 2) * C + 'px'; im.style.top = (gy - cp.y0 - S) * C + 'px';
         im.style.width = im.style.height = S * C + 'px';
         host.appendChild(im);
