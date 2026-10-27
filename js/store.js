@@ -8,12 +8,21 @@
  * ========================================================= */
 window.Store = (() => {
   const KEY = 'danceIsland.events.v1';
-  const STYLES = ['All Style', 'Breaking', 'Popping', 'Locking', 'Hip Hop', 'House', 'Waacking', 'Krump', 'Vogue', 'Choreography', 'Kids', 'Other'];
+  // 舞風 / 類別標籤（存的是英文代號，畫面上用 label() 顯示當地語言）
+  const STYLES = ['All Style', 'Breaking', 'Popping', 'Locking', 'Hip Hop', 'House', 'Waacking', 'Krump', 'Vogue', 'Dancehall', 'Heels', 'K-POP', 'Jazz Funk',
+    'Choreography', 'Experimental', 'Kids', 'Showcase', 'Workshop', 'Other'];
   const STYLE_COLOR = {
     'All Style': '#eac45a', 'Breaking': '#e35d5d', 'Popping': '#7895df', 'Locking': '#ef8a3a',
     'Hip Hop': '#5bb5a6', 'House': '#7fcf73', 'Waacking': '#f07ca3', 'Krump': '#a8473f',
-    'Vogue': '#b48ae0', 'Choreography': '#4fa3c7', 'Kids': '#f4a7c0', 'Other': '#9a8f85'
+    'Vogue': '#b48ae0', 'Dancehall': '#3aa776', 'Heels': '#c95f93', 'K-POP': '#5fbfe6', 'Jazz Funk': '#d9a52b',
+    'Choreography': '#4fa3c7', 'Experimental': '#7d6fd6', 'Kids': '#f4a7c0', 'Showcase': '#d99a6c', 'Workshop': '#8db8a6', 'Other': '#9a8f85'
   };
+  const STYLE_NAME = {
+    zh: { 'Choreography': '排舞', 'Experimental': '實驗', 'Kids': '兒童', 'Showcase': '展演', 'Workshop': '工作坊 / 營隊', 'Other': '其他' },
+    ja: { 'Choreography': '振付', 'Experimental': '実験', 'Kids': 'キッズ', 'Showcase': 'ショーケース', 'Workshop': 'ワークショップ', 'Other': 'その他' },
+    ko: { 'Choreography': '안무', 'Experimental': '실험', 'Kids': '키즈', 'Showcase': '쇼케이스', 'Workshop': '워크숍', 'Other': '기타' }
+  };
+  const label = s => ((STYLE_NAME[window.I18N && I18N.lang] || {})[s] || s);
   const cloud = () => Backend.enabled;
   const sortKey = e => `${e.date || '9999'} ${e.startTime || '99:99'}`;
   const uid = () => 'ev-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -52,10 +61,11 @@ window.Store = (() => {
     return remote.filter(e => !e._deleted).map(e => ({ ...e, _src: 'cloud' }))
       .concat(seed().filter(e => !ids.has(e.id)).map(e => ({ ...e, _src: 'seed' })));
   };
-  const all = () => (cloud() ? cloudAll() : localAll()).sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+  // 草稿（draft: true，例如舞風還沒公告）只有能編輯的人看得到
+  const all = () => (cloud() ? cloudAll() : localAll()).filter(e => !e.draft || (cloud() ? Backend.isAdmin : true)).sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
 
   return {
-    STYLES, STYLE_COLOR,
+    STYLES, STYLE_COLOR, label,
     get cloud() { return cloud(); },
     get loaded() { return loaded; },
     /** 能不能新增 / 編輯：雲端模式只有管理員；本機模式大家都行（只影響自己的瀏覽器） */

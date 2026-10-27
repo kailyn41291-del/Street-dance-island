@@ -2631,3 +2631,4 @@ html.gated #boot, html.gated #hud, html.gated #stage, html.gated .mnav, html.gat
 /* 英文名改成 BOOTO（字比較短），標題列的字放大一點、字距拉開 */
 #hud .logo .en { font-size: 17px; letter-spacing: 3px; }
 @media (max-width: 760px) { #hud .logo .en { font-size: 14px; letter-spacing: 2px; } }
+.tag.draft-tag { --c: #fff3c4; border-style: dashed; }

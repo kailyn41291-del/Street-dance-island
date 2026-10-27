@@ -166,7 +166,7 @@ window.Daily = (() => {
   A.viewTag = e => (hostOf[e.id] ? `<a class="tag sd-host" href="#/studios/${hostOf[e.id].id}">${esc(t('sd_host_tag', { n: hostOf[e.id].name }))}</a>` : '') + (prevViewTag ? prevViewTag(e) : '');
   if (Backend.enabled) Backend.ready.then(() => loadStudios().catch(() => {}));
 
-  const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('');
+  const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(Store.label(s))}</span>`).join('');
   const placeName = s => [nm(A.byCode[s.country]), s.city ? nm(A.cityOf(s.country, s.city)) : ''].filter(Boolean).join('・');
   const coverHTML = (s, cls = '') => (safeUrl(s.cover) ? Backend.thumbImg(s.cover, 'sd-cover ' + cls) : `<span class="sd-cover ${cls} sd-cover-none">🏫</span>`);
   const countryOpts = (sel, any) => (any ? `<option value="">${t('sd_all_cc')}</option>` : '') + GEO.countries.slice().sort((a, b) => (!!b.home - !!a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
@@ -199,7 +199,7 @@ window.Daily = (() => {
     inner.innerHTML = `<div class="win">${UI.winHTML(t('sd_title'), 'teal', false)}<div class="win-body"><p>${t('sd_intro')}</p>
         <div class="sd-bar">
           <select class="input sm sd-cc">${countryOpts(FS.cc, true)}</select><select class="input sm sd-city"></select>
-          <select class="input sm sd-style"><option value="">${t('sd_all_style')}</option>${Store.STYLES.map(s => `<option ${s === FS.style ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
+          <select class="input sm sd-style"><option value="">${t('sd_all_style')}</option>${Store.STYLES.map(s => `<option value="${esc(s)}" ${s === FS.style ? 'selected' : ''}>${esc(Store.label(s))}</option>`).join('')}</select>
           <input class="input sm sd-q" placeholder="${esc(t('sd_q'))}" value="${esc(FS.q)}">
         </div>
         <div class="btn-row"><button class="btn sm teal sd-near ${FS.me ? 'on' : ''}">${PXI.img('menu/near', '📍')} ${t('sd_near')}</button>
@@ -355,7 +355,7 @@ window.Daily = (() => {
       <label class="field full"><span>${t('sd_f_name')} <b>*</b></span><input class="input" name="name" maxlength="60" value="${esc(s.name || '')}"></label>
       <div class="field"><span>${t('sd_f_place')} <b>*</b></span><div class="row2"><select class="input" name="country">${countryOpts(s.country)}</select><select class="input" name="city"></select></div></div>
       <label class="field"><span>${t('sd_f_addr')}</span><input class="input" name="address" maxlength="200" value="${esc(s.address || '')}"></label>
-      <fieldset class="fieldset full"><legend>${t('sd_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip ${(s.styles || []).includes(x) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" ${(s.styles || []).includes(x) ? 'checked' : ''} hidden><span class="dot"></span>${esc(x)}</label>`).join('')}</div></fieldset>
+      <fieldset class="fieldset full"><legend>${t('sd_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip ${(s.styles || []).includes(x) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" ${(s.styles || []).includes(x) ? 'checked' : ''} hidden><span class="dot"></span>${esc(Store.label(x))}</label>`).join('')}</div></fieldset>
       <div class="row3 full"><label class="field"><span>${t('sd_f_phone')}</span><input class="input" name="phone" maxlength="40" value="${esc(s.phone || '')}"></label>
         <label class="field"><span>${t('sd_f_ig')}</span><input class="input" name="ig" maxlength="200" value="${esc(s.ig || '')}" placeholder="@studio"></label>
         <label class="field"><span>${t('sd_f_link')}</span><input class="input" name="link" type="url" maxlength="300" value="${esc(s.link || '')}" placeholder="https://"></label></div>
@@ -433,7 +433,7 @@ window.Daily = (() => {
       <div class="row3 full"><label class="field"><span>${t('sd_p_date')}</span><input class="input" type="date" name="date"></label>
         <label class="field"><span>${t('sd_p_time')}</span><input class="input" name="time" maxlength="20" placeholder="19:00–21:00"></label>
         <label class="field"><span>${t('sd_p_teacher')}</span><input class="input" name="teacher" maxlength="60"></label></div>
-      <fieldset class="fieldset full"><legend>${t('sd_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" hidden><span class="dot"></span>${esc(x)}</label>`).join('')}</div></fieldset>
+      <fieldset class="fieldset full"><legend>${t('sd_f_styles')}</legend><div class="chips">${Store.STYLES.map(x => `<label class="chip" style="--c:${Store.STYLE_COLOR[x]}"><input type="checkbox" name="styles" value="${esc(x)}" hidden><span class="dot"></span>${esc(Store.label(x))}</label>`).join('')}</div></fieldset>
       <label class="field full"><span>${t('sd_p_body')}</span><textarea class="input" name="body" rows="4" maxlength="2000"></textarea></label>
       <label class="field full"><span>${t('sd_p_link')}</span><input class="input" name="link" type="url" maxlength="300" placeholder="https://"></label>
       <fieldset class="fieldset full"><legend>${t('sd_p_img')}</legend><label class="btn sm">${t('sd_f_cover_up')}<input type="file" accept="image/png,image/jpeg,image/webp" hidden class="sd-pimg"></label><img class="poster-prev hidden" alt=""></fieldset>

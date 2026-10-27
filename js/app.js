@@ -551,7 +551,7 @@
             </div>
             <div class="chips">
               <button class="chip ${st.styles.size ? '' : 'on'}" data-style="" style="--c:var(--yellow)">${t('all_styles')}</button>
-              ${Store.STYLES.map(s => `<button class="chip ${st.styles.has(s) ? 'on' : ''}" data-style="${esc(s)}" style="--c:${Store.STYLE_COLOR[s]}"><span class="dot"></span>${esc(s)}</button>`).join('')}
+              ${Store.STYLES.map(s => `<button class="chip ${st.styles.has(s) ? 'on' : ''}" data-style="${esc(s)}" style="--c:${Store.STYLE_COLOR[s]}"><span class="dot"></span>${esc(Store.label(s))}</button>`).join('')}
             </div>
             ${st.mode === 'month' ? monthGrid(filtered, today) : ''}
           </div>
@@ -772,7 +772,7 @@
         ${e.startTime ? `<span class="tm">${esc(e.startTime)}</span>` : ''}
       </div>
       <div class="main">
-        <div class="tags">${(e.styles || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('')}
+        <div class="tags">${(e.styles || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(Store.label(s))}</span>`).join('')}${e.draft ? `<span class="tag draft-tag">${esc(I18N.lang === 'zh' ? '草稿・只有管理員看得到' : 'Draft · admins only')}</span>` : ''}
           ${regStatus(e, today)}${past ? `<span class="tag">${t('ended')}</span>` : ''}${e._src === 'local' ? `<span class="tag local" title="${esc(t('local_tip'))}">${t('local')}</span>` : ''}${App.viewTag ? App.viewTag(e) : ''}</div>
         <h3 data-trn>${esc(e.name)}</h3>
         ${opt.place ? `<div class="place-tag">${PXI.img('event/pin', '📍')} ${esc(nm(byCode[e.country]))}・${esc(nm(cityOf(e.country, e.city)))}${opt.dist ? `　(${opt.dist} km)` : ''}</div>` : ''}
@@ -830,7 +830,7 @@
       <label class="field"><span>${t('f_venue')}</span><input class="input" name="venue" value="${esc(e.venue)}" placeholder="${esc(t('f_venue_ph'))}"></label>
       <label class="field"><span>${t('f_addr')}</span><input class="input" name="address" value="${esc(e.address)}" placeholder="${esc(t('f_addr_ph'))}"></label>
       <fieldset class="fieldset full"><legend>${t('f_styles')} <b style="color:var(--red)">*</b></legend>
-        <div class="chips">${Store.STYLES.map(s => `<label class="chip ${e.styles.includes(s) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[s]}"><input type="checkbox" name="styles" value="${esc(s)}" ${e.styles.includes(s) ? 'checked' : ''} hidden><span class="dot"></span>${esc(s)}</label>`).join('')}</div>
+        <div class="chips">${Store.STYLES.map(s => `<label class="chip ${e.styles.includes(s) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[s]}"><input type="checkbox" name="styles" value="${esc(s)}" ${e.styles.includes(s) ? 'checked' : ''} hidden><span class="dot"></span>${esc(Store.label(s))}</label>`).join('')}</div>
       </fieldset>
       <fieldset class="fieldset full"><legend>${t('f_when')}</legend>
         <div class="row2"><label class="field"><span>${t('f_date')} <b>*</b></span><input class="input" type="date" name="date" value="${esc(e.date)}"></label>

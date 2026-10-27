@@ -389,7 +389,7 @@ window.App = {
             <option value="TW" ${fs.region === 'TW' ? 'selected' : ''}>${esc(nm(A.byCode.TW))}</option>${A.CONTS.map(k => `<option value="${k}" ${fs.region === k ? 'selected' : ''}>${A.contName(k)}</option>`).join('')}</select>
           <label class="chk"><input type="checkbox" class="open" ${fs.open ? 'checked' : ''}> ${t('ev_open')}</label>
         </div>
-        <div class="chips">${Store.STYLES.map(s => `<button class="chip ${fs.styles.has(s) ? 'on' : ''}" data-style="${esc(s)}" style="--c:${Store.STYLE_COLOR[s]}"><span class="dot"></span>${esc(s)}</button>`).join('')}</div>
+        <div class="chips">${Store.STYLES.map(s => `<button class="chip ${fs.styles.has(s) ? 'on' : ''}" data-style="${esc(s)}" style="--c:${Store.STYLE_COLOR[s]}"><span class="dot"></span>${esc(Store.label(s))}</button>`).join('')}</div>
       </div></div>
       <div class="list-head"><span class="ev-count"></span><span class="grow"></span><button class="btn sm ev-dens"></button></div><div class="fs-ask-slot"></div><div class="cards ev-list"></div>`;
     // 精簡 / 詳細切換

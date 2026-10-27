@@ -91,7 +91,7 @@ window.Party = (() => {
   const pad = n => String(n).padStart(2, '0');
   const whenStr = iso => { const d = new Date(iso); return `${d.getMonth() + 1}/${d.getDate()}（${(t('week') || [])[d.getDay()] || ''}）${pad(d.getHours())}:${pad(d.getMinutes())}`; };
   const placeOf = x => [x.city ? nm(A.cityOf(x.country, x.city)) : nm(A.byCode[x.country]), x.place].filter(Boolean).join('・');
-  const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('');
+  const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(Store.label(s))}</span>`).join('');
   const myRegion = () => { const p = Backend.profile || {}; const c = p.card || {}; return { cc: c.rc || p.nat || 'TW', city: c.rcity || '' }; };
   const isNear = x => { const r = myRegion(); return x.country === r.cc && (!r.city || !x.city || x.city === r.city); };
   const countryOpts = sel => GEO.countries.slice().sort((a, b) => (!!b.home - !!a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
@@ -238,7 +238,7 @@ window.Party = (() => {
       <div class="row2 full"><label class="field"><span>${t('pt_when')} <b>*</b></span><div class="row2"><input class="input" type="date" name="date" value="${dv}"><input class="input" type="time" name="time" value="${tv}"></div></label>
         <label class="field"><span>${t('pt_max')}</span><input class="input" type="number" name="max" min="2" max="30" value="${x.max_members}"></label></div>
       <div class="field full"><span>${t('pt_place_f')}</span><div class="row3"><select class="input" name="country">${countryOpts(x.country)}</select><select class="input" name="city"></select><input class="input" name="place" maxlength="100" value="${esc(x.place || '')}" placeholder="${esc(t('pt_place_ph'))}"></div></div>
-      <fieldset class="fieldset full"><legend>${t('pt_styles')}</legend><div class="chips">${Store.STYLES.map(s => `<label class="chip ${(x.styles || []).includes(s) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[s]}"><input type="checkbox" name="styles" value="${esc(s)}" ${(x.styles || []).includes(s) ? 'checked' : ''} hidden><span class="dot"></span>${esc(s)}</label>`).join('')}</div></fieldset>
+      <fieldset class="fieldset full"><legend>${t('pt_styles')}</legend><div class="chips">${Store.STYLES.map(s => `<label class="chip ${(x.styles || []).includes(s) ? 'on' : ''}" style="--c:${Store.STYLE_COLOR[s]}"><input type="checkbox" name="styles" value="${esc(s)}" ${(x.styles || []).includes(s) ? 'checked' : ''} hidden><span class="dot"></span>${esc(Store.label(s))}</label>`).join('')}</div></fieldset>
       <label class="field full"><span>${t('pt_intro_f')}</span><textarea class="input" name="intro" rows="3" maxlength="500" placeholder="${esc(t('pt_intro_ph'))}">${esc(x.intro || '')}</textarea></label>
       <fieldset class="fieldset full"><legend>${t('pt_vis')}</legend>
         <label class="chk"><input type="radio" name="vis" value="1" ${x.public ? 'checked' : ''}> ${t('pt_public')}</label>
