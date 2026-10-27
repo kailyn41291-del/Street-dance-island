@@ -111,6 +111,13 @@
     // 1) 每個國家投影成世界座標
     const shapes = G.countries.map((c, idx) => {
       let polys = c.polys.map(poly => poly.map(([lo, la]) => raw(lo, la)));
+      // 小到畫不出來的離島不要畫（不然每個都會變成一根細細的小柱子，群島看起來很亂）；主島一定留著
+      if (!c.home && polys.length > 1) {
+        const sz = polys.map(poly => { const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]); return Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)); });
+        const big = Math.max(...sz);
+        const keep = polys.filter((_, i) => sz[i] === big || sz[i] >= CELL * 1.6);
+        if (keep.length) polys = keep;
+      }
       polys = c.home ? polys.map(poly => poly.map(([x, y]) => [T[0] + (x - T[0]) * WL.TW_ZOOM, T[1] + (y - T[1]) * WL.TW_ZOOM]))
         : polys.map(poly => poly.map(warp));
       const xs = polys.flat().map(p => p[0]), ys = polys.flat().map(p => p[1]);
@@ -129,8 +136,17 @@
     // 2) 蓋到同一張格子上（大國先、小國後，小國才不會被蓋掉）
     const ids = new Uint16Array(GW * GH);
     [...shapes].sort((a, b) => b.area - a.area).forEach(s => {
-      const g = PX.rasterizeXY(s.polys, CELL, 0, [ox, oy]);
-      const offx = Math.round((g.minX - ox) / CELL), offy = Math.round((g.minY - oy) / CELL);
+      const g = PX.rasterizeXY(s.polys, CELL, 1, [ox, oy]);
+      const offx = Math.round((g.minX - ox) / CELL) - 1, offy = Math.round((g.minY - oy) / CELL) - 1;
+      // 太小的國家：長成一個圓圓的小島（至少 3×3 左右），不要只有一兩格的細條
+      let cnt = 0; for (let i = 0; i < g.cells.length; i++) cnt += g.cells[i];
+      if (!s.c.home && cnt < 7) {
+        const src = g.cells.slice();
+        for (let y = 0; y < g.h; y++) for (let x = 0; x < g.w; x++) {
+          if (src[y * g.w + x]) continue;
+          if ((x > 0 && src[y * g.w + x - 1]) || (x < g.w - 1 && src[y * g.w + x + 1]) || (y > 0 && src[(y - 1) * g.w + x]) || (y < g.h - 1 && src[(y + 1) * g.w + x])) g.cells[y * g.w + x] = 1;
+        }
+      }
       for (let y = 0; y < g.h; y++) for (let x = 0; x < g.w; x++) {
         if (!g.cells[y * g.w + x]) continue;
         const X = offx + x, Yy = offy + y;
