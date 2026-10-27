@@ -39,6 +39,32 @@ window.Backend = (() => {
     await refresh();
   }).catch(e => { console.warn('[Backend]', e); });
 
+  /* 省即時連線：分頁切到背景超過 1 分鐘就先斷線，回來再自動接上（免費版同時最多 200 條連線）
+   * 斷線時把每個頻道標成「出錯」並停掉重試；回來時重新連線、重新加入每個頻道，
+   * 加入成功後各頻道原本的 SUBSCRIBED 回呼會再跑一次（例如重新登記在線） */
+  const resumeFns = [];
+  let paused = false, pauseTm = null;
+  function rtPause() {
+    if (!sb || paused) return;
+    const rt = sb.realtime; if (!rt.isConnected()) return;
+    paused = true;
+    rt.disconnect();
+    rt.getChannels().forEach(ch => { try { ch._trigger('phx_error'); ch.rejoinTimer.reset(); } catch (e) {} });
+  }
+  function rtResume() {
+    if (!sb || !paused) return;
+    paused = false;
+    const rt = sb.realtime;
+    rt.connect();
+    rt.getChannels().forEach(ch => { try { if (ch.state === 'errored') ch._rejoin(); } catch (e) {} });
+    resumeFns.forEach(f => { try { f(); } catch (e) {} });
+  }
+  document.addEventListener('visibilitychange', () => {
+    clearTimeout(pauseTm);
+    if (document.visibilityState === 'hidden') pauseTm = setTimeout(rtPause, 60000);
+    else rtResume();
+  });
+
   const must = r => { if (r.error) throw new Error(r.error.message); return r.data; };
   const toEmail = handle => handle.toLowerCase() + PLAYER_DOMAIN;
 
@@ -50,6 +76,9 @@ window.Backend = (() => {
     get role() { return role; },
     get profile() { return profile; },
     onChange: f => listeners.push(f),
+    onResume: f => resumeFns.push(f),   // 從背景回來、即時連線接回後要做的事（例如補抓漏掉的訊息）
+    get rtPaused() { return paused; },
+    _rtPause: rtPause, _rtResume: rtResume,
 
     /* 管理員 */
     async signInAdmin(email, password) {
@@ -421,9 +450,10 @@ window.Backend = (() => {
 
     /* 即時更新：table = 'messages' | 'comments' | 'announcements' */
     subscribe(table, cb) {
-      const ch = sb.channel('rt-' + table + '-' + Math.random().toString(36).slice(2, 7))
-        .on('postgres_changes', { event: '*', schema: 'public', table }, payload => cb(payload))
-        .subscribe();
+      const tables = [].concat(table);   // 可以一次訂好幾張表，共用一個頻道
+      let ch = sb.channel('rt-' + tables.join('-') + '-' + Math.random().toString(36).slice(2, 7));
+      tables.forEach(tb => { ch = ch.on('postgres_changes', { event: '*', schema: 'public', table: tb }, payload => cb(payload)); });
+      ch.subscribe();
       return () => sb.removeChannel(ch);
     }
   };

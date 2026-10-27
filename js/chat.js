@@ -247,6 +247,8 @@ window.Chat = (() => {
     Player.onChange(() => { drawForm(); renderList(); });
     I18N.onChange(() => { const o = open; el.remove(); build(); if (o) toggle(true); renderList(); });
     startAnnouncements();
+    // 從背景回來：補抓斷線期間漏掉的訊息
+    if (Backend.onResume) Backend.onResume(async () => { await Promise.all(CHANNELS.map(([c]) => load(c))); renderList(); const l = [...cache.world, ...cache.tw].sort((a, b) => (a.created_at < b.created_at ? -1 : 1)).pop(); updateBar(l); });
   }
 
   /* 舞團頻道：加入舞團後多一個「crew:<id>」分頁；離團就拿掉 */

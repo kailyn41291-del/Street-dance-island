@@ -16,7 +16,7 @@ window.Online = (() => {
     ko: { on_hide_me: '「지금 접속 중」 목록에서 숨기기 (인원수에는 포함)', on_hidden: '숨김 상태인 플레이어 {n}명', on_btn: '접속 {n}', on_title: '🟢 지금 접속 중', on_sum: '플레이어 {p}명 · 방문자 {g}명', on_none: '다른 플레이어가 없어요. 친구를 초대해 봐요!', on_me: '(나)', on_guest_note: '방문자는 로그인하지 않아서 숫자만 보여요', on_by: '나라별', on_unknown: '나라 미설정' }
   });
 
-  let ch = null, players = [], guests = 0, panel = null;
+  let ch = null, players = [], guests = 0, panel = null; const subs = [];
   const flag = cc => (/^[A-Z]{2}$/.test(cc || '') ? String.fromCodePoint(...[...cc].map(c => 127397 + c.charCodeAt(0))) : '🏳');
   const country = cc => { const c = cc && A.byCode && A.byCode[cc]; return c ? nm(c) : t('on_unknown'); };
   const myKey = () => {
@@ -26,7 +26,7 @@ window.Online = (() => {
     return g;
   };
   const hiddenMe = () => !!(Backend.profile && Backend.profile.card && Backend.profile.card.hideOn);
-  const meta = () => { const p = Player.me; if (!p) return { g: 1 }; return hiddenMe() ? { h: p.id, x: 1 } : { h: p.id, n: p.name, c: p.nat || '', v: !!p.verified, t: p.title || '', l: p.look || null }; };
+  const meta = () => { const p = Player.me; if (!p) return { g: 1 }; const u = Backend.uid || ''; return hiddenMe() ? { h: p.id, u, x: 1 } : { h: p.id, u, n: p.name, c: p.nat || '', v: !!p.verified, t: p.title || '', l: p.look || null }; };
 
   function connect() {
     if (!Backend.enabled || !Backend.channel) return;
@@ -38,7 +38,7 @@ window.Online = (() => {
       if (ch !== c) return;
       const st = c.presenceState(); const ps = []; let gs = 0;
       Object.values(st).forEach(arr => { const m = arr && arr[arr.length - 1]; if (!m) return; if (m.g) gs++; else if (m.h) ps.push(m); });
-      players = ps; guests = gs; update();
+      players = ps; guests = gs; update(); subs.forEach(f => { try { f(ps); } catch (e) {} });
     }).subscribe(async s => { if (s === 'SUBSCRIBED' && ch === c) { try { await c.track(meta()); } catch (e) {} } });
   }
 
@@ -90,5 +90,5 @@ window.Online = (() => {
   (Backend.enabled ? Backend.ready.then(() => Player.ready) : Promise.resolve()).then(boot, boot);
   let last = null;
   if (Player.onChange) Player.onChange(() => { const k = Player.me ? Player.me.id : null; if (k !== last) { last = k; connect(); } else if (ch) { try { ch.track(meta()); } catch (e) {} } });
-  return { open, reconnect: connect, retrack: () => { if (ch) { try { ch.track(meta()); } catch (e) {} } }, count: total, list: () => players.slice() };
+  return { open, reconnect: connect, retrack: () => { if (ch) { try { ch.track(meta()); } catch (e) {} } }, count: total, list: () => players.slice(), onSync: f => { subs.push(f); f(players); } };
 })();

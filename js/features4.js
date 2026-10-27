@@ -10,7 +10,7 @@ window.Friends = (() => {
 
   /* ---------- 狀態 ---------- */
   let rels = [], blocks = new Set(), people = {}, online = new Set(), unread = {}, started = false;
-  let presence = null, inbox = null, unsubs = [], seenTimer = null;
+  let presence = null, inbox = null, unsubs = [], seenTimer = null, onlineHooked = false;
   const me = () => Backend.uid;
   const other = r => (r.from_user === me() ? r.to_user : r.from_user);
   // 和某人的關係：friend / out（我送出的）/ in（對方送來的）/ none
@@ -577,11 +577,9 @@ window.Friends = (() => {
     await reload();
     const uid = me();
     // 在線狀態（所有登入的玩家）
-    presence = Backend.channel('online', uid);
-    presence.on('presence', { event: 'sync' }, () => {
-      online = new Set(Object.keys(presence.presenceState()));
-      document.querySelectorAll('.fr-panel .fr-row, .dm-head').forEach(() => {});
-    }).subscribe(async st => { if (st === 'SUBSCRIBED') await presence.track({ handle: Player.me.id }); });
+    // 誰在線：直接用上方「在線 N」那條共用的連線（不再另開一條，省一半的即時訊息量）
+    if (!onlineHooked && window.Online && Online.onSync) { onlineHooked = true; Online.onSync(ps => { if (started) online = new Set(ps.map(p => p.u).filter(Boolean)); }); }
+    else if (window.Online) online = new Set(Online.list().map(p => p.u).filter(Boolean));
     // 自己的收件匣（Battle 邀請）
     inbox = Backend.channel('inbox-' + uid, uid);
     inbox.on('broadcast', { event: 'pvp' }, ({ payload }) => onInbox(payload)).subscribe();

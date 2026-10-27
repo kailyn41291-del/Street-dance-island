@@ -90,7 +90,7 @@ window.Social = (() => {
   function ensureSubs() {
     if (subs || !cloud()) return;
     subs = true;
-    ['messages', 'comments', 'announcements', 'votes'].forEach(tb => Backend.subscribe(tb, p => emit(tb, { type: p.eventType, row: p.new && p.new.id ? p.new : p.old })));
+    Backend.subscribe(['messages', 'comments', 'announcements', 'votes'], p => emit(p.table, { type: p.eventType, row: p.new && p.new.id ? p.new : p.old }));
   }
 
   return {
