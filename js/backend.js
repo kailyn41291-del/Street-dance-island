@@ -18,7 +18,9 @@ window.Backend = (() => {
   const loadLib = () => new Promise((res, rej) => {
     if (window.supabase) return res();
     const s = document.createElement('script');
-    s.src = LIB; s.onload = res; s.onerror = () => rej(new Error('supabase load failed'));
+    // 先用網站自己的那份，失敗再用 CDN（某些國家連不到 CDN）
+    s.src = 'js/vendor/supabase.min.js?v=2.45.4'; s.onload = res;
+    s.onerror = () => { const c = document.createElement('script'); c.src = LIB; c.onload = res; c.onerror = () => rej(new Error('supabase load failed')); document.head.appendChild(c); };
     document.head.appendChild(s);
   });
 
