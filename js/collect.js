@@ -4,14 +4,14 @@
  * - 新稱號自動檢查（分銅 / 銀 / 金三級，條件都在伺服器 check_titles() 判斷）
  * - 「特別稱號怎麼拿」說明 + 進度
  * - DJ / MC / 評審 / 主辦 身分申請；網站架設者審核、頒發 / 收回稱號
- * 球鞋圖：assets/sneakers/1.png ~ 12.png（之後換成正式圖，檔名一樣就好）
+ * 球鞋圖：assets/sneakers_V2/1.png ~ 12.png（之後換成正式圖，檔名一樣就好）
  * ========================================================= */
 window.Collect = (() => {
   const { h, esc, modal, toast, sparkle, npc } = UI;
   const A = window.App;
   const logged = () => Backend.enabled && !!Backend.uid && !!Player.me;
   const N = 12, RARE = [11, 12];
-  const shoeImg = (n, cls = '') => `<img class="sk-img ${cls}" src="assets/sneakers/${n}.png?v=1" alt="" draggable="false">`;
+  const shoeImg = (n, cls = '') => `<img class="sk-img ${cls}" src="assets/sneakers_V2/${n}.png?v=2" alt="" draggable="false">`;
 
   /* 稱號條件：key → [框代表的稱號 id 前綴, 銅 / 銀 / 金門檻] */
   const TIERED = { pvp: [10, 30, 50], vet: [15, 25, 40], hall: [10, 20, 30], crew: [3, 5, 8], graf: [10, 30, 50], drip: [10, 30, 50], stk: [30, 80, 150], relay: [2, 4, 6], skate: [1, 2, 3], shoe: [4, 8, 12] };
