@@ -578,6 +578,7 @@ window.Friends = (() => {
     const uid = me();
     // 在線狀態（所有登入的玩家）
     // 誰在線：直接用上方「在線 N」那條共用的連線（不再另開一條，省一半的即時訊息量）
+    if (!onlineHooked && Backend.onResume) Backend.onResume(() => { if (started) reload().catch(() => {}); });   // 從背景回來：補抓好友邀請、未讀私訊
     if (!onlineHooked && window.Online && Online.onSync) { onlineHooked = true; Online.onSync(ps => { if (started) online = new Set(ps.map(p => p.u).filter(Boolean)); }); }
     else if (window.Online) online = new Set(Online.list().map(p => p.u).filter(Boolean));
     // 自己的收件匣（Battle 邀請）
