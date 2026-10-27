@@ -7,9 +7,9 @@ window.Gate = (() => {
   const PRIVATE = true;
   I18N.extend({
     zh: { gt_title: '舞島準備中', gt_text: '冒險者你好！舞島正在準備中，目前只開放給管理員。冒險就快開始了，敬請期待！', gt_id: '玩家 ID 或 Email', gt_pass: '密碼', gt_go: '管理員登入', gt_no: '這個帳號沒有開啟權限', gt_bad: '帳號或密碼不對', gt_wait: '登入中…' },
-    en: { gt_title: 'Dance Island is coming soon', gt_text: 'Dance Island is still getting ready and is only open to admins for now. Stay tuned!', gt_id: 'Player ID or email', gt_pass: 'Password', gt_go: 'Admin sign in', gt_no: 'This account does not have access', gt_bad: 'Wrong ID or password', gt_wait: 'Signing in…' },
+    en: { gt_title: 'Booto is coming soon', gt_text: 'Booto is still getting ready and is only open to admins for now. Stay tuned!', gt_id: 'Player ID or email', gt_pass: 'Password', gt_go: 'Admin sign in', gt_no: 'This account does not have access', gt_bad: 'Wrong ID or password', gt_wait: 'Signing in…' },
     ja: { gt_title: '舞島 準備中', gt_text: '舞島はただいま準備中で、管理者のみ利用できます。お楽しみに！', gt_id: 'プレイヤー ID またはメール', gt_pass: 'パスワード', gt_go: '管理者ログイン', gt_no: 'このアカウントには権限がありません', gt_bad: 'ID かパスワードが違います', gt_wait: 'ログイン中…' },
-    ko: { gt_title: '무도 준비 중', gt_text: '무도는 아직 준비 중이라 지금은 관리자만 들어올 수 있어요. 기대해 주세요!', gt_id: '플레이어 ID 또는 이메일', gt_pass: '비밀번호', gt_go: '관리자 로그인', gt_no: '이 계정은 권한이 없어요', gt_bad: 'ID 또는 비밀번호가 틀렸어요', gt_wait: '로그인 중…' }
+    ko: { gt_title: 'Booto 준비 중', gt_text: 'Booto는 아직 준비 중이라 지금은 관리자만 들어올 수 있어요. 기대해 주세요!', gt_id: '플레이어 ID 또는 이메일', gt_pass: '비밀번호', gt_go: '관리자 로그인', gt_no: '이 계정은 권한이 없어요', gt_bad: 'ID 또는 비밀번호가 틀렸어요', gt_wait: '로그인 중…' }
   });
   // 本機測試用：只有在自己電腦（localhost）網址加 ?gate=off 才會跳過，正式網站沒有作用
   const devOpen = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]gate=off\b/.test(location.search);
@@ -34,7 +34,7 @@ window.Gate = (() => {
     const face = f0 ? art('kailyn_face.webp') : 'assets/kailyn/cheer.webp?v=2';
     el.innerHTML = `<div class="gate-shade"></div>
       <div class="gate-main">
-        <img class="gate-logo" src="assets/logo.webp?v=1" alt="舞島 Dance Island">
+        <img class="gate-logo" src="assets/logo.webp?v=1" alt="舞島 Booto">
         <h1 class="gate-big" aria-label="Coming soon"><span>COMING</span><span>SOON</span></h1>
         <div class="gate-sub">NOW LOADING<span class="gate-dots">...</span></div>
         <div class="gate-bar" aria-hidden="true">${'<i></i>'.repeat(20)}</div>

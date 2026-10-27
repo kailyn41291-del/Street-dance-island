@@ -101,7 +101,7 @@ window.Friends = (() => {
     const ig = /^[A-Za-z0-9._]{1,30}$/.test(c.ig || '') ? c.ig : '';
     const isOn = p.user_id && online.has(p.user_id);
     return `<div class="pcard bg-${esc(bgOk(c.bg) ? c.bg : 'pink')} pat-${esc(PAT.includes(c.pat) && c.bg !== 'leopard' ? c.pat : 'none')} fr-${esc(FRAME.includes(c.frame) ? c.frame : 'pixel')}">
-      <div class="pc-top"><span>DANCE ISLAND</span><span>PLAYER CARD</span></div>
+      <div class="pc-top"><span>BOOTO</span><span>PLAYER CARD</span></div>
       <div class="pc-body">
         <div class="pc-av scene-${esc(SCENE.includes(c.scene) ? c.scene : 'none')}"></div>
         <div class="pc-info">

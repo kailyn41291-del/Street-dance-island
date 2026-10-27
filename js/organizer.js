@@ -81,7 +81,7 @@ window.Organizer = (() => {
   const XLSX = () => load('xlsx', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', () => window.XLSX);
   const h2c = () => load('h2c', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', () => window.html2canvas);
   const saveBlob = (blob, name) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); };
-  const safeName = s => String(s || 'dance-island').replace(/[\\/:*?"<>|]+/g, '').trim().slice(0, 60) || 'dance-island';
+  const safeName = s => String(s || 'booto').replace(/[\\/:*?"<>|]+/g, '').trim().slice(0, 60) || 'booto';
   // 把一張（或好幾張）canvas 放進 A4 PDF
   async function canvasToPDF(canvases, name, landscape) {
     const J = await jsPDF();
@@ -125,7 +125,7 @@ window.Organizer = (() => {
     const fg = st.bg && st.dim ? '#ffffff' : ink;
     g.textAlign = 'center'; g.fillStyle = fg; g.font = font(78, true); g.fillText(st.title || 'BATTLE', W / 2, 120);
     if (st.sub) { g.font = font(40); g.fillStyle = gold; g.fillText(st.sub, W / 2, 180); }
-    g.font = font(26); g.fillStyle = fg; g.globalAlpha = 0.7; g.fillText('DANCE ISLAND 舞島', W / 2, H - 40); g.globalAlpha = 1;
+    g.font = font(26); g.fillStyle = fg; g.globalAlpha = 0.7; g.fillText('BOOTO 舞島', W / 2, H - 40); g.globalAlpha = 1;
     // 左右兩邊往中間打：左半邊、右半邊各一半，決賽在中間
     // 輪空的直接晉級到第二輪
     const adv = []; for (let i = 0; i < size; i += 2) adv.push(slots[i] && !slots[i + 1] ? slots[i] : !slots[i] && slots[i + 1] ? slots[i + 1] : '');
@@ -299,7 +299,7 @@ window.Organizer = (() => {
       // 太長就切成好幾頁
       const pageH = Math.round(cv.width * 1.414), pages = [];
       for (let y = 0; y < cv.height; y += pageH) { const c = document.createElement('canvas'); c.width = cv.width; c.height = Math.min(pageH, cv.height - y); c.getContext('2d').drawImage(cv, 0, y, cv.width, c.height, 0, 0, cv.width, c.height); pages.push(c); }
-      await canvasToPDF(pages, `dance-island-${title}-${A.todayStr()}`, false);
+      await canvasToPDF(pages, `booto-${title}-${A.todayStr()}`, false);
     } catch (e) { pane.classList.remove('pdf-snap'); toast(t('bk_lib_fail'), '✕'); }
   }
   setTimeout(() => (A.adminTabs || []).forEach(tb => {

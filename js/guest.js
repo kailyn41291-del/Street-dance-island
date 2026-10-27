@@ -30,7 +30,7 @@ window.Guest = (() => {
       gu_reason: '創角只要 30 秒，就能使用這個功能喔！'
     },
     en: {
-      gu_gift_got: 'Welcome to Dance Island! Gift delivered: “Just Landed” title + 100 XP + 1 sneaker', gu_gift: '🎁 Join now: “Just Landed” title + 100 XP + 1 sneaker',
+      gu_gift_got: 'Welcome to Booto! Gift delivered: “Just Landed” title + 100 XP + 1 sneaker', gu_gift: '🎁 Join now: “Just Landed” title + 100 XP + 1 sneaker',
       gu_lock_t: '🔒 Islanders only', gu_lock_p: 'This area is for island residents! Create a character in 30 seconds to unlock:',
       gu_perks: ['Chat and make friends with dancers worldwide', 'Save events, check in, mark “I’m going”', 'Practice parties, crews and player battles', 'Level up with quests, collect titles and sneakers'],
       gu_create: '✨ Create a character', gu_login: 'I already have one', gu_back: '◀ Back to map',
@@ -54,7 +54,7 @@ window.Guest = (() => {
       gu_reason: '30 秒でキャラを作ればこの機能が使えるよ！'
     },
     ko: {
-      gu_gift_got: '댄스 아일랜드에 온 걸 환영해요! 선물 도착: 칭호 「섬 첫 상륙」 + 100 XP + 스니커 1켤레', gu_gift: '🎁 지금 캐릭터를 만들면: 칭호 「섬 첫 상륙」 + 100 XP + 스니커 1켤레',
+      gu_gift_got: 'Booto에 온 걸 환영해요! 선물 도착: 칭호 「섬 첫 상륙」 + 100 XP + 스니커 1켤레', gu_gift: '🎁 지금 캐릭터를 만들면: 칭호 「섬 첫 상륙」 + 100 XP + 스니커 1켤레',
       gu_lock_t: '🔒 섬 주민 전용', gu_lock_p: '여기는 섬 주민만 들어올 수 있어요! 30초면 캐릭터를 만들고 바로 열 수 있어요:',
       gu_perks: ['전 세계 댄서와 채팅하고 친구 되기', '이벤트 저장, 체크인, 「갈게요」 표시', '파티 연습, 크루, 플레이어 배틀', '퀘스트로 레벨업, 칭호와 스니커 수집'],
       gu_create: '✨ 캐릭터 만들기', gu_login: '이미 캐릭터가 있어요', gu_back: '◀ 지도로',

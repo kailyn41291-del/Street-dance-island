@@ -44,7 +44,7 @@ window.App = {
     const tz = tzOf(e), end = e.endDate || e.date;
     const escI = s => String(s || '').replace(/[\\,;]/g, m => '\\' + m).replace(/\n/g, '\\n');
     const dt = (k, d, tm) => (tm ? `${k}${tz ? ';TZID=' + tz : ''}:${stamp(d, tm)}` : `${k};VALUE=DATE:${stamp(d)}`);
-    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Dance Island//EN', 'BEGIN:VEVENT',
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Booto//EN', 'BEGIN:VEVENT',
       'UID:' + e.id + '@dance-island', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z',
       dt('DTSTART', e.date, e.startTime), e.startTime ? dt('DTEND', end, e.endTime || e.startTime) : dt('DTEND', nextDay(end)),
       'SUMMARY:' + escI(e.name), 'LOCATION:' + escI(placeOf(e)), 'DESCRIPTION:' + escI(`${e.organizer || ''} ${e.link || ''} ${eventUrl(e)}`), 'URL:' + eventUrl(e),
@@ -77,7 +77,7 @@ window.App = {
     g.fillStyle = '#3b2b2b'; g.fillRect(X + 14, Y + 14, WW, HH); g.fillRect(X - 6, Y - 6, WW + 12, HH + 12);
     g.fillStyle = '#fff6e8'; g.fillRect(X, Y, WW, HH);
     g.fillStyle = '#f07ca3'; g.fillRect(X, Y, WW, 90); g.fillStyle = '#3b2b2b'; g.fillRect(X, Y + 90, WW, 6);
-    g.fillStyle = '#3b2b2b'; g.font = F(40); g.textBaseline = 'middle'; g.fillText('DANCE ISLAND 舞島', X + 32, Y + 46);
+    g.fillStyle = '#3b2b2b'; g.font = F(40); g.textBaseline = 'middle'; g.fillText('BOOTO 舞島', X + 32, Y + 46);
     const wrap = (text, x, y, maxW, lh, max = 3) => {
       const out = []; let line = '';
       // 英文單字不拆開，中日韓文字可以逐字換行
@@ -227,7 +227,7 @@ window.App = {
     const img = new Image(); img.src = cv.toDataURL('image/png'); img.alt = e.name;
     body.querySelector('.share-prev').innerHTML = ''; body.querySelector('.share-prev').appendChild(img);
     const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
-    const file = new File([blob], 'dance-island.png', { type: 'image/png' });
+    const file = new File([blob], 'booto.png', { type: 'image/png' });
     body.querySelector('.dl').onclick = () => { const a = document.createElement('a'); a.href = img.src; a.download = (e.name || 'event') + '.png'; a.click(); SFX.play('coin'); };
     const sh = body.querySelector('.sh');
     if (!navigator.share) sh.classList.add('hidden');

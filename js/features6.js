@@ -9,7 +9,7 @@
 
   I18N.extend({
     zh: {
-      pp_open: '打開護照本', pp_title: '📘 舞島護照', pp_cover1: '舞島護照', pp_cover2: 'DANCE ISLAND PASSPORT', pp_cover3: '街舞冒險者通行證',
+      pp_open: '打開護照本', pp_title: '📘 舞島護照', pp_cover1: '舞島護照', pp_cover2: 'BOOTO PASSPORT', pp_cover3: '街舞冒險者通行證',
       pp_info: '持照人資料', pp_name: '姓名 / Name', pp_id: '角色 ID', pp_nat: '國籍 / Nationality', pp_style: '舞風 / Style', pp_job: '職業 / Role', pp_title_f: '稱號 / Title',
       pp_lv: '等級 / Level', pp_issue: '發照日期 / Date of issue', pp_stamps: '印章數', pp_tw: '台灣 22 縣市', pp_tw_d: '去台灣各縣市的活動打卡，把這頁集滿吧！',
       pp_visa: '簽證 VISAS', pp_visa_empty: '這頁還空空的…去活動現場打卡就會蓋上印章！', pp_back: '舞島護照局 · 願你在每個 Cypher 都找到自己的節奏',
@@ -20,10 +20,10 @@
       sp_note: '彈窗：每台裝置每天最多看到一次，新手教學期間不會出現。橫幅：顯示在活動總覽、城市行事曆、論壇上方。圖片廣播：每隔幾分鐘從左下角滑出。'
     },
     en: {
-      pp_open: 'Open passport', pp_title: '📘 Dance Island passport', pp_cover1: 'DANCE ISLAND', pp_cover2: 'PASSPORT', pp_cover3: 'Street dance adventurer pass',
+      pp_open: 'Open passport', pp_title: '📘 Booto passport', pp_cover1: 'BOOTO', pp_cover2: 'PASSPORT', pp_cover3: 'Street dance adventurer pass',
       pp_info: 'Holder information', pp_name: 'Name', pp_id: 'Character ID', pp_nat: 'Nationality', pp_style: 'Style', pp_job: 'Role', pp_title_f: 'Title',
       pp_lv: 'Level', pp_issue: 'Date of issue', pp_stamps: 'Stamps', pp_tw: 'Taiwan · 22 cities & counties', pp_tw_d: 'Check in at events around Taiwan to fill this page!',
-      pp_visa: 'VISAS', pp_visa_empty: 'Still empty… check in at an event to get a stamp!', pp_back: 'Dance Island Passport Office · May you find your rhythm in every cypher',
+      pp_visa: 'VISAS', pp_visa_empty: 'Still empty… check in at an event to get a stamp!', pp_back: 'Booto Passport Office · May you find your rhythm in every cypher',
       pp_prev: 'Previous', pp_next: 'Next', pp_dl: 'Download ID page', pp_page: 'Page {n} / {t}', pp_login: 'Log in to get your passport',
       sp_tag: 'Sponsored', sp_more: 'Learn more', sp_admin: 'Sponsors', sp_new: 'New ad', sp_name: 'Sponsor name', sp_kind: 'Type', sp_popup: 'Popup', sp_banner: 'Banner', sp_broadcast: 'Image broadcast',
       sp_img: 'Image URL', sp_img_up: 'or upload an image (max 3MB)', sp_link: 'Link (https://…)', sp_text: 'Text (max 200)', sp_start: 'Start', sp_end: 'End (optional)', sp_weight: 'Weight 1–10',
@@ -31,10 +31,10 @@
       sp_note: 'Popup: at most once per device per day, never during the tutorial. Banner: shown above events, city calendars and the forum. Image broadcast: slides in from the bottom-left every few minutes.'
     },
     ja: {
-      pp_open: 'パスポートを開く', pp_title: '📘 ダンスアイランド パスポート', pp_cover1: 'ダンスアイランド', pp_cover2: 'PASSPORT', pp_cover3: 'ストリートダンス冒険者の通行証',
+      pp_open: 'パスポートを開く', pp_title: '📘 Booto パスポート', pp_cover1: 'Booto', pp_cover2: 'PASSPORT', pp_cover3: 'ストリートダンス冒険者の通行証',
       pp_info: '所持人情報', pp_name: '氏名 / Name', pp_id: 'キャラ ID', pp_nat: '国籍 / Nationality', pp_style: 'ジャンル / Style', pp_job: '職業 / Role', pp_title_f: '称号 / Title',
       pp_lv: 'レベル / Level', pp_issue: '発行日 / Date of issue', pp_stamps: 'スタンプ数', pp_tw: '台湾 22 県市', pp_tw_d: '台湾各地のイベントでチェックインして、このページを集めよう！',
-      pp_visa: '査証 VISAS', pp_visa_empty: 'まだ空っぽ…イベントでチェックインするとスタンプが押されるよ！', pp_back: 'ダンスアイランド旅券局 · すべてのサイファーで君のリズムが見つかりますように',
+      pp_visa: '査証 VISAS', pp_visa_empty: 'まだ空っぽ…イベントでチェックインするとスタンプが押されるよ！', pp_back: 'Booto旅券局 · すべてのサイファーで君のリズムが見つかりますように',
       pp_prev: '前へ', pp_next: '次へ', pp_dl: '身分事項ページを保存', pp_page: '{n} / {t} ページ', pp_login: 'ログインするとパスポートがもらえるよ',
       sp_tag: '広告', sp_more: '詳しく見る', sp_admin: 'スポンサー広告', sp_new: '広告を追加', sp_name: 'スポンサー名', sp_kind: '種類', sp_popup: 'ポップアップ', sp_banner: 'バナー', sp_broadcast: '画像配信',
       sp_img: '画像 URL', sp_img_up: 'または画像をアップロード（3MB まで）', sp_link: 'リンク（https://…）', sp_text: 'テキスト（200 文字まで）', sp_start: '開始', sp_end: '終了（任意）', sp_weight: '重み 1–10',
@@ -42,10 +42,10 @@
       sp_note: 'ポップアップ：端末ごとに 1 日 1 回まで、チュートリアル中は出ません。バナー：イベント一覧・都市カレンダー・掲示板の上に表示。画像配信：数分ごとに左下から表示。'
     },
     ko: {
-      pp_open: '여권 열기', pp_title: '📘 댄스 아일랜드 여권', pp_cover1: '댄스 아일랜드', pp_cover2: 'PASSPORT', pp_cover3: '스트리트 댄스 모험가 통행증',
+      pp_open: '여권 열기', pp_title: '📘 Booto 여권', pp_cover1: 'Booto', pp_cover2: 'PASSPORT', pp_cover3: '스트리트 댄스 모험가 통행증',
       pp_info: '소지인 정보', pp_name: '이름 / Name', pp_id: '캐릭터 ID', pp_nat: '국적 / Nationality', pp_style: '장르 / Style', pp_job: '직업 / Role', pp_title_f: '칭호 / Title',
       pp_lv: '레벨 / Level', pp_issue: '발급일 / Date of issue', pp_stamps: '도장 수', pp_tw: '대만 22개 지역', pp_tw_d: '대만 곳곳의 이벤트에서 체크인해서 이 페이지를 채워 봐요!',
-      pp_visa: '사증 VISAS', pp_visa_empty: '아직 비어 있어요… 이벤트에서 체크인하면 도장이 찍혀요!', pp_back: '댄스 아일랜드 여권국 · 모든 사이퍼에서 당신의 리듬을 찾길',
+      pp_visa: '사증 VISAS', pp_visa_empty: '아직 비어 있어요… 이벤트에서 체크인하면 도장이 찍혀요!', pp_back: 'Booto 여권국 · 모든 사이퍼에서 당신의 리듬을 찾길',
       pp_prev: '이전', pp_next: '다음', pp_dl: '인적 사항 페이지 저장', pp_page: '{n} / {t} 페이지', pp_login: '로그인하면 여권을 받을 수 있어요',
       sp_tag: '광고', sp_more: '자세히 보기', sp_admin: '스폰서 광고', sp_new: '광고 추가', sp_name: '스폰서 이름', sp_kind: '종류', sp_popup: '팝업', sp_banner: '배너', sp_broadcast: '이미지 방송',
       sp_img: '이미지 URL', sp_img_up: '또는 이미지 업로드(3MB 이하)', sp_link: '링크(https://…)', sp_text: '문구(200자 이하)', sp_start: '시작', sp_end: '종료(선택)', sp_weight: '가중치 1–10',
@@ -73,7 +73,7 @@
     const [m1, m2] = mrz(me, issued, stamps.length);
     const out = [];
     out.push(`<div class="pp-page pp-img"><img src="assets/passport/cover.webp?v=1" alt="${esc(t('pp_cover1'))} ${esc(t('pp_cover2'))}"></div>`);
-    out.push(`<div class="pp-page pp-in pp-info"><i class="pp-k k1"></i><i class="pp-k k2"></i><i class="pp-k k3"></i><i class="pp-k k4"></i><div class="pp-ph">${esc(t('pp_info'))}<span>DANCE ISLAND</span></div>
+    out.push(`<div class="pp-page pp-in pp-info"><i class="pp-k k1"></i><i class="pp-k k2"></i><i class="pp-k k3"></i><i class="pp-k k4"></i><div class="pp-ph">${esc(t('pp_info'))}<span>BOOTO</span></div>
       <div class="pp-grid"><div class="pp-photo"></div><dl>
         <dt>${t('pp_name')}</dt><dd>${esc(me.name)}</dd><dt>${t('pp_id')}</dt><dd>@${esc(me.id)}</dd>
         <dt>${t('pp_nat')}</dt><dd>${nat ? esc(nm(nat)) : '—'}</dd><dt>${t('pp_style')}</dt><dd>${esc(me.style || '—')}</dd>
@@ -113,7 +113,7 @@
     document.addEventListener('keydown', key);
     // 手機：左右滑動翻頁
     let sx = null; slot.addEventListener('pointerdown', e => (sx = e.clientX)); slot.addEventListener('pointerup', e => { if (sx === null) return; const d = e.clientX - sx; sx = null; if (Math.abs(d) > 50) body.querySelector(d < 0 ? '.nx' : '.pv').click(); });
-    body.querySelector('.dl').onclick = () => drawInfo(P).then(cv => { const a = document.createElement('a'); a.href = cv.toDataURL('image/png'); a.download = `dance-island-passport-${P.me.id}.png`; a.click(); SFX.play('coin'); });
+    body.querySelector('.dl').onclick = () => drawInfo(P).then(cv => { const a = document.createElement('a'); a.href = cv.toDataURL('image/png'); a.download = `booto-passport-${P.me.id}.png`; a.click(); SFX.play('coin'); });
     show(0);
     sparkle(innerWidth / 2, innerHeight / 3, 14);
   }

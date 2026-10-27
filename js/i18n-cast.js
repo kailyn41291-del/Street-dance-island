@@ -5,7 +5,7 @@ I18N.extend({
     nav_map: '地圖', nav_events: '活動', nav_chat: '聊天', nav_me: '我的', 
     guide_choco: '夥伴 Choco',
     tut: [
-      '嗨！歡迎來到「舞島 DANCE ISLAND」！我是嚮導 Kailyn ✦',
+      '嗨！歡迎來到「舞島 BOOTO」！我是嚮導 Kailyn ✦',
       '我是 Choco！接下來我們兩個帶你跑完新手任務，準備好了嗎？',
       '任務 1：中間這座主島就是「台灣」！點它就能看到各縣市的活動。',
       '任務 2：整個世界都在這裡～拖曳移動，滾輪或兩指縮放。點任何國家就能進去看城市。',
@@ -36,7 +36,7 @@ I18N.extend({
     nav_map: 'Map', nav_events: 'Events', nav_chat: 'Chat', nav_me: 'Me', 
     guide_choco: 'Choco',
     tut: [
-      "Hi! Welcome to DANCE ISLAND! I'm your guide Kailyn ✦",
+      "Hi! Welcome to BOOTO! I'm your guide Kailyn ✦",
       "And I'm Choco! We'll walk you through the starter quests. Ready?",
       'Quest 1: The island in the middle is Taiwan! Tap it to see events in every city.',
       'Quest 2: The whole world is here — drag to move, scroll or pinch to zoom. Tap any country to see its cities.',
@@ -57,7 +57,7 @@ I18N.extend({
       { who: 'kailyn', mood: 'cheer', text: 'Complete a quest (check in at an event) to earn XP and passport stamps!' }
     ],
     invite: [
-      '[📜 QUEST REQUEST]\nAdventurer, a new challenge has arrived on Dance Island!\n🆚 {name}\n📅 {date}\n📍 {place}\nAccept quest ▶ {url}',
+      '[📜 QUEST REQUEST]\nAdventurer, a new challenge has arrived on Booto!\n🆚 {name}\n📅 {date}\n📍 {place}\nAccept quest ▶ {url}',
       '[💬 NPC TALK]\nKailyn: "I heard there\'s a hot event in {place}!"\nChoco: "It\'s {name}! {date} — let\'s go 😎"\n▶ {url}',
       '[✨ A wild dance event appeared!]\n{name}\n{date} · {place}\nWhat will you do?\n▶ GO ON ADVENTURE  {url}'
     ]
@@ -67,7 +67,7 @@ I18N.extend({
     nav_map: 'マップ', nav_events: 'イベント', nav_chat: 'チャット', nav_me: 'マイ', 
     guide_choco: '相棒 Choco',
     tut: [
-      'やあ！「DANCE ISLAND」へようこそ！ガイドの Kailyn だよ ✦',
+      'やあ！「BOOTO」へようこそ！ガイドの Kailyn だよ ✦',
       'オレは Choco！ふたりでチュートリアルクエストを案内するよ。準備はいい？',
       'クエスト 1：真ん中の島がメインの「台湾」！タップすると各都市のイベントが見られるよ。',
       'クエスト 2：世界中がここに。ドラッグで移動、スクロールやピンチでズーム。どの国もタップで都市が見られる。',
@@ -88,7 +88,7 @@ I18N.extend({
       { who: 'kailyn', mood: 'cheer', text: 'クエスト達成（イベントでチェックイン）で経験値とパスポートのスタンプがもらえるよ！' }
     ],
     invite: [
-      '【📜 クエスト依頼】\n冒険者よ、ダンスアイランドに新たな挑戦が届いた！\n🆚 {name}\n📅 {date}\n📍 {place}\n依頼を受ける ▶ {url}',
+      '【📜 クエスト依頼】\n冒険者よ、Bootoに新たな挑戦が届いた！\n🆚 {name}\n📅 {date}\n📍 {place}\n依頼を受ける ▶ {url}',
       '【💬 NPC の会話】\nKailyn「{place} ですごいイベントがあるって！」\nChoco「{name} だよ！{date}、一緒に行こう 😎」\n▶ {url}',
       '【✨ やせいの ダンスイベントが あらわれた！】\n{name}\n{date}・{place}\nどうする？\n▶ ぼうけんに でる　{url}'
     ]
@@ -98,7 +98,7 @@ I18N.extend({
     nav_map: '지도', nav_events: '이벤트', nav_chat: '채팅', nav_me: '마이', 
     guide_choco: '동료 Choco',
     tut: [
-      '안녕! 「DANCE ISLAND」에 온 걸 환영해! 나는 가이드 Kailyn ✦',
+      '안녕! 「BOOTO」에 온 걸 환영해! 나는 가이드 Kailyn ✦',
       '나는 Choco! 우리 둘이 초보자 퀘스트를 안내해 줄게. 준비됐어?',
       '퀘스트 1: 가운데 섬이 메인 섬 「대만」이야! 누르면 각 도시의 이벤트를 볼 수 있어.',
       '퀘스트 2: 전 세계가 여기 있어. 드래그로 이동, 스크롤이나 핀치로 확대/축소. 어느 나라든 누르면 도시가 보여.',
@@ -119,7 +119,7 @@ I18N.extend({
       { who: 'kailyn', mood: 'cheer', text: '퀘스트 완료(이벤트 체크인)하면 경험치랑 여권 도장을 받을 수 있어!' }
     ],
     invite: [
-      '【📜 퀘스트 의뢰】\n모험가여, 댄스 아일랜드에 새로운 도전이 도착했다!\n🆚 {name}\n📅 {date}\n📍 {place}\n의뢰 수락 ▶ {url}',
+      '【📜 퀘스트 의뢰】\n모험가여, Booto에 새로운 도전이 도착했다!\n🆚 {name}\n📅 {date}\n📍 {place}\n의뢰 수락 ▶ {url}',
       '【💬 NPC 대화】\nKailyn: "{place}에서 엄청난 이벤트가 열린대!"\nChoco: "{name}이야! {date}, 같이 가자 😎"\n▶ {url}',
       '【✨ 야생의 댄스 이벤트가 나타났다!】\n{name}\n{date}・{place}\n어떻게 할까?\n▶ 모험을 떠난다　{url}'
     ]

@@ -28,7 +28,7 @@ window.Together = (() => {
       lk_btn: 'Like', lk_done: 'Already liked today', lk_many: 'Out of likes for today (10 per day)', lk_got: 'Like sent!', lk_n: '👍 {n}', rel_n: '🤝 Reliable teammate ×{n}',
       bd_label: 'Birthday', bd_zodiac: 'Zodiac', bd_blood: 'Blood type', bd_age: '{n} y/o',
       bd_title: '🎂 Birthday · zodiac · blood type', bd_month: 'Month', bd_day: 'Day', bd_year: 'Birth year (optional)', bd_pub: 'Show on my card (month/day, zodiac, blood type only — year stays private)', bd_none: '—',
-      bd_today: '🎂 It’s {n}’s birthday today! Go say happy birthday', bd_mine: '🎂 Happy birthday! Dance Island wishes you a year full of dancing 🎉', anni_mine: '🏝 Happy {y}-year island anniversary! Thanks for being here', anni_friend: '🏝 Today is {n}’s {y}-year island anniversary'
+      bd_today: '🎂 It’s {n}’s birthday today! Go say happy birthday', bd_mine: '🎂 Happy birthday! Booto wishes you a year full of dancing 🎉', anni_mine: '🏝 Happy {y}-year island anniversary! Thanks for being here', anni_friend: '🏝 Today is {n}’s {y}-year island anniversary'
     },
     ja: {
       go_btn: '行く！', go_on: '行く ✔', go_friends: '{n} も行きます', go_more: '{n} ほか {c} 人のフレンドが行きます', go_login: 'キャラを作ると「行く」を付けられます',

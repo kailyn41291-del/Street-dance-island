@@ -34,9 +34,9 @@ I18N.extend({
     ev_w_upcoming: 'Upcoming', ev_w_week: 'Next 7 days', ev_w_month: 'Next 30 days', ev_w_past: 'Past', ev_w_all: 'Any time',
     ev_count: '{n} events', ev_more: 'Show more ({n} left)', ev_none: 'No events match your filters', ev_locating: '📍 Getting your location… (please allow location access)', ev_noloc: "Couldn't get your location. Please allow location access.", ev_notfound: 'Event not found — it may have been removed',
     b_cal: 'Calendar', b_share: 'Share', cal_title: '📅 Add to calendar', cal_q: 'Which calendar? You will get a reminder one day before.',
-    share_title: '📤 Share event', share_send: 'Share', share_dl: 'Download card', share_copy: 'Copy link', share_copied: 'Invite text + link copied!', share_footer: 'Find more street dance events on Dance Island', share_reg_end: 'Registration closes {d}', views: 'Views',
+    share_title: '📤 Share event', share_send: 'Share', share_dl: 'Download card', share_copy: 'Copy link', share_copied: 'Invite text + link copied!', share_footer: 'Find more street dance events on Booto', share_reg_end: 'Registration closes {d}', views: 'Views',
     tk_today: 'TODAY!', tk_tomorrow: 'Tomorrow!', tk_days: 'in {n} days',
-    fest_halloween: '🎃 Happy Halloween! Pumpkins have appeared on the island!', fest_xmas: '🎄 Merry Christmas! It is snowing on Dance Island!', fest_newyear: '🎆 Happy New Year! Keep dancing!', fest_valentine: '💘 Happy Valentine’s Day!', fest_lunar: '🧧 Happy Lunar New Year!'
+    fest_halloween: '🎃 Happy Halloween! Pumpkins have appeared on the island!', fest_xmas: '🎄 Merry Christmas! It is snowing on Booto!', fest_newyear: '🎆 Happy New Year! Keep dancing!', fest_valentine: '💘 Happy Valentine’s Day!', fest_lunar: '🧧 Happy Lunar New Year!'
   },
   ja: {
     lv_up: '⬆ レベルアップ！Lv.{n} になりました', need_cloud: 'この機能はクラウドモードが必要です', b_fav: '保存', b_faved: '保存済み', fav_added: 'マイ予定に追加しました', b_checkin: 'チェックイン', b_checked: 'チェックイン済',
@@ -53,7 +53,7 @@ I18N.extend({
     ev_w_upcoming: '近日開催', ev_w_week: '7日以内', ev_w_month: '30日以内', ev_w_past: '終了', ev_w_all: 'すべての期間',
     ev_count: '{n} 件', ev_more: 'もっと見る（残り {n} 件）', ev_none: '条件に合うイベントがありません', ev_locating: '📍 位置情報を取得中…（位置情報の利用を許可してください）', ev_noloc: '位置情報を取得できませんでした。許可設定を確認してください。', ev_notfound: 'イベントが見つかりません（削除された可能性があります）',
     b_cal: 'カレンダー', b_share: 'シェア', cal_title: '📅 カレンダーに追加', cal_q: 'どのカレンダーに追加しますか？前日にお知らせします。',
-    share_title: '📤 イベントをシェア', share_send: 'シェア', share_dl: 'カードを保存', share_copy: 'リンクをコピー', share_copied: '招待文とリンクをコピーしました！', share_footer: 'ダンスアイランドでもっとイベントを探そう', share_reg_end: 'エントリー締切 {d}', views: '閲覧数',
+    share_title: '📤 イベントをシェア', share_send: 'シェア', share_dl: 'カードを保存', share_copy: 'リンクをコピー', share_copied: '招待文とリンクをコピーしました！', share_footer: 'Bootoでもっとイベントを探そう', share_reg_end: 'エントリー締切 {d}', views: '閲覧数',
     tk_today: '今日開催！', tk_tomorrow: '明日から！', tk_days: 'あと {n} 日',
     fest_halloween: '🎃 ハッピーハロウィン！島にかぼちゃが出現！', fest_xmas: '🎄 メリークリスマス！雪が降ってきた！', fest_newyear: '🎆 あけましておめでとう！今年も踊ろう！', fest_valentine: '💘 ハッピーバレンタイン！', fest_lunar: '🧧 春節おめでとう！'
   },
@@ -72,7 +72,7 @@ I18N.extend({
     ev_w_upcoming: '다가오는', ev_w_week: '7일 이내', ev_w_month: '30일 이내', ev_w_past: '종료됨', ev_w_all: '전체 기간',
     ev_count: '{n}개', ev_more: '더 보기 ({n}개 남음)', ev_none: '조건에 맞는 이벤트가 없어요', ev_locating: '📍 위치를 가져오는 중… (위치 권한을 허용해 주세요)', ev_noloc: '위치를 가져올 수 없어요. 위치 권한을 확인해 주세요.', ev_notfound: '이벤트를 찾을 수 없어요 (삭제되었을 수 있어요)',
     b_cal: '캘린더', b_share: '공유', cal_title: '📅 캘린더에 추가', cal_q: '어느 캘린더에 추가할까요? 하루 전에 알려 드려요.',
-    share_title: '📤 이벤트 공유', share_send: '공유', share_dl: '카드 저장', share_copy: '링크 복사', share_copied: '초대 문구와 링크를 복사했어요!', share_footer: '댄스 아일랜드에서 더 많은 이벤트 찾기', share_reg_end: '신청 마감 {d}', views: '조회수',
+    share_title: '📤 이벤트 공유', share_send: '공유', share_dl: '카드 저장', share_copy: '링크 복사', share_copied: '초대 문구와 링크를 복사했어요!', share_footer: 'Booto에서 더 많은 이벤트 찾기', share_reg_end: '신청 마감 {d}', views: '조회수',
     tk_today: '오늘 열려요!', tk_tomorrow: '내일부터!', tk_days: '{n}일 남음',
     fest_halloween: '🎃 해피 할로윈! 섬에 호박이 나타났어요!', fest_xmas: '🎄 메리 크리스마스! 눈이 와요!', fest_newyear: '🎆 새해 복 많이 받으세요! 올해도 같이 춤춰요!', fest_valentine: '💘 해피 밸런타인!', fest_lunar: '🧧 설날 축하해요!'
   }

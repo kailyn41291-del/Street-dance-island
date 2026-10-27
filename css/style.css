@@ -1,5 +1,5 @@
 /* =========================================================
- * 舞島 DANCE ISLAND — 像素 RPG 風格
+ * 舞島 BOOTO — 像素 RPG 風格
  * 色票取自參考圖五：粉藍格子底、奶油色視窗、深咖啡描邊
  * ========================================================= */
 @font-face {
@@ -2628,3 +2628,6 @@ img.pxi { image-rendering: auto; }   /* 縮小顯示用平滑縮放，像素線�
   .gate-say .txt { font-size: 14px; }
 }
 html.gated #boot, html.gated #hud, html.gated #stage, html.gated .mnav, html.gated #chat, html.gated .qbox { visibility: hidden !important; }
+/* 英文名改成 BOOTO（字比較短），標題列的字放大一點、字距拉開 */
+#hud .logo .en { font-size: 17px; letter-spacing: 3px; }
+@media (max-width: 760px) { #hud .logo .en { font-size: 14px; letter-spacing: 2px; } }

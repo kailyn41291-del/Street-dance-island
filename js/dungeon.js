@@ -33,7 +33,7 @@ window.Dungeon = (() => {
       dg_l_reg1: 'This is {name} — {title}!', dg_l_reg2: 'The champion of {region} stands on this island, waiting for the next challenger.', dg_l_fin1: 'Whoa! Standing in the middle of the islands is {name}!', dg_l_fin2: '{title}! Want to cheer for the champion?',
       dg_l_enter1: 'Welcome to the {name} islands! Each island has a regional champion.', dg_l_enter2: 'The world champions stand on the final island in the middle. Tap a dancer to say hi!',
       dg_admin: 'Event islands', dg_a_enabled: 'Open now', dg_a_from: 'Opens at', dg_a_until: 'Closes at', dg_a_live: 'Live stream link', dg_a_live_note: 'Live note (optional)', dg_a_pyear: 'Prediction year (blank = closed)', dg_a_puntil: 'Predictions close',
-      dg_a_save: 'Save', dg_a_links: 'Dancers ↔ player accounts', dg_a_links_note: 'If a dancer has a Dance Island account, enter their player ID — tapping them on the island opens their card.', dg_a_settle: 'Settle predictions', dg_a_settle_btn: 'Settle (+100 XP for correct picks)', dg_a_settled: 'Settled — {n} correct!', dg_a_open_now: 'Status: {s}', dg_a_on: 'Open', dg_a_off: 'Closed'
+      dg_a_save: 'Save', dg_a_links: 'Dancers ↔ player accounts', dg_a_links_note: 'If a dancer has a Booto account, enter their player ID — tapping them on the island opens their card.', dg_a_settle: 'Settle predictions', dg_a_settle_btn: 'Settle (+100 XP for correct picks)', dg_a_settled: 'Settled — {n} correct!', dg_a_open_now: 'Status: {s}', dg_a_on: 'Open', dg_a_off: 'Closed'
     },
     ja: {
       dg_cheer_n: '応援 {n}', dg_soon: '近日開放', dg_closed: 'このエリアはまだ開放されていません。先に他の場所を探検しよう！', dg_preview: '🔒 管理者プレビュー：プレイヤーはまだ入れません', dg_islands: '群島', dg_year: '年', dg_live: '📺 生配信', dg_predict: '🔮 優勝予想', dg_back: '◀ 世界地図へ',
@@ -44,7 +44,7 @@ window.Dungeon = (() => {
       dg_l_reg1: 'この人は {title}——{name}！', dg_l_reg2: '{region}の代表がこの島で次の挑戦者を待っています。', dg_l_fin1: 'わあ！群島の真ん中に立っているのは——{name}！', dg_l_fin2: '{title}！チャンピオンを応援しよう？',
       dg_l_enter1: '{name} 群島へようこそ！それぞれの島に各地域の王者がいます。', dg_l_enter2: '真ん中の決勝の島には世界王者が。ダンサーをタップして話しかけてみて！',
       dg_admin: '特別島', dg_a_enabled: '今すぐ開放', dg_a_from: '開放開始', dg_a_until: '開放終了', dg_a_live: '配信リンク', dg_a_live_note: '配信メモ（任意）', dg_a_pyear: '予想を開く年（空欄 = 閉じる）', dg_a_puntil: '予想締切',
-      dg_a_save: '保存', dg_a_links: 'ダンサー ↔ プレイヤー', dg_a_links_note: 'ダンサーがダンスアイランドに登録していれば ID を入力。島のダンサーをタップすると名刺が開きます。', dg_a_settle: '予想の集計', dg_a_settle_btn: '集計（的中 +100 XP）', dg_a_settled: '集計完了：{n} 人的中！', dg_a_open_now: '状態：{s}', dg_a_on: '開放中', dg_a_off: '未開放'
+      dg_a_save: '保存', dg_a_links: 'ダンサー ↔ プレイヤー', dg_a_links_note: 'ダンサーがBootoに登録していれば ID を入力。島のダンサーをタップすると名刺が開きます。', dg_a_settle: '予想の集計', dg_a_settle_btn: '集計（的中 +100 XP）', dg_a_settled: '集計完了：{n} 人的中！', dg_a_open_now: '状態：{s}', dg_a_on: '開放中', dg_a_off: '未開放'
     },
     ko: {
       dg_cheer_n: '응원 {n}', dg_soon: '오픈 예정', dg_closed: '이 지역은 아직 열리지 않았어요. 먼저 다른 곳을 탐험해 보세요!', dg_preview: '🔒 관리자 미리보기: 플레이어는 아직 들어올 수 없어요', dg_islands: '군도', dg_year: '연도', dg_live: '📺 생중계', dg_predict: '🔮 우승 예측', dg_back: '◀ 세계 지도로',
@@ -55,7 +55,7 @@ window.Dungeon = (() => {
       dg_l_reg1: '이분이 바로 {title}——{name}!', dg_l_reg2: '{region} 대표가 이 섬에서 다음 도전자를 기다리고 있어요.', dg_l_fin1: '와! 군도 한가운데 서 있는 건——{name}!', dg_l_fin2: '{title}! 챔피언을 응원해 볼까요?',
       dg_l_enter1: '{name} 군도에 온 걸 환영해요! 섬마다 각 지역 챔피언이 있어요.', dg_l_enter2: '한가운데 결승 섬에는 월드 챔피언이 있어요. 댄서를 눌러 인사해 보세요!',
       dg_admin: '특별 섬', dg_a_enabled: '지금 열기', dg_a_from: '여는 시간', dg_a_until: '닫는 시간', dg_a_live: '생중계 링크', dg_a_live_note: '생중계 메모 (선택)', dg_a_pyear: '예측을 여는 연도 (빈칸 = 닫힘)', dg_a_puntil: '예측 마감',
-      dg_a_save: '저장', dg_a_links: '댄서 ↔ 플레이어 계정', dg_a_links_note: '댄서가 댄스 아일랜드에 가입했다면 플레이어 ID를 입력하세요. 섬에서 댄서를 누르면 명함이 열려요.', dg_a_settle: '예측 결산', dg_a_settle_btn: '결산 (맞힌 사람 +100 XP)', dg_a_settled: '결산 완료: {n}명 적중!', dg_a_open_now: '상태: {s}', dg_a_on: '열림', dg_a_off: '닫힘'
+      dg_a_save: '저장', dg_a_links: '댄서 ↔ 플레이어 계정', dg_a_links_note: '댄서가 Booto에 가입했다면 플레이어 ID를 입력하세요. 섬에서 댄서를 누르면 명함이 열려요.', dg_a_settle: '예측 결산', dg_a_settle_btn: '결산 (맞힌 사람 +100 XP)', dg_a_settled: '결산 완료: {n}명 적중!', dg_a_open_now: '상태: {s}', dg_a_on: '열림', dg_a_off: '닫힘'
     }
   });
 

@@ -65,7 +65,7 @@ window.Daily = (() => {
       sd_f_name: 'Studio name', sd_f_place: 'Country / city', sd_f_addr: 'Address', sd_f_styles: 'Styles taught', sd_f_phone: 'Phone', sd_f_ig: 'IG account or URL', sd_f_link: 'Website / sign-up link',
       sd_f_intro: 'About the studio', sd_f_cover: 'Cover image', sd_f_cover_up: 'Upload image (max 5MB)', sd_f_pin: 'Map location (click the map to move the pin)', sd_f_here: '📍 Use my location',
       sd_f_teachers: 'Teachers', sd_f_sched: 'Weekly timetable', sd_f_battles: 'Battles hosted by the studio (tick events on this site)', sd_f_battles_q: 'Search events…',
-      sd_t_name: 'Teacher', sd_t_styles: 'Styles', sd_t_ig: 'IG', sd_t_handle: 'Dance Island ID (optional)',
+      sd_t_name: 'Teacher', sd_t_styles: 'Styles', sd_t_ig: 'IG', sd_t_handle: 'Booto ID (optional)',
       sd_s_title: 'Class', sd_s_teacher: 'Teacher', sd_s_level: 'Level', sd_add_row: 'Add row',
       sd_save: 'Save', sd_submit: 'Submit', sd_sent: 'Sent! It will show on the map once an admin approves it', sd_saved: 'Saved!',
       sd_p_kind: 'Type', sd_p_notice: 'News', sd_p_course: 'Class / Workshop', sd_p_special: 'Special event', sd_p_title: 'Title', sd_p_date: 'Date', sd_p_time: 'Time', sd_p_teacher: 'Teacher', sd_p_body: 'Details', sd_p_link: 'Sign-up / info link', sd_p_img: 'Image',
@@ -88,7 +88,7 @@ window.Daily = (() => {
       sd_f_name: 'スタジオ名', sd_f_place: '国 / 都市', sd_f_addr: '住所', sd_f_styles: '教えているジャンル', sd_f_phone: '電話', sd_f_ig: 'IG アカウントか URL', sd_f_link: '公式サイト / 申込リンク',
       sd_f_intro: 'スタジオ紹介', sd_f_cover: 'カバー画像', sd_f_cover_up: '画像をアップロード（5MB まで）', sd_f_pin: '地図の位置（地図をクリックでピン移動）', sd_f_here: '📍 現在地を使う',
       sd_f_teachers: '講師', sd_f_sched: '週間時間割', sd_f_battles: 'スタジオ主催のバトル（サイト上のイベントにチェック）', sd_f_battles_q: 'イベントを検索…',
-      sd_t_name: '講師名', sd_t_styles: 'ジャンル', sd_t_ig: 'IG', sd_t_handle: 'ダンスアイランド ID（任意）',
+      sd_t_name: '講師名', sd_t_styles: 'ジャンル', sd_t_ig: 'IG', sd_t_handle: 'Booto ID（任意）',
       sd_s_title: 'クラス名', sd_s_teacher: '講師', sd_s_level: 'レベル', sd_add_row: '行を追加',
       sd_save: '保存', sd_submit: '登録する', sd_sent: '送信しました！管理者が承認すると地図に表示されます', sd_saved: '保存しました！',
       sd_p_kind: '種類', sd_p_notice: 'お知らせ', sd_p_course: 'クラス / WS', sd_p_special: '特別イベント', sd_p_title: 'タイトル', sd_p_date: '日付', sd_p_time: '時間', sd_p_teacher: '講師', sd_p_body: '内容', sd_p_link: '申込 / 詳細リンク', sd_p_img: '画像',
@@ -111,7 +111,7 @@ window.Daily = (() => {
       sd_f_name: '학원 이름', sd_f_place: '나라 / 도시', sd_f_addr: '주소', sd_f_styles: '수업 장르', sd_f_phone: '전화', sd_f_ig: 'IG 계정 또는 URL', sd_f_link: '홈페이지 / 신청 링크',
       sd_f_intro: '학원 소개', sd_f_cover: '커버 이미지', sd_f_cover_up: '이미지 업로드 (5MB 이하)', sd_f_pin: '지도 위치 (지도를 클릭해 핀 이동)', sd_f_here: '📍 현재 위치 사용',
       sd_f_teachers: '강사', sd_f_sched: '주간 시간표', sd_f_battles: '학원 주최 배틀 (사이트의 이벤트 선택)', sd_f_battles_q: '이벤트 검색…',
-      sd_t_name: '강사 이름', sd_t_styles: '장르', sd_t_ig: 'IG', sd_t_handle: '댄스 아일랜드 ID (선택)',
+      sd_t_name: '강사 이름', sd_t_styles: '장르', sd_t_ig: 'IG', sd_t_handle: 'Booto ID (선택)',
       sd_s_title: '수업 이름', sd_s_teacher: '강사', sd_s_level: '레벨', sd_add_row: '행 추가',
       sd_save: '저장', sd_submit: '등록하기', sd_sent: '보냈어요! 관리자가 승인하면 지도에 표시돼요', sd_saved: '저장했어요!',
       sd_p_kind: '종류', sd_p_notice: '공지', sd_p_course: '수업 / 워크숍', sd_p_special: '특별 이벤트', sd_p_title: '제목', sd_p_date: '날짜', sd_p_time: '시간', sd_p_teacher: '강사', sd_p_body: '내용', sd_p_link: '신청 / 상세 링크', sd_p_img: '이미지',
@@ -595,7 +595,7 @@ window.Daily = (() => {
     const evHTML = ev ? `<a class="lk-rec" href="#/e/${esc(ev.e.id)}"><b>${esc(ev.e.name)}</b><small>${esc(ev.e.date.replace(/-/g, '/'))}・${esc(nm(A.cityOf(ev.e.country, ev.e.city)))}</small>${ev.why[0] ? `<small class="why">${esc(ev.why[0])}</small>` : ''}</a>` : `<a class="lk-rec" href="#/events"><small>${t('lk_ev_none')}</small></a>`;
     const wsHTML = ws ? `<a class="lk-rec" href="#/studios/${ws.s.id}"><b>${esc(ws.p.title)}</b><small>${esc([ws.s.name, ws.p.date ? ws.p.date.replace(/-/g, '/') : '', ws.p.time].filter(Boolean).join('・'))}</small>${styles[0] ? `<small class="why">${esc(t('lk_why', { s: styles[0] }))}</small>` : ''}</a>` : `<a class="lk-rec" href="#/studios"><small>${t('lk_ws_none')}</small></a>`;
     const body = h(`<div class="lk-wrap"><button class="lk-card" type="button" aria-label="${esc(t('lk_tap'))}">
-        <span class="lk-face lk-back"><span class="lk-clover">🍀</span><b>DANCE ISLAND</b><small>${t('lk_tap')}</small></span>
+        <span class="lk-face lk-back"><span class="lk-clover">🍀</span><b>BOOTO</b><small>${t('lk_tap')}</small></span>
         <span class="lk-face lk-front" style="--lc:${color[1]}">
           <span class="lk-row"><span>${t('lk_luck')}</span><b class="lk-stars">${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}</b></span>
           <span class="lk-quote" data-utr>${esc(quote)}</span>

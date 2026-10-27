@@ -1,5 +1,5 @@
 /* =========================================================
- * 舞島 DANCE ISLAND — 主程式
+ * 舞島 BOOTO — 主程式
  * 路由：#/            世界地圖
  *       #/c/TW        國家（島嶼）→ 城市按鈕
  *       #/c/TW/taipei 城市活動行事曆
@@ -711,13 +711,13 @@
       f_line_ph: '一行一個，例：\nIPLockers\nFunkdation', r_teams: '👥 參賽', r_judges: '⚖ Judge', r_show: '✨ Showcase', f_djs: 'DJ', f_mcs: 'MC', r_djs: '🎧 DJ', r_mcs: '🎤 MC', f_at_tip: '有註冊舞島的人，寫「名字 @角色ID」就會連到他的名片（例：DJ Kai @kailyn41291）' },
     en: { f_rt: 'Entry type', rt_open: 'Open registration', rt_invite: 'Invite only', rt_closed: 'Prelims finished', rt_none: 'No sign-up · just watch',
       f_fee_ph2: 'e.g. Audience $10 | Free entry (optional)', f_lineup: '🎤 Line-up (optional)', f_teams: 'Teams / dancers', f_judges: 'Judges', f_show: 'Showcase',
-      f_line_ph: 'One per line, e.g.\nIPLockers\nFunkdation', r_teams: '👥 Line-up', r_judges: '⚖ Judges', r_show: '✨ Showcase', f_djs: 'DJ', f_mcs: 'MC', r_djs: '🎧 DJ', r_mcs: '🎤 MC', f_at_tip: 'For Dance Island members, write “Name @playerID” to link their card (e.g. DJ Kai @kailyn41291)' },
+      f_line_ph: 'One per line, e.g.\nIPLockers\nFunkdation', r_teams: '👥 Line-up', r_judges: '⚖ Judges', r_show: '✨ Showcase', f_djs: 'DJ', f_mcs: 'MC', r_djs: '🎧 DJ', r_mcs: '🎤 MC', f_at_tip: 'For Booto members, write “Name @playerID” to link their card (e.g. DJ Kai @kailyn41291)' },
     ja: { f_rt: 'エントリー形式', rt_open: '一般エントリー', rt_invite: '招待制', rt_closed: '予選終了', rt_none: 'エントリー不要・観覧のみ',
       f_fee_ph2: '例：観覧 ¥2000｜入場無料（任意）', f_lineup: '🎤 出演者（任意）', f_teams: '出場チーム / ダンサー', f_judges: 'ジャッジ', f_show: 'ショーケース',
       f_line_ph: '1 行に 1 つ。例：\nIPLockers\nFunkdation', r_teams: '👥 出場', r_judges: '⚖ ジャッジ', r_show: '✨ ショーケース', f_djs: 'DJ', f_mcs: 'MC', r_djs: '🎧 DJ', r_mcs: '🎤 MC', f_at_tip: '舞島に登録している人は「名前 @キャラID」と書くと名刺にリンクします（例：DJ Kai @kailyn41291）' },
     ko: { f_rt: '참가 방식', rt_open: '공개 신청', rt_invite: '초청제', rt_closed: '예선 종료', rt_none: '신청 불필요 · 관람만',
       f_fee_ph2: '예: 관람 ₩20,000 | 무료 입장 (선택)', f_lineup: '🎤 라인업 (선택)', f_teams: '참가 팀 / 댄서', f_judges: '저지', f_show: '쇼케이스',
-      f_line_ph: '한 줄에 하나씩, 예:\nIPLockers\nFunkdation', r_teams: '👥 참가', r_judges: '⚖ 저지', r_show: '✨ 쇼케이스', f_djs: 'DJ', f_mcs: 'MC', r_djs: '🎧 DJ', r_mcs: '🎤 MC', f_at_tip: '댄스 아일랜드 회원은 「이름 @캐릭터ID」로 쓰면 명함으로 연결돼요 (예: DJ Kai @kailyn41291)' }
+      f_line_ph: '한 줄에 하나씩, 예:\nIPLockers\nFunkdation', r_teams: '👥 참가', r_judges: '⚖ 저지', r_show: '✨ 쇼케이스', f_djs: 'DJ', f_mcs: 'MC', r_djs: '🎧 DJ', r_mcs: '🎤 MC', f_at_tip: 'Booto 회원은 「이름 @캐릭터ID」로 쓰면 명함으로 연결돼요 (예: DJ Kai @kailyn41291)' }
   });
   const RT = ['open', 'invite', 'closed', 'none'];
   const lines = v => (Array.isArray(v) ? v : String(v || '').split('\n')).map(x => String(x).trim()).filter(Boolean);
@@ -1078,7 +1078,7 @@
     </div>`);
     const m = modal({ title: t('s_title'), color: 'yellow', body });
     body.querySelector('.exp-js').onclick = () => { download('events.js', Store.exportJS()); SFX.play('coin'); toast(t('s_downloaded'), '💾'); };
-    body.querySelector('.exp-json').onclick = () => { download('dance-island-backup.json', Store.exportJSON(), 'application/json'); SFX.play('coin'); };
+    body.querySelector('.exp-json').onclick = () => { download('booto-backup.json', Store.exportJSON(), 'application/json'); SFX.play('coin'); };
     body.querySelector('.imp').onchange = ev => {
       const file = ev.target.files[0]; if (!file) return;
       file.text().then(x => { const n = Store.importJSON(x); toast(t('s_imported', { n }), '★'); m.close(); render(true); })
@@ -1114,7 +1114,7 @@
       b.querySelector('.start').textContent = t('press_start');
       b.querySelectorAll('.boot-langs button').forEach(x => x.classList.toggle('on', x.dataset.l === I18N.lang));
     }
-    document.title = { zh: '舞島 Dance Island', en: 'Dance Island', ja: 'ダンスアイランド Dance Island', ko: '댄스 아일랜드 Dance Island' }[I18N.lang];
+    document.title = { zh: '舞島 Booto', en: 'Booto', ja: '舞島 Booto', ko: '舞島 Booto' }[I18N.lang];
   }
 
   function afterStart() {
