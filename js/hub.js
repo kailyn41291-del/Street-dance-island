@@ -303,21 +303,23 @@ window.Hub = (() => {
     lab(); I18N.onChange && I18N.onChange(lab);
   }
 
-  /* 手機版：底部導覽列（地圖 / 活動 / 選單 / 聊天 / 我的） */
+  /* 手機版：底部導覽列（地圖 / 活動 / 選單 / 聊天 / 好友 / 我的） */
   function mountNav() {
     if (document.querySelector('.mnav')) return;
     const el = h(`<nav class="mnav" aria-label="menu"></nav>`);
     const draw = () => {
       const r = location.hash.replace(/^#\/?/, '').split('/')[0] || '';
-      const items = [['today', PXI.img('menu/today', '🏠'), t('nav_today'), r === 'today'], ['map', PXI.img('menu/world', '🌏'), t('nav_map'), r === '' || r === 'c'], ['events', PXI.img('menu/events', '📋'), t('nav_events'), r === 'events' || r === 'e'], ['menu', '📱', t('hub_menu'), false], ['chat', PXI.img('menu/chat', '💬'), t('nav_chat'), false], ['me', PXI.img('menu/me', '🧑'), t('nav_me'), r === 'me']];
-      el.innerHTML = items.map(([k, ic, lb, on]) => `<button class="mn-b ${on ? 'on' : ''}" data-k="${k}"><span class="mn-i">${k === 'menu' ? '<img src="assets/menu_phone.webp?v=1" alt="">' : ic}</span><span class="mn-l">${esc(lb)}</span>${k === 'menu' ? '<i class="mn-dot"></i>' : ''}${k === 'today' ? '<span class="bell-badge" hidden></span>' : ''}</button>`).join('');
+      // 「今天」在功能選單最上面，底部改放「好友」
+      const items = [['map', PXI.img('menu/world', '🌏'), t('nav_map'), r === '' || r === 'c'], ['events', PXI.img('menu/events', '📋'), t('nav_events'), r === 'events' || r === 'e'], ['menu', '📱', t('hub_menu'), false], ['chat', PXI.img('menu/chat', '💬'), t('nav_chat'), false], ['friends', PXI.img('menu/friends', '👥'), t('hud_friends'), false], ['me', PXI.img('menu/me', '🧑'), t('nav_me'), r === 'me']];
+      el.innerHTML = items.map(([k, ic, lb, on]) => `<button class="mn-b ${on ? 'on' : ''}" data-k="${k}"><span class="mn-i">${k === 'menu' ? '<img src="assets/menu_phone.webp?v=1" alt="">' : ic}</span><span class="mn-l">${esc(lb)}</span>${k === 'menu' ? '<i class="mn-dot"></i><span class="bell-badge" hidden></span>' : ''}${k === 'friends' ? '<span class="mn-badge fr-badge" hidden></span>' : ''}</button>`).join('');
+      window.Friends && Friends.badge && setTimeout(Friends.badge, 0);
       window.Notify && setTimeout(() => window.Notify.unread && document.querySelectorAll('.bell-badge').forEach(b => { const n = Notify.unread(); b.textContent = n > 9 ? '9+' : n; b.hidden = !n; }), 0);
     };
     el.onclick = e => {
       const b = e.target.closest('[data-k]'); if (!b) return; SFX.play('select');
       const k = b.dataset.k;
       if (k !== 'chat' && document.getElementById('chat')?.classList.contains('open')) Chat.toggle(false);   // 點其他按鈕就收起聊天室
-      if (k === 'today') A.nav('#/today'); else if (k === 'map') A.nav('#/'); else if (k === 'events') A.nav('#/events'); else if (k === 'menu') openMenu();
+      if (k === 'friends') { if (logged()) Friends.openPanel(); else Player.prompt(); } else if (k === 'map') A.nav('#/'); else if (k === 'events') A.nav('#/events'); else if (k === 'menu') openMenu();
       else if (k === 'chat') Chat.toggle(!document.getElementById('chat')?.classList.contains('open'));
       else if (k === 'me') (logged() ? A.nav('#/me') : Player.prompt());
     };

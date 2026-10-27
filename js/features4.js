@@ -64,6 +64,7 @@ window.Friends = (() => {
     hudBtn.querySelector('.label').textContent = t('hud_friends');
     const n = incoming().length + Object.values(unread).reduce((s, v) => s + v, 0);
     const b = hudBtn.querySelector('.fr-badge'); b.hidden = !n; b.textContent = n > 99 ? '99+' : n;
+    document.querySelectorAll('.mnav [data-k="friends"] .fr-badge').forEach(x => { x.hidden = !n || !on(); x.textContent = n > 9 ? '9+' : n; });
   }
 
   /* ---------- 名片 ---------- */
@@ -638,5 +639,5 @@ window.Friends = (() => {
     Player.onChange(() => setTimeout(sync, 50));
   }
 
-  return { openCard, openCardEditor, openPanel, openDM, invitePvp, get online() { return online; }, friends: () => friendIds().map(id => people[id]).filter(Boolean) };
+  return { badge: () => { try { badge(); } catch (e) {} }, openCard, openCardEditor, openPanel, openDM, invitePvp, get online() { return online; }, friends: () => friendIds().map(id => people[id]).filter(Boolean) };
 })();

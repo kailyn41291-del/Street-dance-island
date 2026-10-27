@@ -34,7 +34,12 @@ window.PXI = (() => {
     '🎪': ['menu/fest', 'fest/party'], '🎖': ['menu/titles', 'xp/medal'], '📦': ['menu/shoes', 'game/footwork'], '✨': 'ui/sparkle', '🎂': 'social/birthday', '🔮': 'game/predict',
     '📯': ['social/recruit', 'menu/party'], '🎤': 'event/lineup', '⚖': 'event/judge', '📄': 'event/pdf', '🪞': 'event/mirror', '☔': 'event/roof', '💡': ['event/light', 'ach/qa1'],
     '📺': 'event/live', '📴': 'ui/offline', '🌙': 'ui/night', '☀': 'ui/day', '📚': 'event/course', '🧑‍🏫': 'event/teacher', '🎃': ['fest/halloween'], '🎄': ['fest/xmas'],
-    '🎆': ['fest/newyear'], '💘': ['fest/valentine'], '🧧': ['fest/lunar'], '🌕': 'fest/moon', '📈': 'xp/stats'
+    '🎆': ['fest/newyear'], '💘': ['fest/valentine'], '🧧': ['fest/lunar'], '🌕': 'fest/moon', '📈': 'xp/stats',
+    // 第四批（tools/icon_brief_v4.md）：還沒畫的先借現有的
+    '🗨': ['ui/comments', 'menu/chat'], '📘': ['ui/passport_book', 'xp/passport'], '📖': ['ui/guide', 'event/course'], '🔎': 'menu/search', '🔧': ['ui/tool', 'menu/admin'],
+    '✎': 'ui/edit', '🟢': 'ui/online', '🏳': 'ui/flag', '📎': 'ui/attach', '⏸': 'ui/pause', '🔈': ['ui/volume', 'menu/sound_on'], '⌛': ['ui/hourglass', 'game/timer'],
+    '☎': 'ui/phone', '📱': 'ui/mobile', '❤': 'ui/heart', '♥': 'ui/heart', '💪': 'ui/flex', '💥': 'ui/boom', '🌊': 'ui/wave', '☁': 'ui/cloud', '🌈': 'ui/rainbow',
+    '🦶': 'ui/foot', '🍣': 'ui/sushi', '🍎': 'ui/apple', '🧢': 'ui/cap', '🧋': 'ui/bubbletea', '♂': 'ui/male', '♀': 'ui/female', '✅': 'ui/check', '❌': 'ui/cross'
   };
   // 一個 emoji 可以對應好幾個圖示（第一個有檔案的就用它）
   const pick = k => [].concat(EMO[k] || []).find(has);
@@ -42,26 +47,27 @@ window.PXI = (() => {
   /** '🕒 日期時間' → 像素圖示 + '日期時間'（開頭的 emoji 有對應圖示才換；回傳 HTML，文字要先 escape） */
   const lead = html => { const m = /^(\S+?)\uFE0F?\s/.exec(html); return m && pick(m[1]) ? img(pick(m[1])) + html.slice(m[0].length) : html; };
 
-  /* ---- 自動替換：按鈕、標籤、視窗標題、通知……開頭的 emoji 換成像素圖示 ----
-   * 只處理介面文字（不碰玩家寫的聊天、論壇內容），有圖示的 emoji 才換 */
-  const SEL = '.btn, button, .tag, .win-title, legend, .toast .ic, .nt-list .ic, .crumbs, h4, .chip, .sr-row b, .ph-app, .qb-head, .lk-sec h4';
-  const SKIP = '.mt, .fo-body, .thr-t, .pc-bio, .dp-body, .sd-intro, input, textarea, [contenteditable], .pt-msg, .dm-msg, .msn-log';
-  const keys = Object.keys(EMO).filter(k => pick(k));
-  const RE = new RegExp('^(\\s*)(' + keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\uFE0F?\\s?');
+  /* ---- 自動替換：整個網頁介面文字裡的 emoji，有對應圖示就換成像素圖示 ----
+   * 不碰玩家自己寫的內容（聊天、論壇、名片自介、私訊……）和輸入框 */
+  const SKIP = '.mt, .fo-body, .thr-t, .pc-bio, .dp-body, .sd-intro, input, textarea, select, option, script, style, title, [contenteditable], svg, .pt-msg, .dm-msg, .msn-log, .no-pxi';
+  const keys = Object.keys(EMO).filter(k => pick(k)).sort((a, b) => b.length - a.length);
+  const RE = new RegExp('(' + keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\uFE0F?', 'g');
   function swapIn(root) {
-    if (!keys.length || !root || root.nodeType !== 1) return;
-    const els = root.matches && root.matches(SEL) ? [root, ...root.querySelectorAll(SEL)] : root.querySelectorAll(SEL);
-    els.forEach(el => {
-      if (el.closest(SKIP)) return;
-      for (const n of [...el.childNodes]) {
-        if (n.nodeType !== 3) continue;
-        const m = RE.exec(n.nodeValue); if (!m) continue;
-        const i = document.createElement('img'); i.className = 'pxi'; i.src = src(pick(m[2])); i.alt = ''; i.draggable = false;
-        n.nodeValue = n.nodeValue.slice(m[0].length);
-        n.before(i); if (n.nodeValue) n.before(document.createTextNode(' '));
-        if (!n.nodeValue) n.remove();
-        break;                           // 每個元素只換開頭那一個
+    if (!keys.length || !root) return;
+    if (root.nodeType === 3) root = root.parentElement;
+    if (!root || root.nodeType !== 1 || (root.closest && root.closest(SKIP))) return;
+    const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (RE.lastIndex = 0, RE.test(n.nodeValue) && !n.parentElement.closest(SKIP) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT) });
+    const list = []; while (tw.nextNode()) list.push(tw.currentNode);
+    list.forEach(n => {
+      const frag = document.createDocumentFragment(), v = n.nodeValue; let last = 0, m;
+      RE.lastIndex = 0;
+      while ((m = RE.exec(v))) {
+        if (m.index > last) frag.appendChild(document.createTextNode(v.slice(last, m.index)));
+        const i = document.createElement('img'); i.className = 'pxi'; i.src = src(pick(m[1])); i.alt = ''; i.draggable = false;
+        frag.appendChild(i); last = m.index + m[0].length;
       }
+      if (last < v.length) frag.appendChild(document.createTextNode(v.slice(last)));
+      n.replaceWith(frag);
     });
   }
   let pending = new Set(), tm = null;
