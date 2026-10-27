@@ -1193,3 +1193,25 @@
 
   boot();
 })();
+
+/* 頁面上下留白跟著畫面上的固定列走：
+   上面的 HUD 在手機上會換行變高、下面有選單列和「每日任務」按鈕，量好實際高度再留空間，內容就不會被蓋住 */
+(() => {
+  const root = document.documentElement;
+  const measure = () => {
+    const hud = document.getElementById('hud');
+    const top = hud && !hud.classList.contains('hidden') ? hud.getBoundingClientRect().bottom : 0;
+    let bottom = innerHeight;
+    document.querySelectorAll('.mnav, .qbox:not(.open)').forEach(e => {
+      const r = e.getBoundingClientRect(), s = getComputedStyle(e);
+      if (r.height && s.display !== 'none' && s.visibility !== 'hidden' && r.top > innerHeight / 2) bottom = Math.min(bottom, r.top);
+    });
+    root.style.setProperty('--hud-b', Math.round(top) + 'px');
+    root.style.setProperty('--bot-h', Math.round(innerHeight - bottom) + 'px');
+  };
+  let t; const later = () => { clearTimeout(t); t = setTimeout(measure, 120); };
+  addEventListener('resize', later); addEventListener('hashchange', later);
+  new MutationObserver(later).observe(document.body, { childList: true, subtree: false, attributes: true, attributeFilter: ['class'] });
+  setInterval(measure, 3000);
+  later();
+})();

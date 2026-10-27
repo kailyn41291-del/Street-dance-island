@@ -2536,3 +2536,28 @@ img.pxi { image-rendering: auto; }   /* 縮小顯示用平滑縮放，像素線�
 @keyframes fsFall { to { top: calc(100% + 40px); } }
 @keyframes fsSway { from { transform: translateX(-14px) rotate(-12deg); } to { transform: translateX(14px) rotate(12deg); } }
 .k-face img[src*="assets/fest/"] { object-fit: cover; object-position: 50% 0; }
+
+/* ===== 版面：內容不被上方 HUD、下方選單列蓋住（高度由 app.js 量好） ===== */
+.view.city-view { padding-top: max(84px, calc(var(--hud-b, 84px) + 14px)) !important; padding-bottom: max(40px, calc(var(--bot-h, 0px) + 24px)) !important; }
+/* 空的列表：做成一張卡片，不要只是一行小字浮在背景上 */
+.city-inner > .note, .city-inner > :not(.win) > .note:only-child { background: var(--paper, #fff6e8); border: 3px dashed rgba(59, 43, 43, .35); border-radius: 10px; padding: 20px 16px; text-align: center; font-size: 14px; color: var(--ink-soft); }
+.view.cypher-view { padding-top: max(84px, calc(var(--hud-b, 84px) + 10px)) !important; padding-bottom: max(70px, calc(var(--bot-h, 0px) + 10px)) !important; }
+/* 手機地圖：活動跑馬燈放在 HUD 下面，右邊按鈕再往下，不要互相蓋住 */
+@media (max-width: 760px) {
+  .cd-ticker { top: calc(var(--hud-b, 78px) + 6px) !important; }
+  .view:has(.cd-ticker) .map-ctrls { top: calc(var(--hud-b, 78px) + 44px) !important; }
+}
+/* 手機地圖：「每日任務」疊在「快速傳送」上面，不要並排擠在一起 */
+@media (max-width: 760px) {
+  body:has(.world-menu.collapsed) .qbox:not(.open) { bottom: calc(126px + env(safe-area-inset-bottom)) !important; }
+}
+@media (max-width: 760px) {
+  #chat { top: calc(var(--hud-b, 96px) + 6px) !important; }
+}
+
+/* 電腦 / 平板：地圖以外的頁面，「每日任務」移到左下角，不要蓋住頁面最上面的內容 */
+@media (min-width: 761px) {
+  body:not(:has(.world-menu)) .qbox { top: auto; bottom: 16px; display: flex; flex-direction: column-reverse; }
+  body:not(:has(.world-menu)) .qbox:not(.open) { width: auto; }
+  body:not(:has(.world-menu)) .qbox.open .qb-head { border-bottom: 0; border-top: 2px solid var(--ink); }
+}
