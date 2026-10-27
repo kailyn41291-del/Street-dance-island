@@ -91,6 +91,7 @@
   A.orgLinks = s => splitOrg(s).map(o => `<a class="org-link" href="#/org/${encodeURIComponent(o)}">${esc(o)}</a>`).join(' / ');
   A.crumbs.org = r => PXI.img('event/organizer', '🏠') + ' ' + esc(r.arg[0] || '');
   A.views.org = (r, stage) => {
+    Store.ensureAll();   // 主辦單位的舊活動也要列出來（抓完會自動重畫）
     const org = r.arg[0] || '';
     const today = A.todayStr();
     const evs = Store.all().filter(e => splitOrg(e.organizer).some(o => o.toLowerCase() === org.toLowerCase()));
@@ -139,6 +140,7 @@
   A.prefetch.me = () => meData();
   A.views.me = async (r, stage) => {
     if (!Player.me) { Player.prompt(); return A.nav('#/'); }
+    if (!Store.full) Store.ensureAll();   // 收藏裡的舊活動（抓完會自動重畫）
     const view = h(`<div class="view city-view"><div class="city-inner me-page"><p class="note">…</p></div></div>`);
     const inner = view.querySelector('.city-inner');
     stage.appendChild(view);

@@ -417,6 +417,8 @@ window.App = {
         try { await getHere(); } catch (x) { listEl.innerHTML = `<p class="note">${t('ev_noloc')}</p>`; return; }
       }
       const q = fs.q.trim().toLowerCase();
+      // 看過去 / 全部 / 有打字搜尋：要用到舊活動，先在背景抓，抓完再畫一次
+      if ((fs.when === 'past' || fs.when === 'all' || q) && !Store.full) Store.ensureAll(true).then(n => n && listEl.isConnected && draw());
       let list = Store.all().filter(e => {
         const end = e.endDate || e.date;
         if (fs.when === 'upcoming' && end < today) return false;
@@ -437,15 +439,29 @@ window.App = {
       if (fs.when === 'past') list.reverse();
       countEl.textContent = t('ev_count', { n: list.length });
       const canEdit = Store.canEdit();
-      let html = '', lastM = '';
-      list.forEach((e, i) => {
-        const m = (e.date || '').slice(0, 7);
-        if (fs.region !== 'near' && m !== lastM) { lastM = m; const [y, mm] = m.split('-'); html += `<div class="month-sep">${t('month_title', { y, m: +mm })}</div>`; }
-        html += A.cardHTML(e, Math.min(i, 12), today, canEdit, { place: true, dist: fs.region === 'near' ? distOf(e) : null });
-      });
-      listEl.innerHTML = html || `<div class="win empty"><div class="win-body"><p>${t('ev_none')}</p></div></div>`;
-      A.loadCommentCounts(listEl);
-      A.translateCards(listEl);
+      // 一次只畫 30 個，滑到底再畫下一批（活動很多時才不會卡）
+      const PAGE = 30; let shown = 0, lastM = '';
+      const more = () => {
+        const part = list.slice(shown, shown + PAGE); let html = '';
+        part.forEach((e, k) => {
+          const m = (e.date || '').slice(0, 7);
+          if (fs.region !== 'near' && m !== lastM) { lastM = m; const [y, mm] = m.split('-'); html += `<div class="month-sep">${t('month_title', { y, m: +mm })}</div>`; }
+          html += A.cardHTML(e, Math.min(k, 12), today, canEdit, { place: true, dist: fs.region === 'near' ? distOf(e) : null });
+        });
+        shown += part.length;
+        listEl.querySelector('.ev-more')?.remove();
+        const box = document.createElement('div'); box.innerHTML = html; const frag = document.createDocumentFragment(); [...box.childNodes].forEach(n => frag.appendChild(n)); listEl.appendChild(frag);
+        if (shown < list.length) {
+          const b = h(`<button class="btn ev-more">${t('ev_more', { n: list.length - shown })}</button>`);
+          b.onclick = () => { SFX.play('select'); more(); };
+          listEl.appendChild(b);
+          if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { io.disconnect(); if (b.isConnected) more(); } }, { rootMargin: '600px' }); io.observe(b); }
+        }
+        A.loadCommentCounts(listEl);
+        A.translateCards(listEl);
+      };
+      listEl.innerHTML = '';
+      if (list.length) more(); else listEl.innerHTML = `<div class="win empty"><div class="win-body"><p>${t('ev_none')}</p></div></div>`;
     };
     let tmr;
     inner.querySelector('.q').oninput = ev => { fs.q = ev.target.value; clearTimeout(tmr); tmr = setTimeout(() => { draw(); saveFs(); }, 300); };

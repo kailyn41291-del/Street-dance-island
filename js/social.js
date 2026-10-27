@@ -123,7 +123,8 @@ window.Social = (() => {
 
     /* 留言板 */
     async commentCounts() {
-      if (cloud()) { try { return await Backend.commentCounts(); } catch (e) { return {}; } }
+      // 一分鐘內重複要的話用同一份（活動頁往下滑會一直要）
+      if (cloud()) { if (this._cc && Date.now() - this._cc.at < 60000) return this._cc.p; const p = Backend.commentCounts().catch(() => ({})); this._cc = { at: Date.now(), p }; return p; }
       const n = {}; db.comments.forEach(c => (n[c.event_id] = (n[c.event_id] || 0) + 1)); return n;
     },
     async comments(eventId) {
@@ -131,6 +132,7 @@ window.Social = (() => {
       return db.comments.filter(c => c.event_id === eventId);
     },
     async comment(eventId, text) {
+      this._cc = null;
       const bad = check(text, 10000); if (bad) throw new Error(bad);
       let row;
       if (cloud()) {
@@ -143,6 +145,7 @@ window.Social = (() => {
       return row;
     },
     async removeComment(id) {
+      this._cc = null;
       if (cloud()) return Backend.deleteComment(id);
       db.comments = db.comments.filter(c => c.id !== id); save(); emit('comments', { type: 'DELETE', row: { id } });
     },

@@ -260,6 +260,7 @@ window.XP = (() => {
     key: 'evrep', label: () => '⚠ ' + t('rp_admin'),
     draw: async (pane, fail) => {
       let rows = []; try { rows = await Backend.eventReports(); } catch (x) { return fail(x); }
+      await Store.ensureAll(true);
       const ps = {}; try { (await Backend.playersByIds([...new Set(rows.map(r => r.user_id))])).forEach(p => (ps[p.user_id] = p)); } catch (x) {}
       pane.innerHTML = rows.length ? '' : `<p class="note">${t('adm_none')}</p>`;
       rows.forEach(r => {

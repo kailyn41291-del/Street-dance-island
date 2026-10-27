@@ -30,9 +30,21 @@ window.Store = (() => {
     return out;
   };
 
-  /* ---- 雲端模式 ---- */
+  /* ---- 雲端模式 ----
+   * 打開網站只先抓「最近 4 個月內＋之後」的活動（省流量、比較快）
+   * 更舊的活動在需要的時候才抓（看過去活動、搜尋、主辦單位頁、我的收藏……），抓到後畫面自動更新 */
+  const RECENT_DAYS = 120;
   let remote = [];
-  let loaded = false;
+  let loaded = false, full = false, fullP = null;
+  const cutoff = () => { const d = new Date(Date.now() + 8 * 3600e3 - RECENT_DAYS * 864e5); return d.toISOString().slice(0, 10); };
+  const merge = rows => { const have = new Set(remote.map(e => e.id)); const add = rows.filter(e => !have.has(e.id)); remote = remote.concat(add); return add.length; };
+  // 管理員：把以前塞在活動資料裡的海報搬成檔案（一次搬一個，背景慢慢做）
+  async function movePosters() {
+    if (!Backend.isAdmin || !Backend.uploadPoster) return;
+    for (const e of remote.filter(x => typeof x.poster === 'string' && x.poster.startsWith('data:'))) {
+      try { const url = await Backend.uploadPoster(e.poster); const { _src, ...row } = { ...e, poster: url }; await Backend.upsertEvent(row); e.poster = url; } catch (x) { console.warn('[Store] poster', e.id, x); return; }
+    }
+  }
 
   // 雲端模式：雲端活動 + 寫在網站裡的活動（雲端有同 ID 的就以雲端為準；_deleted 代表管理員刪掉了）
   const cloudAll = () => {
@@ -51,7 +63,7 @@ window.Store = (() => {
     async load() {
       if (cloud()) {
         try {
-          remote = await Backend.listEvents();
+          remote = await Backend.listEvents({ since: cutoff() }); full = false; fullP = null;
           try { localStorage.setItem('danceIsland.eventsCache', JSON.stringify({ at: Date.now(), rows: remote })); } catch (x) {}
         } catch (e) {
           console.warn('[Store] load failed', e);
@@ -60,6 +72,19 @@ window.Store = (() => {
         }
       }
       loaded = true;
+      if (cloud()) Backend.ready.then(() => setTimeout(() => { if (Backend.isAdmin) this.ensureAll().then(movePosters); }, 4000));
+    },
+    get full() { return !cloud() || full; },
+    /** 需要舊活動時呼叫：抓完會回傳新增了幾個，並讓畫面重畫一次 */
+    ensureAll(quiet) {
+      if (!cloud() || full) return Promise.resolve(0);
+      if (fullP && !quiet) fullP.then(n => n && window.App && App.redraw && App.redraw());
+      if (!fullP) fullP = Backend.listEvents({ before: cutoff() }).then(rows => {
+        full = true; const n = merge(rows);
+        if (n && !quiet && window.App && App.redraw) setTimeout(() => App.redraw(), 0);
+        return n;
+      }).catch(e => { fullP = null; console.warn('[Store] older', e); return 0; });
+      return fullP;
     },
     all,
     get: id => all().find(e => e.id === id),
@@ -69,6 +94,7 @@ window.Store = (() => {
       const e = { ...ev }; delete e._src;
       if (!e.id) e.id = uid();
       if (cloud()) {
+        if (typeof e.poster === 'string' && e.poster.startsWith('data:') && Backend.uploadPoster) e.poster = await Backend.uploadPoster(e.poster);   // 海報存成檔案
         await Backend.upsertEvent(e);
         remote = remote.filter(x => x.id !== e.id).concat(e);
         return e;

@@ -89,6 +89,7 @@
     let views = {}, clicks = null;
     try { views = await Backend.viewCounts(); } catch (x) {}
     try { clicks = await Backend.clickStats(); } catch (x) { clicks = null; }
+    await Store.ensureAll(true);
     const all = Store.all().filter(e => e.date);
     const years = [...new Set(all.map(e => e.date.slice(0, 4)))].sort();
     let year = '';

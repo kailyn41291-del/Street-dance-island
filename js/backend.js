@@ -66,6 +66,16 @@ window.Backend = (() => {
   });
 
   const must = r => { if (r.error) throw new Error(r.error.message); return r.data; };
+  // 資料庫算好的數字（第二十八批 SQL）；還沒跑 SQL 時退回舊的做法
+  const tally = async (fn, args, fallback) => {
+    const r = await sb.rpc(fn, args || {});
+    if (r.error) { if (/PGRST202|Could not find the function/i.test(r.error.code + ' ' + r.error.message)) return fallback(); throw new Error(r.error.message); }
+    return r.data;
+  };
+  // 把 [{…, n, mine}] 還原成一筆一筆的樣子（畫面的程式不用改）
+  const expand = (rows, key) => { const out = []; (rows || []).forEach(r => { for (let i = 0; i < r.n; i++) { const o = { user_id: i === 0 && r.mine ? (user && user.id) : null }; key.forEach(k => (o[k] = r[k])); out.push(o); } }); return out; };
+  // 一次最多 1000 筆，超過就分批抓
+  const allRows = async make => { const out = []; for (let from = 0; ; from += 1000) { const rows = must(await make().range(from, from + 999)); out.push(...rows); if (rows.length < 1000) return out; } };
   const toEmail = handle => handle.toLowerCase() + PLAYER_DOMAIN;
 
   return {
@@ -113,9 +123,24 @@ window.Backend = (() => {
     async signOut() { await sb.auth.signOut(); await refresh(); emit(); },
 
     /* 活動 */
-    async listEvents() {
-      const rows = must(await sb.from('events').select('id,data'));
+    /** since：只抓這天之後（或還沒結束）的活動；before：只抓這天之前就結束的舊活動 */
+    async listEvents(o = {}) {
+      const rows = await allRows(() => {
+        let q = sb.from('events').select('id,data').order('id');
+        if (o.since) q = q.or(`data->>date.gte.${o.since},data->>endDate.gte.${o.since},data->>date.is.null`);
+        if (o.before) q = q.lt('data->>date', o.before).or(`data->>endDate.is.null,data->>endDate.lt.${o.before}`);
+        return q;
+      });
       return rows.map(r => ({ ...r.data, id: r.id }));
+    },
+    async getEvent(id) { const r = must(await sb.from('events').select('id,data').eq('id', id).maybeSingle()); return r ? { ...r.data, id: r.id } : null; },
+    /** 海報：存成檔案（media/poster/），活動資料裡只放連結 */
+    async uploadPoster(dataUrl) {
+      const blob = await (await fetch(dataUrl)).blob();
+      const ext = blob.type === 'image/webp' ? 'webp' : blob.type === 'image/png' ? 'png' : 'jpg';
+      const name = `poster/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      must(await sb.storage.from('media').upload(name, blob, { contentType: blob.type || 'image/jpeg', upsert: false }));
+      return sb.storage.from('media').getPublicUrl(name).data.publicUrl;
     },
     async upsertEvent(e) {
       const { id, ...data } = e;
@@ -132,15 +157,14 @@ window.Backend = (() => {
     async deleteMessage(id) { must(await sb.from('messages').delete().eq('id', id)); },
 
     /* 活動瀏覽次數 */
-    async viewCounts() { const n = {}; must(await sb.from('event_views').select('event_id,n')).forEach(r => (n[r.event_id] = r.n)); return n; },
+    async viewCounts() { return tally('view_counts', null, async () => { const n = {}; (await allRows(() => sb.from('event_views').select('event_id,n'))).forEach(r => (n[r.event_id] = r.n)); return n; }); },
     async bumpView(eid) { must(await sb.rpc('bump_view', { eid })); },
     async bumpClick(eid, k) { must(await sb.rpc('bump_click', { eid, k })); },
-    async clickStats() { return must(await sb.from('event_clicks').select('event_id,kind,day,n')); },
+    async clickStats() { return tally('click_stats', null, () => allRows(() => sb.from('event_clicks').select('event_id,kind,day,n'))); },
 
     /* 留言板 */
     async commentCounts() {
-      const rows = must(await sb.from('comments').select('event_id'));
-      const n = {}; rows.forEach(r => (n[r.event_id] = (n[r.event_id] || 0) + 1)); return n;
+      return tally('comment_counts', null, async () => { const n = {}; (await allRows(() => sb.from('comments').select('event_id'))).forEach(r => (n[r.event_id] = (n[r.event_id] || 0) + 1)); return n; });
     },
     async listComments(eventId) { return must(await sb.from('comments').select('*').eq('event_id', eventId).order('created_at')); },
     async sendComment(eventId, text) { return must(await sb.from('comments').insert({ event_id: eventId, text }).select().single()); },
@@ -199,7 +223,7 @@ window.Backend = (() => {
     async listBattles() { return must(await sb.from('battles').select('*').order('ends_at', { ascending: false }).limit(20)); },
     async addBattle(b) { return must(await sb.from('battles').insert(b).select().single()); },
     async deleteBattle(id) { must(await sb.from('battles').delete().eq('id', id)); },
-    async listVotes(battleIds) { return battleIds.length ? must(await sb.from('votes').select('battle_id,user_id,choice').in('battle_id', battleIds)) : []; },
+    async listVotes(battleIds) { return battleIds.length ? tally('battle_tally', { ids: battleIds }, () => sb.from('votes').select('battle_id,user_id,choice').in('battle_id', battleIds).then(must)).then(r => (r[0] && 'n' in r[0] ? expand(r, ['battle_id', 'choice']) : r)) : []; },
     async vote(battle_id, choice) { must(await sb.from('votes').insert({ battle_id, choice })); },
 
     /* 節奏遊戲 / NPC */
@@ -264,13 +288,13 @@ window.Backend = (() => {
       must(await sb.storage.from('forum').upload(name, blob, { contentType: blob.type, upsert: false }));
       return sb.storage.from('forum').getPublicUrl(name).data.publicUrl;
     },
-    async pollVotes(postId) { return must(await sb.from('poll_votes').select('user_id,choice').eq('post_id', postId)); },
+    async pollVotes(postId) { return tally('poll_tally', { pid: postId }, () => sb.from('poll_votes').select('user_id,choice').eq('post_id', postId).then(must)).then(r => (r[0] && 'n' in r[0] ? expand(r, ['choice']) : r)); },
     async pollVote(postId, choice) { must(await sb.from('poll_votes').insert({ post_id: postId, choice })); },
-    async replyCounts(threads) { if (!threads.length) return {}; const n = {}; must(await sb.from('replies').select('thread').in('thread', threads)).forEach(r => (n[r.thread] = (n[r.thread] || 0) + 1)); return n; },
+    async replyCounts(threads) { if (!threads.length) return {}; return tally('reply_counts', { threads }, async () => { const n = {}; (await allRows(() => sb.from('replies').select('thread').in('thread', threads))).forEach(r => (n[r.thread] = (n[r.thread] || 0) + 1)); return n; }); },
     async listReplies(thread) { return must(await sb.from('replies').select('*').eq('thread', thread).order('created_at').limit(500)); },
     async addReply(thread, text, parent_id) { return must(await sb.from('replies').insert({ thread, text, parent_id: parent_id || null }).select().single()); },
     async deleteReply(id) { must(await sb.from('replies').delete().eq('id', id)); },
-    async likesFor(targets) { return targets.length ? must(await sb.from('likes').select('target,user_id').in('target', targets)) : []; },
+    async likesFor(targets) { return targets.length ? tally('like_tally', { targets }, () => sb.from('likes').select('target,user_id').in('target', targets).then(must)).then(r => (r[0] && 'n' in r[0] ? expand(r, ['target']) : r)) : []; },
     async like(target) { must(await sb.from('likes').insert({ target })); },
     async unlike(target) { must(await sb.from('likes').delete().eq('target', target).eq('user_id', user.id)); },
 
@@ -343,7 +367,7 @@ window.Backend = (() => {
     async crews() { return must(await sb.from('crews').select('*').order('created_at')); },
     async crew(id) { return must(await sb.from('crews').select('*').eq('id', id).maybeSingle()); },
     async crewMembers(id) { return must(await sb.from('crew_members').select('*').eq('crew_id', id)); },
-    async crewCounts() { const n = {}; must(await sb.from('crew_members').select('crew_id')).forEach(r => (n[r.crew_id] = (n[r.crew_id] || 0) + 1)); return n; },
+    async crewCounts() { return tally('crew_counts', null, async () => { const n = {}; (await allRows(() => sb.from('crew_members').select('crew_id'))).forEach(r => (n[r.crew_id] = (n[r.crew_id] || 0) + 1)); return n; }); },
     async crewLabels(id) { return must(await sb.from('crew_labels').select('*').eq('crew_id', id).order('id')); },
     async crewOf(uid) { return must(await sb.from('crew_members').select('*').eq('user_id', uid).maybeSingle()); },
     async crewRequests(id) { return must(await sb.from('crew_requests').select('*').eq('crew_id', id).eq('status', 'pending').order('created_at')); },
@@ -380,7 +404,7 @@ window.Backend = (() => {
     async moveChallenge(week) { return must(await sb.from('move_challenges').select('*').eq('week', week).maybeSingle()); },
     async setMoveChallenge(row) { must(await sb.from('move_challenges').upsert(row)); },
     async moveEntries(week) { return must(await sb.from('move_entries').select('*').eq('week', week).order('created_at')); },
-    async moveVotes(week) { return must(await sb.from('move_votes').select('entry_id,user_id').eq('week', week)); },
+    async moveVotes(week) { return tally('move_tally', { pweek: week }, () => sb.from('move_votes').select('entry_id,user_id').eq('week', week).then(must)).then(r => (r[0] && 'n' in r[0] ? expand(r, ['entry_id']) : r)); },
     async moveLast() { return must(await sb.from('move_results').select('*').order('week', { ascending: false }).limit(1).maybeSingle()); },
     async addMoveEntry(row) { return must(await sb.from('move_entries').insert(row).select().single()); },
     async moveVote(entry_id) { must(await sb.from('move_votes').insert({ entry_id })); },

@@ -191,6 +191,7 @@
     const k = q.trim().toLowerCase();
     if (k.length < 2) { out.innerHTML = `<p class="note">${t('sr_hint')}</p>`; return; }
     out.innerHTML = '<p class="note">…</p>';
+    await Store.ensureAll(true);   // 搜尋也要找得到舊活動
     const has = (...xs) => xs.filter(Boolean).join(' ').toLowerCase().includes(k);
     const evs = Store.all().filter(e => has(e.name, e.organizer, e.venue, e.address, (e.styles || []).join(' '), nm(A.byCode[e.country]), nm(A.cityOf(e.country, e.city)), (e.teams || []).join(' '), (e.judges || []).join(' ')))
       .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
