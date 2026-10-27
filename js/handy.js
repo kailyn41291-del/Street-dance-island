@@ -136,7 +136,7 @@
     };
     const card = s => {
       const l = latest(s);
-      return `<article class="sp-card" data-id="${s.id}">${s.photo ? `<img class="sp-ph" src="${esc(s.photo)}" alt="" loading="lazy">` : ''}<div class="sp-main">
+      return `<article class="sp-card" data-id="${s.id}">${s.photo ? Backend.thumbImg(s.photo, 'sp-ph') : ''}<div class="sp-main">
         <div class="sp-top"><b>${esc(s.name)}</b><span class="tag">${t('sp_k_' + s.kind)}</span>${s.status !== 'approved' ? `<span class="tag">${t('sd_pending')}</span>` : ''}</div>
         <small>${PXI.img('event/pin', '📍')} ${esc(placeName(s))}${s.address ? '・' + esc(s.address) : ''}${s._d != null ? `　${t('sd_km', { n: s._d < 10 ? s._d.toFixed(1) : Math.round(s._d) })}` : ''}</small>
         <div class="sp-feat">${s.mirror ? `<span class="tag">${t('sp_mirror')}</span>` : ''}${s.roof ? `<span class="tag">${t('sp_roof')}</span>` : ''}${s.light ? `<span class="tag">${t('sp_light')}</span>` : ''}</div>
@@ -243,7 +243,7 @@
       const q = MF.q.toLowerCase();
       const rows = items.filter(x => (MF.tab === 'mine' ? x.user_id === Backend.uid : ['approved', 'sold'].includes(x.status))).filter(x => !MF.cat || x.category === MF.cat)
         .filter(x => !q || (x.title + ' ' + (x.body || '')).toLowerCase().includes(q)).sort((a, b) => (a.status === 'sold') - (b.status === 'sold'));
-      inner.querySelector('.mk-grid').innerHTML = rows.map(x => `<button class="mk-card ${x.status}" data-id="${x.id}">${(x.photos || [])[0] ? `<img src="${esc(x.photos[0])}" alt="" loading="lazy">` : '<span class="mk-noph">🛍</span>'}
+      inner.querySelector('.mk-grid').innerHTML = rows.map(x => `<button class="mk-card ${x.status}" data-id="${x.id}">${(x.photos || [])[0] ? Backend.thumbImg(x.photos[0]) : '<span class="mk-noph">🛍</span>'}
         ${x.status === 'sold' ? `<span class="mk-sold">${t('mk_sold')}</span>` : ''}<span class="mk-b"><b>${esc(x.title)}</b><span class="mk-price">${esc(price(x))}</span>
         <small>${t('mk_cond_' + x.cond)}・${t('mk_trade_' + x.trade)}・${esc(placeName(x))}</small>${x.status === 'pending' ? `<span class="tag">${t('mk_pending')}</span>` : x.status === 'rejected' ? `<span class="tag">${t('mk_rejected')}</span>` : ''}</span></button>`).join('') || `<p class="note">${t('mk_none')}</p>`;
     };

@@ -63,6 +63,7 @@ window.Chat = (() => {
 
   function push(channel, m) {
     if (!cache[channel]) return;
+    if (m.id != null && cache[channel].some(x => x.id === m.id)) return;   // 定時更新和即時可能重複
     cache[channel].push(m);
     const me = Player.me && Player.me.id, a = m.author || {};
     if (me && !m.official && a.handle && a.handle !== me && mentions(m.text).includes(me)) { SFX.play('coin'); toast(t('mention_got', { n: a.name || a.handle, c: t(channel === 'tw' ? 'ch_tw' : 'ch_world') }), '📣'); }
@@ -229,9 +230,41 @@ window.Chat = (() => {
 
   function toggle(v) {
     open = v; el.classList.toggle('open', v); SFX.play(v ? 'open' : 'cancel');
+    saver.check();
     if (v) { unread[cur] = 0; renderList(); setTimeout(() => input && input.focus({ preventScroll: true }), 50); }
     updateBar();
   }
+
+  /* ---------- 省額度模式（自動）----------
+   * 人多或聊天很熱絡時：沒打開聊天室的人不即時收訊息，改成每分鐘抓一次最新的（跑馬燈、未讀數一樣會更新）
+   * 打開聊天室的人照樣即時。人少下來就自動恢復全部即時 */
+  const saver = (() => {
+    let on = false, pollTm = null, closedAt = 0, forced = null;   // forced：測試用，固定開 / 關
+    const rate = () => { const since = new Date(Date.now() - 5 * 60e3).toISOString(); return CHANNELS.reduce((n, [c]) => n + (cache[c] || []).filter(m => m.created_at > since).length, 0); };
+    const people = () => (window.Online && Online.count ? Online.count() : 0);
+    async function poll() {
+      for (const [c] of CHANNELS) {
+        try { const rows = (await Social.messages(c)) || []; const seen = new Set((cache[c] || []).map(m => m.id)); rows.filter(m => !seen.has(m.id)).forEach(m => push(c, m)); } catch (e) {}
+      }
+      renderList(); const last = [...(cache.world || []), ...(cache.tw || [])].sort((a, b) => (a.created_at < b.created_at ? -1 : 1)).pop(); updateBar(last);
+    }
+    function check() {
+      if (!Social.cloud || !Social.liveChat) return;
+      const p = people(), r = rate();
+      if (forced !== null) on = forced;
+      else if (!on && (p >= 60 || r >= 30)) on = true;
+      else if (on && p < 40 && r < 15) on = false;
+      if (!open && closedAt === 0) closedAt = Date.now();
+      if (open) closedAt = 0;
+      // 關掉聊天室 30 秒後才停止即時（避免開開關關一直重連）
+      const live = !on || open || (Date.now() - closedAt < 30000);
+      if (live !== Social.chatLive) { Social.liveChat(live); if (live) poll(); }
+      if (live && pollTm) { clearInterval(pollTm); pollTm = null; }
+      else if (!live && !pollTm) pollTm = setInterval(() => { if (document.visibilityState === 'visible') poll(); }, 60000);
+    }
+    setInterval(check, 15000);
+    return { check, get on() { return on; }, _force: v => { forced = v; check(); } };
+  })();
 
   async function init() {
     build();
@@ -261,5 +294,5 @@ window.Chat = (() => {
     if (el) { const o = open; el.remove(); build(); if (o) toggle(true); renderList(); }
   }
 
-  return { init, togglePicker, restartAnnouncements: startAnnouncements, headIcon, toggle, setCrew, crewTagHTML: a => crewTag(a) };
+  return { saver, init, togglePicker, restartAnnouncements: startAnnouncements, headIcon, toggle, setCrew, crewTagHTML: a => crewTag(a) };
 })();

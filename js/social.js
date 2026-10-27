@@ -86,14 +86,23 @@ window.Social = (() => {
   }
 
   /* ---------- 即時更新 ---------- */
-  let subs = false;
+  let subs = false, msgOff = null, msgWant = true;
+  const relay = p => emit(p.table, { type: p.eventType, row: p.new && p.new.id ? p.new : p.old });
   function ensureSubs() {
     if (subs || !cloud()) return;
     subs = true;
-    Backend.subscribe(['messages', 'comments', 'announcements', 'votes'], p => emit(p.table, { type: p.eventType, row: p.new && p.new.id ? p.new : p.old }));
+    Backend.subscribe(['comments', 'announcements', 'votes'], relay);
+    liveChat(msgWant);
+  }
+  /** 聊天訊息要不要即時收（人多時，沒打開聊天室的人改成定時更新，省即時訊息額度） */
+  function liveChat(on) {
+    msgWant = on; if (!subs) return;
+    if (on && !msgOff) msgOff = Backend.subscribe('messages', relay);
+    else if (!on && msgOff) { msgOff(); msgOff = null; }
   }
 
   return {
+    liveChat, get chatLive() { return !!msgOff; },
     get cloud() { return cloud(); },
     check, errKey, translate, detect,
     on(table, f) { ensureSubs(); listeners[table].push(f); return () => { listeners[table] = listeners[table].filter(x => x !== f); }; },

@@ -148,7 +148,7 @@ window.Together = (() => {
     const grid = body.querySelector('.ph-grid');
     const draw = async () => {
       let rows = []; try { rows = await Backend.eventPhotos(e.id); } catch (x) {}
-      grid.innerHTML = rows.length ? rows.map(p => `<figure class="ph-it" data-id="${p.id}"><img src="${esc(p.url)}" alt="" loading="lazy">
+      grid.innerHTML = rows.length ? rows.map(p => `<figure class="ph-it" data-id="${p.id}">${Backend.thumbImg(p.url)}
         <figcaption>${p.caption ? `<span data-utr>${esc(p.caption)}</span>` : ''}<small>${esc(t('ph_by', { n: (p.author || {}).name || '?' }))}</small>
         ${p.user_id === Backend.uid || Backend.isAdmin ? `<button class="btn sm ph-del">${t('ph_del')}</button>` : ''}${Backend.isAdmin && p.user_id !== Backend.uid ? `<button class="btn sm ph-hide">${t('ph_hide')}</button>` : ''}</figcaption></figure>`).join('') : `<p class="note">${t('ph_none')}</p>`;
     };
@@ -157,7 +157,7 @@ window.Together = (() => {
       const id = +it.dataset.id;
       if (ev.target.closest('.ph-del')) { try { await Backend.deleteEventPhoto(id); it.remove(); photoN[e.id] = Math.max(0, (photoN[e.id] || 1) - 1); } catch (x) { toast(x.message, '✕'); } return; }
       if (ev.target.closest('.ph-hide')) { try { await Backend.hideEventPhoto(id); it.remove(); } catch (x) { toast(x.message, '✕'); } return; }
-      if (ev.target.tagName === 'IMG') modal({ title: '📸', color: 'orange', wide: true, body: `<div class="lightbox"><img src="${esc(ev.target.src)}" alt=""></div>` });
+      if (ev.target.tagName === 'IMG') modal({ title: '📸', color: 'orange', wide: true, body: `<div class="lightbox"><img src="${esc(ev.target.dataset.full || ev.target.src)}" alt=""></div>` });
     };
     draw();
   }

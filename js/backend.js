@@ -66,6 +66,13 @@ window.Backend = (() => {
   });
 
   const must = r => { if (r.error) throw new Error(r.error.message); return r.data; };
+  // 縮圖片（webp）；不是一般照片或讀不到就回傳 null
+  const shrinkImage = (blob, max, q) => new Promise(res => {
+    const u = URL.createObjectURL(blob), img = new Image();
+    img.onload = () => { const k = Math.min(1, max / Math.max(img.width, img.height)), cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(img.width * k)); cv.height = Math.max(1, Math.round(img.height * k)); cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(u); cv.toBlob(b => res(b), 'image/webp', q); };
+    img.onerror = () => { URL.revokeObjectURL(u); res(null); };
+    img.src = u;
+  });
   // 資料庫算好的數字（第二十八批 SQL）；還沒跑 SQL 時退回舊的做法
   const tally = async (fn, args, fallback) => {
     const r = await sb.rpc(fn, args || {});
@@ -283,10 +290,24 @@ window.Backend = (() => {
     async reviewPost(id, status) { must(await sb.from('forum_posts').update({ status, reviewed_at: new Date().toISOString() }).eq('id', id)); },
     async pinPost(id, pinned) { must(await sb.from('forum_posts').update({ pinned }).eq('id', id)); },
     async deletePost(id) { must(await sb.from('forum_posts').delete().eq('id', id)); },
+    /* 照片上傳：一律縮到最長 1280px（省空間、省流量），另外存一張小縮圖（_t.webp）給列表用 */
     async uploadForumFile(blob, ext) {
-      const name = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      const base = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      let thumb = null;
+      if (/^image\/(png|jpeg|webp)$/.test(blob.type || '')) {
+        const big = await shrinkImage(blob, 1280, 0.82); if (big && big.size < blob.size) { blob = big; ext = 'webp'; }
+        thumb = await shrinkImage(blob, 420, 0.72);
+      }
+      const name = `${base}.${ext}`;
       must(await sb.storage.from('forum').upload(name, blob, { contentType: blob.type, upsert: false }));
+      if (thumb) await sb.storage.from('forum').upload(`${base}_t.webp`, thumb, { contentType: 'image/webp', upsert: false }).catch(() => {});
       return sb.storage.from('forum').getPublicUrl(name).data.publicUrl;
+    },
+    /** 列表用的小縮圖：有縮圖就用縮圖，舊照片沒有縮圖就自動改用原圖 */
+    thumbImg(url, cls = '') {
+      const e = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const th = /\/storage\/v1\/object\/public\/forum\/.+\.(webp|jpe?g|png)$/i.test(url || '') ? url.replace(/\.(webp|jpe?g|png)$/i, '_t.webp') : url;
+      return `<img class="${e(cls)}" src="${e(th)}" data-full="${e(url)}" alt="" loading="lazy"${th !== url ? ` onerror="this.onerror=null;this.src=this.dataset.full"` : ''}>`;
     },
     async pollVotes(postId) { return tally('poll_tally', { pid: postId }, () => sb.from('poll_votes').select('user_id,choice').eq('post_id', postId).then(must)).then(r => (r[0] && 'n' in r[0] ? expand(r, ['choice']) : r)); },
     async pollVote(postId, choice) { must(await sb.from('poll_votes').insert({ post_id: postId, choice })); },

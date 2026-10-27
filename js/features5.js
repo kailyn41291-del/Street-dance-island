@@ -161,7 +161,7 @@
     if (!Array.isArray(media) || !media.length) return '';
     const imgs = media.filter(x => x.type === 'image' && safeMedia(x.url)), vid = media.find(x => ['video', 'youtube', 'clip'].includes(x.type) && safeMedia(x.url));
     return `<div class="fo-media">${vid ? Vid.html(vid.url) : ''}
-      ${imgs.length ? `<div class="fo-imgs n${imgs.length}">${imgs.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener"><img src="${esc(x.url)}" alt="" loading="lazy"></a>`).join('')}</div>` : ''}</div>`;
+      ${imgs.length ? `<div class="fo-imgs n${imgs.length}">${imgs.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${Backend.thumbImg(x.url)}</a>`).join('')}</div>` : ''}</div>`;
   }
   function pollHTML(post, votes) {
     const pl = post.poll; if (!pl || !Array.isArray(pl.options)) return '';

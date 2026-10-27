@@ -168,7 +168,7 @@ window.Daily = (() => {
 
   const styleTags = list => (list || []).map(s => `<span class="tag" style="--c:${Store.STYLE_COLOR[s] || 'var(--cream)'}">${esc(s)}</span>`).join('');
   const placeName = s => [nm(A.byCode[s.country]), s.city ? nm(A.cityOf(s.country, s.city)) : ''].filter(Boolean).join('・');
-  const coverHTML = (s, cls = '') => (safeUrl(s.cover) ? `<img class="sd-cover ${cls}" src="${esc(s.cover)}" alt="" loading="lazy">` : `<span class="sd-cover ${cls} sd-cover-none">🏫</span>`);
+  const coverHTML = (s, cls = '') => (safeUrl(s.cover) ? Backend.thumbImg(s.cover, 'sd-cover ' + cls) : `<span class="sd-cover ${cls} sd-cover-none">🏫</span>`);
   const countryOpts = (sel, any) => (any ? `<option value="">${t('sd_all_cc')}</option>` : '') + GEO.countries.slice().sort((a, b) => (!!b.home - !!a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
   const cityOpts = (cc, sel, any) => (any ? `<option value="">${t('sd_all_city')}</option>` : '') + ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
   const locate = () => new Promise((res, rej) => {
@@ -271,7 +271,7 @@ window.Daily = (() => {
     const upcoming = by('course').filter(p => !p.date || p.date >= today).sort((a, b) => (a.date || '9').localeCompare(b.date || '9'));
     const past = by('course').filter(p => p.date && p.date < today).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
     const specials = by('special').sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-    const postHTML = p => `<article class="sd-post" data-pid="${p.id}">${safeUrl(p.image) ? `<img src="${esc(p.image)}" alt="" loading="lazy">` : ''}<div class="sd-post-main">
+    const postHTML = p => `<article class="sd-post" data-pid="${p.id}">${safeUrl(p.image) ? Backend.thumbImg(p.image) : ''}<div class="sd-post-main">
         <b>${esc(p.title)}</b><small>${[p.date ? p.date.replace(/-/g, '/') : '', p.time, p.teacher].filter(Boolean).map(esc).join('・')}</small>
         ${(p.styles || []).length ? `<span class="sd-tags">${styleTags(p.styles)}</span>` : ''}
         ${p.body ? `<p data-utr>${esc(p.body)}</p>` : ''}${safeUrl(p.link) ? `<a class="btn sm orange" href="${esc(p.link)}" target="_blank" rel="noopener">${PXI.img('event/link', '🔗')} ${t('lk_go')}</a>` : ''}
