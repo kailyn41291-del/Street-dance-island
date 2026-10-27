@@ -85,7 +85,7 @@
     // 截止倒數（台灣時間下週一 00:00）
     const end = new Date(w + 'T00:00:00+08:00').getTime() + 7 * 864e5, ms = Math.max(0, end - Date.now()), dd = Math.floor(ms / 864e5), hh = Math.floor(ms % 864e5 / 3600e3);
     entries.sort((a, b) => (n[b.id] || 0) - (n[a.id] || 0) || a.created_at.localeCompare(b.created_at));
-    const video = e => { const y = ytId(e.video); return y ? `<button class="rl-yt" data-yt="${esc(y)}"><img src="https://i.ytimg.com/vi/${esc(y)}/hqdefault.jpg" alt="" loading="lazy"><span>▶</span></button>` : `<video src="${esc(e.video)}" controls preload="metadata" playsinline></video>`; };
+    const video = e => Vid.html(e.video, (e.author || {}).name);
     inner.innerHTML = `<div class="win">${UI.winHTML(t('rl_title'), 'pink', false)}<div class="win-body">
         <div class="rl-move"><small>${t('rl_week_move')}・${esc(w.slice(5).replace('-', '/'))}</small><b>${esc(mv.move)}</b>${mv.style ? `<span class="tag" style="--c:${Store.STYLE_COLOR[mv.style] || 'var(--cream)'}">${esc(mv.style)}</span>` : ''}
           ${mv.tip ? `<p data-utr>${esc(mv.tip)}</p>` : ''}${/^https?:\/\//.test(mv.demo || '') ? `<a class="btn sm" href="${esc(mv.demo)}" target="_blank" rel="noopener">${t('rl_demo')}</a>` : ''}
@@ -93,8 +93,8 @@
         <p class="note">${t('rl_rules')}</p>
         ${called ? `<p class="rl-called">${esc(t('rl_called', { n: (called.author || {}).name || '?', m: mv.move }))}</p>` : ''}
         ${!logged() ? `<button class="btn pink rl-login">🔑 ${t('login')}</button>` : mine ? `<p class="rl-done">${t('rl_done')}</p>` : `<form class="form rl-form">
-          <div class="field full"><span>${t('rl_join')}</span><label class="btn sm teal">${t('rl_file')}<input type="file" accept="video/mp4" hidden class="rl-file"></label><small class="rl-fname"></small>
-            <input class="input" name="yt" type="url" placeholder="${esc(t('rl_yt'))}：https://youtu.be/…"></div>
+          <div class="field full"><span>${t('rl_join')}</span>
+            <input class="input" name="yt" type="url" placeholder="${esc(t('vid_ph'))}"><small class="note">${t('vid_hint')}</small></div>
           <label class="field"><span>${t('rl_cap')}</span><input class="input" name="cap" maxlength="100"></label>
           <label class="field"><span>${t('rl_nom')}</span><input class="input" name="nom" maxlength="17" placeholder="@kailyn" autocapitalize="off" spellcheck="false"></label>
           <div class="full"><div class="err"></div><div class="form-foot"><button class="btn pink">🎬 ${t('rl_send')}</button></div></div></form>`}
@@ -111,22 +111,19 @@
     // 上傳
     const f = inner.querySelector('.rl-form');
     if (f) {
-      let file = null;
-      f.querySelector('.rl-file').onchange = ev => { file = ev.target.files[0] || null; f.querySelector('.rl-fname').textContent = file ? file.name : ''; };
       f.onsubmit = async ev => {
         ev.preventDefault();
         const errEl = f.querySelector('.err'), yt = f.elements.yt.value.trim();
-        if (!file && !ytId(yt)) { errEl.textContent = '✕ ' + t('rl_e_video'); return; }
-        if (file && file.size > 50 * 1024 * 1024) { errEl.textContent = '✕ ' + t('rl_e_big'); return; }
-        const btn = f.querySelector('.form-foot .pink'); btn.disabled = true; errEl.textContent = file ? t('rl_uploading') : '';
+        if (!yt) { errEl.textContent = '✕ ' + t('rl_e_video'); return; }
+        const vbad = Vid.check(yt); if (vbad) { errEl.textContent = '✕ ' + vbad; return; }
+        const btn = f.querySelector('.form-foot .pink'); btn.disabled = true; errEl.textContent = '';
         try {
-          const url = file ? await Backend.uploadForumFile(file, 'mp4') : yt;
+          const url = yt;   // 影片只存連結
           await Backend.addMoveEntry({ video: url, caption: f.elements.cap.value.trim() || null, nominee: f.elements.nom.value.trim().replace(/^@/, '').toLowerCase() || null });
           SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 3, 24); toast(t('rl_sent'), '🎬'); draw(inner);
         } catch (x) { errEl.textContent = '✕ ' + err(x); btn.disabled = false; }
       };
     }
-    inner.querySelectorAll('.rl-yt').forEach(b => (b.onclick = () => { b.outerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(b.dataset.yt)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`; }));
     inner.querySelector('.rl-grid').onclick = async ev => {
       const it = ev.target.closest('[data-id]'); if (!it) return; const id = +it.dataset.id;
       try {

@@ -2481,3 +2481,18 @@ input::selection, textarea::selection, [contenteditable] ::selection { backgroun
 /* ===== 手機底部「好友」的紅點 ===== */
 .mn-badge { position: absolute; top: 2px; left: calc(50% + 8px); min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--red); color: #fff; font-size: 11px; line-height: 18px; text-align: center; border: 2px solid var(--ink); font-family: var(--font-en); }
 .mn-badge[hidden] { display: none; }
+
+/* ===== 影片連結播放器（YouTube / IG / TikTok） ===== */
+.vid { width: 100%; margin: 6px 0; }
+.vid iframe, .vid video { display: block; width: 100%; border: var(--px) solid var(--ink); background: #000; }
+.vid-yt, .vid-mp4 { aspect-ratio: 16 / 9; }
+.vid-yt iframe, .vid-yt .vid-thumb, .vid-mp4 video { width: 100%; height: 100%; }
+.vid-ig { max-width: 400px; margin-inline: auto; }
+.vid-ig iframe { aspect-ratio: 4 / 5.6; background: #fff; }
+.vid-tt { max-width: 330px; margin-inline: auto; }
+.vid-tt iframe { aspect-ratio: 9 / 17; background: #fff; }
+.vid-thumb { position: relative; display: block; padding: 0; border: var(--px) solid var(--ink); background: #000; cursor: pointer; }
+.vid-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vid-thumb span { position: absolute; inset: 0; margin: auto; width: 56px; height: 40px; display: grid; place-items: center; background: var(--red); color: #fff; font-size: 20px; border: var(--px) solid var(--ink); border-radius: 10px; }
+.fo-media .vid, .bt-video .vid, .rl-item .vid { margin: 0; }
+.bt-video { aspect-ratio: auto; border: 0; background: none; }

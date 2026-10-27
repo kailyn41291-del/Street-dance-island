@@ -283,11 +283,6 @@ window.Emotes = (() => {
   /* =========================================================
    * 人氣 Battle 投票（#/battle）
    * ========================================================= */
-  const embedOf = url => {
-    const y = /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/.exec(url || '');
-    return y ? `https://www.youtube.com/embed/${y[1]}` : null;
-  };
-  const isMp4 = url => /\.mp4(\?|$)/i.test(url || '') && /^https:\/\//.test(url || '');
   A.crumbs.battle = () => '🆚 ' + t('arc_battle');
   const battleData = async () => { const battles = await Backend.listBattles(); return { battles, votes: await Backend.listVotes(battles.map(b => b.id)) }; };
   A.prefetch = A.prefetch || {};
@@ -307,10 +302,9 @@ window.Emotes = (() => {
         const mine = vs.find(v => v.user_id === uid), ended = b.ends_at <= now, show = ended || mine;
         const pa = vs.length ? Math.round((a / vs.length) * 100) : 50;
         const side = (k, name, url, n, p) => {
-          const em = embedOf(url);
           return `<div class="bt-side ${mine && mine.choice === k ? 'chosen' : ''} ${ended && ((k === 'a' && a > bb) || (k === 'b' && bb > a)) ? 'winner' : ''}">
             <div class="bt-name">${esc(name)}</div>
-            ${isMp4(url) ? `<div class="bt-video"><video src="${esc(url)}" controls playsinline preload="metadata"></video></div>` : em ? `<div class="bt-video"><iframe src="${esc(em)}" title="${esc(name)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>` : /^https?:\/\//.test(url || '') ? `<a class="btn sm" href="${esc(url)}" target="_blank" rel="noopener">▶ ${t('res_video')}</a>` : ''}
+            ${Vid.html(url, name) ? `<div class="bt-video">${Vid.html(url, name)}</div>` : /^https?:\/\//.test(url || '') ? `<a class="btn sm" href="${esc(url)}" target="_blank" rel="noopener">▶ ${t('res_video')}</a>` : ''}
             ${!ended && !mine ? `<button class="btn pink vote" data-b="${b.id}" data-c="${k}">👍 ${t('bt_vote')}</button>` : ''}
             ${show ? `<div class="bt-pct">${p}% <small>(${n})</small></div>` : ''}</div>`;
         };
@@ -324,8 +318,8 @@ window.Emotes = (() => {
       inner.innerHTML = `<div class="win">${UI.winHTML('🆚 ' + t('arc_battle'), 'blue', false)}<div class="win-body"><p>${t('bt_intro')}</p>
           ${Backend.isAdmin ? `<details class="bt-new"><summary>＋ ${t('bt_new')}</summary><form class="form" novalidate>
             <label class="field full"><span>${t('bt_t')}</span><input class="input" name="title" maxlength="80"></label>
-            <label class="field"><span>A</span><input class="input" name="a_name" maxlength="40"></label><label class="field"><span>A ${t('res_video')}</span><input class="input" name="a_url" type="url" placeholder="https://youtu.be/..."><small class="note">${t('bt_or_mp4')}</small><input class="input" name="a_file" type="file" accept="video/mp4"></label>
-            <label class="field"><span>B</span><input class="input" name="b_name" maxlength="40"></label><label class="field"><span>B ${t('res_video')}</span><input class="input" name="b_url" type="url" placeholder="https://youtu.be/..."><small class="note">${t('bt_or_mp4')}</small><input class="input" name="b_file" type="file" accept="video/mp4"></label>
+            <label class="field"><span>A</span><input class="input" name="a_name" maxlength="40"></label><label class="field"><span>A ${t('res_video')}</span><input class="input" name="a_url" type="url" placeholder="${esc(t('vid_ph'))}"></label>
+            <label class="field"><span>B</span><input class="input" name="b_name" maxlength="40"></label><label class="field"><span>B ${t('res_video')}</span><input class="input" name="b_url" type="url" placeholder="${esc(t('vid_ph'))}"></label>
             <label class="field full"><span>📌 ${t('bt_q')}</span><input class="input" name="pinned_q" maxlength="200" placeholder="${esc(t('bt_q_ph'))}"></label>
             <label class="field"><span>${t('bt_days')}</span><input class="input" name="days" type="number" min="1" max="30" value="7"></label>
             <div class="full form-foot"><button class="btn pink">${t('bt_create')}</button></div></form></details>` : ''}</div></div>
@@ -337,12 +331,10 @@ window.Emotes = (() => {
         e.preventDefault();
         const v = k => f.elements[k].value.trim();
         if (!v('title') || !v('a_name') || !v('b_name')) return toast(t('e_name'), '✕');
-        const files = ['a_file', 'b_file'].map(k => f.elements[k].files[0] || null);
-        for (const fl of files) if (fl && (fl.type !== 'video/mp4' || fl.size > 50 * 1024 * 1024)) return toast(t('bt_mp4_bad'), '✕');
+        for (const k of ['a_url', 'b_url']) { const bad = Vid.check(v(k)); if (bad) return toast(bad, '✕'); }
         const btn = f.querySelector('button'); btn.disabled = true;
         try {
-          const urls = [];
-          for (let i = 0; i < 2; i++) { if (files[i]) { btn.textContent = t('bt_uploading', { n: i + 1 }); urls[i] = await Backend.uploadVideo(files[i]); } }
+          const urls = [];   // 影片只存連結
           await Backend.addBattle({ title: v('title'), a_name: v('a_name'), a_url: urls[0] || v('a_url') || null, b_name: v('b_name'), b_url: urls[1] || v('b_url') || null, pinned_q: v('pinned_q') || null, ends_at: new Date(Date.now() + (+v('days') || 7) * 864e5).toISOString() });
           await load(); draw(); toast(t('adm_done'), '🆚');
         } catch (x) { toast(x.message, '✕'); btn.disabled = false; btn.textContent = t('bt_create'); }

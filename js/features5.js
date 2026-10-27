@@ -159,8 +159,8 @@
   const safeMedia = u => /^https:\/\//.test(u || '');
   function mediaHTML(media) {
     if (!Array.isArray(media) || !media.length) return '';
-    const imgs = media.filter(x => x.type === 'image' && safeMedia(x.url)), vid = media.find(x => (x.type === 'video' || x.type === 'youtube') && safeMedia(x.url));
-    return `<div class="fo-media">${vid ? (vid.type === 'youtube' && ytId(vid.url) ? `<div class="fo-video"><iframe src="https://www.youtube.com/embed/${esc(ytId(vid.url))}" title="YouTube" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>` : vid.type === 'video' ? `<div class="fo-video"><video src="${esc(vid.url)}" controls playsinline preload="metadata"></video></div>` : '') : ''}
+    const imgs = media.filter(x => x.type === 'image' && safeMedia(x.url)), vid = media.find(x => ['video', 'youtube', 'clip'].includes(x.type) && safeMedia(x.url));
+    return `<div class="fo-media">${vid ? Vid.html(vid.url) : ''}
       ${imgs.length ? `<div class="fo-imgs n${imgs.length}">${imgs.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener"><img src="${esc(x.url)}" alt="" loading="lazy"></a>`).join('')}</div>` : ''}</div>`;
   }
   function pollHTML(post, votes) {
@@ -190,22 +190,19 @@
       <label class="field full"><span>${t('fo_body')} <b>*</b></span><textarea class="input fo-ta" name="body" maxlength="2000" rows="7"></textarea></label>
       <div class="field full fo-att"><span>📎 ${t('fo_att')}</span>
         <div class="fo-att-btns"><label class="btn sm">🖼 ${t('fo_add_img')}<input type="file" name="imgs" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden></label>
-          <label class="btn sm">🎬 ${t('fo_add_vid')}<input type="file" name="vid" accept="video/mp4" hidden></label>
-          <input class="input sm" name="yt" type="url" placeholder="${esc(t('fo_yt_ph'))}"></div>
-        <div class="fo-att-prev"></div><small class="note">${t('fo_att_rule')}</small></div>
+          <input class="input sm" name="yt" type="url" placeholder="${esc(t('vid_ph'))}"></div>
+        <div class="fo-att-prev"></div><small class="note">${t('fo_att_rule')}</small><small class="note">🎬 ${t('vid_hint')}</small></div>
       <div class="field full fo-pollf"><label class="chk"><input type="checkbox" name="poll"> 📊 ${t('fo_poll_add')}</label>
         <div class="fo-poll-ed" hidden><input class="input" name="pq" maxlength="100" placeholder="${esc(t('fo_poll_q'))}"><div class="fo-opts"></div><button type="button" class="btn sm add-opt">＋ ${t('fo_poll_more')}</button></div></div>
       <div class="full"><div class="err"></div><div class="form-foot"><span class="grow"></span><button class="btn pink sub">${t('fo_submit')}</button></div></div></form>`);
     const m = modal({ title: '✎ ' + t('fo_new'), color: 'teal', body, wide: true });
     const E = body.elements, err = body.querySelector('.err'), prev = body.querySelector('.fo-att-prev');
-    let imgs = [], vid = null;
+    let imgs = [];
     const drawPrev = () => {
-      prev.innerHTML = imgs.map((f, i) => `<span class="fo-th"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" data-ri="${i}">✕</button></span>`).join('') + (vid ? `<span class="fo-th vid">🎬 ${esc(vid.name.slice(0, 18))}<button type="button" data-rv>✕</button></span>` : '');
+      prev.innerHTML = imgs.map((f, i) => `<span class="fo-th"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" data-ri="${i}">✕</button></span>`).join('');
     };
-    prev.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.ri != null) imgs.splice(+b.dataset.ri, 1); if (b.dataset.rv != null) vid = null; drawPrev(); };
+    prev.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.ri != null) imgs.splice(+b.dataset.ri, 1); drawPrev(); };
     E.imgs.onchange = () => { const fs = [...E.imgs.files].filter(f => /^image\/(png|jpeg|webp|gif)$/.test(f.type)); E.imgs.value = ''; imgs = imgs.concat(fs).slice(0, 4); if (fs.length + imgs.length > 4) toast(t('fo_img_max'), '🖼'); drawPrev(); };
-    E.vid.onchange = () => { const f = E.vid.files[0]; E.vid.value = ''; if (!f) return; if (f.type !== 'video/mp4' || f.size > 50 * 1024 * 1024) { toast(t('bt_mp4_bad'), '✕'); return; } vid = f; E.yt.value = ''; drawPrev(); };
-    E.yt.oninput = () => { if (E.yt.value.trim()) { vid = null; drawPrev(); } };
     // 投票選項
     const opts = body.querySelector('.fo-opts');
     const addOpt = (v = '') => { if (opts.children.length >= 6) return; opts.appendChild(h(`<div class="fo-opt"><input class="input sm" maxlength="40" placeholder="${esc(t('fo_poll_opt', { n: opts.children.length + 1 }))}" value="${esc(v)}"><button type="button" class="btn sm rm">✕</button></div>`)); };
@@ -223,13 +220,12 @@
         if (!v('pq') || o.length < 2) { err.textContent = '✕ ' + t('fo_poll_need'); return; }
         poll = { q: v('pq'), options: o };
       }
-      const yt = v('yt'); if (yt && !ytId(yt)) { err.textContent = '✕ ' + t('fo_yt_bad'); return; }
+      const yt = v('yt'), vbad = Vid.check(yt); if (vbad) { err.textContent = '✕ ' + vbad; return; }
       const btn = body.querySelector('.sub'); btn.disabled = true;
       try {
         const media = [];
-        for (let i = 0; i < imgs.length; i++) { btn.textContent = t('fo_uploading', { n: i + 1, t: imgs.length + (vid ? 1 : 0) }); const b = await shrinkImg(imgs[i]); media.push({ type: 'image', url: await Backend.uploadForumFile(b, b.type === 'image/gif' ? 'gif' : 'webp') }); }
-        if (vid) { btn.textContent = t('fo_uploading', { n: imgs.length + 1, t: imgs.length + 1 }); media.push({ type: 'video', url: await Backend.uploadForumFile(vid, 'mp4') }); }
-        else if (yt) media.unshift({ type: 'youtube', url: yt });
+        for (let i = 0; i < imgs.length; i++) { btn.textContent = t('fo_uploading', { n: i + 1, t: imgs.length }); const b = await shrinkImg(imgs[i]); media.push({ type: 'image', url: await Backend.uploadForumFile(b, b.type === 'image/gif' ? 'gif' : 'webp') }); }
+        if (yt) media.unshift({ type: Vid.parse(yt).k === 'yt' ? 'youtube' : 'clip', url: yt });   // 影片只存連結
         await Backend.addPost({ category: v('cat'), title: v('title'), body: v('body'), media: media.length ? media : null, poll });
       } catch (x) { SFX.play('error'); btn.disabled = false; btn.textContent = t('fo_submit'); err.textContent = '✕ ' + (/big/.test(x.message) ? t('dm_img_big') : /bad media|bad poll/.test(x.message) ? t('fo_att_bad') : errMsg(x)); return; }
       m.close(); SFX.play('coin');
