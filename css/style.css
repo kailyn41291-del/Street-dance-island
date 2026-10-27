@@ -2497,6 +2497,35 @@ input::selection, textarea::selection, [contenteditable] ::selection { backgroun
 .fo-media .vid, .bt-video .vid, .rl-item .vid { margin: 0; }
 .bt-video { aspect-ratio: auto; border: 0; background: none; }
 
+/* ===== 圖示：大一點、清楚一點，圖示＋文字一律置中 ===== */
+img.pxi { image-rendering: auto; }   /* 縮小顯示用平滑縮放，像素線條才不會斷掉糊成一團 */
+.ph-ic img.pxi, .ach .ach-ic img.pxi, .fs-rp .pxi, .stamp-fx .stamp.big .st-ico img.pxi, .mn-i img.pxi { image-rendering: pixelated; }
+/* 按鈕：圖示跟字一樣置中，圖示約字的 1.6 倍高，上下對稱（不會把按鈕撐高） */
+.btn > img.pxi, button > img.pxi { width: 1.6em; height: 1.6em; margin: -0.3em 0; vertical-align: middle; flex: none; }
+.btn:has(> img.pxi) { gap: 5px; }
+/* 標籤、小按鈕列：一樣置中 */
+.tag, .place-tag { display: inline-flex; align-items: center; justify-content: center; gap: 3px; vertical-align: middle; }
+.tag > img.pxi, .place-tag > img.pxi { width: 20px; height: 20px; margin: -3px 0; flex: none; }
+.chip { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.chip > img.pxi { width: 20px; height: 20px; margin: -3px 0; flex: none; }
+.card .acts .btn > img.pxi { width: 22px; height: 22px; margin: -4px 0; }
+.card .info dt { display: inline-flex; align-items: center; gap: 3px; }
+.card .info dt img.pxi { width: 22px; height: 22px; margin: -3px 0; }
+.crumbs img.pxi { width: 22px; height: 22px; margin: -4px 2px -4px 0; vertical-align: middle; }
+.win-title img.pxi, legend img.pxi, h4 img.pxi { width: 1.5em; height: 1.5em; vertical-align: middle; margin: -0.25em 3px -0.2em 0; }
+.toast .ic img.pxi, .nt-list li .ic img.pxi { width: 26px; height: 26px; }
+/* 一般文字裡的圖示（數字列、說明…）：跟文字垂直置中 */
+:is(span, p, small, b, li, div, label, a) > img.pxi:not(.btn > img):not(.tag > img) { vertical-align: middle; }
+.me-nums { align-items: center; flex-wrap: wrap; justify-content: center; }
+.me-nums > span { display: inline-flex; align-items: center; gap: 4px; }
+.me-nums img.pxi { width: 24px; height: 24px; }
+.spin-title { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.spin-title img.pxi { width: 24px; height: 24px; }
+
+/* ===== 稱號：沒有把字包住的框（31 號以後）不放白底，字用框的顏色＋金色 ===== */
+.ttl.ttl-fx.ttl-open .ttl-in { color: var(--tc); font-weight: 700; letter-spacing: .5px;
+  text-shadow: -1px -1px 0 #2a1f2e, 1px -1px 0 #2a1f2e, -1px 1px 0 #2a1f2e, 1px 1px 0 #2a1f2e, 0 2px 0 #2a1f2e, 0 0 5px rgba(244, 215, 122, .6); }
+
 /* ===== 節日美術：橫幅、地圖小物件、飄落效果、嚮導節日裝 ===== */
 .fs-banner.fs-banner-art { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 1; min-height: 84px; padding: 0 14%; background-size: cover; background-position: center; image-rendering: pixelated; animation: none; overflow: hidden; }
 .fs-banner.fs-banner-art span { background: rgba(255, 249, 236, .9); border: 2px solid var(--ink, #2a1f2e); border-radius: 8px; padding: 5px 12px; text-align: center; line-height: 1.4; box-shadow: 0 2px 0 rgba(42, 31, 46, .25); animation: fsPulse 2.4s ease-in-out infinite; }

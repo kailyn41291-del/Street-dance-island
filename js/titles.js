@@ -130,10 +130,12 @@ window.Titles = (() => {
   const FRAME = {"owner":"22","admin":"03","verified":"26","r_lucky":"09","r_spinner":"16","r_goldfeet":"17","r_cypherking":"21","r_vinyl":"24","r_rainbow":"27","r_moonwalk":"01","r_sushi":"07","r_week7":"05","r_npcslayer":"30","r_npcboss":"29","r_moveking":"23","r_master":"13","r_graduate":"10","r_reliable":"02","r_duo":"11","r_f_newyear":"18","r_f_lunar":"04","r_f_valentine":"06","r_f_danceday":"28","r_f_summer100":"15","r_f_hiphop":"25","r_f_moon":"12","r_f_halloween":"08","r_f_xmas":"19","r_islander":"20","r_comp1":"14","r_comp5":"21","r_comp10":"23","r_challenger":"30","lv5":"20","lv10":"17","lv20":"01","t_pvp_1":"37_1","t_pvp_2":"37_2","t_pvp_3":"37_3","t_vet_1":"32_1","t_vet_2":"32_2","t_vet_3":"32_3","t_hall_1":"40_1","t_hall_2":"40_2","t_hall_3":"40_3","t_crew_1":"35_1","t_crew_2":"35_2","t_crew_3":"35_3","t_graf_1":"41_1","t_graf_2":"41_2","t_graf_3":"41_3","t_drip_1":"46_1","t_drip_2":"46_2","t_drip_3":"46_3","t_stk_1":"48_1","t_stk_2":"48_2","t_stk_3":"48_3","t_relay_1":"49_1","t_relay_2":"49_2","t_relay_3":"49_3","t_skate_1":"45_1","t_skate_2":"45_2","t_skate_3":"45_3","t_shoe_1":"44_1","t_shoe_2":"44_2","t_shoe_3":"44_3","t_champ":"31","t_podium":"33","t_world":"38","t_belt":"34","t_id_dj":"43","t_id_mc":"47","t_id_judge":"36","t_id_host":"39","t_dj_pop":"42","t_mc_pop":"50","r_welcome":"18"};
   // 新框（31～50）：保持原本比例顯示，不拉長；[高 / 寬, 文字區左, 上, 右, 下]（0～1）
   const FN = {};   // （不再使用：新框也統一用拉長的方式，大小才會一致）
+  // 31 號以後的框沒有把字包住：不放白底，字改用「框的主色＋一點金色」，外面加深色描邊
+  const OPEN_TC = {"31": "#e3b64f", "32_1": "#eba86a", "32_2": "#e8ebf2", "32_3": "#ffd65c", "33": "#97adb2", "34": "#e3b35a", "35_1": "#eba86a", "35_2": "#e8ebf2", "35_3": "#ffd65c", "36": "#e36252", "37_1": "#eba86a", "37_2": "#e8ebf2", "37_3": "#ffd65c", "38": "#e3b859", "39": "#e39444", "40_1": "#eba86a", "40_2": "#e8ebf2", "40_3": "#ffd65c", "41_1": "#eba86a", "41_2": "#e8ebf2", "41_3": "#ffd65c", "42": "#6e94b2", "43": "#97d891", "44_1": "#eba86a", "44_2": "#e8ebf2", "44_3": "#ffd65c", "45_1": "#eba86a", "45_2": "#e8ebf2", "45_3": "#ffd65c", "46_1": "#eba86a", "46_2": "#e8ebf2", "46_3": "#ffd65c", "47": "#6b83b2", "48_1": "#eba86a", "48_2": "#e8ebf2", "48_3": "#ffd65c", "49_1": "#eba86a", "49_2": "#e8ebf2", "49_3": "#ffd65c", "50": "#875fb2"};   // 銅 / 銀 / 金三級固定用銅色、銀色、金色字
   const frameStyle = id => {
     const n = FRAME[id], m = n && FR[n.slice(0, 2)]; if (!m) return '';
     const [w, hh, c, tp, bt, xl, xr] = m, r = v => +(v / hh).toFixed(4);
-    return `border-image-source:url(assets/title_frames/${n}.webp?v=4);border-image-slice:${tp} ${w - c - 2} ${bt} ${c} fill;--ft:${r(tp)};--fr:${r(w - c - 2)};--fb:${r(bt)};--fl:${r(c)};--fin:${r(hh - tp - bt)};--fu:${r(xr - xl)};--fo:${r(((xr - c) - (c - xl)) / 2)}`;
+    return `border-image-source:url(assets/title_frames/${n}.webp?v=5);border-image-slice:${tp} ${w - c - 2} ${bt} ${c} fill;--ft:${r(tp)};--fr:${r(w - c - 2)};--fb:${r(bt)};--fl:${r(c)};--fin:${r(hh - tp - bt)};--fu:${r(xr - xl)};--fo:${r(((xr - c) - (c - xl)) / 2)}`;
   };
   const earned = id => { const x = byId[id]; return !!x && !!(x.only === 'unlock' || x.only === 'verified' || x.minLv); };
   const color = id => (byId[id] && byId[id].color) || '#ffe08a';
@@ -149,7 +151,8 @@ window.Titles = (() => {
     if (fx) {
       // 所有框一樣大；字的大小取「框中間放得下的寬度」和「緞帶高度」比較小的那個
       const len = [...txt].reduce((n, ch) => n + (/[\x00-\xff]/.test(ch) ? 0.55 : 1), 0);
-      return `<span class="ttl ttl-fx" style="${fx};--len:${Math.max(len, 2).toFixed(2)}"><span class="ttl-in">${txt}</span></span>`;
+      const tc = OPEN_TC[FRAME[id]];
+      return `<span class="ttl ttl-fx${tc ? ' ttl-open' : ''}" style="${fx};--len:${Math.max(len, 2).toFixed(2)}${tc ? ';--tc:' + tc : ''}"><span class="ttl-in">${txt}</span></span>`;
     }
     const e = earned(id); return `<span class="ttl ${x.only ? 'ttl-' + x.only : ''} ${e ? 'ttl-earned' : ''}"${e ? ` style="--tc:${color(id)}"` : ''}>${e ? '★ ' : ''}${txt}</span>`;
   };
