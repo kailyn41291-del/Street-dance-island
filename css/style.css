@@ -2552,7 +2552,7 @@ img.pxi { image-rendering: auto; }   /* 縮小顯示用平滑縮放，像素線�
   body:has(.world-menu.collapsed) .qbox:not(.open) { bottom: calc(126px + env(safe-area-inset-bottom)) !important; }
 }
 @media (max-width: 760px) {
-  #chat { top: calc(var(--hud-b, 96px) + 6px) !important; }
+  #chat.open { top: calc(var(--hud-b, 96px) + 6px) !important; }
 }
 
 /* ===== 節日：開機畫面、登入視窗 ===== */

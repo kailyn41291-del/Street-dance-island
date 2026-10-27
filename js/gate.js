@@ -11,7 +11,9 @@ window.Gate = (() => {
     ja: { gt_title: '舞島 準備中', gt_text: '舞島はただいま準備中で、管理者のみ利用できます。お楽しみに！', gt_id: 'プレイヤー ID またはメール', gt_pass: 'パスワード', gt_go: '管理者ログイン', gt_no: 'このアカウントには権限がありません', gt_bad: 'ID かパスワードが違います', gt_wait: 'ログイン中…' },
     ko: { gt_title: '무도 준비 중', gt_text: '무도는 아직 준비 중이라 지금은 관리자만 들어올 수 있어요. 기대해 주세요!', gt_id: '플레이어 ID 또는 이메일', gt_pass: '비밀번호', gt_go: '관리자 로그인', gt_no: '이 계정은 권한이 없어요', gt_bad: 'ID 또는 비밀번호가 틀렸어요', gt_wait: '로그인 중…' }
   });
-  if (!PRIVATE || !Backend.enabled) return { open: true };
+  // 本機測試用：只有在自己電腦（localhost）網址加 ?gate=off 才會跳過，正式網站沒有作用
+  const devOpen = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]gate=off\b/.test(location.search);
+  if (!PRIVATE || !Backend.enabled || devOpen) return { open: true };
 
   let el = null;
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
