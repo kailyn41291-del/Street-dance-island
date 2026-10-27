@@ -2632,3 +2632,28 @@ html.gated #boot, html.gated #hud, html.gated #stage, html.gated .mnav, html.gat
 #hud .logo .en { font-size: 17px; letter-spacing: 3px; }
 @media (max-width: 760px) { #hud .logo .en { font-size: 14px; letter-spacing: 2px; } }
 .tag.draft-tag { --c: #fff3c4; border-style: dashed; }
+
+/* ===== 版面整理 ===== */
+/* 撿球鞋 / 紅包：在一般畫面之上，但不能蓋住彈出視窗；有視窗打開時先藏起來 */
+.sk-drop, .fs-rp { z-index: 55 !important; }
+body:has(.modal-back) .sk-drop, body:has(.modal-back) .fs-rp { display: none; }
+.sk-drop .pxi { width: 50px; height: 50px; image-rendering: pixelated; filter: drop-shadow(2px 3px 0 rgba(42,31,46,.35)); }
+/* 「編輯角色」按鈕多了一段下邊距，跟旁邊按鈕對不齊（.ed 原本是給角色編輯區用的） */
+.btn.ed { margin-bottom: 0; }
+/* 輸入框、下拉選單跟按鈕放同一排時一樣高 */
+.btn-row .input, .chat-input .input, .fo-bar .input, .fo-bar select, .cr-codef .input, .pt-codef .input,
+.input.sm, select.input.sm { min-height: var(--bh, 38px); box-sizing: border-box; }
+/* 空的列表要佔滿整排，不要只佔一格 */
+.cr-grid > .note:only-child, .city-inner [class*="-grid"] > .note:only-child { grid-column: 1 / -1; }
+/* 搜尋框：一行就好，太長就用「…」 */
+.td-search { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.td-search .pxi { flex: none; }
+@media (max-width: 760px) {
+  /* 今天頁的三顆按鈕：手機上平均排成一排 */
+  .btn-row:has(> .td-bell) { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .btn-row:has(> .td-bell) .btn { padding-left: 4px; padding-right: 4px; font-size: 12px; white-space: nowrap; justify-content: center; }
+  .btn-row:has(> .td-bell) .btn .pxi { width: 18px; height: 18px; }
+  /* 節日橫幅上的字：手機一行放得下 */
+  .fs-banner.fs-banner-art { padding: 0 6%; }
+  .fs-banner.fs-banner-art span { font-size: 12px; white-space: nowrap; padding: 4px 8px; }
+}

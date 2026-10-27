@@ -133,8 +133,10 @@ window.Collect = (() => {
   const doneToday = () => { try { return !!localStorage.getItem(dayKey()); } catch (e) { return true; } };
   const markToday = () => { try { localStorage.setItem(dayKey(), '1'); } catch (e) {} };
   function maybeDrop() {
-    if (!logged() || doneToday() || document.querySelector('.sk-drop') || Math.random() > 0.3) return;
-    const b = h(`<button class="sk-drop" aria-label="sneaker" style="left:${8 + Math.random() * 74}vw;top:${30 + Math.random() * 45}vh"><span class="sk-box">?</span></button>`);
+    if (!logged() || doneToday() || document.querySelector('.sk-drop') || document.querySelector('.modal-back') || Math.random() > 0.3) return;
+    // 出現在畫面左右兩側（不要蓋住中間的內容），用禮物盒圖示
+    const side = Math.random() < 0.5 ? 2 + Math.random() * 6 : 86 + Math.random() * 6;
+    const b = h(`<button class="sk-drop" aria-label="sneaker" style="left:${side}vw;top:${34 + Math.random() * 36}vh">${PXI.img('game/gift', '<span class="sk-box">?</span>')}</button>`);
     document.body.appendChild(b);
     b.onclick = async () => {
       b.remove();

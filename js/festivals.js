@@ -105,7 +105,7 @@ window.Festivals = (() => {
   const rpKey = () => `danceIsland.rp.${Backend.uid}.${A.todayStr()}`;
   const rpFound = () => { try { return +localStorage.getItem(rpKey()) || 0; } catch (e) { return 0; } };
   function maybeRedPacket() {
-    if (!logged() || !active().includes('lunar') || rpFound() >= 3 || document.querySelector('.fs-rp') || Math.random() > 0.35) return;
+    if (!logged() || !active().includes('lunar') || rpFound() >= 3 || document.querySelector('.fs-rp') || document.querySelector('.modal-back') || Math.random() > 0.35) return;
     const b = h(`<button class="fs-rp" aria-label="red packet" style="left:${10 + Math.random() * 75}vw;top:${25 + Math.random() * 50}vh">${PXI.img('fest/lunar', '<span class="fs-rp-box"></span>')}</button>`);
     document.body.appendChild(b);
     b.onclick = async () => {
