@@ -261,6 +261,38 @@ window.Festivals = (() => {
     view.appendChild(fx);
   }
 
+  /* ---------- 開機畫面、登入視窗的節日樣式 ---------- */
+  const ACCENT = { xmas: '#d9534f', newyear: '#eac45a', lunar: '#d9534f', halloween: '#f08c3a', valentine: '#f07ca3', moon: '#eac45a' };
+  const fxRain = (host, f, n) => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const fx = document.createElement('div'); fx.className = 'fs-fx'; fx.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < n; i++) {
+      const im = document.createElement('img'); im.alt = ''; im.src = art(f, `fx_${(i % 3) + 1}.png`);
+      const dur = 10 + Math.random() * 9, sz = 22 + Math.round(Math.random() * 12);
+      im.style.cssText = `left:${(Math.random() * 100).toFixed(1)}%;width:${sz}px;height:${sz}px;animation-duration:${dur.toFixed(1)}s,${(2.5 + Math.random() * 2).toFixed(1)}s;animation-delay:${(-Math.random() * dur).toFixed(1)}s,0s`;
+      fx.appendChild(im);
+    }
+    host.appendChild(fx);
+  };
+  function decorateBoot() {
+    const f = look(), boot = document.getElementById('boot'); if (!f || !boot || boot.classList.contains('fs-boot')) return;
+    boot.classList.add('fs-boot'); boot.style.setProperty('--fs-c', ACCENT[f]);
+    const logo = boot.querySelector('.boot-logo'); if (logo) logo.style.backgroundImage = `url('${art(f, 'banner.webp')}')`;
+    fxRain(boot, f, innerWidth < 760 ? 10 : 16);
+    boot.insertAdjacentHTML('beforeend', `<img class="fs-boot-k" src="${art(f, 'kailyn.webp')}" alt=""><img class="fs-boot-c" src="${art(f, 'choco.webp')}" alt="">`);
+  }
+  // 等所有程式都載入完（日期工具在 app.js）再裝飾；出錯也不能影響網站
+  const safeBoot = () => { try { decorateBoot(); } catch (e) { console.warn(e); } };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', safeBoot); else setTimeout(safeBoot, 0);
+  // 登入視窗（選擇冒險者）：上面的圖換成節日橫幅＋節日裝的凱琳
+  function decorateChoose(body, m) {
+    const f = look(); if (!f) return;
+    const a = body.querySelector('.choose-art'); if (!a) return;
+    a.classList.add('fs-choose'); a.style.backgroundImage = `url('${art(f, 'banner.webp')}')`;
+    const k = a.querySelector('.choose-k'); if (k) k.src = art(f, 'kailyn.webp');
+    const win = m && m.el && m.el.closest('.modal'); if (win) win.style.setProperty('--fs-c', ACCENT[f]), win.classList.add('fs-modal');
+  }
+
   /* ---------- 今天首頁的節日橫幅、第一次遇到節日的對話 ---------- */
   const bannerHTML = () => {
     const now = active(), f = look();
@@ -278,5 +310,5 @@ window.Festivals = (() => {
   /* ---------- 裝飾：十二月島上積雪 ---------- */
   const islandPal = () => (A.todayStr().slice(5, 7) === '12' || look() === 'xmas' ? { grass: '#eef3fb', grass2: '#dde7f5', grassHi: '#ffffff' } : null);
 
-  return { active, upcoming, bannerHTML, islandPal, windowOf, mainDay, look, guideArt, decorateWorld, art };
+  return { active, upcoming, bannerHTML, islandPal, windowOf, mainDay, look, guideArt, decorateWorld, art, decorateChoose };
 })();

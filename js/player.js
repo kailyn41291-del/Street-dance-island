@@ -220,6 +220,7 @@ window.Player = (() => {
     const looks = [Avatar.random({ gender: 'f' }), Avatar.random({ gender: 'm' })];
     looks.forEach(l => { const d = Avatar.dancer(3, l); body.querySelector('.choose-art').appendChild(d.el); const tm = setInterval(() => { if (!d.el.isConnected) clearInterval(tm); else d.beat(); }, 300 + Math.random() * 120); });
     const m = modal({ title: t('p_choose_title'), color: 'yellow', body });
+    if (window.Festivals && Festivals.decorateChoose) try { Festivals.decorateChoose(body, m); } catch (e) {}
     body.querySelector('.c-new').onclick = () => { m.close(); setTimeout(openCreate, 220); };
     body.querySelector('.c-login').onclick = () => { m.close(); setTimeout(openLogin, 220); };
     body.querySelector('.c-later').onclick = m.close;

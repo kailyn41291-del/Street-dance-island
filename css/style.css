@@ -2555,6 +2555,23 @@ img.pxi { image-rendering: auto; }   /* 縮小顯示用平滑縮放，像素線�
   #chat { top: calc(var(--hud-b, 96px) + 6px) !important; }
 }
 
+/* ===== 節日：開機畫面、登入視窗 ===== */
+#boot.fs-boot { overflow: hidden; }
+#boot.fs-boot .win { position: relative; z-index: 2; }
+#boot.fs-boot .win-title { background: var(--fs-c); }
+#boot.fs-boot .boot-logo { background-size: cover; background-position: center; image-rendering: pixelated; border: var(--px) solid var(--ink); border-radius: 6px; margin: 2px 0 12px; padding: 6px 0 2px; }
+#boot.fs-boot .boot-logo-img { width: min(300px, 70vw); margin: 2px auto 4px; filter: drop-shadow(0 0 3px #fff) drop-shadow(3px 4px 0 rgba(59,43,43,.3)); }
+#boot .fs-fx { position: fixed; z-index: 1; }
+.fs-boot-k, .fs-boot-c { position: fixed; bottom: 0; z-index: 1; pointer-events: none; height: min(34vh, 300px); width: auto; animation: kBob 2.6s ease-in-out infinite; }
+.fs-boot-k { left: max(8px, calc(50% - 470px)); }
+.fs-boot-c { right: max(8px, calc(50% - 480px)); height: min(26vh, 230px); animation-delay: -1.3s; }
+@media (max-width: 760px) {
+  .fs-boot-k { height: 22vh; left: 4px; }
+  .fs-boot-c { height: 16vh; right: 4px; }
+}
+.choose-art.fs-choose { background-size: cover; background-position: center; image-rendering: pixelated; }
+.choose-art.fs-choose .choose-k { filter: drop-shadow(0 0 2px #fff); }
+.fs-modal > .win-title { background: var(--fs-c); }
 /* 電腦 / 平板：地圖以外的頁面，「每日任務」移到左下角，不要蓋住頁面最上面的內容 */
 @media (min-width: 761px) {
   body:not(:has(.world-menu)) .qbox { top: auto; bottom: 16px; display: flex; flex-direction: column-reverse; }
