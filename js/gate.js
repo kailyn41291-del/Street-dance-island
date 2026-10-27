@@ -6,7 +6,7 @@
 window.Gate = (() => {
   const PRIVATE = true;
   I18N.extend({
-    zh: { gt_title: '舞島準備中', gt_text: '舞島還在準備中，目前只開放給管理員。敬請期待！', gt_id: '玩家 ID 或 Email', gt_pass: '密碼', gt_go: '管理員登入', gt_no: '這個帳號沒有開啟權限', gt_bad: '帳號或密碼不對', gt_wait: '登入中…' },
+    zh: { gt_title: '舞島準備中', gt_text: '冒險者你好！舞島正在準備中，目前只開放給管理員。冒險就快開始了，敬請期待！', gt_id: '玩家 ID 或 Email', gt_pass: '密碼', gt_go: '管理員登入', gt_no: '這個帳號沒有開啟權限', gt_bad: '帳號或密碼不對', gt_wait: '登入中…' },
     en: { gt_title: 'Dance Island is coming soon', gt_text: 'Dance Island is still getting ready and is only open to admins for now. Stay tuned!', gt_id: 'Player ID or email', gt_pass: 'Password', gt_go: 'Admin sign in', gt_no: 'This account does not have access', gt_bad: 'Wrong ID or password', gt_wait: 'Signing in…' },
     ja: { gt_title: '舞島 準備中', gt_text: '舞島はただいま準備中で、管理者のみ利用できます。お楽しみに！', gt_id: 'プレイヤー ID またはメール', gt_pass: 'パスワード', gt_go: '管理者ログイン', gt_no: 'このアカウントには権限がありません', gt_bad: 'ID かパスワードが違います', gt_wait: 'ログイン中…' },
     ko: { gt_title: '무도 준비 중', gt_text: '무도는 아직 준비 중이라 지금은 관리자만 들어올 수 있어요. 기대해 주세요!', gt_id: '플레이어 ID 또는 이메일', gt_pass: '비밀번호', gt_go: '관리자 로그인', gt_no: '이 계정은 권한이 없어요', gt_bad: 'ID 또는 비밀번호가 틀렸어요', gt_wait: '로그인 중…' }
@@ -17,21 +17,64 @@ window.Gate = (() => {
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   function show() {
     if (el) return;
+    // 等整個網頁的程式都載入完（節日判斷要用到）再畫
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', show, { once: true }); return; }
     document.documentElement.classList.add('gated');
     el = document.createElement('div');
     el.id = 'gate';
-    el.innerHTML = `<div class="win"><div class="win-title yellow"><span class="t">dance_island.exe</span><div class="win-ctrls"><span>_</span><span>□</span><span>×</span></div></div>
-      <div class="win-body">
+    // 有節日美術就用節日主題（橫幅當背景、凱琳巧可穿節日裝、飄落小東西）
+    let f0 = null; try { f0 = window.Festivals && Festivals.look ? Festivals.look() : null; } catch (e) {}
+    const art = n => (f0 ? Festivals.art(f0, n) : '');
+    const ACC = { xmas: '#d9534f', newyear: '#eac45a', lunar: '#d9534f', halloween: '#f08c3a', valentine: '#f07ca3', moon: '#eac45a' };
+    if (f0) { el.classList.add('gate-fest'); const SKY = { xmas: ['#1d2b4a', '#3a5a8a'], newyear: ['#1b1840', '#45306e'], lunar: ['#4a1010', '#8a2a1e'], halloween: ['#231833', '#5b3a6e'], valentine: ['#4a1d36', '#a04a72'], moon: ['#101d36', '#2e4a78'] }[f0] || ['#2a1f3d', '#5b3a6e'];
+    el.style.backgroundImage = `url('${art('banner.webp')}'), linear-gradient(${SKY[0]}, ${SKY[1]})`;
+    el.style.setProperty('--sky2', SKY[1]); el.style.setProperty('--fs-c', ACC[f0] || '#f07ca3'); }
+    const face = f0 ? art('kailyn_face.webp') : 'assets/kailyn/cheer.webp?v=2';
+    el.innerHTML = `<div class="gate-shade"></div>
+      <div class="gate-main">
         <img class="gate-logo" src="assets/logo.webp?v=1" alt="舞島 Dance Island">
-        <h2>${esc(t('gt_title'))}</h2><p>${esc(t('gt_text'))}</p>
+        <h1 class="gate-big" aria-label="Coming soon"><span>COMING</span><span>SOON</span></h1>
+        <div class="gate-sub">NOW LOADING<span class="gate-dots">...</span></div>
+        <div class="gate-bar" aria-hidden="true">${'<i></i>'.repeat(20)}</div>
+        <div class="gate-pct">STAGE 1 &nbsp;·&nbsp; <b>87</b>%</div>
+      </div>
+      ${f0 ? `<img class="gate-k" src="${art('kailyn.webp')}" alt=""><img class="gate-c" src="${art('choco.webp')}" alt="">` : ''}
+      <div class="gate-dlg">
+        <div class="gate-face"><img src="${face}" alt="Kailyn"></div>
+        <div class="gate-say"><div class="who">${esc(t('guide'))}</div><div class="txt"></div></div>
+        <div class="next">▼</div>
+      </div>
+      <button class="gate-admin" type="button">▶ ADMIN</button>
+      <div class="gate-login win" hidden><div class="win-title yellow"><span class="t">${esc(t('gt_go'))}</span></div><div class="win-body">
         <form class="gate-form" novalidate>
           <input class="input" name="id" placeholder="${esc(t('gt_id'))}" autocapitalize="off" spellcheck="false" autocomplete="username">
           <input class="input" name="pass" type="password" placeholder="${esc(t('gt_pass'))}" autocomplete="current-password">
           <div class="err"></div>
           <button class="btn pink" type="submit">${esc(t('gt_go'))}</button>
-        </form>
-      </div></div>`;
+        </form></div></div>`;
     document.body.appendChild(el);
+    // 對話框逐字打出來
+    const txt = el.querySelector('.gate-say .txt'), line = t('gt_text'); let i = 0;
+    const tick = () => { txt.textContent = line.slice(0, ++i); if (i < line.length) setTimeout(tick, 55); };
+    setTimeout(tick, 500);
+    // 進度條：卡在快完成的地方慢慢跳（準備中的感覺）
+    const bars = el.querySelectorAll('.gate-bar i'), pct = el.querySelector('.gate-pct b');
+    let p = 80; const step = () => { p = p >= 99 ? 80 : p + 1 + Math.floor(Math.random() * 3); pct.textContent = Math.min(p, 99); bars.forEach((b, k) => b.classList.toggle('on', k < Math.round(Math.min(p, 99) / 5))); };
+    step(); setInterval(step, 900);
+    // 飄落小東西
+    if (f0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const fx = document.createElement('div'); fx.className = 'fs-fx';
+      for (let k = 0; k < (innerWidth < 760 ? 10 : 18); k++) {
+        const im = document.createElement('img'); im.alt = ''; im.src = art(`fx_${(k % 3) + 1}.png`);
+        const dur = 10 + Math.random() * 9, sz = 22 + Math.round(Math.random() * 12);
+        im.style.cssText = `left:${(Math.random() * 100).toFixed(1)}%;width:${sz}px;height:${sz}px;animation-duration:${dur.toFixed(1)}s,${(2.5 + Math.random() * 2).toFixed(1)}s;animation-delay:${(-Math.random() * dur).toFixed(1)}s,0s`;
+        fx.appendChild(im);
+      }
+      el.insertBefore(fx, el.querySelector('.gate-main'));
+    }
+    // 管理員登入：點右下角才打開
+    const login = el.querySelector('.gate-login');
+    el.querySelector('.gate-admin').onclick = () => { login.hidden = !login.hidden; if (!login.hidden) login.querySelector('input').focus(); };
     const f = el.querySelector('form'), err = el.querySelector('.err'), btn = f.querySelector('button');
     f.onsubmit = async ev => {
       ev.preventDefault();
