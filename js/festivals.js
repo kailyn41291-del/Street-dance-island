@@ -223,7 +223,9 @@ window.Festivals = (() => {
     const land = (gx, gy) => gx >= 0 && gy >= 0 && gx < L.GW && gy < L.GH && L.ids[gy * L.GW + gx] > 0;
     const S = 13, HS = 6;   // 物件大小（格）、一半
     const used = [];
-    const big = L.info.map((f2, i) => [f2, i]).filter(([f2]) => f2 && f2.n > 260).sort((a, b) => b[0].n - a[0].n).slice(0, 16);
+    // 地圖小物件：目前的圖太陽春，先關掉（新圖到了把 PROPS 改成 true）
+    const PROPS = false;
+    const big = !PROPS ? [] : L.info.map((f2, i) => [f2, i]).filter(([f2]) => f2 && f2.n > 260).sort((a, b) => b[0].n - a[0].n).slice(0, 16);
     let k = 0;
     big.forEach(([fi, i]) => {
       const cp = L.comps[fi.comp]; if (!cp) return;
