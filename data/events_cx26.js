@@ -71,6 +71,7 @@ window.DANCE_EVENTS = (window.DANCE_EVENTS || []).concat([
   "link": "http://et-stage.net/event/NS8xMjAzMg/",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=Chiba%2C%20Japan",
   "poster": "posters/cx26-004.webp",
+  "draft": true,
   "src": "codex-2026-10-28"
  },
  {
@@ -374,6 +375,7 @@ window.DANCE_EVENTS = (window.DANCE_EVENTS || []).concat([
   "link": "https://olympics.com/ioc/dakar-2026",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=Dakar%2C%20Senegal",
   "poster": "posters/cx26-023.webp",
+  "draft": true,
   "src": "codex-2026-10-28"
  },
  {
@@ -459,6 +461,7 @@ window.DANCE_EVENTS = (window.DANCE_EVENTS || []).concat([
   "link": "https://www.instagram.com/stakesishigh_ac",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=Aachen%2C%20Germany",
   "poster": "posters/cx26-029.webp",
+  "draft": true,
   "src": "codex-2026-10-28"
  },
  {
@@ -941,6 +944,7 @@ window.DANCE_EVENTS = (window.DANCE_EVENTS || []).concat([
   "endDate": "2026-12-06",
   "link": "https://and8.dance/en/e/5632",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=Paris%2C%20France",
+  "draft": true,
   "src": "codex-2026-10-28"
  },
  {
@@ -1372,6 +1376,7 @@ window.DANCE_EVENTS = (window.DANCE_EVENTS || []).concat([
   "link": "https://www.themovementarena.ch",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=Aarau%2C%20Switzerland",
   "poster": "posters/cx26-084.webp",
+  "draft": true,
   "src": "codex-2026-10-28"
  },
  {
@@ -1556,6 +1561,7 @@ window.DANCE_EVENTS = (window.DANCE_EVENTS || []).concat([
   "endDate": "2027-08-29",
   "link": "https://theworldbattle.com",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=Porto%2C%20Portugal",
+  "draft": true,
   "src": "codex-2026-10-28"
  },
  {
@@ -1639,6 +1645,7 @@ window.DANCE_EVENTS = (window.DANCE_EVENTS || []).concat([
   "link": "https://www.redbull.com/int-en/events/red-bull-dance-your-style-world-final-london-2027",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=London%2C%20United%20Kingdom",
   "poster": "posters/cx26-100.webp",
+  "draft": true,
   "src": "codex-2026-10-28"
  }
 ]);
