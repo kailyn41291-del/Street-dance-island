@@ -461,7 +461,7 @@ window.App = {
         A.translateCards(listEl);
       };
       listEl.innerHTML = '';
-      if (list.length) more(); else listEl.innerHTML = `<div class="win empty"><div class="win-body"><p>${t('ev_none')}</p></div></div>`;
+      if (list.length) more(); else listEl.innerHTML = `<div class="win empty"><div class="win-body">${UI.emptyArt("events")}<p>${t('ev_none')}</p></div></div>`;
     };
     let tmr;
     inner.querySelector('.q').oninput = ev => { fs.q = ev.target.value; clearTimeout(tmr); tmr = setTimeout(() => { draw(); saveFs(); }, 300); };

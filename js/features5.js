@@ -145,7 +145,7 @@
             <button class="btn pink new">✎ ${t('fo_new')}</button></div>
         </div></div>
         ${mine.length ? `<div class="list-head">${t('fo_mine')}</div><div class="fo-list">${mine.map(row).join('')}</div>` : ''}
-        <div class="fo-list">${list.map(row).join('') || `<p class="note">${t('fo_empty')}</p>`}</div>`;
+        <div class="fo-list">${list.map(row).join('') || `<p class="note empty-li">${UI.emptyArt("posts")}${t('fo_empty')}</p>`}</div>`;
       inner.querySelectorAll('.fo-row').forEach(a => { const p = posts.find(x => '#/forum/' + x.id === a.getAttribute('href')); if (p) a.querySelector('.fo-ic').appendChild(headIcon((p.author || {}).look)); });
       inner.querySelector('.fo-sort').onchange = e => { st.sort = e.target.value; draw(); };
       inner.querySelector('.chips').onclick = e => { const b = e.target.closest('[data-cat]'); if (b) { st.cat = b.dataset.cat; SFX.play('select'); draw(); } };

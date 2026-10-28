@@ -106,7 +106,7 @@ window.Dungeon = (() => {
     const id = r.arg[0], d = D[id];
     const view = h(`<div class="view city-view dg-view"><div class="city-inner"><p class="note">…</p></div></div>`);
     const inner = view.querySelector('.city-inner'); stage.appendChild(view);
-    if (!d) { inner.innerHTML = `<p class="note">404</p>`; return; }
+    if (!d) { inner.innerHTML = `<p class="note empty-li">${UI.emptyArt("error")}404</p>`; return; }
     await load();
     if (!canEnter(id)) { inner.innerHTML = `<div class="win"><div class="win-body"><p>${t('dg_closed')}</p><a class="btn" href="#/">${t('dg_back')}</a></div></div>`; return; }
     const years = Object.keys(d.editions).sort().reverse();

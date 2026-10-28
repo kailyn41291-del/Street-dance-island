@@ -2678,3 +2678,50 @@ body:has(.modal-back) .sk-drop, body:has(.modal-back) .fs-rp { display: none; }
   body:has(.world-menu.collapsed) .qbox.open { left: 8px !important; right: auto !important; }
   body:has(.world-menu.collapsed) .qbox:not(.open) { left: 62px !important; right: auto !important; bottom: var(--wm-b, calc(72px + env(safe-area-inset-bottom))) !important; }
 }
+
+/* ===== V8 準備中畫面：全螢幕底圖（寬 / 直兩張） ===== */
+#gate.gate-bg { background: #1d2b4a var(--gbw) center bottom / cover no-repeat !important; image-rendering: pixelated; }
+@media (max-aspect-ratio: 4/5) { #gate.gate-bg { background-image: var(--gbt) !important; } }
+#gate.gate-bg .gate-shade { background: linear-gradient(rgba(10,6,20,.12), transparent 45%, rgba(10,6,20,.18)); }
+#gate.gate-bg .gate-shade::before, #gate.gate-bg .gate-shade::after { content: none; }
+/* V8 主題飄落小圖：拿掉原本色塊的外框和形狀 */
+.fx-layer .fx-img { background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; clip-path: none !important; image-rendering: auto; object-fit: contain; filter: drop-shadow(1px 1px 0 rgba(0,0,0,.08)); }
+/* V8 招式小圖 */
+.mv-ico { width: 1.6em; height: 1.6em; object-fit: contain; vertical-align: middle; }
+.emote-pick .mv-ico, .cy-moves .mv-ico { width: 40px; height: 40px; }
+.em-name .mv-ico, .emote-line .mv-ico { width: 22px; height: 22px; margin: -4px 0; }
+/* V8 地圖雲朵（三種形狀） */
+.world .cloud.c1, .world .cloud.c2, .world .cloud.c3 { width: 128px; height: 64px; background: url('../assets/map/cloud_1.webp?v=1') center / contain no-repeat; opacity: .85; }
+.world .cloud.c2 { background-image: url('../assets/map/cloud_2.webp?v=1'); }
+.world .cloud.c3 { background-image: url('../assets/map/cloud_3.webp?v=1'); width: 112px; height: 56px; }
+/* V8 幸運小卡：塔羅牌卡框 */
+.lk-face { border: 0; box-shadow: none; background-size: 100% 100% !important; background-repeat: no-repeat !important; }
+.lk-back { background: url('../assets/ui_art/luck_back.webp?v=1'); align-content: end; padding-bottom: 14%; }
+.lk-back .lk-clover, .lk-back b { display: none; }
+.lk-front { background: url('../assets/ui_art/luck_front.webp?v=1'); border-top: 0; padding: 22% 20% 20%; gap: 6px; }
+.lk-front .lk-row { font-size: 12px; }
+.lk-front .lk-quote { font-size: 15px; line-height: 1.6; }
+/* V8 每日輪盤：輪盤圖在背後轉，中間的圖示和上方指針不動 */
+.wheel { position: relative; width: 96px; height: 96px; margin-top: 12px; border: 0; box-shadow: none; background: none !important; }
+.wheel::before { content: ''; position: absolute; inset: 0; background: url('../assets/ui_art/wheel.webp?v=1') center / contain no-repeat; }
+.wheel::after { content: ''; position: absolute; left: 50%; top: -14px; width: 28px; height: 28px; margin-left: -14px; background: url('../assets/ui_art/wheel_pointer.webp?v=1') center / contain no-repeat; }
+.wheel span { position: relative; z-index: 1; width: 38px; height: 38px; font-size: 20px; }
+.wheel.spinning { animation: none; }
+.wheel.spinning::before { animation: wspin .3s linear infinite; }
+/* V8 空狀態插圖 */
+.empty-art { display: block; width: min(240px, 70%); height: auto; margin: 0 auto 8px; }
+.empty-li { text-align: center; list-style: none; }
+.empty-li .empty-art { width: min(200px, 60%); }
+/* V8 打卡印章動畫：郵戳外框 */
+.stamp-fx .stamp.big { border: 0; background: url('../assets/ui_art/stamp_ring.webp?v=1') center / contain no-repeat, radial-gradient(circle, var(--paper) 62%, transparent 63%); color: #3b2b2b; }
+/* V8 動作抽卡：卡背、卡面、稀有卡框 */
+.gcard { width: 150px; height: 210px; }
+.gcard > div { border: 0; box-shadow: none; background-size: 100% 100% !important; background-repeat: no-repeat !important; }
+.gcard .back { background: url('../assets/games/card_back.webp?v=1') !important; font-size: 0; }
+.gcard .front { background: url('../assets/games/card_front.webp?v=1') !important; padding: 22% 18%; gap: 6px; }
+.gcard.rare .front { background-image: url('../assets/games/card_rare.webp?v=1') !important; }
+.gcard .front .mv { font-size: 15px; }
+/* V8 節拍道場：大鼓墊、節拍器 */
+.tap-pad { border: 0; box-shadow: none; background: url('../assets/games/drum_pad.webp?v=1') center / contain no-repeat; color: #3b2b2b; text-shadow: 0 1px 0 #fff; padding-top: 8px; }
+.tap-pad:active { transform: translateY(4px) scale(.97); box-shadow: none; }
+.bpm-num { padding-top: 70px; background: url('../assets/games/metronome.webp?v=1') center top / 64px 64px no-repeat; }

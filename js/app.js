@@ -256,7 +256,7 @@
     world.appendChild(waves);
     OCEANS.forEach(([k, lon, lat]) => { const [x, y] = L.toWorld(lon, lat); world.appendChild(h(`<div class="ocean-label" style="left:${x}px;top:${y}px">${esc(t(k))}</div>`)); });
     for (let i = 0; i < 16; i++) {
-      const c = h(`<i class="cloud"></i>`);
+      const c = h(`<i class="cloud c${(i % 3) + 1}"></i>`);
       c.style.top = Math.round(PX.hash(i, 9) * L.H) + 'px';
       const dur = 140 + PX.hash(i, 10) * 120;
       c.style.setProperty('--w', L.W + 'px');
@@ -426,7 +426,7 @@
       const list = q ? G.countries.filter(match)
         : cont ? G.countries.filter(c => c.cont === cont).sort((a, b) => nm(a).localeCompare(nm(b)))
         : [...new Set([...G.countries.filter(c => counts[c.code]).map(c => c.code), ...POPULAR])].map(k => byCode[k]).filter(Boolean);
-      gridEl.innerHTML = list.length ? '' : `<p style="grid-column:1/-1;font-size:12px;margin:4px">${t('not_found')}</p>`;
+      gridEl.innerHTML = list.length ? '' : `<p class="empty-li" style="grid-column:1/-1;font-size:12px;margin:4px">${UI.emptyArt("search")}${t('not_found')}</p>`;
       list.forEach(c => {
         const n = counts[c.code] || 0;
         const b = h(`<button class="btn sm ${c.home ? 'pink' : ''}"><span class="nm">${esc(nm(c))}</span>${n ? `<span class="badge">${n}</span>` : ''}</button>`);

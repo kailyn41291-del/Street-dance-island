@@ -27,14 +27,17 @@ window.Gate = (() => {
     // 有節日美術就用節日主題（橫幅當背景、凱琳巧可穿節日裝、飄落小東西）
     let f0 = null; try { f0 = window.Festivals && Festivals.look ? Festivals.look() : null; } catch (e) {}
     const art = n => (f0 ? Festivals.art(f0, n) : '');
-    const ACC = { xmas: '#d9534f', newyear: '#eac45a', lunar: '#d9534f', halloween: '#f08c3a', valentine: '#f07ca3', moon: '#eac45a' };
-    if (f0) { el.classList.add('gate-fest'); const SKY = { xmas: ['#1d2b4a', '#3a5a8a'], newyear: ['#1b1840', '#45306e'], lunar: ['#4a1010', '#8a2a1e'], halloween: ['#231833', '#5b3a6e'], valentine: ['#4a1d36', '#a04a72'], moon: ['#101d36', '#2e4a78'] }[f0] || ['#2a1f3d', '#5b3a6e'];
-    el.style.backgroundImage = `url('${art('banner.webp')}'), linear-gradient(${SKY[0]}, ${SKY[1]})`;
-    el.style.setProperty('--sky2', SKY[1]); el.style.setProperty('--fs-c', ACC[f0] || '#f07ca3'); }
+    const ACC = { xmas: '#d9534f', newyear: '#eac45a', lunar: '#d9534f', halloween: '#f08c3a', valentine: '#f07ca3', moon: '#eac45a', hiphop: '#7895df', danceday: '#f07ca3' };
+    // 全螢幕底圖：電腦用寬圖、手機用直圖；沒有節日就用平常版
+    const bgKey = f0 || 'default';
+    el.classList.add('gate-bg');
+    el.style.setProperty('--gbw', `url('${new URL(`assets/login_bg/${bgKey}_wide.webp?v=1`, location.href).href}')`);
+    el.style.setProperty('--gbt', `url('${new URL(`assets/login_bg/${bgKey}_tall.webp?v=1`, location.href).href}')`);
+    if (f0) { el.classList.add('gate-fest'); el.style.setProperty('--fs-c', ACC[f0] || '#f07ca3'); }
     const face = f0 ? art('kailyn_face.webp') : 'assets/kailyn/cheer.webp?v=2';
     el.innerHTML = `<div class="gate-shade"></div>
       <div class="gate-main">
-        <img class="gate-logo" src="assets/logo.webp?v=1" alt="舞島 Booto">
+        <img class="gate-logo" src="assets/logo.webp?v=2" alt="舞島 Booto">
         <h1 class="gate-big" aria-label="Coming soon"><span>COMING</span><span>SOON</span></h1>
         <div class="gate-sub">NOW LOADING<span class="gate-dots">...</span></div>
         <div class="gate-bar" aria-hidden="true">${'<i></i>'.repeat(20)}</div>

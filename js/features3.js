@@ -15,6 +15,8 @@ window.Emotes = (() => {
     pop:      { icon: '💥', name: 'Pop' },
     jump:     { icon: '⬆', name: 'Jump' }
   };
+  // 招式小圖（V8 美術）
+  const ico = (k, cls = "mv-ico") => `<img class="${cls}" src="assets/moves/${k}.webp?v=1" alt="">`;
   const parse = text => { const m = /^\/([a-z]+)$/i.exec((text || '').trim()); return m && MOVES[m[1].toLowerCase()] ? m[1].toLowerCase() : null; };
   /** 讓角色做招式：dance(Avatar.dancer 物件或 canvas, 'windmill') */
   function dance(d, move, ms = 2400) {
@@ -29,7 +31,7 @@ window.Emotes = (() => {
   // 聊天室跳出的招式表演
   function play(author, move) {
     const a = author || {};
-    const stage = UI.h(`<div class="emote-stage"><div class="em-floor"></div><div class="em-name">${UI.esc(a.name || '')} — ${MOVES[move].icon} ${MOVES[move].name}!</div></div>`);
+    const stage = UI.h(`<div class="emote-stage"><div class="em-floor"></div><div class="em-name">${UI.esc(a.name || '')} — ${ico(move)} ${MOVES[move].name}!</div></div>`);
     const d = Avatar.dancer(4, a.look);
     stage.prepend(d.el);
     document.body.appendChild(stage);
@@ -37,10 +39,10 @@ window.Emotes = (() => {
     setTimeout(() => stage.classList.add('out'), 2600);
     setTimeout(() => stage.remove(), 3000);
   }
-  const rowHTML = (a, move) => `<div class="mt emote-line">${MOVES[move].icon} <b>${UI.esc(a.name || '')}</b> ${t('em_did', { m: MOVES[move].name })}</div>`;
+  const rowHTML = (a, move) => `<div class="mt emote-line">${ico(move)} <b>${UI.esc(a.name || '')}</b> ${t('em_did', { m: MOVES[move].name })}</div>`;
   function picker(btn, send) {
     document.querySelector('.emote-pick')?.remove();
-    const p = UI.h(`<div class="emote-pick win">${Object.entries(MOVES).map(([k, m]) => `<button data-mv="${k}">${m.icon}<span>${m.name}</span></button>`).join('')}</div>`);
+    const p = UI.h(`<div class="emote-pick win">${Object.entries(MOVES).map(([k, m]) => `<button data-mv="${k}">${ico(k)}<span>${m.name}</span></button>`).join('')}</div>`);
     document.body.appendChild(p);
     const r = btn.getBoundingClientRect();
     p.style.left = Math.max(8, Math.min(innerWidth - 300, r.left)) + 'px';
@@ -49,7 +51,7 @@ window.Emotes = (() => {
     const close = ev => { if (!p.contains(ev.target) && ev.target !== btn) { p.remove(); document.removeEventListener('pointerdown', close); } };
     setTimeout(() => document.addEventListener('pointerdown', close), 0);
   }
-  return { MOVES, parse, dance, play, rowHTML, picker };
+  return { MOVES, ico, parse, dance, play, rowHTML, picker };
 })();
 
 (() => {
@@ -359,7 +361,7 @@ window.Emotes = (() => {
     const view = h(`<div class="view cypher-view"><div class="cy-lights"></div>
       <div class="cy-head win">${UI.winHTML('🕺 ' + t('arc_cypher'), 'pink', false)}<div class="win-body"><span class="cy-count"></span><span class="grow"></span><button class="btn sm music">🔈 ${t('cy_music')}</button></div></div>
       <div class="cy-floor"><div class="cy-dancers"></div></div>
-      <div class="cy-moves">${Object.entries(Emotes.MOVES).map(([k, m]) => `<button class="btn" data-mv="${k}">${m.icon}<span>${m.name}</span></button>`).join('')}</div></div>`);
+      <div class="cy-moves">${Object.entries(Emotes.MOVES).map(([k, m]) => `<button class="btn" data-mv="${k}">${Emotes.ico(k)}<span>${m.name}</span></button>`).join('')}</div></div>`);
     stage.appendChild(view);
     const dancers = view.querySelector('.cy-dancers'), countEl = view.querySelector('.cy-count');
     const me = Player.me, els = new Map();

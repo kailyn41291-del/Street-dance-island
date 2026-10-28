@@ -35,8 +35,8 @@ window.Games = (() => {
       for (let i = 0; i < 3; i++) {
         const st = style === '*' ? pick(Object.keys(MOVES)) : style;
         const [r, stars] = roll();
-        const c = h(`<button class="gcard ${r === 'SSR' ? 'ssr' : ''}" style="background:none;border:0;padding:0">
-          <div class="back">?</div>
+        const c = h(`<button class="gcard ${r === 'SSR' ? 'ssr' : ''} ${r === 'SSR' || r === 'SR' ? 'rare' : ''}" style="background:none;border:0;padding:0">
+          <div class="back"></div>
           <div class="front"><span class="rar">${stars} ${r}</span><span class="ty" style="background:${Store.STYLE_COLOR[st]}">${st}</span>
             <span class="mv">${esc(pick(MOVES[st]))}</span><span style="font-size:12px">＋ ${esc(r === 'N' ? t('g_free') : pick(t('g_ch')))}</span></div></button>`);
         c.onclick = e => {

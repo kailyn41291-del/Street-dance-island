@@ -204,12 +204,12 @@ window.Festivals = (() => {
 
   /* ---------- 節日美術（橫幅、地圖小物件、飄落效果、嚮導節日裝） ---------- */
   // 有畫好美術的節日；測試用：網址加 ?fest=xmas，或 localStorage danceIsland.festLook = xmas（off 關掉）
-  const ART = ['xmas', 'newyear', 'lunar', 'halloween', 'valentine', 'moon'];
+  const ART = ['xmas', 'newyear', 'lunar', 'halloween', 'valentine', 'moon', 'hiphop', 'danceday'];
   const forced = () => {
     try { const q = new URLSearchParams(location.search).get('fest'); if (q) localStorage.setItem('danceIsland.festLook', q); return localStorage.getItem('danceIsland.festLook') || ''; } catch (e) { return ''; }
   };
   const look = () => { const f = forced(); if (f === 'off') return null; if (ART.includes(f)) return f; return active().find(x => ART.includes(x)) || null; };
-  const art = (f, n) => `assets/fest/${f}/${n}?v=1`;
+  const art = (f, n) => `assets/fest/${f}/${n}?v=2`;
   // 嚮導：開心 / 慶祝的表情換成節日裝
   const guideArt = (who, mood) => {
     const f = look(); if (!f) return null;
@@ -264,7 +264,7 @@ window.Festivals = (() => {
   }
 
   /* ---------- 開機畫面、登入視窗的節日樣式 ---------- */
-  const ACCENT = { xmas: '#d9534f', newyear: '#eac45a', lunar: '#d9534f', halloween: '#f08c3a', valentine: '#f07ca3', moon: '#eac45a' };
+  const ACCENT = { xmas: '#d9534f', newyear: '#eac45a', lunar: '#d9534f', halloween: '#f08c3a', valentine: '#f07ca3', moon: '#eac45a', hiphop: '#7895df', danceday: '#f07ca3' };
   const fxRain = (host, f, n) => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const fx = document.createElement('div'); fx.className = 'fs-fx'; fx.setAttribute('aria-hidden', 'true');

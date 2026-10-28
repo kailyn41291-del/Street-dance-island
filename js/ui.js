@@ -242,5 +242,7 @@ window.UI = (() => {
   }
 
   Kailyn.preload(); Choco.preload();
-  return { kao, h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn, Choco, lineOf, whoName };
+  // 空狀態插圖（V8 美術）：events / friends / posts / search / offline / error
+  const emptyArt = name => `<img class="empty-art" src="assets/ui_art/empty_${name}.webp?v=1" alt="" loading="lazy">`.replace("empty_offline", "offline").replace("empty_error", "error");
+  return { kao, h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn, Choco, lineOf, whoName, emptyArt };
 })();

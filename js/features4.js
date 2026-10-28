@@ -302,7 +302,7 @@ window.Friends = (() => {
         const ids = friendIds().sort((a, b) => (online.has(b) - online.has(a)));
         html = ids.length ? ids.map(id => { const p = people[id]; if (!p) return ''; const u = unread[id] || 0;
           return row(p, `<span class="fr-seen"><i class="dot ${online.has(id) ? 'on' : ''}"></i> ${esc(seenText(p))}<small>${esc(joinText(p))}</small></span><button class="btn sm pink dm" data-u="${esc(id)}">💬${u ? ` <b class="fr-badge">${u}</b>` : ''}</button><button class="btn sm cd">🪪</button>`); }).join('')
-          : `<li class="note">${t('fr_none')}</li>`;
+          : `<li class="note empty-li">${UI.emptyArt("friends")}${t('fr_none')}</li>`;
       } else if (tab === 'req') {
         const inn = incoming(), out = rels.filter(r => r.from_user === me() && r.status === 'pending');
         html = (inn.length ? inn.map(r => { const p = people[r.from_user]; return p ? row(p, `<button class="btn sm yellow cd">💌 ${t('fr_open_req')}</button>`) : ''; }).join('') : `<li class="note">${t('fr_req_none')}</li>`)

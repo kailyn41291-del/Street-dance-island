@@ -131,6 +131,7 @@ window.Themes = (() => {
 
   /* ---------- 套用 / 取消主題 ---------- */
   let current = '';
+  const BG_IMG = new Set(['tw', 'jp', 'kr', 'cn', 'hk', 'th', 'sea', 'in', 'mideast', 'europe', 'fr', 'gb', 'us', 'latam', 'africa', 'oceania', 'snow']);
   function apply(country) {
     const k = country ? keyOf(country) : '';
     if (k === current) return;
@@ -143,7 +144,9 @@ window.Themes = (() => {
     if (!k) return;
     const th = T[k];
     Object.entries(th.vars).forEach(([v, val]) => root.style.setProperty(v, val));
-    if (th.bg) root.style.setProperty('--theme-bg', th.bg);
+    // 背景花紋（V8 美術，可以無縫拼接的小圖）；沒有圖的主題用原本的 CSS 花紋
+    if (BG_IMG.has(k)) root.style.setProperty('--theme-bg', `url('${new URL(`assets/theme/bg/${k}.webp?v=1`, location.href).href}') 0 0 / 128px 128px repeat, var(--sky)`);
+    else if (th.bg) root.style.setProperty('--theme-bg', th.bg);
   }
 
   /* ---------- 飄落特效 ---------- */
@@ -160,6 +163,9 @@ window.Themes = (() => {
     pumpkin: { n: 16, cls: 'fx-fall pumpkin', colors: ['#ef8a3a', '#e0702a', '#6b4ca0'], w: 14, h: 12 },
     heart: { n: 20, cls: 'fx-rise heart', colors: ['#f07ca3', '#e35d5d', '#ffb3c8'], w: 12, h: 12 }
   };
+  // 飄落小圖（V8 美術）；沒有圖的就用上面的色塊
+  const FX_FILE = { sakura: 'sakura', petals: 'petal', leaves: 'leaf', snow: 'snow', confetti: 'confetti', rain: 'rain', lantern: 'lantern', bubbles: 'bubble', spark: 'spark', pumpkin: 'pumpkin', heart: 'heart' };
+  const FX_IMG = Object.fromEntries(Object.entries(FX_FILE).map(([k, v]) => [k, `assets/theme/fx/${v}.png?v=1`]));
   function fx(country) {
     const th = of(country); if (!th || !th.fx) return null;
     return fxLayer(th.fx);
@@ -169,13 +175,21 @@ window.Themes = (() => {
     const f = FX[name]; if (!f) return null;
     const layer = document.createElement('div');
     layer.className = 'fx-layer';
-    for (let i = 0; i < f.n; i++) {
-      const p = document.createElement('i');
-      p.className = f.cls;
+    const src = FX_IMG[name];
+    const n = src ? Math.ceil(f.n * 0.6) : f.n;   // 圖比色塊大，數量少一點
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement(src ? 'img' : 'i');
+      p.className = f.cls + (src ? ' fx-img' : '');
       const r = PX.hash(i, 77);
       p.style.left = (PX.hash(i, 11) * 100).toFixed(1) + '%';
-      p.style.width = f.w + 'px'; p.style.height = f.h + 'px';
-      p.style.background = f.colors[i % f.colors.length];
+      if (src) {
+        p.src = src; p.alt = ''; p.decoding = 'async';
+        const sz = Math.round((name === 'rain' ? 14 : 18) + PX.hash(i, 19) * 12);
+        p.style.width = p.style.height = sz + 'px';
+      } else {
+        p.style.width = f.w + 'px'; p.style.height = f.h + 'px';
+        p.style.background = f.colors[i % f.colors.length];
+      }
       p.style.animationDuration = (f.cls.includes('fast') ? 1.2 + r : f.cls.includes('slow') ? 9 + r * 8 : 6 + r * 6).toFixed(1) + 's';
       p.style.animationDelay = (-PX.hash(i, 13) * 12).toFixed(1) + 's';
       if (f.cls.includes('twinkle')) p.style.top = (PX.hash(i, 17) * 100).toFixed(1) + '%';
