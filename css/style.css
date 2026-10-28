@@ -2725,3 +2725,6 @@ body:has(.modal-back) .sk-drop, body:has(.modal-back) .fs-rp { display: none; }
 .tap-pad { border: 0; box-shadow: none; background: url('../assets/games/drum_pad.webp?v=1') center / contain no-repeat; color: #3b2b2b; text-shadow: 0 1px 0 #fff; padding-top: 8px; }
 .tap-pad:active { transform: translateY(4px) scale(.97); box-shadow: none; }
 .bpm-num { padding-top: 70px; background: url('../assets/games/metronome.webp?v=1') center top / 64px 64px no-repeat; }
+/* 開機畫面：全螢幕底圖（跟準備中畫面同一組） */
+#boot.boot-bg { background: #1d2b4a var(--gbw) center bottom / cover no-repeat; image-rendering: pixelated; }
+@media (max-aspect-ratio: 4/5) { #boot.boot-bg { background-image: var(--gbt); } }
