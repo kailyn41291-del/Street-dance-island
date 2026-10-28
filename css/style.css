@@ -2765,3 +2765,11 @@ html[data-theme="night"] .sky-orb .moon { display: block; }
 .offline-bar { display: flex; align-items: center; gap: 8px; }
 .offline-bar .off-img { width: 64px; height: 48px; object-fit: contain; margin: -6px 0 -6px -6px; }
 .cele-banner.unlock b { left: 50%; right: auto; transform: translate(-50%, -50%); max-width: 86%; background: #fff6e8; border: 3px solid #3b2b2b; padding: 2px 12px; box-shadow: 3px 3px 0 #3b2b2b; }
+/* 稱號框：字比較長（英文、日文、韓文）時框的中間跟著拉長（整個框最多寬 1.6 倍），字不用縮那麼小 */
+.ttl.ttl-fx {
+  --fbw: calc(var(--fh) * (var(--fw) - var(--fl) - var(--fr)));
+  --fF: min(var(--fzb), calc(var(--fh) * var(--fin) * .74));
+  --fwd: min(calc(var(--fbw) + var(--fh) * var(--fw) * .6), max(var(--fbw), calc(var(--fF) * var(--len) / .88 - var(--fh) * var(--fu, 0))));
+  width: var(--fwd);
+  font-size: max(7.5px, min(var(--fF), calc((var(--fwd) + var(--fh) * var(--fu, 0)) / var(--len) * .88)));
+}
