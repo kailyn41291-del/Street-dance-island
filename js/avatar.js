@@ -24,7 +24,7 @@ window.Avatar = (() => {
     shoes: ['sneakers', 'hightops', 'boots'],
     faceAcc: ['none', 'glasses', 'shades', 'mask'],
     acc: ['none', 'headphones', 'scarf', 'chain'],
-    special: ['none', 'admin', 'owner', 'kailyn', 'choco']
+    special: ['none', 'admin', 'owner', 'kailyn', 'choco', 'cros1', 'matt', 'icequeenie']
   };
   const COLORS = {
     skin: ['#ffe3cc', '#f6c9a0', '#e8b088', '#c98d5f', '#9a6440', '#6b4128'],
@@ -430,7 +430,11 @@ window.Avatar = (() => {
   // 「本人造型」：直接用原畫的專屬角色（kailyn = 網站架設者；choco = bboychoco 本人）
   const SKINS = {
     kailyn: { full: 'assets/kailyn/full.webp?v=2', head: 'assets/kailyn/happy.webp?v=2' },
-    choco:  { full: 'assets/skins/choco.webp', head: 'assets/skins/choco_head.webp', handle: 'bboychoco' }
+    choco:  { full: 'assets/skins/choco.webp', head: 'assets/skins/choco_head.webp', handle: 'bboychoco' },
+    // 封測帳號本人造型
+    cros1:      { full: 'assets/skins/cros1.webp?v=1', head: 'assets/skins/cros1_head.webp?v=1', handle: 'bboycros1' },
+    matt:       { full: 'assets/skins/matt.webp?v=1', head: 'assets/skins/matt_head.webp?v=1', handle: 'bboymatt' },
+    icequeenie: { full: 'assets/skins/icequeenie.webp?v=1', head: 'assets/skins/icequeenie_head.webp?v=1', handle: 'icequeenie' }
   };
   Object.values(SKINS).forEach(s => { s.img = new Image(); s.img.src = s.full; });
   /** 這個玩家能用哪些本人造型 */
