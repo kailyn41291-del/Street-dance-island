@@ -235,8 +235,9 @@ window.Player = (() => {
       ${me.verified && me.ig ? `<a class="tag vtag" href="https://www.instagram.com/${encodeURIComponent(me.ig)}/" target="_blank" rel="noopener">✔ IG @${esc(me.ig)}</a>` : ''} ${nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''} <span class="tag">${esc(me.style || '')}</span>
       ${me.role ? `<span class="tag role-tag role-${me.role}">${me.role === 'owner' ? '★ ' + Titles.label('owner') : '✦ ' + Titles.label('admin')}</span>` : ''}</div>
       <div class="ed"></div>
-      <div class="form-foot"><button class="btn red lo">${t('p_logout')}</button>${cloud() && !me.verified ? `<button class="btn blue vf">${t('v_apply')}</button>` : ''}<span class="grow"></span><button class="btn pink sv">${t('p_save')}</button></div></div>`);
+      <div class="form-foot"><button class="btn red lo">${t('p_logout')}</button>${cloud() ? `<button class="btn yellow pw">🔑 ${t('pw_btn')}</button>` : ''}${cloud() && !me.verified ? `<button class="btn blue vf">${t('v_apply')}</button>` : ''}<span class="grow"></span><button class="btn pink sv">${t('p_save')}</button></div></div>`);
     body.querySelector('.ed').appendChild(lookEditor(state, me.role, typeof startTab === 'string' ? startTab : null));
+    const pwb = body.querySelector('.pw'); if (pwb) pwb.onclick = () => { m.close(); setTimeout(() => window.Password && Password.open(), 220); };
     const vf = body.querySelector('.vf'); if (vf) vf.onclick = () => { m.close(); setTimeout(openVerify, 220); };
     const m = modal({ title: t('p_edit'), color: 'pink', body, wide: true });
     body.querySelector('.sv').onclick = async () => {

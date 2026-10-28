@@ -130,6 +130,12 @@ window.Backend = (() => {
       return profile;
     },
     async signOut() { await sb.auth.signOut(); await refresh(); emit(); },
+    /* 改密碼（封測帳號第一次登入會被提醒改） */
+    get mustChangePw() { return !!(user && user.user_metadata && user.user_metadata.must_change_pw); },
+    async changePassword(password) {
+      must(await sb.auth.updateUser({ password, data: { must_change_pw: false } }));
+      await refresh(); emit();
+    },
 
     /* 活動 */
     /** since：只抓這天之後（或還沒結束）的活動；before：只抓這天之前就結束的舊活動 */
