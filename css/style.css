@@ -2728,3 +2728,9 @@ body:has(.modal-back) .sk-drop, body:has(.modal-back) .fs-rp { display: none; }
 /* 開機畫面：全螢幕底圖（跟準備中畫面同一組） */
 #boot.boot-bg { background: #1d2b4a var(--gbw) center bottom / cover no-repeat; image-rendering: pixelated; }
 @media (max-aspect-ratio: 4/5) { #boot.boot-bg { background-image: var(--gbt); } }
+/* 全螢幕底圖不裁切：整張圖完整顯示（貼齊下緣），畫面比例不同時多出來的地方用同一張圖模糊墊底 */
+#gate.gate-bg, #boot.boot-bg { background: #1d2b4a !important; }
+#gate.gate-bg::before, #boot.boot-bg::before, #gate.gate-bg::after, #boot.boot-bg::after { content: ''; position: absolute; z-index: -1; pointer-events: none; background-image: var(--gbw); background-repeat: no-repeat; }
+#gate.gate-bg::before, #boot.boot-bg::before { inset: -40px; background-size: cover; background-position: center; filter: blur(18px) brightness(.85); }
+#gate.gate-bg::after, #boot.boot-bg::after { inset: 0; background-size: contain; background-position: center bottom; image-rendering: pixelated; }
+@media (max-aspect-ratio: 1/1) { #gate.gate-bg::before, #boot.boot-bg::before, #gate.gate-bg::after, #boot.boot-bg::after { background-image: var(--gbt); } }
