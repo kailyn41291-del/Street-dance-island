@@ -1231,3 +1231,21 @@
   setInterval(measure, 3000);
   later();
 })();
+
+/* 手機鍵盤：鍵盤打開時記下鍵盤高度（--kb）和畫面被推上去多少（--vv-top），
+   讓聊天室縮到鍵盤上面，輸入框不會被鍵盤蓋住 */
+(() => {
+  const vv = window.visualViewport; if (!vv) return;
+  const root = document.documentElement;
+  const sync = () => {
+    const typing = document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+    const kb = Math.max(0, Math.round(innerHeight - vv.height - vv.offsetTop));
+    const open = typing && innerWidth <= 760 && innerHeight - vv.height > 120;
+    root.classList.toggle('kb-open', open);
+    root.style.setProperty('--kb', (open ? kb : 0) + 'px');
+    root.style.setProperty('--vv-top', (open ? Math.round(vv.offsetTop) : 0) + 'px');
+    if (open) { const c = document.querySelector('#chat.open .chat-list'); if (c && document.activeElement.closest('#chat')) c.scrollTop = c.scrollHeight; }
+  };
+  vv.addEventListener('resize', sync); vv.addEventListener('scroll', sync);
+  addEventListener('focusin', () => setTimeout(sync, 300)); addEventListener('focusout', () => setTimeout(sync, 100));
+})();

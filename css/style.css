@@ -2657,3 +2657,12 @@ body:has(.modal-back) .sk-drop, body:has(.modal-back) .fs-rp { display: none; }
   .fs-banner.fs-banner-art { padding: 0 6%; }
   .fs-banner.fs-banner-art span { font-size: 12px; white-space: nowrap; padding: 4px 8px; }
 }
+
+/* 手機聊天室：用「上緣到導覽列」之間的空間，不用 100vh（iPhone Safari 的 100vh 比看得到的畫面高，輸入框會被壓到下面點不到）
+   鍵盤打開時，app.js 會把 --kb 設成鍵盤高度，整個聊天室往上縮到鍵盤上面 */
+@media (max-width: 760px) {
+  #chat.open { display: flex; flex-direction: column; }
+  #chat.open .chat-panel { height: auto !important; flex: 1; min-height: 0; }
+  html.kb-open #chat.open { top: calc(var(--vv-top, 0px) + 6px) !important; bottom: var(--kb, 0px) !important; }
+  html.kb-open .mnav, html.kb-open .world-menu, html.kb-open .qbox { visibility: hidden; }
+}
