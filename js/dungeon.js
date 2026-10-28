@@ -73,7 +73,7 @@ window.Dungeon = (() => {
   };
   const isOpen = id => { const c = cfg[id]; if (!c) return false; const now = Date.now(); return !!c.enabled || (!!c.open_from && now >= Date.parse(c.open_from) && (!c.open_until || now < Date.parse(c.open_until))); };
   const canEnter = id => isOpen(id) || Backend.isAdmin;
-  const img = (id, year, slug) => `assets/dungeons/${id}/${year}/${slug}.webp`;
+  const img = (id, year, slug) => `assets/dungeons/${id}/${year}/${slug}.webp?v=2`;
   const regionName = r => (I18N.lang === 'zh' ? r.zh : r.en);
   const egg = async (id, k) => {
     if (!logged()) return;
