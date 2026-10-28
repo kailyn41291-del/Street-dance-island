@@ -120,7 +120,7 @@ window.Collect = (() => {
     try { got = (await Backend.rpc('check_titles')) || []; } catch (e) { return; }
     if (!got.length) return;
     try { if (!(Player.me.unlocks instanceof Set)) Player.me.unlocks = new Set(Player.me.unlocks || []); got.forEach(id => Player.me.unlocks.add(id)); } catch (e) {}
-    got.forEach((id, i) => setTimeout(() => { SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 3, 22); toast(t('tg_new', { t: Titles.label(id) }), '🎖'); }, i * 1400));
+    got.forEach((id, i) => setTimeout(() => { UI.banner('unlock', Titles.label(id)); SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 3, 22); toast(t('tg_new', { t: Titles.label(id) }), '🎖'); }, i * 1400));
     const last = got[got.length - 1];
     setTimeout(() => { if (!(window.RPG && RPG.busy())) npc.say([{ who: 'kailyn', mood: 'celebrate', text: t('tg_new_k', { t: Titles.label(last) }) }]); }, got.length * 1400 + 400);
   }

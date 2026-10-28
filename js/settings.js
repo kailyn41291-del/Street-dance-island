@@ -43,7 +43,7 @@ window.Settings = (() => {
   const paint = () => {
     if (navigator.onLine) { bar && bar.remove(); bar = null; return; }
     if (!bar) { bar = document.createElement('div'); bar.className = 'offline-bar'; document.body.appendChild(bar); }
-    bar.textContent = t('offline_bar');
+    bar.innerHTML = '<img class="off-img" src="assets/ui_art/offline.webp?v=1" alt=""><span></span>'; bar.querySelector('span').textContent = t('offline_bar');
   };
   addEventListener('online', paint); addEventListener('offline', paint); paint();
 })();

@@ -240,6 +240,16 @@
       return `<path d="M${tx} ${ty} Q${(tx + x) / 2} ${(ty + y) / 2 - Math.abs(x - tx) * 0.15} ${x} ${y}"/>`;
     }).join('');
     world.appendChild(h(`<svg class="routes" width="${L.W}" height="${L.H}" viewBox="0 0 ${L.W} ${L.H}">${routes}</svg>`));
+    // 航線上的小船（最多 6 條，沿著航線慢慢開）
+    [...routes.matchAll(/d="([^"]+)"/g)].slice(0, 6).forEach((m, i) => {
+      const b = h(`<img class="route-boat" src="assets/map/boat.webp?v=1" alt="">`);
+      b.style.offsetPath = `path('${m[1]}')`;
+      b.style.animationDuration = (40 + PX.hash(i, 21) * 30).toFixed(1) + 's';
+      b.style.animationDelay = (-PX.hash(i, 22) * 60).toFixed(1) + 's';
+      world.appendChild(b);
+    });
+    // 右上角的太陽（白天）／月亮（夜間模式）
+    world.appendChild(h(`<div class="sky-orb" style="left:${L.W - 190}px;top:30px"><img class="sun" src="assets/map/sun.webp?v=1" alt=""><img class="moon" src="assets/map/moon.webp?v=1" alt=""></div>`));
 
     // 浪花、海洋名稱、雲
     const waves = h('<div class="waves"></div>');
@@ -430,7 +440,7 @@
       list.forEach(c => {
         const n = counts[c.code] || 0;
         const b = h(`<button class="btn sm ${c.home ? 'pink' : ''}"><span class="nm">${esc(nm(c))}</span>${n ? `<span class="badge">${n}</span>` : ''}</button>`);
-        b.onclick = () => { SFX.play('select'); nav('#/c/' + c.code); };
+        b.onclick = () => { SFX.play('select'); UI.fly(); nav('#/c/' + c.code); };
         gridEl.appendChild(b);
       });
     };

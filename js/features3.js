@@ -182,7 +182,7 @@ window.Emotes = (() => {
     if (window.Guest && !Guest.once('npc', 'gu_why_npc')) return;
     let you = 0, them = 0, round = 0;
     const body = h(`<div class="npc-battle">
-      <div class="nb-stage"><div class="nb-side me"></div><div class="nb-vs">VS</div><div class="nb-side npc"></div></div>
+      <div class="nb-stage"><div class="nb-side me"></div><div class="nb-vs"><img class="vs-img" src="assets/ui_art/vs.webp?v=1" alt="VS"></div><div class="nb-side npc"></div></div>
       <div class="nb-score"><span class="s-me">0</span> : <span class="s-npc">0</span></div>
       <p class="nb-msg">${t('npc_rule')}</p>
       <div class="nb-btns">${Object.entries(RPS).map(([k, v]) => `<button class="btn" data-m="${k}">${v.icon} ${t('rps_' + k)}</button>`).join('')}</div></div>`);
@@ -312,7 +312,7 @@ window.Emotes = (() => {
         };
         const left = Math.max(0, Math.round((new Date(b.ends_at) - Date.now()) / 36e5));
         return `<div class="win battle">${UI.winHTML('🆚 ' + esc(b.title), ended ? 'yellow' : 'pink', false)}<div class="win-body">
-          <div class="bt-row">${side('a', b.a_name, b.a_url, a, pa)}<div class="bt-vs">VS</div>${side('b', b.b_name, b.b_url, bb, 100 - pa)}</div>
+          <div class="bt-row">${side('a', b.a_name, b.a_url, a, pa)}<div class="bt-vs"><img class="vs-img" src="assets/ui_art/vs.webp?v=1" alt="VS"></div>${side('b', b.b_name, b.b_url, bb, 100 - pa)}</div>
           ${show ? `<div class="bt-bar"><i style="width:${pa}%"></i></div>` : ''}
           <p class="note">${ended ? t('bt_ended', { n: vs.length }) : t('bt_left', { h: left, n: vs.length })}${Backend.isAdmin ? ` <button class="btn sm red del-b" data-b="${b.id}">${t('b_del')}</button>` : ''}</p>
           ${A.battleExtras ? A.battleExtras(b) : ''}</div></div>`;

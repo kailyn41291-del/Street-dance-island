@@ -244,5 +244,18 @@ window.UI = (() => {
   Kailyn.preload(); Choco.preload();
   // 空狀態插圖（V8 美術）：events / friends / posts / search / offline / error
   const emptyArt = name => `<img class="empty-art" src="assets/ui_art/empty_${name}.webp?v=1" alt="" loading="lazy">`.replace("empty_offline", "offline").replace("empty_error", "error");
-  return { kao, h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn, Choco, lineOf, whoName, emptyArt };
+  // 慶祝橫幅（V8 美術）：升級 levelup、拿到新稱號 unlock，中間疊一行字，幾秒後自己消失
+  function banner(kind, text) {
+    if (document.hidden) return;
+    const el = h(`<div class="cele-banner ${kind}" aria-live="polite"><img src="assets/ui_art/${kind}.webp?v=1" alt=""><b>${esc(text)}</b></div>`);
+    document.body.appendChild(el);
+    setTimeout(() => el.classList.add("out"), 2600); setTimeout(() => el.remove(), 3100);
+  }
+  // 快速傳送：小飛機飛過畫面
+  function fly() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = h(`<img class="fly-plane" src="assets/map/plane.webp?v=1" alt="">`);
+    document.body.appendChild(el); setTimeout(() => el.remove(), 1300);
+  }
+  return { kao, h, esc, I, winHTML, modal, npc, toast, sparkle, wipe, download, Kailyn, Choco, lineOf, whoName, emptyArt, banner, fly };
 })();

@@ -487,7 +487,7 @@ window.Friends = (() => {
     let you = 0, them = 0, round = 1, over = false, myPick = null, salt = '', sentCommit = false, timer = null, left = 15;
     const commits = {}, reveals = {};
     const body = h(`<div class="npc-battle pvp">
-      <div class="nb-stage"><div class="nb-side me"><small>${esc(Player.me.name)}</small></div><div class="nb-vs">VS</div><div class="nb-side npc"><small>${esc(opp.name)}</small></div></div>
+      <div class="nb-stage"><div class="nb-side me"><small>${esc(Player.me.name)}</small></div><div class="nb-vs"><img class="vs-img" src="assets/ui_art/vs.webp?v=1" alt="VS"></div><div class="nb-side npc"><small>${esc(opp.name)}</small></div></div>
       <div class="nb-score"><span class="s-me">0</span> : <span class="s-npc">0</span></div>
       <p class="nb-round"></p><p class="nb-msg">${t('npc_rule')}</p>
       <div class="nb-btns">${Object.entries(RPS).map(([k, v]) => `<button class="btn" data-m="${k}">${v.icon} ${t('rps_' + k)}</button>`).join('')}</div>

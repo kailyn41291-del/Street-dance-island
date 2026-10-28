@@ -31,6 +31,7 @@
   function levelUp(lv) {
     SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 30);
     toast(t('lv_up', { n: lv }), PXI.img('xp/level_up', '⬆'));
+    UI.banner('levelup', 'LV ' + lv);
     window.RPG && RPG.levelUp(lv);
   }
   const needLogin = () => { if (!Backend.enabled) { toast(t('need_cloud'), '☁'); return true; } if (!Player.me) { Player.prompt(); return true; } return false; };
@@ -211,7 +212,7 @@
       wheel.querySelector('span').textContent = isTitle ? '🎁' : REWARD_ICON[rw] || '✨';
       SFX.play('fanfare'); sparkle(innerWidth / 2, innerHeight / 2, 26);
       if (isTitle) S.unlocks.add(rw), Player.me.unlocks = S.unlocks;
-      modal({ title: '🎰 ' + t('daily_title'), color: 'yellow', body: `<div class="reward"><div class="rw-ico">${isTitle ? '🎁' : REWARD_ICON[rw]}</div>
+      modal({ title: '🎰 ' + t('daily_title'), color: 'yellow', body: `<div class="reward"><div class="rw-ico">${isTitle ? '<img class="rw-unlock" src="assets/ui_art/unlock.webp?v=1" alt="">' : REWARD_ICON[rw]}</div>
         <p>${isTitle ? t('daily_got_title', { n: Titles.label(rw) }) : t('daily_got_xp', { n: rw.slice(2) })}</p>
         ${isTitle ? `<p class="note">${t('daily_title_hint')}</p>` : ''}<p class="note">${t('daily_streak', { n: res.streak })}</p></div>`,
         onClose: () => A.render(true) });

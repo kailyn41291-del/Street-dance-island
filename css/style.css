@@ -2734,3 +2734,34 @@ body:has(.modal-back) .sk-drop, body:has(.modal-back) .fs-rp { display: none; }
 #gate.gate-bg::before, #boot.boot-bg::before { inset: -40px; background-size: cover; background-position: center; filter: blur(18px) brightness(.85); }
 #gate.gate-bg::after, #boot.boot-bg::after { inset: 0; background-size: contain; background-position: center bottom; image-rendering: pixelated; }
 @media (max-aspect-ratio: 1/1) { #gate.gate-bg::before, #boot.boot-bg::before, #gate.gate-bg::after, #boot.boot-bg::after { background-image: var(--gbt); } }
+/* V8：左上角標題換成橫式 Logo */
+.logo.has-img { padding: 0; background: none; border: 0; box-shadow: none; }
+.logo.has-img .logo-img { height: 46px; width: auto; display: block; filter: drop-shadow(2px 3px 0 rgba(59,43,43,.25)); }
+@media (max-width: 760px) { .logo.has-img .logo-img { height: 34px; } }
+/* V8：Battle 中間的閃電徽章 */
+.nb-vs .vs-img, .bt-vs .vs-img { width: 56px; height: 56px; display: block; animation: hop .8s steps(2) infinite; }
+/* V8：升級、新稱號的慶祝橫幅 */
+.cele-banner { position: fixed; left: 50%; top: 30%; z-index: 120; width: min(400px, 88vw); transform: translate(-50%, -50%); pointer-events: none; animation: celeIn .35s steps(4); }
+.cele-banner img { width: 100%; display: block; filter: drop-shadow(3px 4px 0 rgba(59,43,43,.35)); }
+.cele-banner b { position: absolute; left: 22%; right: 22%; top: 40%; transform: translateY(-50%); text-align: center; font-size: clamp(16px, 4.6vw, 24px); color: #3b2b2b; text-shadow: 0 2px 0 #fff6e8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cele-banner.levelup b { font-family: 'Press Start 2P', var(--font); font-size: clamp(16px, 4.4vw, 22px); }
+.cele-banner.unlock b { top: 16%; }
+.cele-banner.out { opacity: 0; transition: opacity .45s steps(4); }
+@keyframes celeIn { from { transform: translate(-50%, -50%) scale(.4); } to { transform: translate(-50%, -50%) scale(1); } }
+.rw-unlock { width: min(260px, 70vw); }
+/* V8：快速傳送的小飛機 */
+.fly-plane { position: fixed; z-index: 120; left: -80px; top: 42%; width: 72px; pointer-events: none; animation: flyPlane 1.2s ease-in forwards; }
+@keyframes flyPlane { to { transform: translate(calc(100vw + 160px), -18vh) rotate(-8deg); } }
+/* V8：航線上的小船 */
+.route-boat { position: absolute; left: 0; top: 0; width: 30px; height: 30px; offset-rotate: 0deg; pointer-events: none; z-index: 1; animation: boatGo linear infinite; }
+@keyframes boatGo { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+/* V8：地圖右上角的太陽／月亮（夜間模式顯示月亮） */
+.sky-orb { position: absolute; width: 120px; height: 120px; pointer-events: none; z-index: 1; animation: kBob 4s ease-in-out infinite; }
+.sky-orb img { width: 100%; height: 100%; }
+.sky-orb .moon, html[data-theme="night"] .sky-orb .sun { display: none; }
+html[data-theme="night"] .sky-orb .moon { display: block; }
+@media (prefers-reduced-motion: reduce) { .route-boat, .sky-orb { animation: none !important; } .route-boat { display: none; } }
+/* V8：離線提示加上巧可的插圖 */
+.offline-bar { display: flex; align-items: center; gap: 8px; }
+.offline-bar .off-img { width: 64px; height: 48px; object-fit: contain; margin: -6px 0 -6px -6px; }
+.cele-banner.unlock b { left: 50%; right: auto; transform: translate(-50%, -50%); max-width: 86%; background: #fff6e8; border: 3px solid #3b2b2b; padding: 2px 12px; box-shadow: 3px 3px 0 #3b2b2b; }
