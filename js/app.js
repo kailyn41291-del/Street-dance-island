@@ -411,7 +411,7 @@
 
     // 快速傳送
     // 預設收起來，不擋地圖；點標題展開
-    const menu = h(`<div class="win world-menu collapsed">${winHTML(`🧭 ${t('quick_travel', { n: G.countries.length })}`, 'yellow', false)}
+    const menu = h(`<div class="win world-menu collapsed">${winHTML(`<span class="wm-i">🧭</span> <span class="wm-tt">${t('quick_travel', { n: G.countries.length })}</span>`, 'yellow', false)}
       <div class="win-body"><input class="input sm search" placeholder="${esc(t('search_ph'))}" aria-label="${esc(t('search_ph'))}">
         <div class="cont-tabs"><button data-cont="" class="on">${t('popular')}</button>${CONTS.map(k => `<button data-cont="${k}">${contName(k)}</button>`).join('')}</div>
         <div class="country-grid"></div></div></div>`);

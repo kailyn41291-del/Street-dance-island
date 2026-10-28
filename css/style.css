@@ -2666,3 +2666,15 @@ body:has(.modal-back) .sk-drop, body:has(.modal-back) .fs-rp { display: none; }
   html.kb-open #chat.open { top: calc(var(--vv-top, 0px) + 6px) !important; bottom: var(--kb, 0px) !important; }
   html.kb-open .mnav, html.kb-open .world-menu, html.kb-open .qbox { visibility: hidden; }
 }
+
+/* 手機地圖：「快速傳送」收起來時只剩一顆圖示鈕，「每日任務」縮成圖示＋進度，兩顆並排在左下角 */
+@media (max-width: 760px) {
+  .world-menu.collapsed { width: auto !important; right: auto !important; }
+  .world-menu.collapsed .win-title { width: 46px; height: 46px; min-height: 0; padding: 0 !important; justify-content: center; }
+  .world-menu.collapsed .wm-tt, .world-menu.collapsed .win-title .toggle { display: none !important; }
+  .world-menu .wm-i, .qbox .qb-i { font-size: 22px; line-height: 1; }
+  .qbox:not(.open) .qb-tt, .qbox:not(.open) .qb-arrow { display: none; }
+  .qbox:not(.open) .qb-head { height: 46px; min-height: 0; padding: 0 10px; gap: 4px; }
+  body:has(.world-menu.collapsed) .qbox.open { left: 8px !important; right: auto !important; }
+  body:has(.world-menu.collapsed) .qbox:not(.open) { left: 62px !important; right: auto !important; bottom: var(--wm-b, calc(72px + env(safe-area-inset-bottom))) !important; }
+}

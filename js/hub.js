@@ -238,7 +238,7 @@ window.Hub = (() => {
     const n = state.ids.filter(done).length, all = n === state.ids.length;
     box.classList.toggle('all', all);
     queueMicrotask(() => window.Newbie && Newbie.inject(box.querySelector('.qb-body')));
-    box.querySelector('.qb-t').textContent = '📜 ' + t('q_title');
+    box.querySelector('.qb-t').innerHTML = `<span class="qb-i">📜</span> <span class="qb-tt">${esc(t('q_title'))}</span>`;
     box.querySelector('.qb-n').textContent = `${n}/${state.ids.length}`;
     box.querySelector('.qb-body').innerHTML = `${state.server ? `<div class="qb-streak">🔥 ${t('q_streak', { n: state.streak || 0 })}${state.mult > 1 ? ` <b>×${state.mult}</b>` : ''}</div>` : ''}<ul>${state.ids.map(id => { const q = POOL.find(x => x.id === id), p = state.prog[id] || 0, d = p >= q.n;
         return `<li class="${d ? 'ok' : ''}"><span class="qb-c">${d ? '✔' : '☐'}</span><span class="qb-l">${esc(label(q))} <b>(${p}/${q.n})</b>${state.server ? ` <i class="qb-xp">+${Math.round(15 * (state.mult || 1))} XP</i>` : ''}</span>${d ? '' : `<button class="qb-go" data-go="${q.id}">${t('q_go')} ▸</button>`}</li>`; }).join('')}</ul>
