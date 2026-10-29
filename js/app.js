@@ -277,16 +277,43 @@
 
     // 陸塊
     const compEls = [];
+    // 島上不要放裝飾的地方：國名、主角站的位置
+    const avoid = {};
+    L.info.forEach((f, i) => { if (f.n) (avoid[f.comp] = avoid[f.comp] || []).push([f.cx - L.comps[f.comp].x0, f.cy - L.comps[f.comp].y0]); });
+    { const cp = L.comps[twInfo.comp]; (avoid[twInfo.comp] = avoid[twInfo.comp] || []).push([twInfo.cx - cp.x0, twInfo.y0 - cp.y0 + (twInfo.y1 - twInfo.y0) * 0.16 + 8]); }
+    // 有地形材質（V9）就用材質畫，還沒載好先用舊畫法，載好再換
+    const islandArt = (cp, terr) => {
+      const key = (terr ? terr.t : 'old') + ':' + cp.k;
+      let art = L.art.get(key);
+      if (!art) {
+        const opt = { depth: cp.n > 40 ? 4 : 3, seed: cp.k + 1 };
+        art = terr ? Terrain.drawIsland(cp.grid, C, { ...opt, data: terr, ox: cp.x0, oy: cp.y0, avoid: avoid[cp.k] })
+          : PX.drawIsland(cp.grid, C, { ...opt, pal: window.Festivals && Festivals.islandPal() });
+        L.art.set(key, art);
+      }
+      return art;
+    };
+    const putArt = (el, art) => {
+      el.querySelectorAll(':scope > .base, :scope > .float > canvas.isle-art').forEach(x => x.remove());
+      const base = art.base, isl = art.island;
+      base.className = 'base'; base.style.left = -art.pad + 'px'; base.style.top = -art.pad + 'px';
+      isl.classList.add('isle-art');
+      el.style.width = art.w + 'px'; el.style.height = art.h + 'px';
+      el.prepend(base);
+      el.querySelector('.float').prepend(isl);
+    };
+    const terr0 = window.Terrain ? Terrain.get() : null;
     L.comps.forEach(cp => {
-      let art = L.art.get(cp.k);
-      if (!art) { art = PX.drawIsland(cp.grid, C, { depth: cp.n > 40 ? 4 : 3, seed: cp.k + 1, pal: window.Festivals && Festivals.islandPal() }); L.art.set(cp.k, art); }
-      const el = h(`<div class="isle" style="left:${cp.x0 * C}px;top:${cp.y0 * C}px;width:${art.w}px;height:${art.h}px">
+      const art = islandArt(cp, terr0);
+      const el = h(`<div class="isle" style="left:${cp.x0 * C}px;top:${cp.y0 * C}px">
         <div class="float" style="--d:${(-(cp.k % 9) * 0.37).toFixed(2)}s"></div></div>`);
-      art.base.className = 'base'; art.base.style.left = -art.pad + 'px'; art.base.style.top = -art.pad + 'px';
-      el.prepend(art.base);
-      el.querySelector('.float').prepend(art.island);
+      putArt(el, art);
       el._k = cp.k; compEls[cp.k] = el;
       world.appendChild(el);
+    });
+    if (!terr0 && window.Terrain) Terrain.load().then(terr => {
+      if (!terr) return;
+      L.comps.forEach(cp => putArt(compEls[cp.k], islandArt(cp, terr)));
     });
     compEls[twInfo.comp].classList.add('home');
 
