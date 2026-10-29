@@ -97,7 +97,7 @@ window.Gate = (() => {
       try {
         if (id.includes('@')) await Backend.signInAdmin(id, pass);
         else await Backend.signInPlayer(id.toLowerCase(), pass);
-        if (!Backend.isAdmin) { await Backend.signOut(); throw new Error('no access'); }
+        if (!Backend.canEnter) { await Backend.signOut(); throw new Error('no access'); }
         location.reload();
       } catch (x) {
         err.textContent = /no access|not admin/.test(String(x && x.message)) ? t('gt_no') : t('gt_bad');
@@ -107,15 +107,15 @@ window.Gate = (() => {
   }
   // 不是管理員：蓋上準備中畫面
   const check = () => {
-    if (Backend.isAdmin) return;
+    if (Backend.canEnter) return;
     show();
   };
   const real = Backend.ready;
   real.then(check, show);
   // 網站其他部分都等 Backend.ready 才開始（抓資料、在線人數、聊天…）
   // 不是管理員就永遠不放行，所以完全不會連線、也不會被算進在線人數
-  Backend.ready = real.then(() => (Backend.isAdmin ? undefined : new Promise(() => {})));
+  Backend.ready = real.then(() => (Backend.canEnter ? undefined : new Promise(() => {})));
   // 管理員登出後也關起來
-  Backend.onChange(() => { if (!Backend.isAdmin && Backend.uid === null) setTimeout(check, 0); });
+  Backend.onChange(() => { if (!Backend.canEnter && Backend.uid === null) setTimeout(check, 0); });
   return { get open() { return !el; } };
 })();

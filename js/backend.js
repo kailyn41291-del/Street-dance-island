@@ -11,7 +11,7 @@ window.Backend = (() => {
   const enabled = !!(cfg.supabaseUrl && cfg.supabaseAnonKey);
   const LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
   const PLAYER_DOMAIN = '@players.dance-island.app';
-  let sb = null, user = null, isAdmin = false, role = null, profile = null, skins = null;
+  let sb = null, user = null, isAdmin = false, role = null, profile = null, skins = null, gatePass = false;
   const listeners = [];
   const emit = () => listeners.forEach(f => f({ user, isAdmin, profile }));
 
@@ -27,7 +27,7 @@ window.Backend = (() => {
   async function refresh() {
     const { data } = await sb.auth.getSession();
     user = data.session ? data.session.user : null;
-    isAdmin = false; role = null; profile = null; skins = null;
+    isAdmin = false; role = null; profile = null; skins = null; gatePass = false;
     if (user) {
       const a = await sb.from('admins').select('user_id,role').eq('user_id', user.id).maybeSingle();
       isAdmin = !!a.data; role = a.data ? a.data.role || 'admin' : null;
@@ -36,6 +36,8 @@ window.Backend = (() => {
       // 本人造型：綁帳號（user_id），改 ID 也不會掉
       const s = await sb.from('skin_owners').select('skin').eq('user_id', user.id);
       skins = s.error ? null : (s.data || []).map(r => r.skin);
+      // 網站還沒公開：通行名單上的帳號（測試帳號、之後的封測玩家）也能進來
+      if (!isAdmin) { const g = await sb.from('gate_pass').select('user_id').eq('user_id', user.id).maybeSingle(); gatePass = !!g.data; }
     }
   }
 
@@ -504,6 +506,7 @@ window.Backend = (() => {
     removeChannel(ch) { sb.removeChannel(ch); },
     get uid() { return user ? user.id : null; },
     get skins() { return skins; },
+    get canEnter() { return isAdmin || gatePass; },
 
     /* 即時更新：table = 'messages' | 'comments' | 'announcements' */
     subscribe(table, cb) {
