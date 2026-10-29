@@ -16,7 +16,7 @@ window.Emotes = (() => {
     jump:     { icon: '⬆', name: 'Jump' }
   };
   // 招式小圖（V8 美術）
-  const ico = (k, cls = "mv-ico") => `<img class="${cls}" src="assets/moves/${k}.webp?v=1" alt="">`;
+  const ico = (k, cls = "mv-ico") => `<img class="${cls}" src="assets/moves/${k}.webp?v=2" alt="">`;
   const parse = text => { const m = /^\/([a-z]+)$/i.exec((text || '').trim()); return m && MOVES[m[1].toLowerCase()] ? m[1].toLowerCase() : null; };
   /** 讓角色做招式：dance(Avatar.dancer 物件或 canvas, 'windmill') */
   function dance(d, move, ms = 2400) {
