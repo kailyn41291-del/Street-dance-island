@@ -438,7 +438,11 @@ window.Avatar = (() => {
   };
   Object.values(SKINS).forEach(s => { s.img = new Image(); s.img.src = s.full; });
   /** 這個玩家能用哪些本人造型 */
-  const skinsFor = (role, handle) => Object.keys(SKINS).filter(k => (k === 'kailyn' ? role === 'owner' : SKINS[k].handle === handle));
+  // 有雲端的時候看 skin_owners 表（綁帳號，改 ID 也不會掉）；沒有才用 ID 對
+  const skinsFor = (role, handle) => {
+    const own = window.Backend && Backend.skins;
+    return Object.keys(SKINS).filter(k => (k === 'kailyn' ? role === 'owner' : own ? own.includes(k) : SKINS[k].handle === handle));
+  };
   function renderSkin(name, frame, scale) {
     const out = document.createElement('canvas');
     out.width = (W + 2) * scale; out.height = (H + 2) * scale;
