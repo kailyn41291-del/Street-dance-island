@@ -44,7 +44,7 @@ window.Password = (() => {
     if (!Backend.enabled || !Player.me || !Backend.mustChangePw || nagged === Player.me.id) return;
     nagged = Player.me.id;
     setTimeout(() => {
-      if (document.querySelector('.modal-back')) { nagged = null; return setTimeout(check, 4000); }
+      if (document.querySelector('.modal-back, .vip-ov') || (window.VIP && (VIP.running || Backend.vipWelcome))) { nagged = null; return setTimeout(check, 4000); }
       npc.say([{ text: t('pw_hi', { n: Player.me.name }), mood: 'celebrate' }], open);
     }, 1500);
   }

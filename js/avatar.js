@@ -24,7 +24,7 @@ window.Avatar = (() => {
     shoes: ['sneakers', 'hightops', 'boots'],
     faceAcc: ['none', 'glasses', 'shades', 'mask'],
     acc: ['none', 'headphones', 'scarf', 'chain'],
-    special: ['none', 'admin', 'owner', 'kailyn', 'choco', 'cros1', 'matt', 'icequeenie']
+    special: ['none', 'admin', 'owner', 'kailyn', 'choco', 'cros1', 'matt', 'icequeenie', 'gonza', 'otopus', 'ranny', 'reflex', 'yan']
   };
   const COLORS = {
     skin: ['#ffe3cc', '#f6c9a0', '#e8b088', '#c98d5f', '#9a6440', '#6b4128'],
@@ -434,7 +434,12 @@ window.Avatar = (() => {
     // 封測帳號本人造型
     cros1:      { full: 'assets/skins/cros1.webp?v=1', head: 'assets/skins/cros1_head.webp?v=1', handle: 'bboycros1' },
     matt:       { full: 'assets/skins/matt.webp?v=1', head: 'assets/skins/matt_head.webp?v=1', handle: 'bboymatt' },
-    icequeenie: { full: 'assets/skins/icequeenie.webp?v=1', head: 'assets/skins/icequeenie_head.webp?v=1', handle: 'icequeenie' }
+    icequeenie: { full: 'assets/skins/icequeenie.webp?v=1', head: 'assets/skins/icequeenie_head.webp?v=1', handle: 'icequeenie' },
+    gonza: { full: 'assets/skins/gonza.webp?v=1', head: 'assets/skins/gonza_head.webp?v=1', handle: 'bboygonza' },
+    otopus: { full: 'assets/skins/otopus.webp?v=1', head: 'assets/skins/otopus_head.webp?v=1', handle: 'bboyotopus' },
+    ranny: { full: 'assets/skins/ranny.webp?v=1', head: 'assets/skins/ranny_head.webp?v=1', handle: 'ranny' },
+    reflex: { full: 'assets/skins/reflex.webp?v=1', head: 'assets/skins/reflex_head.webp?v=1', handle: 'bboyreflex' },
+    yan: { full: 'assets/skins/yan.webp?v=1', head: 'assets/skins/yan_head.webp?v=1', handle: 'yanshrimp' }
   };
   Object.values(SKINS).forEach(s => { s.img = new Image(); s.img.src = s.full; });
   /** 這個玩家能用哪些本人造型 */

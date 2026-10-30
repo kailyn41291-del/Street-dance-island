@@ -89,7 +89,7 @@
       saveItems(); paintBadge();
     },
     all() { loadItems(); return [...dyn, ...items]; },
-    unread() { const r = readSet(); return Notify.all().filter(x => !r.has(x.key)).length; },
+    unread() { if (!logged()) return 0; const r = readSet(); return Notify.all().filter(x => !r.has(x.key)).length; },   // 訪客打不開通知中心，就不顯示數字
     async refresh() {
       dyn = [];
       if (!logged()) return paintBadge();

@@ -2773,3 +2773,40 @@ html[data-theme="night"] .sky-orb .moon { display: block; }
   width: var(--fwd);
   font-size: max(7.5px, min(var(--fF), calc((var(--fwd) + var(--fh) * var(--fu, 0)) / var(--len) * .88)));
 }
+
+/* 封測名人的紅毯歡迎（js/vip.js） */
+.vip-ov { position: fixed; inset: 0; z-index: 120; overflow: hidden; display: grid; place-items: center;
+  background: radial-gradient(ellipse at 50% 40%, #4a2a6e 0%, #1c1030 60%, #0c0716 100%); animation: vipIn .45s ease-out; }
+.vip-ov.out { animation: vipOut .45s ease-in forwards; }
+@keyframes vipIn { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: none; } }
+@keyframes vipOut { to { opacity: 0; transform: scale(.96); } }
+.vip-beams i { position: absolute; bottom: -10%; left: 50%; width: 22vmax; height: 130vmax; transform-origin: 50% 100%;
+  background: linear-gradient(to top, rgba(255, 240, 180, .32), rgba(255, 240, 180, 0)); filter: blur(6px); animation: vipBeam 3.2s ease-in-out infinite alternate; }
+.vip-beams i:nth-child(1) { margin-left: -11vmax; --a: -32deg; --b: -8deg; }
+.vip-beams i:nth-child(2) { margin-left: -11vmax; --a: 8deg; --b: 30deg; animation-delay: -1.1s; background: linear-gradient(to top, rgba(255, 140, 220, .28), rgba(255, 140, 220, 0)); }
+.vip-beams i:nth-child(3) { margin-left: -11vmax; --a: -12deg; --b: 14deg; animation-delay: -2s; background: linear-gradient(to top, rgba(130, 220, 255, .26), rgba(130, 220, 255, 0)); }
+@keyframes vipBeam { from { transform: rotate(var(--a)); } to { transform: rotate(var(--b)); } }
+.vip-flash { position: absolute; width: 140px; height: 140px; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 255, 255, .7) 25%, rgba(255, 255, 255, 0) 70%); }
+.vip-flash.on { animation: vipFlash .25s ease-out; }
+@keyframes vipFlash { 0% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.4); } }
+.vip-confetti i { position: absolute; top: -20px; width: 8px; height: 12px; animation: vipFall linear infinite; }
+@keyframes vipFall { to { top: 110%; transform: rotate(720deg) translateX(40px); } }
+.vip-in { position: relative; text-align: center; color: #fff; padding: 16px; max-width: 92vw; }
+.vip-wow { font-size: clamp(54px, 13vw, 110px); font-weight: 900; line-height: 1; color: #ffd65c; letter-spacing: 4px;
+  text-shadow: 4px 4px 0 #c2185b, 8px 8px 0 #3b2b2b; animation: vipPop .6s cubic-bezier(.2, 1.6, .4, 1) both; }
+.vip-line { margin-top: 10px; font-size: clamp(20px, 5vw, 34px); font-weight: 800; text-shadow: 3px 3px 0 #3b2b2b; animation: vipPop .6s .35s cubic-bezier(.2, 1.6, .4, 1) both; }
+.vip-name { color: #ff9be0; display: inline-block; animation: vipGlow 1.2s ease-in-out infinite alternate; }
+@keyframes vipPop { from { opacity: 0; transform: scale(.3) rotate(-6deg); } to { opacity: 1; transform: none; } }
+@keyframes vipGlow { from { text-shadow: 3px 3px 0 #3b2b2b, 0 0 8px #ff7ac8; } to { text-shadow: 3px 3px 0 #3b2b2b, 0 0 22px #ffd65c; } }
+.vip-stage { position: relative; height: 200px; margin: 34px auto 6px; width: min(360px, 86vw); }
+.vip-av { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 1; animation: vipPop .6s .7s both; }
+.vip-carpet { position: absolute; left: 50%; bottom: 0; width: 70%; height: 46px; transform: translateX(-50%) perspective(160px) rotateX(48deg);
+  background: repeating-linear-gradient(90deg, #d81b40 0 18px, #c2183a 18px 20px); border: 3px solid #ffd65c; box-shadow: 0 6px 18px rgba(0, 0, 0, .5); }
+.vip-crowd { font-weight: 700; font-size: 16px; color: #ffe9a8; animation: vipShake .5s 1s ease-in-out 3; }
+@keyframes vipShake { 0%, 100% { transform: none; } 25% { transform: translateX(-4px) rotate(-1deg); } 75% { transform: translateX(4px) rotate(1deg); } }
+.vip-go { margin-top: 16px; font-size: 18px; animation: vipPop .5s 1.2s both; }
+@media (prefers-reduced-motion: reduce) { .vip-beams i, .vip-confetti i, .vip-name, .vip-crowd { animation: none; } .vip-confetti { display: none; } }
+/* 功能選單裡「通知中心」的未讀數字 */
+.ph-app .ph-ic { position: relative; }
+.ph-app .ph-badge { top: -7px; right: -7px; z-index: 2; }

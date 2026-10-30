@@ -135,6 +135,9 @@ window.Backend = (() => {
       return profile;
     },
     async signOut() { await sb.auth.signOut(); await refresh(); emit(); },
+    /* 封測名人第一次登入的歡迎（資料庫幫他們標記，看完就關掉） */
+    get vipWelcome() { return !!(user && user.user_metadata && user.user_metadata.vip_welcome); },
+    async vipWelcomeDone() { must(await sb.auth.updateUser({ data: { vip_welcome: false } })); await refresh(); },
     /* 改密碼（封測帳號第一次登入會被提醒改） */
     get mustChangePw() { return !!(user && user.user_metadata && user.user_metadata.must_change_pw); },
     async changePassword(password) {

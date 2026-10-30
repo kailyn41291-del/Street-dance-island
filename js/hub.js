@@ -275,10 +275,12 @@ window.Hub = (() => {
     ];
     const items = [];
     const body = h(`<div class="phone-ui"><div class="ph-bar"><span>BOOTO</span><span class="ph-clock"></span></div>
-      ${S.map(([sec, list]) => `<div class="ph-sec">${t(sec)}</div><div class="ph-grid">${list.map(([ic, k, fn]) => { items.push(fn); return `<button class="ph-app" data-i="${items.length - 1}" data-k="${k}"><span class="ph-ic">${PXI.img('menu/' + ({ sound: 'sound_on' }[k.replace('hub_', '')] || k.replace('hub_', '')), ic)}</span><span>${t(k)}</span></button>`; }).join('')}</div>`).join('')}</div>`);
+      ${S.map(([sec, list]) => `<div class="ph-sec">${t(sec)}</div><div class="ph-grid">${list.map(([ic, k, fn]) => { items.push(fn); return `<button class="ph-app" data-i="${items.length - 1}" data-k="${k}"><span class="ph-ic">${PXI.img('menu/' + ({ sound: 'sound_on' }[k.replace('hub_', '')] || k.replace('hub_', '')), ic)}${k === 'hub_bell' ? '<span class="bell-badge ph-badge" hidden></span>' : ''}</span><span>${t(k)}</span></button>`; }).join('')}</div>`).join('')}</div>`);
     const d = new Date(); body.querySelector('.ph-clock').textContent = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     window.Guest && Guest.decorateMenu(body);
     const m = modal({ title: t('hub_title'), color: 'blue', body });
+    // 選單外面的紅色數字 = 通知中心的未讀；在「通知中心」圖示上也標出來，才知道要點哪裡
+    if (window.Notify && Notify.unread) { const n = Notify.unread(), bb = body.querySelector('.ph-badge'); if (bb) { bb.textContent = n > 9 ? '9+' : n; bb.hidden = !n; } }
     body.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; SFX.play('confirm'); m.close(); setTimeout(items[+b.dataset.i], 230); };
   }
   // 主畫面上方：舞者論壇、人氣 Battle（之前藏在小遊戲裡太難找）
