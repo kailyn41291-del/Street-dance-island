@@ -41,6 +41,8 @@ window.Friends = (() => {
     const m = String(x && x.message || x);
     if (/blocked/.test(m)) return t('bl_by');
     if (/too many/.test(m)) return t('fr_too_many');
+    if (/requests closed/.test(m)) return t('pv_closed');
+    if (/mutual only/.test(m)) return t('pv_mutual_only');
     if (/too fast/.test(m)) return t('fr_fast');
     if (/not friends/.test(m)) return t('dm_only');
     if (/spam/.test(m)) return t('fr_spam');
@@ -94,18 +96,21 @@ window.Friends = (() => {
   });
   const countryOpts = sel => GEO.countries.slice().sort((a, b) => (!!b.home - !!a.home) || nm(a).localeCompare(nm(b))).map(k => `<option value="${k.code}" ${k.code === sel ? 'selected' : ''}>${esc(nm(k))}</option>`).join('');
   const cityOpts = (cc, sel) => `<option value="">${t('fd_any_city')}</option>` + ((A.byCode[cc] || {}).cities || []).map(ci => `<option value="${esc(ci.id)}" ${ci.id === sel ? 'selected' : ''}>${esc(nm(ci))}</option>`).join('');
+  // 對方選了「隱藏上線狀態」：綠點和上線時間都不顯示
+  const hidesOn = p => !!(p && p.card && p.card.hideOn);
+  const isOnline = p => !!p && online.has(p.user_id) && !hidesOn(p);
   function cardHTML(p, opt = {}) {
     const c = { ...defCard(), ...(p.card || {}) };
     const nat = p.nat && A.byCode[p.nat];
     const J = t('jobs') || {};
     const ig = /^[A-Za-z0-9._]{1,30}$/.test(c.ig || '') ? c.ig : '';
-    const isOn = p.user_id && online.has(p.user_id);
+    const isOn = p.user_id && isOnline(p);
     return `<div class="pcard bg-${esc(bgOk(c.bg) ? c.bg : 'pink')} pat-${esc(PAT.includes(c.pat) && c.bg !== 'leopard' ? c.pat : 'none')} fr-${esc(FRAME.includes(c.frame) ? c.frame : 'pixel')}">
       <div class="pc-top"><span>BOOTO</span><span>PLAYER CARD</span></div>
       <div class="pc-body">
         <div class="pc-av scene-${esc(SCENE.includes(c.scene) ? c.scene : 'none')}"></div>
         <div class="pc-info">
-          <div class="pc-name">${Player.nameHTML({ ...p, handle: null })}${p.user_id && p.user_id !== me() ? `<i class="dot ${isOn ? 'on' : ''}" title="${esc(t(isOn ? 'fr_online' : 'fr_offline'))}"></i>` : ''}</div>
+          <div class="pc-name">${Player.nameHTML({ ...p, handle: null })}${p.user_id && p.user_id !== me() ? `${hidesOn(p) ? '' : `<i class="dot ${isOn ? 'on' : ''}" title="${esc(t(isOn ? 'fr_online' : 'fr_offline'))}"></i>`}` : ''}</div>
           <div class="pc-handle">@${esc(p.handle || '')}</div>
           ${p.title ? `<div class="pc-title">${Titles.html(p.title)}</div>` : ''}
           <div class="pc-tags">${c.rpub && regionName(c) ? `<span class="tag pc-reg">${PXI.img('event/pin', '📍')} ${esc(regionName(c))}</span>` : nat ? `<span class="tag">${esc(nm(nat))}</span>` : ''}${p.style ? `<span class="tag">${esc(p.style)}</span>` : ''}${p.job && J[p.job] ? `<span class="tag">${esc(J[p.job])}</span>` : ''}</div>
@@ -144,6 +149,9 @@ window.Friends = (() => {
           <label class="chk"><input type="checkbox" name="find" ${c.find !== false ? 'checked' : ''}> ${t('fd_find_me')}</label>
           <label class="chk"><input type="checkbox" name="hideon" ${c.hideOn ? 'checked' : ''}> ${t('on_hide_me')}</label>
           <label class="chk"><input type="checkbox" name="rpub" ${c.rpub ? 'checked' : ''}> ${t('fd_rpub')}</label>
+          <label class="field pv-fr"><span>${t('pv_fr')}</span><select class="input sm" name="fr">${['all', 'mutual', 'none'].map(k => `<option value="${k}" ${(c.fr || 'all') === k ? 'selected' : ''}>${t('pv_fr_' + k)}</option>`).join('')}</select></label>
+          <label class="chk"><input type="checkbox" name="frquiet" ${c.frQuiet ? 'checked' : ''}> ${t('pv_quiet')}</label>
+          <label class="chk"><input type="checkbox" name="replyf" ${c.replyF ? 'checked' : ''}> ${t('pv_reply')}</label>
           <div class="cd-reg" ${c.rpub ? '' : 'hidden'}><select class="input sm" name="rc">${countryOpts(c.rc || (Backend.profile && Backend.profile.nat) || 'TW')}</select>
             <select class="input sm" name="rcity"></select><button type="button" class="btn sm teal here">${PXI.img('event/pin', '📍')} ${t('fd_here')}</button></div>
           <p class="note">${t('fd_priv_note')}</p></fieldset>
@@ -159,7 +167,7 @@ window.Friends = (() => {
       try { const r = await locate(); E.rc.value = r.rc; fillCity(r.rcity); SFX.play('coin'); paint(); } catch (x) { toast(t('fd_geo_fail'), '📍'); }
     };
     const read = () => {
-      const o = { ...c, crew: E.crew.value.trim(), move: E.move.value.trim(), bio: E.bio.value.trim(), ig: E.ig.value.trim().replace(/^@/, ''), find: E.find.checked, rpub: E.rpub.checked, hideOn: !!(E.hideon && E.hideon.checked) };
+      const o = { ...c, crew: E.crew.value.trim(), move: E.move.value.trim(), bio: E.bio.value.trim(), ig: E.ig.value.trim().replace(/^@/, ''), find: E.find.checked, rpub: E.rpub.checked, hideOn: !!(E.hideon && E.hideon.checked), fr: E.fr ? E.fr.value : 'all', frQuiet: !!(E.frquiet && E.frquiet.checked), replyF: !!(E.replyf && E.replyf.checked) };
       setTimeout(() => window.Online && Online.retrack && Online.retrack(), 800);
       // 沒有勾選公開地區：地區不存
       if (o.rpub) { o.rc = E.rc.value; o.rcity = E.rcity.value; } else { delete o.rc; delete o.rcity; }
@@ -222,6 +230,7 @@ window.Friends = (() => {
       else if (r.type === 'friend') main = `<button class="btn pink dm">💬 ${t('dm_open')}</button><button class="btn orange pv">${t('pvp_invite')}</button><span class="tag fr-is">${t('fr_is')}</span>`;
       else if (r.type === 'in') main = `<button class="btn green ac">✓ ${t('fr_accept')}</button><button class="btn dc">${t('fr_decline')}</button>`;
       else if (r.type === 'out') main = `<span class="tag">${t('fr_pending')}</span><button class="btn orange pv">${t('pvp_invite')}</button>`;
+      else if (p.card && p.card.fr === 'none') main = `<span class="tag">${t('pv_closed')}</span>`;
       else main = `<button class="btn green ad">${t('fr_add')}</button><button class="btn orange pv">${t('pvp_invite')}</button>`;
       acts.innerHTML = `<div class="btn-row">${main}</div><div class="btn-row sub">
         ${r.type === 'friend' ? `<button class="btn sm rm">${t('fr_remove')}</button>` : ''}
@@ -271,7 +280,7 @@ window.Friends = (() => {
       list.forEach(p => (people[p.user_id] = p));
       ul.innerHTML = (foundNote ? `<li class="fr-sub">${esc(foundNote)}</li>` : '') + (list.length ? list.map(p => {
         const r = rel(p.user_id), reg = (p.card && p.card.rpub && regionName(p.card)) || '';
-        return row(p, `${reg ? `<span class="tag">${PXI.img('event/pin', '📍')} ${esc(reg)}</span>` : ''}<i class="dot ${online.has(p.user_id) ? 'on' : ''}"></i>${r.type === 'friend' ? `<span class="tag fr-is">${t('fr_is')}</span>` : r.type === 'none' ? `<button class="btn sm green add" data-u="${esc(p.user_id)}">${t('fr_add')}</button>` : `<span class="tag">${t('fr_pending')}</span>`}<button class="btn sm cd">🪪</button>`);
+        return row(p, `${reg ? `<span class="tag">${PXI.img('event/pin', '📍')} ${esc(reg)}</span>` : ''}<i class="dot ${isOnline(p) ? 'on' : ''}"></i>${r.type === 'friend' ? `<span class="tag fr-is">${t('fr_is')}</span>` : r.type === 'none' && p.card && p.card.fr === 'none' ? '' : r.type === 'none' ? `<button class="btn sm green add" data-u="${esc(p.user_id)}">${t('fr_add')}</button>` : `<span class="tag">${t('fr_pending')}</span>`}<button class="btn sm cd">🪪</button>`);
       }).join('') : `<li class="note">${t('fd_none')}</li>`);
       ul.querySelectorAll('.fr-row').forEach(li => { const p = list.find(x => x.handle === li.dataset.h); if (p) li.querySelector('.fr-ic').appendChild(headIcon(p.look)); });
     };
@@ -299,9 +308,9 @@ window.Friends = (() => {
       body.querySelector('.fd-box').hidden = tab !== 'find';
       if (tab === 'find') { ul.innerHTML = ''; return drawFind(); }
       if (tab === 'friends') {
-        const ids = friendIds().sort((a, b) => (online.has(b) - online.has(a)));
+        const ids = friendIds().sort((a, b) => (isOnline(people[b]) - isOnline(people[a])));
         html = ids.length ? ids.map(id => { const p = people[id]; if (!p) return ''; const u = unread[id] || 0;
-          return row(p, `<span class="fr-seen"><i class="dot ${online.has(id) ? 'on' : ''}"></i> ${esc(seenText(p))}<small>${esc(joinText(p))}</small></span><button class="btn sm pink dm" data-u="${esc(id)}">💬${u ? ` <b class="fr-badge">${u}</b>` : ''}</button><button class="btn sm cd">🪪</button>`); }).join('')
+          return row(p, `<span class="fr-seen"><i class="dot ${isOnline(p) ? 'on' : ''}"></i> ${esc(seenText(p))}<small>${esc(joinText(p))}</small></span><button class="btn sm pink dm" data-u="${esc(id)}">💬${u ? ` <b class="fr-badge">${u}</b>` : ''}</button><button class="btn sm cd">🪪</button>`); }).join('')
           : `<li class="note empty-li">${UI.emptyArt("friends")}${t('fr_none')}</li>`;
       } else if (tab === 'req') {
         const inn = incoming(), out = rels.filter(r => r.from_user === me() && r.status === 'pending');
@@ -338,6 +347,7 @@ window.Friends = (() => {
   let dm = null; // { uid, el, list }
   // 上次上線：「在線」或「3 小時前上線」
   const seenText = p => {
+    if (hidesOn(p)) return '';
     if (online.has(p.user_id)) return t('fr_online');
     if (!p.last_seen) return t('fr_offline');
     const s = (Date.now() - new Date(p.last_seen)) / 1000;
@@ -370,7 +380,7 @@ window.Friends = (() => {
       <div class="msn-title"><span class="msn-ico">chat.exe</span><b>chat.exe</b><span class="grow"></span><button class="msn-b mn" aria-label="minimize">_</button><button class="msn-b cd" title="${esc(t('cd_title'))}">□</button><button class="msn-b x" aria-label="close">✕</button></div>
       <div class="msn-in">
         <div class="msn-who"><span class="dm-ic"></span><b>${Player.nameHTML({ ...p, handle: null })}</b><span class="msn-tag">· ${t('fr_is').replace('✓ ', '')}</span></div>
-        <div class="msn-st"><i class="dot ${online.has(uid) ? 'on' : ''}"></i> <span class="st-t">${esc(seenText(p))}</span></div>
+        <div class="msn-st"><i class="dot ${isOnline(p) ? 'on' : ''}"></i> <span class="st-t">${esc(seenText(p))}</span></div>
         <div class="dm-list"><p class="note">…</p></div>
         <form class="msn-form dm-form"><button type="button" class="msn-tool emo-btn" aria-label="emoji"><img class="pxemo" src="assets/stickers/c/7.webp?v=1" alt=""></button><label class="msn-tool img-btn" title="${esc(t('dm_img'))}">🖼<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
           <input class="msn-input" maxlength="500" placeholder="${esc(t('dm_ph'))}"><button class="msn-send" aria-label="${esc(t('dm_send'))}">➤</button></form>
@@ -591,6 +601,7 @@ window.Friends = (() => {
       const r = p.new; if (!r || !r.from_user) return;
       if (p.eventType === 'INSERT' && r.status === 'pending' && !blocks.has(r.from_user)) {
         const who = people[r.from_user]; if (!who) return;
+        if (Backend.profile && Backend.profile.card && Backend.profile.card.frQuiet) return;
         SFX.play('coin');
         notify(`💌 ${t('fr_wants', { n: who.name })}`, () => openCard(who.handle, { request: true }));
       }

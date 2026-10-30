@@ -16,7 +16,7 @@
   const errMsg = x => {
     const m = String(x && x.message || x);
     if (/spam/.test(m)) return t('fr_spam'); if (/too fast/.test(m)) return t('fr_fast'); if (/too many/.test(m)) return t('fo_too_many');
-    if (/need character/.test(m)) return t('cd_login'); return m;
+    if (/need character/.test(m)) return t('cd_login'); if (/friends only/.test(m)) return t('pv_reply_only'); return m;
   };
   const headIcon = look => { try { const c = Avatar.render(look || Avatar.DEFAULT, 0, 2); c.className = 'fr-head'; return c; } catch (x) { return document.createElement('span'); } };
   const byline = a => `<b class="nm">${Player.nameHTML(a || {})}</b>${a && a.title ? Titles.html(a.title) : ''}`;
